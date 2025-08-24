@@ -55,14 +55,13 @@ function sanitizeTitleBasic(title) {
 }
 
 function buildAudioCandidates(title) {
+  const base = 'audio/'; // mp3 檔案都放在 audio 資料夾
   const candidates = [];
-  candidates.push(encodeURIComponent(title.toLowerCase().trim()) + '.mp3');
-  const s = sanitizeTitleBasic(title);
-  if (s && s !== title.toLowerCase().trim()) {
-    candidates.push(encodeURIComponent(s) + '.mp3');
-  }
+  // 直接使用 JSON 的標題當檔名
+  candidates.push(base + encodeURIComponent(title.trim()) + '.mp3');
   return candidates;
 }
+
 
 function setAudioSourceWithFallback(title) {
   audioTriedCandidates = buildAudioCandidates(title);
