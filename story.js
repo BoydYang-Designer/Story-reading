@@ -114,7 +114,8 @@ function stopScroll() {
 }
 
 async function loadStories() {
-  const res = await fetch('audio/story.json', { cache: 'no-store' });
+  // 修改：讀取同層 story.json
+  const res = await fetch('story.json', { cache: 'no-store' });
   if (!res.ok) throw new Error('Failed to fetch story.json (HTTP ' + res.status + ')');
   const data = await res.json();
   stories = Array.isArray(data['New Words']) ? data['New Words'] : [];
