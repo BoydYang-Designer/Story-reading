@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reading Challenge</title>
+  <meta name="theme-color" content="#ffffff" />
+  <link rel="stylesheet" href="story.css" />
+</head>
+<body>
+  <div class="container">
+    <!-- Home: Category List -->
+    <section id="home-view" aria-labelledby="home-title">
+      <h1 id="home-title">Reading Challenge</h1>
+      <h2>Select a Category</h2>
+      <div id="category-list" class="list"></div>
+    </section>
+
+    <!-- Category: Title List -->
+    <section id="category-view" aria-labelledby="category-title" hidden>
+      <h1 id="category-title"></h1>
+      <div id="title-list" class="list"></div>
+      <div class="controls">
+        <button id="back-to-home" class="secondary" aria-label="Back to categories">Back to Categories</button>
+      </div>
+    </section>
+
+    <!-- Playback: Text and Audio -->
+    <section id="playback-view" aria-labelledby="playback-title" hidden>
+      <h1 id="playback-title"></h1>
+      <div id="text-container" role="region" aria-label="Story text"></div>
+      <audio id="audio" preload="auto"></audio>
+      <div class="controls">
+        <button id="rewind-5" aria-label="Rewind 5 seconds">⏪ -5s</button>
+        <button id="play-pause" aria-pressed="false">Play</button>
+        <button id="forward-5" aria-label="Forward 5 seconds">+5s ⏩</button>
+        <button id="back-to-category" class="secondary" aria-label="Back to titles">Back to Titles</button>
+      </div>
+    </section>
+
+    <noscript>
+      This app requires JavaScript to run.
+    </noscript>
+  </div>
+
+  <!-- 掛載 JS -->
+  <script defer src="story.js"></script>
+</body>
+</html>
