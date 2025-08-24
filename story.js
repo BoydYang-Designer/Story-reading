@@ -1,7 +1,4 @@
-/* Reading Challenge SPA (external JSON + audio in story folder)
- */
-
-// ---------- DOM ----------
+/* Reading Challenge SPA (external JSON + audio in root folder) */
 const homeView = document.getElementById('home-view');
 const categoryView = document.getElementById('category-view');
 const playbackView = document.getElementById('playback-view');
@@ -17,7 +14,6 @@ const backToCategoryBtn = document.getElementById('back-to-category');
 const rewindBtn = document.getElementById('rewind-5');
 const forwardBtn = document.getElementById('forward-5');
 
-// ---------- State ----------
 let stories = [];
 let isPlaying = false;
 let rafId = null;
@@ -25,7 +21,6 @@ let scrollMax = 0;
 let durationFallback = 59;
 let audioTriedCandidates = [];
 
-// ---------- Utils ----------
 function showView(view) {
   for (const el of [homeView, categoryView, playbackView]) {
     el.hidden = true;
@@ -37,6 +32,7 @@ function parafy(text) {
   const cleaned = String(text)
     .replace(/[“”]/g, '"')
     .replace(/[‘’]/g, "'")
+    .replace(/^"|"$/g, '')
     .trim();
   const parts = cleaned.split(/\n\n+/);
   const frag = document.createDocumentFragment();
@@ -60,11 +56,10 @@ function sanitizeTitleBasic(title) {
 
 function buildAudioCandidates(title) {
   const candidates = [];
-  const basePath = 'story/';  // 音檔資料夾
-  candidates.push(basePath + encodeURIComponent(title.toLowerCase().trim()) + '.mp3');
+  candidates.push(encodeURIComponent(title.toLowerCase().trim()) + '.mp3');
   const s = sanitizeTitleBasic(title);
   if (s && s !== title.toLowerCase().trim()) {
-    candidates.push(basePath + encodeURIComponent(s) + '.mp3');
+    candidates.push(encodeURIComponent(s) + '.mp3');
   }
   return candidates;
 }
@@ -118,9 +113,8 @@ function stopScroll() {
   rafId = null;
 }
 
-// ---------- JSON 載入 ----------
 async function loadStories() {
-  const res = await fetch('story/story.json', { cache: 'no-store' });
+  const res = await fetch('story.json', { cache: 'no-store' });
   if (!res.ok) throw new Error('Failed to fetch story.json (HTTP ' + res.status + ')');
   const data = await res.json();
   stories = Array.isArray(data['New Words']) ? data['New Words'] : [];
@@ -161,9 +155,7 @@ function showPlayback(title, content) {
   textContainer.innerHTML = '';
   textContainer.appendChild(parafy(content));
   textContainer.scrollTop = 0;
-
   setAudioSourceWithFallback(title);
-
   const onLoaded = () => {
     if (!audio.paused && !audio.ended) {
       isPlaying = true;
@@ -173,7 +165,6 @@ function showPlayback(title, content) {
     audio.removeEventListener('loadedmetadata', onLoaded);
   };
   audio.addEventListener('loadedmetadata', onLoaded);
-
   if (!audio.paused) {
     isPlaying = true;
     playPauseBtn.textContent = 'Pause';
@@ -181,11 +172,11 @@ function showPlayback(title, content) {
   }
 }
 
-// ---------- Navigation ----------
 backToHomeBtn.addEventListener('click', () => {
   stopAudioAndReset();
   showView(homeView);
 });
+
 backToCategoryBtn.addEventListener('click', () => {
   stopAudioAndReset();
   showView(categoryView);
@@ -200,7 +191,6 @@ function stopAudioAndReset() {
   textContainer.scrollTop = 0;
 }
 
-// ---------- Controls ----------
 rewindBtn.addEventListener('click', () => {
   audio.currentTime = Math.max(0, audio.currentTime - 5);
 });
@@ -228,7 +218,6 @@ playPauseBtn.addEventListener('click', () => {
 window.addEventListener('resize', computeScrollMax, { passive: true });
 audio.addEventListener('ended', stopAudioAndReset);
 
-// ---------- Boot ----------
 (async function init() {
   try {
     await loadStories();
