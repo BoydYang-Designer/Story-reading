@@ -114,7 +114,7 @@ function stopScroll() {
 
 async function loadStories() {
   // 修改：讀取同層 story.json
-  const res = await fetch('story.json', { cache: 'no-store' });
+const res = await fetch('https://raw.githubusercontent.com/BoydYang-Designer/Story-reading/main/story.json', { cache: 'no-store' }); 
   if (!res.ok) throw new Error('Failed to fetch story.json (HTTP ' + res.status + ')');
   const data = await res.json();
   stories = Array.isArray(data['New Words']) ? data['New Words'] : [];
