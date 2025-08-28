@@ -239,3 +239,23 @@ audio.addEventListener('ended', stopAudioAndReset);
     alert('Failed to load story.json.');
   }
 })();
+
+document.addEventListener('keydown', (event) => {
+  // 檢查當前是否在 playbackView
+  if (playbackView.hidden === false) {
+    switch (event.code) {
+      case 'Space':
+        event.preventDefault(); // 防止空白鍵滾動頁面
+        playPauseBtn.click();
+        break;
+      case 'ArrowLeft':
+        event.preventDefault();
+        rewindBtn.click();
+        break;
+      case 'ArrowRight':
+        event.preventDefault();
+        forwardBtn.click();
+        break;
+    }
+  }
+});
