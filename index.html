@@ -8,28 +8,27 @@
 </head>
 <body>
   <div class="container">
-    <!-- Home: Category List -->
     <div id="home-view">
       <h1>Reading Challenge</h1>
       <h2>Select a Category</h2>
       <div id="category-list" class="list"></div>
     </div>
 
-    <!-- Category: Title List -->
     <div id="category-view" hidden>
       <h1 id="category-title"></h1>
       <div id="title-list" class="list"></div>
       <button class="secondary" id="back-to-home">Back to Categories</button>
     </div>
 
-    <!-- Playback: Text and Audio -->
     <div id="playback-view" hidden>
       <h1 id="playback-title"></h1>
       <div id="text-container"></div>
       <div class="controls">
-        <button id="rewind-5">⏪ -5s</button>
-        <button id="play-pause">Play</button>
-        <button id="forward-5">+5s ⏩</button>
+        <div class="playback-actions">
+          <button id="rewind-5">⏪</button>
+          <button id="play-pause">▶️</button>
+          <button id="forward-5">⏩</button>
+        </div>
         <button class="secondary" id="back-to-category">Back to Titles</button>
       </div>
     </div>

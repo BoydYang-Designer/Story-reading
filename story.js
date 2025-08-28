@@ -48,7 +48,7 @@ function sanitizeTitleBasic(title) {
   return title
     .toLowerCase()
     .replace(/[“”‘’]/g, '')
-    .replace(/[\u2014\u2013]/g, '-') 
+    .replace(/[\u2014\u2013]/g, '-')
     .replace(/[^a-z0-9\-\s]/g, '')
     .replace(/\s+/g, ' ')
     .trim();
@@ -71,7 +71,7 @@ function setAudioSourceWithFallback(title) {
 function tryNextAudioCandidate() {
   if (!audioTriedCandidates.length) {
     alert('Audio file not found.');
-    playPauseBtn.textContent = 'Play';
+    playPauseBtn.textContent = '▶️';
     isPlaying = false;
     return;
   }
@@ -81,7 +81,7 @@ function tryNextAudioCandidate() {
   const playAttempt = audio.play();
   if (playAttempt && typeof playAttempt.then === 'function') {
     playAttempt.catch(() => {
-      playPauseBtn.textContent = 'Play';
+      playPauseBtn.textContent = '▶️';
     });
   }
   audio.onerror = () => {
@@ -159,7 +159,7 @@ function showPlayback(title, content) {
   const onLoaded = () => {
     if (!audio.paused && !audio.ended) {
       isPlaying = true;
-      playPauseBtn.textContent = 'Pause';
+      playPauseBtn.textContent = '⏸️';
       startScroll();
     }
     audio.removeEventListener('loadedmetadata', onLoaded);
@@ -167,7 +167,7 @@ function showPlayback(title, content) {
   audio.addEventListener('loadedmetadata', onLoaded);
   if (!audio.paused) {
     isPlaying = true;
-    playPauseBtn.textContent = 'Pause';
+    playPauseBtn.textContent = '⏸️';
     startScroll();
   }
 }
@@ -187,7 +187,7 @@ function stopAudioAndReset() {
   try { audio.pause(); } catch {}
   audio.currentTime = 0;
   isPlaying = false;
-  playPauseBtn.textContent = 'Play';
+  playPauseBtn.textContent = '▶️';
   textContainer.scrollTop = 0;
 }
 
@@ -203,14 +203,14 @@ playPauseBtn.addEventListener('click', () => {
   if (isPlaying) {
     audio.pause();
     isPlaying = false;
-    playPauseBtn.textContent = 'Play';
+    playPauseBtn.textContent = '▶️';
     stopScroll();
   } else {
     audio.play().catch(err => {
       console.log('Autoplay blocked:', err);
     });
     isPlaying = true;
-    playPauseBtn.textContent = 'Pause';
+    playPauseBtn.textContent = '⏸️';
     startScroll();
   }
 });
