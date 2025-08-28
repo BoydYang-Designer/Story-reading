@@ -25,9 +25,17 @@
             ]
         },
         {
-            "標題": "1-about-yourself",
+            "標題": "1-about-yourself-A",
             "內文": "Sure. I’m an industrial designer with more than 16 years in juvenile product design, specializing in strollers and multifunctional children’s products, while also supporting projects in car seats.  One of my recent stroller designs — which transforms into both a ground seat and a wagon — was recognized with a 2025 Red Dot Design Award. My strength is creating safe, user-friendly designs that balance creativity with manufacturability.",
-            "Unnamed: 3": "1-about-yourself",
+            "Unnamed: 3": "1-about-yourself-A",
+            "分類": [
+                "Interview"
+            ]
+        },
+        {
+            "標題": "1-about-yourself-B",
+            "內文": "I’m an industrial designer with more than 16 years of experience in juvenile product design, specializing in strollers and multifunctional children’s products, while also supporting car seat projects. I focus on creating safe, user-friendly designs that balance creativity with manufacturability. I also have experience as a project leader, guiding teams from concept through to production—working with design teams in Europe, leading engineering team in Taiwan, and coordinating with factories in China to ensure successful mass production. I believe good design should enhance daily life for families, and I’m passionate about developing solutions that combine safety, convenience, and innovation.",
+            "Unnamed: 3": "1-about-yourself-B",
             "分類": [
                 "Interview"
             ]
