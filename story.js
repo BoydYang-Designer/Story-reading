@@ -121,7 +121,13 @@ const res = await fetch('https://raw.githubusercontent.com/BoydYang-Designer/Sto
 }
 
 function renderCategories() {
-  const categories = [...new Set(stories.map(item => item['分類']).filter(Boolean))].sort();
+  // 修改：由於 "分類" 是陣列，使用 flatMap 攤平所有分類並整理
+  const categories = [...new Set(
+    stories.flatMap(item => 
+      Array.isArray(item['分類']) ? item['分類'].map(c => c.trim()) : []
+    ).filter(Boolean)
+  )].sort();
+
   categoryList.innerHTML = '';
   for (const category of categories) {
     const div = document.createElement('div');
@@ -137,7 +143,12 @@ function showCategory(category) {
   showView(categoryView);
   categoryTitle.textContent = category;
   titleList.innerHTML = '';
-  const titles = stories.filter(item => item['分類'] === category);
+
+  // 修改：篩選時，檢查項目的 "分類" 陣列中是否 "包含" 指定的分類
+  const titles = stories.filter(item => 
+    Array.isArray(item['分類']) && item['分類'].map(c => c.trim()).includes(category)
+  );
+
   titles.sort((a, b) => String(a['標題']).localeCompare(String(b['標題'])));
   for (const item of titles) {
     const div = document.createElement('div');
