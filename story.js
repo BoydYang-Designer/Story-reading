@@ -34,11 +34,18 @@ function parafy(text) {
     .replace(/[‘’]/g, "'")
     .replace(/^"|"$/g, '')
     .trim();
-  const parts = cleaned.split(/\n\n+/);
+  // 修改：將 split 的條件從雙換行 (\n\n+) 改為單換行 (\n+)，讓文章更好分段
+  const parts = cleaned.split(/\n+/);
   const frag = document.createDocumentFragment();
   for (const part of parts) {
     const p = document.createElement('p');
-    p.textContent = part.trim();
+    const trimmedPart = part.trim();
+    if (trimmedPart === '') {
+      // 對於空白行，使用 &nbsp; 確保其能被渲染出來佔據空間
+      p.innerHTML = '&nbsp;';
+    } else {
+      p.textContent = trimmedPart;
+    }
     frag.appendChild(p);
   }
   return frag;
@@ -114,7 +121,7 @@ function stopScroll() {
 
 async function loadStories() {
   // 修改：讀取同層 story.json
-const res = await fetch('https://raw.githubusercontent.com/BoydYang-Designer/Story-reading/main/story.json', { cache: 'no-store' }); 
+const res = await fetch('https://raw.githubusercontent.com/BoydYang-Designer/Story-reading/main/story.json', { cache: 'no-store' });
   if (!res.ok) throw new Error('Failed to fetch story.json (HTTP ' + res.status + ')');
   const data = await res.json();
   stories = Array.isArray(data['New Words']) ? data['New Words'] : [];
@@ -123,7 +130,7 @@ const res = await fetch('https://raw.githubusercontent.com/BoydYang-Designer/Sto
 function renderCategories() {
   // 修改：由於 "分類" 是陣列，使用 flatMap 攤平所有分類並整理
   const categories = [...new Set(
-    stories.flatMap(item => 
+    stories.flatMap(item =>
       Array.isArray(item['分類']) ? item['分類'].map(c => c.trim()) : []
     ).filter(Boolean)
   )].sort();
@@ -145,7 +152,7 @@ function showCategory(category) {
   titleList.innerHTML = '';
 
   // 修改：篩選時，檢查項目的 "分類" 陣列中是否 "包含" 指定的分類
-  const titles = stories.filter(item => 
+  const titles = stories.filter(item =>
     Array.isArray(item['分類']) && item['分類'].map(c => c.trim()).includes(category)
   );
 
@@ -164,7 +171,11 @@ function showPlayback(title, content) {
   showView(playbackView);
   playbackTitle.textContent = title;
   textContainer.innerHTML = '';
-  textContainer.appendChild(parafy(content));
+
+  // 修改：在文章內容前加入換行符，以在開頭產生空白區域
+  const contentWithPadding = '\n\n' + content;
+  textContainer.appendChild(parafy(contentWithPadding));
+
   textContainer.scrollTop = 0;
   setAudioSourceWithFallback(title);
   const onLoaded = () => {
