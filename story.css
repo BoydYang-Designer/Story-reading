@@ -105,7 +105,7 @@ button.secondary:hover { background: #f7faff; }
 
   /* Phone: ~5 words/line via larger font */
   #text-container {
-    height: 350px;      /* Mobile height */
+    height: 600px;      /* Mobile height */
     font-size: 25px;    /* Larger size -> fewer words per line (approx. ~5) */
     line-height: 1.65;
   }
