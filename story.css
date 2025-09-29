@@ -99,6 +99,14 @@ h2 { font-size: 20px; margin: 0 0 12px; }
   gap: 12px;
 }
 
+/* 新增的進度條樣式 */
+#progress-bar {
+    width: 90%;
+    max-width: 400px; /* 在大螢幕上限制最大寬度 */
+    cursor: pointer;
+    margin-bottom: 5px; /* 與下方按鈕的間距 */
+}
+
 .playback-actions {
   display: flex;
   gap: 10px;

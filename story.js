@@ -17,6 +17,7 @@ const rewindBtn = document.getElementById('rewind-5');
 const forwardBtn = document.getElementById('forward-5');
 const prevStoryBtn = document.getElementById('prev-story');
 const nextStoryBtn = document.getElementById('next-story');
+const progressBar = document.getElementById('progress-bar'); // 新增進度條的引用
 
 
 // Note view elements
@@ -324,6 +325,7 @@ function showPlayback(index) {
   textContainer.appendChild(parafyAndMakeClickable(contentWithPadding));
 
   textContainer.scrollTop = 0;
+  progressBar.value = 0; // 重設進度條
   setAudioSourceWithFallback(title);
 
   // Update button visibility
@@ -363,6 +365,7 @@ function stopAudioAndReset() {
   isPlaying = false;
   playPauseBtn.textContent = '▶️';
   textContainer.scrollTop = 0;
+  progressBar.value = 0; // 重設進度條
 }
 
 rewindBtn.addEventListener('click', () => {
@@ -403,9 +406,30 @@ nextStoryBtn.addEventListener('click', () => {
     }
 });
 
+// --- 新增: 進度條相關函式與事件 ---
+
+// 根據音訊播放時間更新進度條
+function updateProgressBar() {
+    if (audio.duration) {
+        const progressPercent = (audio.currentTime / audio.duration) * 100;
+        progressBar.value = progressPercent;
+    }
+}
+
+// 當使用者拖動進度條時，更新音訊播放時間
+function seekAudio() {
+    if (audio.duration) {
+        const seekTime = (progressBar.value / 100) * audio.duration;
+        audio.currentTime = seekTime;
+    }
+}
+
+// ---
 
 window.addEventListener('resize', computeScrollMax, { passive: true });
 audio.addEventListener('ended', stopAudioAndReset);
+audio.addEventListener('timeupdate', updateProgressBar); // 新增: 當音訊時間更新時，呼叫函式
+progressBar.addEventListener('input', seekAudio); // 新增: 當拖動進度條時，呼叫函式
 
 (async function init() {
   try {
