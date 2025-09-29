@@ -38,25 +38,59 @@ h2 { font-size: 20px; margin: 0 0 12px; }
 .category-item:hover, .title-item:hover { background-color: #f2f6ff; border-color: #cfe1ff; }
 .category-item:active, .title-item:active { transform: translateY(1px); }
 
+/* Note button on home screen */
+#go-to-note {
+    background-color: #e9f5ff;
+    border-color: #a3d1ff;
+    font-weight: 500;
+}
+
 /* Text reading area */
 #text-container {
-  height: 500px;                /* Desktop default */
+  margin-top: 30px;
+  height: 500px;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   background-color: #fff;
   padding: 20px;
   border: 1px solid #ddd;
   border-radius: 10px;
-  font-size: 16px;              /* Desktop default */
+  font-size: 16px;
   line-height: 1.6;
   text-align: left;
-  /* Prevent accidental text selection while auto-scrolling */
   user-select: none;
+  /* Add padding to prevent text from being hidden by fixed controls */
+  padding-bottom: 100px;
+}
+
+/* Clickable word styling */
+#text-container .clickable-word {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+#text-container .clickable-word:hover {
+    background-color: #dbeaff;
+    border-radius: 3px;
+}
+
+/* Fixed Controls Container */
+#fixed-controls-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 15px 0;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border-top: 1px solid #ddd;
 }
 
 /* Controls */
 .controls {
-  margin-top: 16px;
+  max-width: 880px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -97,6 +131,37 @@ button.secondary:hover { background: #f7faff; }
 #text-container p { margin: 0 0 1em; }
 #text-container p:last-child { margin-bottom: 0; }
 
+
+/* Note View Specific Styles */
+#word-note-list .word-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 16px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+}
+#word-note-list .word-text {
+    font-size: 18px;
+    font-weight: 500;
+}
+#word-note-list .word-item-actions {
+    display: flex;
+    gap: 8px;
+}
+#word-note-list .word-item-actions button {
+    padding: 5px 10px;
+    font-size: 14px;
+}
+.note-actions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+
+
 /* Mobile tweaks */
 @media (max-width: 600px) {
   body { padding: 12px; }
@@ -106,8 +171,10 @@ button.secondary:hover { background: #f7faff; }
 
   /* Phone: ~5 words/line via larger font */
   #text-container {
-    height: 550px;      /* Mobile height */
-    font-size: 25px;    /* Larger size -> fewer words per line (approx. ~5) */
+    height: 550px;
+    font-size: 25px;
     line-height: 1.65;
+    /* More padding on mobile for the fixed controls */
+    padding-bottom: 120px;
   }
 }

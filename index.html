@@ -12,6 +12,7 @@
       <h1>Reading Challenge</h1>
       <h2>Select a Category</h2>
       <div id="category-list" class="list"></div>
+      <div id="go-to-note" class="category-item">Note</div>
     </div>
 
     <div id="category-view" hidden>
@@ -23,15 +24,27 @@
     <div id="playback-view" hidden>
       <h1 id="playback-title"></h1>
       <div id="text-container"></div>
-      <div class="controls">
-        <div class="playback-actions">
-          <button id="rewind-5">⏪</button>
-          <button id="play-pause">▶️</button>
-          <button id="forward-5">⏩</button>
+      <div id="fixed-controls-container">
+        <div class="controls">
+          <div class="playback-actions">
+            <button id="rewind-5">⏪</button>
+            <button id="play-pause">▶️</button>
+            <button id="forward-5">⏩</button>
+          </div>
+          <button class="secondary" id="back-to-category">Back to Titles</button>
         </div>
-        <button class="secondary" id="back-to-category">Back to Titles</button>
       </div>
     </div>
+
+    <div id="note-view" hidden>
+        <h1>Word Note</h1>
+        <div id="word-note-list" class="list"></div>
+        <div class="note-actions">
+            <button id="export-words-btn">Export as JSON</button>
+            <button class="secondary" id="back-to-home-from-note">Back to Home</button>
+        </div>
+    </div>
+
 
     <audio id="audio"></audio>
     <p hidden>This app requires JavaScript to run.</p>

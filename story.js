@@ -2,6 +2,8 @@
 const homeView = document.getElementById('home-view');
 const categoryView = document.getElementById('category-view');
 const playbackView = document.getElementById('playback-view');
+const noteView = document.getElementById('note-view');
+
 const categoryList = document.getElementById('category-list');
 const categoryTitle = document.getElementById('category-title');
 const titleList = document.getElementById('title-list');
@@ -14,42 +16,173 @@ const backToCategoryBtn = document.getElementById('back-to-category');
 const rewindBtn = document.getElementById('rewind-5');
 const forwardBtn = document.getElementById('forward-5');
 
+// Note view elements
+const goToNoteBtn = document.getElementById('go-to-note');
+const backToHomeFromNoteBtn = document.getElementById('back-to-home-from-note');
+const wordNoteList = document.getElementById('word-note-list');
+const exportWordsBtn = document.getElementById('export-words-btn');
+
 let stories = [];
 let isPlaying = false;
 let rafId = null;
 let scrollMax = 0;
 let durationFallback = 59;
 let audioTriedCandidates = [];
+let savedWords = new Set();
+
+// --- Storage Functions ---
+function loadWordsFromStorage() {
+  const storedWords = localStorage.getItem('readingChallengeSavedWords');
+  if (storedWords) {
+    try {
+      const wordsArray = JSON.parse(storedWords);
+      savedWords = new Set(wordsArray);
+    } catch (e) {
+      console.error("Failed to parse words from localStorage", e);
+      savedWords = new Set();
+    }
+  }
+}
+
+function saveWordsToStorage() {
+  localStorage.setItem('readingChallengeSavedWords', JSON.stringify(Array.from(savedWords)));
+}
+
 
 function showView(view) {
-  for (const el of [homeView, categoryView, playbackView]) {
+  for (const el of [homeView, categoryView, playbackView, noteView]) {
     el.hidden = true;
   }
   view.hidden = false;
 }
 
-function parafy(text) {
-  const cleaned = String(text)
-    .replace(/[“”]/g, '"')
-    .replace(/[‘’]/g, "'")
-    .replace(/^"|"$/g, '')
-    .trim();
-  // 修改：將 split 的條件從雙換行 (\n\n+) 改為單換行 (\n+)，讓文章更好分段
-  const parts = cleaned.split(/\n+/);
-  const frag = document.createDocumentFragment();
-  for (const part of parts) {
-    const p = document.createElement('p');
-    const trimmedPart = part.trim();
-    if (trimmedPart === '') {
-      // 對於空白行，使用 &nbsp; 確保其能被渲染出來佔據空間
-      p.innerHTML = '&nbsp;';
-    } else {
-      p.textContent = trimmedPart;
+// --- Word Note Functions ---
+function renderSavedWords() {
+    wordNoteList.innerHTML = '';
+    const sortedWords = Array.from(savedWords).sort((a, b) => a.localeCompare(b));
+
+    if (sortedWords.length === 0) {
+        wordNoteList.innerHTML = '<p>No words saved yet. Click on a word in a story to save it here.</p>';
+        return;
     }
-    frag.appendChild(p);
-  }
-  return frag;
+
+    for (const word of sortedWords) {
+        const item = document.createElement('div');
+        item.className = 'word-item';
+
+        const wordText = document.createElement('span');
+        wordText.className = 'word-text';
+        wordText.textContent = word;
+
+        const actions = document.createElement('div');
+        actions.className = 'word-item-actions';
+
+        const copyBtn = document.createElement('button');
+        copyBtn.textContent = 'Copy';
+        copyBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            navigator.clipboard.writeText(word).then(() => {
+                alert(`'${word}' copied to clipboard.`);
+            });
+        });
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'secondary';
+        deleteBtn.textContent = 'Delete';
+        deleteBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (confirm(`Are you sure you want to delete '${word}'?`)) {
+                savedWords.delete(word);
+                saveWordsToStorage();
+                renderSavedWords();
+            }
+        });
+
+        actions.appendChild(copyBtn);
+        actions.appendChild(deleteBtn);
+        item.appendChild(wordText);
+        item.appendChild(actions);
+        wordNoteList.appendChild(item);
+    }
 }
+
+function addWordToNote(word) {
+    const cleanedWord = word.trim().replace(/[^a-zA-Z'-]/g, '');
+    if (cleanedWord) {
+        savedWords.add(cleanedWord);
+        saveWordsToStorage();
+    }
+}
+
+goToNoteBtn.addEventListener('click', () => {
+    renderSavedWords();
+    showView(noteView);
+});
+
+backToHomeFromNoteBtn.addEventListener('click', () => showView(homeView));
+
+exportWordsBtn.addEventListener('click', () => {
+    if (savedWords.size === 0) {
+        alert("No words to export.");
+        return;
+    }
+    const data = JSON.stringify(Array.from(savedWords), null, 2);
+    const blob = new Blob([data], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'my_words.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+});
+
+
+function parafyAndMakeClickable(text) {
+    const cleaned = String(text)
+        .replace(/[“”]/g, '"')
+        .replace(/[‘’]/g, "'")
+        .trim();
+    const paragraphs = cleaned.split(/\n+/);
+    const frag = document.createDocumentFragment();
+
+    paragraphs.forEach(pText => {
+        const p = document.createElement('p');
+        if (pText.trim() === '') {
+            p.innerHTML = '&nbsp;';
+        } else {
+            // Split by space to wrap each word in a span
+            const words = pText.split(/(\s+)/); // Keep spaces
+            words.forEach(word => {
+                if (word.trim().length > 0) {
+                    const span = document.createElement('span');
+                    span.className = 'clickable-word';
+                    span.textContent = word;
+                    p.appendChild(span);
+                } else {
+                    // Append spaces as text nodes
+                    p.appendChild(document.createTextNode(word));
+                }
+            });
+        }
+        frag.appendChild(p);
+    });
+    return frag;
+}
+
+textContainer.addEventListener('click', (e) => {
+    if (e.target.classList.contains('clickable-word')) {
+        const word = e.target.textContent.trim();
+        navigator.clipboard.writeText(word).then(() => {
+            addWordToNote(word);
+            alert(`'${word}' copied and added to notes!`);
+        }).catch(err => {
+            console.error('Failed to copy word: ', err);
+        });
+    }
+});
+
 
 function sanitizeTitleBasic(title) {
   return title
@@ -120,15 +253,13 @@ function stopScroll() {
 }
 
 async function loadStories() {
-  // 修改：讀取同層 story.json
-const res = await fetch('https://raw.githubusercontent.com/BoydYang-Designer/Story-reading/main/story.json', { cache: 'no-store' });
+  const res = await fetch('https://raw.githubusercontent.com/BoydYang-Designer/Story-reading/main/story.json', { cache: 'no-store' });
   if (!res.ok) throw new Error('Failed to fetch story.json (HTTP ' + res.status + ')');
   const data = await res.json();
   stories = Array.isArray(data['New Words']) ? data['New Words'] : [];
 }
 
 function renderCategories() {
-  // 修改：由於 "分類" 是陣列，使用 flatMap 攤平所有分類並整理
   const categories = [...new Set(
     stories.flatMap(item =>
       Array.isArray(item['分類']) ? item['分類'].map(c => c.trim()) : []
@@ -151,7 +282,6 @@ function showCategory(category) {
   categoryTitle.textContent = category;
   titleList.innerHTML = '';
 
-  // 修改：篩選時，檢查項目的 "分類" 陣列中是否 "包含" 指定的分類
   const titles = stories.filter(item =>
     Array.isArray(item['分類']) && item['分類'].map(c => c.trim()).includes(category)
   );
@@ -171,10 +301,8 @@ function showPlayback(title, content) {
   showView(playbackView);
   playbackTitle.textContent = title;
   textContainer.innerHTML = '';
-
-  // 修改：在文章內容前加入換行符，以在開頭產生空白區域
   const contentWithPadding = '\n\n' + content;
-  textContainer.appendChild(parafy(contentWithPadding));
+  textContainer.appendChild(parafyAndMakeClickable(contentWithPadding));
 
   textContainer.scrollTop = 0;
   setAudioSourceWithFallback(title);
@@ -242,6 +370,7 @@ audio.addEventListener('ended', stopAudioAndReset);
 
 (async function init() {
   try {
+    loadWordsFromStorage();
     await loadStories();
     renderCategories();
     showView(homeView);
@@ -252,11 +381,10 @@ audio.addEventListener('ended', stopAudioAndReset);
 })();
 
 document.addEventListener('keydown', (event) => {
-  // 檢查當前是否在 playbackView
   if (playbackView.hidden === false) {
     switch (event.code) {
       case 'Space':
-        event.preventDefault(); // 防止空白鍵滾動頁面
+        event.preventDefault();
         playPauseBtn.click();
         break;
       case 'ArrowLeft':
