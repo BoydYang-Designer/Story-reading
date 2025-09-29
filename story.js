@@ -180,10 +180,20 @@ function parafyAndMakeClickable(text) {
 
 textContainer.addEventListener('click', (e) => {
     if (e.target.classList.contains('clickable-word')) {
-        const word = e.target.textContent.trim();
+        const clickedWordElement = e.target; // 記住被點擊的元素
+        const word = clickedWordElement.textContent.trim();
+
         navigator.clipboard.writeText(word).then(() => {
             addWordToNote(word);
-            alert(`'${word}' copied and added to notes!`);
+
+            // 1. 為被點擊的單字加上高亮 class
+            clickedWordElement.classList.add('word-copied-highlight');
+
+            // 2. 設定一個計時器，在 1.5 秒後移除該 class
+            setTimeout(() => {
+                clickedWordElement.classList.remove('word-copied-highlight');
+            }, 1500); // 1500 毫秒 = 1.5 秒
+
         }).catch(err => {
             console.error('Failed to copy word: ', err);
         });
@@ -421,10 +431,10 @@ function seekAudio() {
     if (audio.duration) {
         const seekTime = (progressBar.value / 100) * audio.duration;
         audio.currentTime = seekTime;
+        const progress = audio.currentTime / audio.duration;
+        textContainer.scrollTop = progress * scrollMax;
     }
 }
-
-// ---
 
 window.addEventListener('resize', computeScrollMax, { passive: true });
 audio.addEventListener('ended', stopAudioAndReset);

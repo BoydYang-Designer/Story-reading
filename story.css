@@ -49,12 +49,12 @@ h2 { font-size: 20px; margin: 0 0 12px; }
 
 /* Text reading area */
 #text-container {
-  margin-top: 30px;
   height: 500px;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   background-color: #fff;
   padding: 20px;
+  padding-top: 5em; 
   border: 1px solid #ddd;
   border-radius: 10px;
   font-size: 16px;
@@ -64,7 +64,6 @@ h2 { font-size: 20px; margin: 0 0 12px; }
   /* Add padding to prevent text from being hidden by fixed controls */
   padding-bottom: 100px;
 }
-
 /* Clickable word styling */
 #text-container .clickable-word {
     cursor: pointer;
@@ -72,6 +71,12 @@ h2 { font-size: 20px; margin: 0 0 12px; }
 }
 #text-container .clickable-word:hover {
     background-color: #dbeaff;
+    border-radius: 3px;
+}
+
+#text-container .word-copied-highlight {
+    background-color: #d1f7d1; /* 淺綠色 */
+    transition: background-color 0.3s ease; /* 讓顏色變化更平滑 */
     border-radius: 3px;
 }
 
