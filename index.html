@@ -18,7 +18,11 @@
     <div id="category-view" hidden>
       <h1 id="category-title"></h1>
       <div id="title-list" class="list"></div>
-      <button class="secondary" id="back-to-home">Back to Categories</button>
+      <div id="fixed-controls-container">
+        <div class="controls">
+            <button class="secondary" id="back-to-home">Back to Categories</button>
+        </div>
+      </div>
     </div>
 
     <div id="playback-view" hidden>
@@ -31,7 +35,11 @@
             <button id="play-pause">▶️</button>
             <button id="forward-5">⏩</button>
           </div>
-          <button class="secondary" id="back-to-category">Back to Titles</button>
+          <div class="navigation-actions">
+            <button id="prev-story" class="secondary" hidden>上一則</button>
+            <button class="secondary" id="back-to-category">Back to Titles</button>
+            <button id="next-story" class="secondary" hidden>下一則</button>
+          </div>
         </div>
       </div>
     </div>

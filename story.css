@@ -22,6 +22,8 @@ h2 { font-size: 20px; margin: 0 0 12px; }
 .list {
   display: grid;
   gap: 12px;
+  /* Add padding to prevent items from being hidden by fixed controls */
+  padding-bottom: 100px;
 }
 
 /* Cards */
@@ -101,6 +103,14 @@ h2 { font-size: 20px; margin: 0 0 12px; }
   display: flex;
   gap: 10px;
   justify-content: center;
+}
+
+/* New style for navigation buttons */
+.navigation-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
 }
 
 button {

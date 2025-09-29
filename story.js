@@ -15,6 +15,9 @@ const backToHomeBtn = document.getElementById('back-to-home');
 const backToCategoryBtn = document.getElementById('back-to-category');
 const rewindBtn = document.getElementById('rewind-5');
 const forwardBtn = document.getElementById('forward-5');
+const prevStoryBtn = document.getElementById('prev-story');
+const nextStoryBtn = document.getElementById('next-story');
+
 
 // Note view elements
 const goToNoteBtn = document.getElementById('go-to-note');
@@ -29,6 +32,9 @@ let scrollMax = 0;
 let durationFallback = 59;
 let audioTriedCandidates = [];
 let savedWords = new Set();
+let currentStoryList = [];
+let currentStoryIndex = -1;
+
 
 // --- Storage Functions ---
 function loadWordsFromStorage() {
@@ -287,17 +293,30 @@ function showCategory(category) {
   );
 
   titles.sort((a, b) => String(a['標題']).localeCompare(String(b['標題'])));
-  for (const item of titles) {
+  
+  // Store the filtered and sorted list for navigation
+  currentStoryList = titles;
+
+  titles.forEach((item, index) => {
     const div = document.createElement('div');
     div.className = 'title-item';
     div.textContent = item['標題'];
     div.tabIndex = 0;
-    div.addEventListener('click', () => showPlayback(item['標題'], item['內文']));
+    div.addEventListener('click', () => showPlayback(index));
     titleList.appendChild(div);
-  }
+  });
 }
 
-function showPlayback(title, content) {
+function showPlayback(index) {
+  currentStoryIndex = index;
+  const story = currentStoryList[currentStoryIndex];
+  
+  if (!story) {
+      console.error('Story not found at index:', index);
+      return;
+  }
+  const { '標題': title, '內文': content } = story;
+
   showView(playbackView);
   playbackTitle.textContent = title;
   textContainer.innerHTML = '';
@@ -306,6 +325,11 @@ function showPlayback(title, content) {
 
   textContainer.scrollTop = 0;
   setAudioSourceWithFallback(title);
+
+  // Update button visibility
+  prevStoryBtn.hidden = currentStoryIndex <= 0;
+  nextStoryBtn.hidden = currentStoryIndex >= currentStoryList.length - 1;
+
   const onLoaded = () => {
     if (!audio.paused && !audio.ended) {
       isPlaying = true;
@@ -364,6 +388,21 @@ playPauseBtn.addEventListener('click', () => {
     startScroll();
   }
 });
+
+prevStoryBtn.addEventListener('click', () => {
+    if (currentStoryIndex > 0) {
+        stopAudioAndReset();
+        showPlayback(currentStoryIndex - 1);
+    }
+});
+
+nextStoryBtn.addEventListener('click', () => {
+    if (currentStoryIndex < currentStoryList.length - 1) {
+        stopAudioAndReset();
+        showPlayback(currentStoryIndex + 1);
+    }
+});
+
 
 window.addEventListener('resize', computeScrollMax, { passive: true });
 audio.addEventListener('ended', stopAudioAndReset);
