@@ -70,8 +70,7 @@ h2 { font-size: 20px; margin: 0 0 12px; }
 #text-container .clickable-word {
     cursor: pointer;
     transition: background-color 0.2s ease;
-    /* Prevent selection for spans, allowing selection of parent <p> */
-    user-select: none;
+    /* MODIFIED: The 'user-select: none;' property has been removed to allow text selection. */
 }
 #text-container .clickable-word:hover {
     background-color: #dbeaff;

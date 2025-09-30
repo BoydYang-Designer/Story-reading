@@ -195,22 +195,99 @@ function parafyAndMakeClickable(text) {
     return frag;
 }
 
-textContainer.addEventListener('click', (e) => {
-    if (e.target.classList.contains('clickable-word')) {
-        const clickedWordElement = e.target;
-        const word = clickedWordElement.textContent.trim();
+// --- NEW/MODIFIED: Robust logic for both Mouse and Touch events ---
 
+let pressTimer = null;
+let startX, startY;
+let isDragging = false;
+let currentTarget = null;
+const dragThreshold = 10; // Increased threshold for less sensitive touch
+const pressDelay = 250; // ms
+
+function handleWordCopy(targetElement) {
+    if (targetElement && targetElement.classList.contains('clickable-word')) {
+        const word = targetElement.textContent.trim();
         navigator.clipboard.writeText(word).then(() => {
             addWordToNote(word);
-            clickedWordElement.classList.add('word-copied-highlight');
+            targetElement.classList.add('word-copied-highlight');
             setTimeout(() => {
-                clickedWordElement.classList.remove('word-copied-highlight');
+                targetElement.classList.remove('word-copied-highlight');
             }, 1500);
         }).catch(err => {
             console.error('Failed to copy word: ', err);
         });
     }
-});
+}
+
+function handlePressStart(e) {
+    // Only act on left mouse button or a single touch
+    if (e.type === 'mousedown' && e.button !== 0) return;
+    if (!e.target.classList.contains('clickable-word')) return;
+
+    const point = e.type === 'touchstart' ? e.touches[0] : e;
+    startX = point.clientX;
+    startY = point.clientY;
+    isDragging = false;
+    currentTarget = e.target;
+
+    pressTimer = setTimeout(() => {
+        isDragging = true; // Treat long-press as a drag to prevent copy on release
+        currentTarget = null;
+    }, pressDelay);
+}
+
+function handlePressMove(e) {
+    if (!pressTimer) return;
+
+    const point = e.type === 'touchmove' ? e.touches[0] : e;
+    const deltaX = Math.abs(point.clientX - startX);
+    const deltaY = Math.abs(point.clientY - startY);
+
+    if (deltaX > dragThreshold || deltaY > dragThreshold) {
+        isDragging = true;
+        clearTimeout(pressTimer);
+        pressTimer = null;
+        currentTarget = null;
+    }
+}
+
+function handlePressEnd(e) {
+    clearTimeout(pressTimer);
+    pressTimer = null;
+    
+    // Check for text selection. If text is selected, don't copy.
+    const selection = window.getSelection();
+    if (selection && selection.toString().length > 0) {
+        isDragging = true;
+    }
+
+    if (!isDragging && currentTarget) {
+        handleWordCopy(currentTarget);
+    }
+    isDragging = false;
+    currentTarget = null;
+}
+
+function handlePressCancel() {
+    clearTimeout(pressTimer);
+    pressTimer = null;
+    isDragging = false;
+    currentTarget = null;
+}
+
+// Add listeners for both Mouse and Touch events
+textContainer.addEventListener('mousedown', handlePressStart);
+textContainer.addEventListener('touchstart', handlePressStart, { passive: true });
+
+textContainer.addEventListener('mousemove', handlePressMove);
+textContainer.addEventListener('touchmove', handlePressMove, { passive: true });
+
+textContainer.addEventListener('mouseup', handlePressEnd);
+textContainer.addEventListener('touchend', handlePressEnd);
+
+// Handle cases where the press is cancelled (e.g., mouse leaves the area)
+textContainer.addEventListener('mouseleave', handlePressCancel);
+
 
 function buildAudioCandidates(title) {
   const base = 'audio/';
@@ -384,7 +461,7 @@ function showPlayback(index, startTime = 0) {
   setAudioSourceWithFallback(title);
 
   prevStoryBtn.hidden = currentStoryIndex <= 0;
-  nextStoryBtn.hidden = currentStoryIndex >= currentStoryList.length - 1;
+  nextStoryBtn.hidden = currentStoryList.length - 1;
 
   const onLoaded = () => {
     if (startTime > 0) {
