@@ -50,7 +50,7 @@ h2 { font-size: 20px; margin: 0 0 12px; }
 
 /* Text reading area */
 #text-container {
-  height: 500px;
+  height: 550px;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   background-color: #fff;
@@ -197,7 +197,7 @@ button.secondary:hover { background: #f7faff; }
 
   /* Phone: ~5 words/line via larger font */
   #text-container {
-    height: 550px;
+    height: 300px;
     font-size: 25px;
     line-height: 1.65;
     /* More padding on mobile for the fixed controls */
