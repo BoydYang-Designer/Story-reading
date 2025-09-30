@@ -17,7 +17,7 @@ const rewindBtn = document.getElementById('rewind-5');
 const forwardBtn = document.getElementById('forward-5');
 const prevStoryBtn = document.getElementById('prev-story');
 const nextStoryBtn = document.getElementById('next-story');
-const progressBar = document.getElementById('progress-bar'); // 新增進度條的引用
+const progressBar = document.getElementById('progress-bar');
 
 
 // Note view elements
@@ -35,9 +35,12 @@ let audioTriedCandidates = [];
 let savedWords = new Set();
 let currentStoryList = [];
 let currentStoryIndex = -1;
+let progressSaveInterval = null;
 
 
 // --- Storage Functions ---
+const LAST_SESSION_KEY = 'readingChallengeLastSession';
+
 function loadWordsFromStorage() {
   const storedWords = localStorage.getItem('readingChallengeSavedWords');
   if (storedWords) {
@@ -53,6 +56,21 @@ function loadWordsFromStorage() {
 
 function saveWordsToStorage() {
   localStorage.setItem('readingChallengeSavedWords', JSON.stringify(Array.from(savedWords)));
+}
+
+function saveLastPlaybackState() {
+    if (currentStoryIndex > -1 && currentStoryList[currentStoryIndex]) {
+        const currentStory = currentStoryList[currentStoryIndex];
+        const state = {
+            title: currentStory['標題'],
+            time: audio.currentTime
+        };
+        localStorage.setItem(LAST_SESSION_KEY, JSON.stringify(state));
+    }
+}
+
+function clearLastPlaybackState() {
+    localStorage.removeItem(LAST_SESSION_KEY);
 }
 
 
@@ -128,21 +146,20 @@ goToNoteBtn.addEventListener('click', () => {
 
 backToHomeFromNoteBtn.addEventListener('click', () => showView(homeView));
 
+// MODIFIED: Changed from Export to Copy All
 exportWordsBtn.addEventListener('click', () => {
     if (savedWords.size === 0) {
-        alert("No words to export.");
+        alert("No words to copy.");
         return;
     }
-    const data = JSON.stringify(Array.from(savedWords), null, 2);
-    const blob = new Blob([data], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'my_words.json';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    const sortedWords = Array.from(savedWords).sort((a, b) => a.localeCompare(b));
+    const textToCopy = sortedWords.join('\n'); // Join with newlines
+    navigator.clipboard.writeText(textToCopy).then(() => {
+        alert(`${savedWords.size} words copied to clipboard.`);
+    }).catch(err => {
+        console.error('Failed to copy words: ', err);
+        alert('Could not copy words. Please try again.');
+    });
 });
 
 
@@ -159,8 +176,7 @@ function parafyAndMakeClickable(text) {
         if (pText.trim() === '') {
             p.innerHTML = '&nbsp;';
         } else {
-            // Split by space to wrap each word in a span
-            const words = pText.split(/(\s+)/); // Keep spaces
+            const words = pText.split(/(\s+)/);
             words.forEach(word => {
                 if (word.trim().length > 0) {
                     const span = document.createElement('span');
@@ -168,7 +184,6 @@ function parafyAndMakeClickable(text) {
                     span.textContent = word;
                     p.appendChild(span);
                 } else {
-                    // Append spaces as text nodes
                     p.appendChild(document.createTextNode(word));
                 }
             });
@@ -180,45 +195,27 @@ function parafyAndMakeClickable(text) {
 
 textContainer.addEventListener('click', (e) => {
     if (e.target.classList.contains('clickable-word')) {
-        const clickedWordElement = e.target; // 記住被點擊的元素
+        const clickedWordElement = e.target;
         const word = clickedWordElement.textContent.trim();
 
         navigator.clipboard.writeText(word).then(() => {
             addWordToNote(word);
-
-            // 1. 為被點擊的單字加上高亮 class
             clickedWordElement.classList.add('word-copied-highlight');
-
-            // 2. 設定一個計時器，在 1.5 秒後移除該 class
             setTimeout(() => {
                 clickedWordElement.classList.remove('word-copied-highlight');
-            }, 1500); // 1500 毫秒 = 1.5 秒
-
+            }, 1500);
         }).catch(err => {
             console.error('Failed to copy word: ', err);
         });
     }
 });
 
-
-function sanitizeTitleBasic(title) {
-  return title
-    .toLowerCase()
-    .replace(/[“”‘’]/g, '')
-    .replace(/[\u2014\u2013]/g, '-')
-    .replace(/[^a-z0-9\-\s]/g, '')
-    .replace(/\s+/g, ' ')
-    .trim();
-}
-
 function buildAudioCandidates(title) {
-  const base = 'audio/'; // mp3 檔案都放在 audio 資料夾
+  const base = 'audio/';
   const candidates = [];
-  // 直接使用 JSON 的標題當檔名
   candidates.push(base + encodeURIComponent(title.trim()) + '.mp3');
   return candidates;
 }
-
 
 function setAudioSourceWithFallback(title) {
   audioTriedCandidates = buildAudioCandidates(title);
@@ -262,11 +259,17 @@ function startScroll() {
   if (rafId) cancelAnimationFrame(rafId);
   computeScrollMax();
   rafId = window.requestAnimationFrame(tickScroll);
+  // NEW: Start saving progress periodically
+  if (progressSaveInterval) clearInterval(progressSaveInterval);
+  progressSaveInterval = setInterval(saveLastPlaybackState, 3000); // Save every 3 seconds
 }
 
 function stopScroll() {
   if (rafId) cancelAnimationFrame(rafId);
   rafId = null;
+  // NEW: Stop saving progress
+  if (progressSaveInterval) clearInterval(progressSaveInterval);
+  progressSaveInterval = null;
 }
 
 async function loadStories() {
@@ -276,6 +279,7 @@ async function loadStories() {
   stories = Array.isArray(data['New Words']) ? data['New Words'] : [];
 }
 
+// MODIFIED: Added logic to create "Continue" button
 function renderCategories() {
   const categories = [...new Set(
     stories.flatMap(item =>
@@ -284,6 +288,26 @@ function renderCategories() {
   )].sort();
 
   categoryList.innerHTML = '';
+
+  // NEW: Add "Continue Last Session" button if data exists
+  const lastSession = localStorage.getItem(LAST_SESSION_KEY);
+  if (lastSession) {
+      try {
+          const { title, time } = JSON.parse(lastSession);
+          if (title && typeof time === 'number') {
+              const continueBtn = document.createElement('div');
+              continueBtn.className = 'category-item';
+              continueBtn.id = 'continue-last-session-btn';
+              continueBtn.textContent = '▶️ Continue Last Session';
+              continueBtn.tabIndex = 0;
+              continueBtn.addEventListener('click', () => resumeLastPlayback(title, time));
+              categoryList.appendChild(continueBtn);
+          }
+      } catch (e) {
+          console.error("Failed to parse last session data", e);
+      }
+  }
+
   for (const category of categories) {
     const div = document.createElement('div');
     div.className = 'category-item';
@@ -292,6 +316,35 @@ function renderCategories() {
     div.addEventListener('click', () => showCategory(category));
     categoryList.appendChild(div);
   }
+}
+
+// NEW: Function to handle resuming playback
+function resumeLastPlayback(title, time) {
+    const story = stories.find(s => s['標題'] === title);
+    if (!story) {
+        alert("Could not find the story from your last session. It might have been updated.");
+        clearLastPlaybackState();
+        renderCategories(); // Re-render to remove the button
+        return;
+    }
+    
+    const category = story['分類'] && story['分類'][0] ? story['分類'][0] : null;
+    if (!category) {
+        alert("Could not determine the category for the story from your last session.");
+        return;
+    }
+
+    // This sets up the context (currentStoryList) needed by showPlayback
+    showCategory(category); 
+
+    const indexInList = currentStoryList.findIndex(s => s['標題'] === title);
+    if (indexInList === -1) {
+        alert("Could not find the story within its category.");
+        return;
+    }
+
+    // Now call showPlayback with the correct index and the saved time
+    showPlayback(indexInList, time);
 }
 
 function showCategory(category) {
@@ -305,7 +358,6 @@ function showCategory(category) {
 
   titles.sort((a, b) => String(a['標題']).localeCompare(String(b['標題'])));
   
-  // Store the filtered and sorted list for navigation
   currentStoryList = titles;
 
   titles.forEach((item, index) => {
@@ -318,7 +370,8 @@ function showCategory(category) {
   });
 }
 
-function showPlayback(index) {
+// MODIFIED: Added startTime parameter
+function showPlayback(index, startTime = 0) {
   currentStoryIndex = index;
   const story = currentStoryList[currentStoryIndex];
   
@@ -335,14 +388,17 @@ function showPlayback(index) {
   textContainer.appendChild(parafyAndMakeClickable(contentWithPadding));
 
   textContainer.scrollTop = 0;
-  progressBar.value = 0; // 重設進度條
+  progressBar.value = 0;
   setAudioSourceWithFallback(title);
 
-  // Update button visibility
   prevStoryBtn.hidden = currentStoryIndex <= 0;
   nextStoryBtn.hidden = currentStoryIndex >= currentStoryList.length - 1;
 
   const onLoaded = () => {
+    // Set the start time after metadata is loaded
+    if (startTime > 0) {
+        audio.currentTime = startTime;
+    }
     if (!audio.paused && !audio.ended) {
       isPlaying = true;
       playPauseBtn.textContent = '⏸️';
@@ -351,6 +407,7 @@ function showPlayback(index) {
     audio.removeEventListener('loadedmetadata', onLoaded);
   };
   audio.addEventListener('loadedmetadata', onLoaded);
+
   if (!audio.paused) {
     isPlaying = true;
     playPauseBtn.textContent = '⏸️';
@@ -369,13 +426,14 @@ backToCategoryBtn.addEventListener('click', () => {
 });
 
 function stopAudioAndReset() {
+  saveLastPlaybackState(); // Save final position before stopping
   stopScroll();
   try { audio.pause(); } catch {}
   audio.currentTime = 0;
   isPlaying = false;
   playPauseBtn.textContent = '▶️';
   textContainer.scrollTop = 0;
-  progressBar.value = 0; // 重設進度條
+  progressBar.value = 0;
 }
 
 rewindBtn.addEventListener('click', () => {
@@ -389,17 +447,25 @@ forwardBtn.addEventListener('click', () => {
 playPauseBtn.addEventListener('click', () => {
   if (isPlaying) {
     audio.pause();
-    isPlaying = false;
-    playPauseBtn.textContent = '▶️';
-    stopScroll();
   } else {
     audio.play().catch(err => {
       console.log('Autoplay blocked:', err);
     });
+  }
+});
+
+// NEW: Handle play/pause state changes from audio element itself
+audio.addEventListener('play', () => {
     isPlaying = true;
     playPauseBtn.textContent = '⏸️';
     startScroll();
-  }
+});
+
+audio.addEventListener('pause', () => {
+    isPlaying = false;
+    playPauseBtn.textContent = '▶️';
+    stopScroll();
+    saveLastPlaybackState(); // Also save when paused
 });
 
 prevStoryBtn.addEventListener('click', () => {
@@ -416,9 +482,6 @@ nextStoryBtn.addEventListener('click', () => {
     }
 });
 
-// --- 新增: 進度條相關函式與事件 ---
-
-// 根據音訊播放時間更新進度條
 function updateProgressBar() {
     if (audio.duration) {
         const progressPercent = (audio.currentTime / audio.duration) * 100;
@@ -426,20 +489,23 @@ function updateProgressBar() {
     }
 }
 
-// 當使用者拖動進度條時，更新音訊播放時間
 function seekAudio() {
     if (audio.duration) {
         const seekTime = (progressBar.value / 100) * audio.duration;
         audio.currentTime = seekTime;
-        const progress = audio.currentTime / audio.duration;
-        textContainer.scrollTop = progress * scrollMax;
+        // The tickScroll function will naturally update the scroll position
     }
 }
 
 window.addEventListener('resize', computeScrollMax, { passive: true });
-audio.addEventListener('ended', stopAudioAndReset);
-audio.addEventListener('timeupdate', updateProgressBar); // 新增: 當音訊時間更新時，呼叫函式
-progressBar.addEventListener('input', seekAudio); // 新增: 當拖動進度條時，呼叫函式
+audio.addEventListener('ended', () => {
+    clearLastPlaybackState(); // Clear state when story finishes
+    stopAudioAndReset();
+    const continueBtn = document.getElementById('continue-last-session-btn');
+    if (continueBtn) continueBtn.hidden = true; // Hide button after finishing
+});
+audio.addEventListener('timeupdate', updateProgressBar);
+progressBar.addEventListener('input', seekAudio);
 
 (async function init() {
   try {

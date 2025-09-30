@@ -1,12 +1,13 @@
 /* Base layout */
 * { box-sizing: border-box; }
-html, body { height: 100%; }
+html, body { height: 100%; overflow-x: hidden; } /* Prevent horizontal scroll */
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans", Arial, "PingFang TC", "Microsoft JhengHei", sans-serif;
   margin: 0;
   padding: 20px;
   background-color: #f5f5f5;
   color: #111;
+  touch-action: manipulation; /* Prevent double-tap to zoom */
 }
 
 .container {
@@ -40,8 +41,8 @@ h2 { font-size: 20px; margin: 0 0 12px; }
 .category-item:hover, .title-item:hover { background-color: #f2f6ff; border-color: #cfe1ff; }
 .category-item:active, .title-item:active { transform: translateY(1px); }
 
-/* Note button on home screen */
-#go-to-note {
+/* Special button styles on home screen */
+#go-to-note, #continue-last-session-btn {
     background-color: #e9f5ff;
     border-color: #a3d1ff;
     font-weight: 500;
@@ -60,7 +61,8 @@ h2 { font-size: 20px; margin: 0 0 12px; }
   font-size: 16px;
   line-height: 1.6;
   text-align: left;
-  user-select: none;
+  /* Allow text selection in this container */
+  user-select: text; 
   /* Add padding to prevent text from being hidden by fixed controls */
   padding-bottom: 100px;
 }
@@ -68,6 +70,8 @@ h2 { font-size: 20px; margin: 0 0 12px; }
 #text-container .clickable-word {
     cursor: pointer;
     transition: background-color 0.2s ease;
+    /* Prevent selection for spans, allowing selection of parent <p> */
+    user-select: none;
 }
 #text-container .clickable-word:hover {
     background-color: #dbeaff;
