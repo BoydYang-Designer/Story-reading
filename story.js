@@ -32,34 +32,57 @@ let rafId = null;
 let scrollMax = 0;
 let durationFallback = 59;
 let audioTriedCandidates = [];
-let savedWords = new Set();
+// MODIFIED: savedWords is now an object to store categorized words.
+let savedWords = {};
 let currentStoryList = [];
 let currentStoryIndex = -1;
-// REMOVED: progressSaveInterval 變數已不再需要
-// let progressSaveInterval = null;
+// NEW: State for current story context
+let currentCategoryName = null;
+let currentStoryTitle = null;
 
 
 // --- Storage Functions ---
 const LAST_SESSION_KEY = 'readingChallengeLastSession';
+const SAVED_WORDS_KEY = 'readingChallengeSavedWordsV2'; // New key for new data structure
 
 function loadWordsFromStorage() {
-  const storedWords = localStorage.getItem('readingChallengeSavedWords');
+  const storedWords = localStorage.getItem(SAVED_WORDS_KEY);
   if (storedWords) {
     try {
-      const wordsArray = JSON.parse(storedWords);
-      savedWords = new Set(wordsArray);
+      const parsed = JSON.parse(storedWords);
+      // Convert word arrays back to Sets for efficient operations
+      for (const category in parsed) {
+        if (typeof parsed[category] === 'object') {
+          for (const title in parsed[category]) {
+            if (Array.isArray(parsed[category][title])) {
+              if (!savedWords[category]) {
+                savedWords[category] = {};
+              }
+              savedWords[category][title] = new Set(parsed[category][title]);
+            }
+          }
+        }
+      }
     } catch (e) {
       console.error("Failed to parse words from localStorage", e);
-      savedWords = new Set();
+      savedWords = {};
     }
   }
 }
 
 function saveWordsToStorage() {
-  localStorage.setItem('readingChallengeSavedWords', JSON.stringify(Array.from(savedWords)));
+    // Create a new object to hold arrays instead of Sets for JSON compatibility
+    const serializableWords = {};
+    for (const category in savedWords) {
+        serializableWords[category] = {};
+        for (const title in savedWords[category]) {
+            serializableWords[category][title] = Array.from(savedWords[category][title]);
+        }
+    }
+    localStorage.setItem(SAVED_WORDS_KEY, JSON.stringify(serializableWords));
 }
 
-// MODIFIED: 函式名稱改為 saveLastPlaybackState 以維持一致性
+
 function saveLastPlaybackState() {
     if (currentStoryIndex > -1 && currentStoryList[currentStoryIndex]) {
         const currentStory = currentStoryList[currentStoryIndex];
@@ -68,7 +91,7 @@ function saveLastPlaybackState() {
             time: audio.currentTime
         };
         localStorage.setItem(LAST_SESSION_KEY, JSON.stringify(state));
-        console.log('Playback state saved:', state); // 可用於除錯，確認儲存時機
+        console.log('Playback state saved:', state);
     }
 }
 
@@ -84,80 +107,142 @@ function showView(view) {
   view.hidden = false;
 }
 
-// --- Word Note Functions ---
-function renderSavedWords() {
+// --- MODIFIED: Word Note Functions ---
+
+function renderNoteView(level = 'categories', categoryName = null, titleName = null) {
     wordNoteList.innerHTML = '';
-    const sortedWords = Array.from(savedWords).sort((a, b) => a.localeCompare(b));
+    const noteActions = document.querySelector('.note-actions');
 
-    if (sortedWords.length === 0) {
-        wordNoteList.innerHTML = '<p>No words saved yet. Click on a word in a story to save it here.</p>';
-        return;
-    }
-
-    for (const word of sortedWords) {
+    // Helper to create a list item
+    const createItem = (text, clickHandler) => {
         const item = document.createElement('div');
-        item.className = 'word-item';
-
-        const wordText = document.createElement('span');
-        wordText.className = 'word-text';
-        wordText.textContent = word;
-
-        const actions = document.createElement('div');
-        actions.className = 'word-item-actions';
-
-        const copyBtn = document.createElement('button');
-        copyBtn.textContent = 'Copy';
-        copyBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            navigator.clipboard.writeText(word).then(() => {
-                alert(`'${word}' copied to clipboard.`);
-            });
-        });
-
-        const deleteBtn = document.createElement('button');
-        deleteBtn.className = 'secondary';
-        deleteBtn.textContent = 'Delete';
-        deleteBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (confirm(`Are you sure you want to delete '${word}'?`)) {
-                savedWords.delete(word);
-                saveWordsToStorage();
-                renderSavedWords();
-            }
-        });
-
-        actions.appendChild(copyBtn);
-        actions.appendChild(deleteBtn);
-        item.appendChild(wordText);
-        item.appendChild(actions);
+        item.className = 'category-item'; // Re-use existing style
+        item.textContent = text;
+        item.addEventListener('click', clickHandler);
         wordNoteList.appendChild(item);
+    };
+
+    if (level === 'categories') {
+        const categories = Object.keys(savedWords).sort((a, b) => a.localeCompare(b));
+        if (categories.length === 0) {
+            wordNoteList.innerHTML = '<p>No words saved yet. Click on a word in a story to save it here.</p>';
+        } else {
+            categories.forEach(category => createItem(category, () => renderNoteView('titles', category)));
+        }
+        backToHomeFromNoteBtn.textContent = 'Back to Home';
+        backToHomeFromNoteBtn.onclick = () => showView(homeView);
+        noteActions.style.display = 'flex';
+
+    } else if (level === 'titles' && categoryName) {
+        const titles = Object.keys(savedWords[categoryName]).sort((a, b) => a.localeCompare(b));
+        titles.forEach(title => createItem(title, () => renderNoteView('words', categoryName, title)));
+        backToHomeFromNoteBtn.textContent = 'Back to Categories';
+        backToHomeFromNoteBtn.onclick = () => renderNoteView('categories');
+
+    } else if (level === 'words' && categoryName && titleName) {
+        const words = Array.from(savedWords[categoryName][titleName]).sort((a, b) => a.localeCompare(b));
+
+        for (const word of words) {
+            const item = document.createElement('div');
+            item.className = 'word-item';
+
+            const wordText = document.createElement('span');
+            wordText.className = 'word-text';
+            wordText.textContent = word;
+
+            const actions = document.createElement('div');
+            actions.className = 'word-item-actions';
+
+            const copyBtn = document.createElement('button');
+            copyBtn.textContent = 'Copy';
+            copyBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                navigator.clipboard.writeText(word).then(() => {
+                    alert(`'${word}' copied to clipboard.`);
+                });
+            });
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'secondary';
+            deleteBtn.textContent = 'Delete';
+            deleteBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (confirm(`Are you sure you want to delete '${word}'?`)) {
+                    // Delete the word
+                    savedWords[categoryName][titleName].delete(word);
+
+                    // If title has no more words, remove title
+                    if (savedWords[categoryName][titleName].size === 0) {
+                        delete savedWords[categoryName][titleName];
+                    }
+                    // If category has no more titles, remove category
+                    if (Object.keys(savedWords[categoryName]).length === 0) {
+                        delete savedWords[categoryName];
+                    }
+
+                    saveWordsToStorage();
+                    // Re-render the correct view
+                    if (!savedWords[categoryName]) {
+                        renderNoteView('categories'); // Go back to categories if category is gone
+                    } else if (!savedWords[categoryName][titleName]) {
+                        renderNoteView('titles', categoryName); // Go back to titles if title is gone
+                    } else {
+                        renderNoteView('words', categoryName, titleName); // Refresh current word list
+                    }
+                }
+            });
+
+            actions.appendChild(copyBtn);
+            actions.appendChild(deleteBtn);
+            item.appendChild(wordText);
+            item.appendChild(actions);
+            wordNoteList.appendChild(item);
+        }
+        backToHomeFromNoteBtn.textContent = 'Back to Titles';
+        backToHomeFromNoteBtn.onclick = () => renderNoteView('titles', categoryName);
     }
 }
 
+
 function addWordToNote(word) {
     const cleanedWord = word.trim().replace(/[^a-zA-Z'-]/g, '');
-    if (cleanedWord) {
-        savedWords.add(cleanedWord);
+    if (cleanedWord && currentCategoryName && currentStoryTitle) {
+        // Ensure category object exists
+        if (!savedWords[currentCategoryName]) {
+            savedWords[currentCategoryName] = {};
+        }
+        // Ensure title Set exists
+        if (!savedWords[currentCategoryName][currentStoryTitle]) {
+            savedWords[currentCategoryName][currentStoryTitle] = new Set();
+        }
+        savedWords[currentCategoryName][currentStoryTitle].add(cleanedWord);
         saveWordsToStorage();
     }
 }
 
 goToNoteBtn.addEventListener('click', () => {
-    renderSavedWords();
+    renderNoteView('categories');
     showView(noteView);
 });
 
-backToHomeFromNoteBtn.addEventListener('click', () => showView(homeView));
+// backToHomeFromNoteBtn is now handled by renderNoteView
 
 exportWordsBtn.addEventListener('click', () => {
-    if (savedWords.size === 0) {
+    const allWords = new Set();
+    for (const category in savedWords) {
+        for (const title in savedWords[category]) {
+            savedWords[category][title].forEach(word => allWords.add(word));
+        }
+    }
+
+    if (allWords.size === 0) {
         alert("No words to copy.");
         return;
     }
-    const sortedWords = Array.from(savedWords).sort((a, b) => a.localeCompare(b));
+    const sortedWords = Array.from(allWords).sort((a, b) => a.localeCompare(b));
     const textToCopy = sortedWords.join('\n');
     navigator.clipboard.writeText(textToCopy).then(() => {
-        alert(`${savedWords.size} words copied to clipboard.`);
+        alert(`${allWords.size} total words copied to clipboard.`);
     }).catch(err => {
         console.error('Failed to copy words: ', err);
         alert('Could not copy words. Please try again.');
@@ -195,14 +280,14 @@ function parafyAndMakeClickable(text) {
     return frag;
 }
 
-// --- NEW/MODIFIED: Robust logic for both Mouse and Touch events ---
+// --- Robust logic for both Mouse and Touch events ---
 
 let pressTimer = null;
 let startX, startY;
 let isDragging = false;
 let currentTarget = null;
-const dragThreshold = 10; // Increased threshold for less sensitive touch
-const pressDelay = 250; // ms
+const dragThreshold = 10;
+const pressDelay = 250;
 
 function handleWordCopy(targetElement) {
     if (targetElement && targetElement.classList.contains('clickable-word')) {
@@ -220,7 +305,6 @@ function handleWordCopy(targetElement) {
 }
 
 function handlePressStart(e) {
-    // Only act on left mouse button or a single touch
     if (e.type === 'mousedown' && e.button !== 0) return;
     if (!e.target.classList.contains('clickable-word')) return;
 
@@ -231,7 +315,7 @@ function handlePressStart(e) {
     currentTarget = e.target;
 
     pressTimer = setTimeout(() => {
-        isDragging = true; // Treat long-press as a drag to prevent copy on release
+        isDragging = true;
         currentTarget = null;
     }, pressDelay);
 }
@@ -255,7 +339,6 @@ function handlePressEnd(e) {
     clearTimeout(pressTimer);
     pressTimer = null;
     
-    // Check for text selection. If text is selected, don't copy.
     const selection = window.getSelection();
     if (selection && selection.toString().length > 0) {
         isDragging = true;
@@ -275,17 +358,12 @@ function handlePressCancel() {
     currentTarget = null;
 }
 
-// Add listeners for both Mouse and Touch events
 textContainer.addEventListener('mousedown', handlePressStart);
 textContainer.addEventListener('touchstart', handlePressStart, { passive: true });
-
 textContainer.addEventListener('mousemove', handlePressMove);
 textContainer.addEventListener('touchmove', handlePressMove, { passive: true });
-
 textContainer.addEventListener('mouseup', handlePressEnd);
 textContainer.addEventListener('touchend', handlePressEnd);
-
-// Handle cases where the press is cancelled (e.g., mouse leaves the area)
 textContainer.addEventListener('mouseleave', handlePressCancel);
 
 
@@ -338,13 +416,11 @@ function startScroll() {
   if (rafId) cancelAnimationFrame(rafId);
   computeScrollMax();
   rafId = window.requestAnimationFrame(tickScroll);
-  // REMOVED: 不再需要計時器來儲存進度
 }
 
 function stopScroll() {
   if (rafId) cancelAnimationFrame(rafId);
   rafId = null;
-  // REMOVED: 不再需要計時器來儲存進度
 }
 
 async function loadStories() {
@@ -420,6 +496,7 @@ function resumeLastPlayback(title, time) {
 function showCategory(category) {
   showView(categoryView);
   categoryTitle.textContent = category;
+  currentCategoryName = category; // Set current category context
   titleList.innerHTML = '';
 
   const titles = stories.filter(item =>
@@ -449,6 +526,7 @@ function showPlayback(index, startTime = 0) {
       return;
   }
   const { '標題': title, '內文': content } = story;
+  currentStoryTitle = title; // Set current title context
 
   showView(playbackView);
   playbackTitle.textContent = title;
@@ -460,8 +538,9 @@ function showPlayback(index, startTime = 0) {
   progressBar.value = 0;
   setAudioSourceWithFallback(title);
 
+  // --- FIX for navigation buttons ---
   prevStoryBtn.hidden = currentStoryIndex <= 0;
-  nextStoryBtn.hidden = currentStoryList.length - 1;
+  nextStoryBtn.hidden = currentStoryIndex >= currentStoryList.length - 1; // Corrected logic
 
   const onLoaded = () => {
     if (startTime > 0) {
@@ -494,8 +573,6 @@ backToCategoryBtn.addEventListener('click', () => {
 });
 
 function stopAudioAndReset() {
-  // REMOVED: 離開畫面時不再需要主動儲存，因為最後一次暫停時已經存過了
-  // saveLastPlaybackState(); 
   stopScroll();
   try { audio.pause(); } catch {}
   audio.currentTime = 0;
@@ -503,6 +580,9 @@ function stopAudioAndReset() {
   playPauseBtn.textContent = '▶️';
   textContainer.scrollTop = 0;
   progressBar.value = 0;
+  // Clear story context when leaving playback
+  currentStoryTitle = null;
+  currentCategoryName = null;
 }
 
 rewindBtn.addEventListener('click', () => {
@@ -523,12 +603,10 @@ playPauseBtn.addEventListener('click', () => {
   }
 });
 
-// MODIFIED: 播放和暫停的事件監聽器現在是儲存進度的唯一地方
 audio.addEventListener('play', () => {
     isPlaying = true;
     playPauseBtn.textContent = '⏸️';
     startScroll();
-    // NEW: 當音訊開始播放時，儲存當前狀態 (標題和時間)
     saveLastPlaybackState();
 });
 
@@ -536,13 +614,14 @@ audio.addEventListener('pause', () => {
     isPlaying = false;
     playPauseBtn.textContent = '▶️';
     stopScroll();
-    // NEW: 當音訊暫停時，儲存當前狀態 (標題和時間)
     saveLastPlaybackState();
 });
 
 prevStoryBtn.addEventListener('click', () => {
     if (currentStoryIndex > 0) {
         stopAudioAndReset();
+        // We need to set the category name again before showing the next story
+        currentCategoryName = categoryTitle.textContent;
         showPlayback(currentStoryIndex - 1);
     }
 });
@@ -550,6 +629,8 @@ prevStoryBtn.addEventListener('click', () => {
 nextStoryBtn.addEventListener('click', () => {
     if (currentStoryIndex < currentStoryList.length - 1) {
         stopAudioAndReset();
+        // We need to set the category name again before showing the next story
+        currentCategoryName = categoryTitle.textContent;
         showPlayback(currentStoryIndex + 1);
     }
 });
@@ -573,7 +654,7 @@ audio.addEventListener('ended', () => {
     clearLastPlaybackState();
     stopAudioAndReset();
     const continueBtn = document.getElementById('continue-last-session-btn');
-    if (continueBtn) continueBtn.hidden = true;
+    if (continueBtn) continueBtn.remove(); // Remove instead of hiding to prevent re-appearing on home view
 });
 audio.addEventListener('timeupdate', updateProgressBar);
 progressBar.addEventListener('input', seekAudio);
