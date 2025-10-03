@@ -18,6 +18,7 @@ const forwardBtn = document.getElementById('forward-5');
 const prevStoryBtn = document.getElementById('prev-story');
 const nextStoryBtn = document.getElementById('next-story');
 const progressBar = document.getElementById('progress-bar');
+const addToNoteBtn = document.getElementById('add-to-note-btn'); // 新增：獲取按鈕
 
 
 // Note view elements
@@ -203,10 +204,10 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
     }
 }
 
-
-function addWordToNote(word) {
-    const cleanedWord = word.trim().replace(/[^a-zA-Z'-]/g, '');
-    if (cleanedWord && currentCategoryName && currentStoryTitle) {
+// 修改後：addWordToNote 函式現在可以處理任何字串
+function addWordToNote(text) {
+    const cleanedText = text.trim();
+    if (cleanedText && currentCategoryName && currentStoryTitle) {
         // Ensure category object exists
         if (!savedWords[currentCategoryName]) {
             savedWords[currentCategoryName] = {};
@@ -215,10 +216,11 @@ function addWordToNote(word) {
         if (!savedWords[currentCategoryName][currentStoryTitle]) {
             savedWords[currentCategoryName][currentStoryTitle] = new Set();
         }
-        savedWords[currentCategoryName][currentStoryTitle].add(cleanedWord);
+        savedWords[currentCategoryName][currentStoryTitle].add(cleanedText);
         saveWordsToStorage();
     }
 }
+
 
 goToNoteBtn.addEventListener('click', () => {
     renderNoteView('categories');
@@ -248,6 +250,36 @@ exportWordsBtn.addEventListener('click', () => {
         alert('Could not copy words. Please try again.');
     });
 });
+
+// --- MODIFICATION START ---
+// 修改後：為 "Add to Note" 按鈕添加事件監聽器，增加複製到剪貼簿功能
+addToNoteBtn.addEventListener('click', () => {
+    const selection = window.getSelection();
+    const selectedText = selection.toString().trim();
+
+    if (selectedText) {
+        // 1. 將文字加入筆記
+        addWordToNote(selectedText);
+
+        // 2. 將相同的文字複製到剪貼簿
+        navigator.clipboard.writeText(selectedText).then(() => {
+            // 成功後，通知使用者兩項操作皆完成
+            alert(`'${selectedText}' 已加入筆記並複製到剪貼簿。`);
+        }).catch(err => {
+            // 如果複製失敗，仍然告知使用者文字已加入筆記
+            console.error('Clipboard write failed: ', err);
+            alert(`'${selectedText}' 已加入筆記，但複製失敗。`);
+        });
+        
+        // 3. 清除畫面上的選取範圍
+        selection.removeAllRanges();
+        
+    } else {
+        // 如果沒有選取任何文字，提示使用者
+        alert("Please select text from the story to add to your notes.");
+    }
+});
+// --- MODIFICATION END ---
 
 
 function parafyAndMakeClickable(text) {
