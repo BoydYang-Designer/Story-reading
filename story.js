@@ -35,28 +35,25 @@ let rafId = null;
 let scrollMax = 0;
 let durationFallback = 59;
 let audioTriedCandidates = [];
-// MODIFIED: savedWords is now an object to store categorized words.
 let savedWords = {};
 let currentStoryList = [];
 let currentStoryIndex = -1;
-// NEW: State for current story context
 let currentCategoryName = null;
 let currentStoryTitle = null;
-let noteViewCategory = null; // 儲存筆記頁面正在查看的分類
-let noteViewTitle = null;    // 儲存筆記頁面正在查看的標題
-let playbackPositionBeforeNote = 0; // 【新增】用來儲存跳轉到筆記前的音訊位置
+let noteViewCategory = null; 
+let noteViewTitle = null;
+let playbackPositionBeforeNote = 0;
 
 
 // --- Storage Functions ---
 const LAST_SESSION_KEY = 'readingChallengeLastSession';
-const SAVED_WORDS_KEY = 'readingChallengeSavedWordsV2'; // New key for new data structure
+const SAVED_WORDS_KEY = 'readingChallengeSavedWordsV2';
 
 function loadWordsFromStorage() {
   const storedWords = localStorage.getItem(SAVED_WORDS_KEY);
   if (storedWords) {
     try {
       const parsed = JSON.parse(storedWords);
-      // Convert word arrays back to Sets for efficient operations
       for (const category in parsed) {
         if (typeof parsed[category] === 'object') {
           for (const title in parsed[category]) {
@@ -77,7 +74,6 @@ function loadWordsFromStorage() {
 }
 
 function saveWordsToStorage() {
-    // Create a new object to hold arrays instead of Sets for JSON compatibility
     const serializableWords = {};
     for (const category in savedWords) {
         serializableWords[category] = {};
@@ -113,29 +109,25 @@ function showView(view) {
   view.hidden = false;
 }
 
-// --- MODIFIED: Word Note Functions ---
+// --- Word Note Functions ---
 
 function renderNoteView(level = 'categories', categoryName = null, titleName = null) {
     wordNoteList.innerHTML = '';
     const noteActions = document.querySelector('.note-actions');
 
-    // 根據 level 決定是否顯示返回文章按鈕
     if (level === 'words' && categoryName && titleName) {
         backToStoryFromNoteBtn.hidden = false;
-        // 儲存當前文章的上下文，以便點擊按鈕後可以返回
         noteViewCategory = categoryName;
         noteViewTitle = titleName;
     } else {
         backToStoryFromNoteBtn.hidden = true;
-        // 清除上下文
         noteViewCategory = null;
         noteViewTitle = null;
     }
 
-    // Helper to create a list item
     const createItem = (text, clickHandler) => {
         const item = document.createElement('div');
-        item.className = 'category-item'; // Re-use existing style
+        item.className = 'category-item';
         item.textContent = text;
         item.addEventListener('click', clickHandler);
         wordNoteList.appendChild(item);
@@ -164,14 +156,11 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
         for (const word of words) {
             const item = document.createElement('div');
             item.className = 'word-item';
-
             const wordText = document.createElement('span');
             wordText.className = 'word-text';
             wordText.textContent = word;
-
             const actions = document.createElement('div');
             actions.className = 'word-item-actions';
-
             const copyBtn = document.createElement('button');
             copyBtn.textContent = 'Copy';
             copyBtn.addEventListener('click', (e) => {
@@ -180,37 +169,29 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
                     alert(`'${word}' copied to clipboard.`);
                 });
             });
-
             const deleteBtn = document.createElement('button');
             deleteBtn.className = 'secondary';
             deleteBtn.textContent = 'Delete';
             deleteBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 if (confirm(`Are you sure you want to delete '${word}'?`)) {
-                    // Delete the word
                     savedWords[categoryName][titleName].delete(word);
-
-                    // If title has no more words, remove title
                     if (savedWords[categoryName][titleName].size === 0) {
                         delete savedWords[categoryName][titleName];
                     }
-                    // If category has no more titles, remove category
                     if (Object.keys(savedWords[categoryName]).length === 0) {
                         delete savedWords[categoryName];
                     }
-
                     saveWordsToStorage();
-                    // Re-render the correct view
                     if (!savedWords[categoryName]) {
-                        renderNoteView('categories'); // Go back to categories if category is gone
+                        renderNoteView('categories');
                     } else if (!savedWords[categoryName][titleName]) {
-                        renderNoteView('titles', categoryName); // Go back to titles if title is gone
+                        renderNoteView('titles', categoryName);
                     } else {
-                        renderNoteView('words', categoryName, titleName); // Refresh current word list
+                        renderNoteView('words', categoryName, titleName);
                     }
                 }
             });
-
             actions.appendChild(copyBtn);
             actions.appendChild(deleteBtn);
             item.appendChild(wordText);
@@ -222,15 +203,12 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
     }
 }
 
-// 修改後：addWordToNote 函式現在可以處理任何字串
 function addWordToNote(text) {
     const cleanedText = text.trim();
     if (cleanedText && currentCategoryName && currentStoryTitle) {
-        // Ensure category object exists
         if (!savedWords[currentCategoryName]) {
             savedWords[currentCategoryName] = {};
         }
-        // Ensure title Set exists
         if (!savedWords[currentCategoryName][currentStoryTitle]) {
             savedWords[currentCategoryName][currentStoryTitle] = new Set();
         }
@@ -245,8 +223,6 @@ goToNoteBtn.addEventListener('click', () => {
     showView(noteView);
 });
 
-// backToHomeFromNoteBtn is now handled by renderNoteView
-
 exportWordsBtn.addEventListener('click', () => {
     const allWords = new Set();
     for (const category in savedWords) {
@@ -254,7 +230,6 @@ exportWordsBtn.addEventListener('click', () => {
             savedWords[category][title].forEach(word => allWords.add(word));
         }
     }
-
     if (allWords.size === 0) {
         alert("No words to copy.");
         return;
@@ -269,37 +244,32 @@ exportWordsBtn.addEventListener('click', () => {
     });
 });
 
-// --- MODIFICATION START ---
-// 修改後：為 "Add to Note" 按鈕添加事件監聽器，增加複製到剪貼簿功能
+function cleanWord(word) {
+  if (!word) return '';
+  const punctuationRegex = /^[.,?!:;'"`“”‘’()[\]{}\-/*]+|[.,?!:;'"`“”‘’()[\]{}\-/*]+$/g;
+  return word.replace(punctuationRegex, '');
+}
+
+
 addToNoteBtn.addEventListener('click', () => {
     const selection = window.getSelection();
-    const selectedText = selection.toString().trim();
-
+    const rawSelectedText = selection.toString().trim();
+    const selectedText = cleanWord(rawSelectedText); 
     if (selectedText) {
-        // 1. 將文字加入筆記
         addWordToNote(selectedText);
-
-        // 2. 將相同的文字複製到剪貼簿
         navigator.clipboard.writeText(selectedText).then(() => {
-            // 成功後，通知使用者兩項操作皆完成
             alert(`'${selectedText}' Add to note and copy`);
         }).catch(err => {
-            // 如果複製失敗，仍然告知使用者文字已加入筆記
             console.error('Clipboard write failed: ', err);
             alert(`'${selectedText}' Added to note，but fail copy`);
         });
-        
-        // 3. 清除畫面上的選取範圍
         selection.removeAllRanges();
-        
     } else {
-        // 如果沒有選取任何文字，提示使用者
         alert("Please select text from the story to add to your notes.");
     }
 });
-// --- MODIFICATION END ---
 
-
+// 【修改】parafyAndMakeClickable 函式，使其能處理 em dash 等符號
 function parafyAndMakeClickable(text) {
     const cleaned = String(text)
         .replace(/[“”]/g, '"')
@@ -313,15 +283,23 @@ function parafyAndMakeClickable(text) {
         if (pText.trim() === '') {
             p.innerHTML = '&nbsp;';
         } else {
-            const words = pText.split(/(\s+)/);
-            words.forEach(word => {
-                if (word.trim().length > 0) {
+            // 修改分割邏輯：不僅按空白，也按 em dash (—) 和 en dash (–) 分割。
+            // 捕獲組 `()` 會將分隔符號本身也保留在陣列中，方便我們後續處理。
+            const parts = pText.split(/(\s+|—|–)/);
+
+            parts.forEach(part => {
+                if (!part) return; // 忽略分割後可能產生的空字串
+
+                // 測試這個部分是否為我們定義的分隔符號
+                if (/^(\s+|—|–)$/.test(part)) {
+                    // 如果是分隔符號，則作為普通文字節點加入，不可點擊
+                    p.appendChild(document.createTextNode(part));
+                } else {
+                    // 如果不是分隔符號，代表它是單字，則建立可點擊的 <span>
                     const span = document.createElement('span');
                     span.className = 'clickable-word';
-                    span.textContent = word;
+                    span.textContent = part;
                     p.appendChild(span);
-                } else {
-                    p.appendChild(document.createTextNode(word));
                 }
             });
         }
@@ -330,8 +308,8 @@ function parafyAndMakeClickable(text) {
     return frag;
 }
 
-// --- Robust logic for both Mouse and Touch events ---
 
+// --- Robust logic for both Mouse and Touch events ---
 let pressTimer = null;
 let startX, startY;
 let isDragging = false;
@@ -341,7 +319,9 @@ const pressDelay = 250;
 
 function handleWordCopy(targetElement) {
     if (targetElement && targetElement.classList.contains('clickable-word')) {
-        const word = targetElement.textContent.trim();
+        const rawWord = targetElement.textContent.trim();
+        const word = cleanWord(rawWord); 
+        if (!word) return;
         navigator.clipboard.writeText(word).then(() => {
             addWordToNote(word);
             targetElement.classList.add('word-copied-highlight');
@@ -357,13 +337,11 @@ function handleWordCopy(targetElement) {
 function handlePressStart(e) {
     if (e.type === 'mousedown' && e.button !== 0) return;
     if (!e.target.classList.contains('clickable-word')) return;
-
     const point = e.type === 'touchstart' ? e.touches[0] : e;
     startX = point.clientX;
     startY = point.clientY;
     isDragging = false;
     currentTarget = e.target;
-
     pressTimer = setTimeout(() => {
         isDragging = true;
         currentTarget = null;
@@ -372,11 +350,9 @@ function handlePressStart(e) {
 
 function handlePressMove(e) {
     if (!pressTimer) return;
-
     const point = e.type === 'touchmove' ? e.touches[0] : e;
     const deltaX = Math.abs(point.clientX - startX);
     const deltaY = Math.abs(point.clientY - startY);
-
     if (deltaX > dragThreshold || deltaY > dragThreshold) {
         isDragging = true;
         clearTimeout(pressTimer);
@@ -388,12 +364,10 @@ function handlePressMove(e) {
 function handlePressEnd(e) {
     clearTimeout(pressTimer);
     pressTimer = null;
-    
     const selection = window.getSelection();
     if (selection && selection.toString().length > 0) {
         isDragging = true;
     }
-
     if (!isDragging && currentTarget) {
         handleWordCopy(currentTarget);
     }
@@ -486,9 +460,7 @@ function renderCategories() {
       Array.isArray(item['分類']) ? item['分類'].map(c => c.trim()) : []
     ).filter(Boolean)
   )].sort();
-
   categoryList.innerHTML = '';
-
   const lastSession = localStorage.getItem(LAST_SESSION_KEY);
   if (lastSession) {
       try {
@@ -506,7 +478,6 @@ function renderCategories() {
           console.error("Failed to parse last session data", e);
       }
   }
-
   for (const category of categories) {
     const div = document.createElement('div');
     div.className = 'category-item';
@@ -525,38 +496,30 @@ function resumeLastPlayback(title, time) {
         renderCategories();
         return;
     }
-    
     const category = story['分類'] && story['分類'][0] ? story['分類'][0] : null;
     if (!category) {
         alert("Could not determine the category for the story from your last session.");
         return;
     }
-
     showCategory(category); 
-
     const indexInList = currentStoryList.findIndex(s => s['標題'] === title);
     if (indexInList === -1) {
         alert("Could not find the story within its category.");
         return;
     }
-
     showPlayback(indexInList, time);
 }
 
 function showCategory(category) {
   showView(categoryView);
   categoryTitle.textContent = category;
-  currentCategoryName = category; // Set current category context
+  currentCategoryName = category;
   titleList.innerHTML = '';
-
   const titles = stories.filter(item =>
     Array.isArray(item['分類']) && item['分類'].map(c => c.trim()).includes(category)
   );
-
   titles.sort((a, b) => String(a['標題']).localeCompare(String(b['標題'])));
-  
   currentStoryList = titles;
-
   titles.forEach((item, index) => {
     const div = document.createElement('div');
     div.className = 'title-item';
@@ -570,28 +533,22 @@ function showCategory(category) {
 function showPlayback(index, startTime = 0) {
   currentStoryIndex = index;
   const story = currentStoryList[currentStoryIndex];
-  
   if (!story) {
       console.error('Story not found at index:', index);
       return;
   }
   const { '標題': title, '內文': content } = story;
-  currentStoryTitle = title; // Set current title context
-
+  currentStoryTitle = title;
   showView(playbackView);
   playbackTitle.textContent = title;
   textContainer.innerHTML = '';
   const contentWithPadding = '\n\n' + content;
   textContainer.appendChild(parafyAndMakeClickable(contentWithPadding));
-
   textContainer.scrollTop = 0;
   progressBar.value = 0;
   setAudioSourceWithFallback(title);
-
-  // --- FIX for navigation buttons ---
   prevStoryBtn.hidden = currentStoryIndex <= 0;
-  nextStoryBtn.hidden = currentStoryIndex >= currentStoryList.length - 1; // Corrected logic
-
+  nextStoryBtn.hidden = currentStoryIndex >= currentStoryList.length - 1;
   const onLoaded = () => {
     if (startTime > 0) {
         audio.currentTime = startTime;
@@ -604,7 +561,6 @@ function showPlayback(index, startTime = 0) {
     audio.removeEventListener('loadedmetadata', onLoaded);
   };
   audio.addEventListener('loadedmetadata', onLoaded);
-
   if (!audio.paused) {
     isPlaying = true;
     playPauseBtn.textContent = '⏸️';
@@ -630,10 +586,9 @@ function stopAudioAndReset() {
   playPauseBtn.textContent = '▶️';
   textContainer.scrollTop = 0;
   progressBar.value = 0;
-  // Clear story context when leaving playback
   currentStoryTitle = null;
   currentCategoryName = null;
-  playbackPositionBeforeNote = 0; // 【新增】重設儲存的位置
+  playbackPositionBeforeNote = 0;
 }
 
 rewindBtn.addEventListener('click', () => {
@@ -671,7 +626,6 @@ audio.addEventListener('pause', () => {
 prevStoryBtn.addEventListener('click', () => {
     if (currentStoryIndex > 0) {
         stopAudioAndReset();
-        // We need to set the category name again before showing the next story
         currentCategoryName = categoryTitle.textContent;
         showPlayback(currentStoryIndex - 1);
     }
@@ -680,7 +634,6 @@ prevStoryBtn.addEventListener('click', () => {
 nextStoryBtn.addEventListener('click', () => {
     if (currentStoryIndex < currentStoryList.length - 1) {
         stopAudioAndReset();
-        // We need to set the category name again before showing the next story
         currentCategoryName = categoryTitle.textContent;
         showPlayback(currentStoryIndex + 1);
     }
@@ -700,14 +653,9 @@ function seekAudio() {
     }
 }
 
-// --- 【修改】在播放頁面點擊 "Note" 按鈕 ---
 goToStoryNoteBtn.addEventListener('click', () => {
-    // 確保我們知道當前的分類和文章標題
     if (currentCategoryName && currentStoryTitle) {
-        // 【新增】儲存當前的音訊時間
         playbackPositionBeforeNote = audio.currentTime;
-
-        // 檢查這篇文章是否有已儲存的單字
         if (savedWords[currentCategoryName] && savedWords[currentCategoryName][currentStoryTitle] && savedWords[currentCategoryName][currentStoryTitle].size > 0) {
             renderNoteView('words', currentCategoryName, currentStoryTitle);
             showView(noteView);
@@ -717,29 +665,19 @@ goToStoryNoteBtn.addEventListener('click', () => {
     }
 });
 
-
-// --- 【修改】在筆記頁面點擊 "Back to Story" 按鈕 ---
 backToStoryFromNoteBtn.addEventListener('click', () => {
-    // 使用儲存的分類和標題資訊來返回文章
     if (noteViewCategory && noteViewTitle) {
-        // 1. 找到對應的文章
         const story = stories.find(s => s['標題'] === noteViewTitle);
         if (!story) {
             alert("Could not find the story to return to.");
             return;
         }
-
-        // 2. 重新載入該分類的故事列表，這是必要的步驟
         showCategory(noteViewCategory); 
-
-        // 3. 在列表中找到這篇文章的索引
         const indexInList = currentStoryList.findIndex(s => s['標題'] === noteViewTitle);
         if (indexInList === -1) {
             alert("Could not find the story within its category list.");
             return;
         }
-        
-        // 4. 【修改】顯示播放頁面，並傳入儲存的時間
         showPlayback(indexInList, playbackPositionBeforeNote);
     }
 });
@@ -749,7 +687,7 @@ audio.addEventListener('ended', () => {
     clearLastPlaybackState();
     stopAudioAndReset();
     const continueBtn = document.getElementById('continue-last-session-btn');
-    if (continueBtn) continueBtn.remove(); // Remove instead of hiding to prevent re-appearing on home view
+    if (continueBtn) continueBtn.remove();
 });
 audio.addEventListener('timeupdate', updateProgressBar);
 progressBar.addEventListener('input', seekAudio);
