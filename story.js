@@ -18,7 +18,7 @@ const forwardBtn = document.getElementById('forward-5');
 const prevStoryBtn = document.getElementById('prev-story');
 const nextStoryBtn = document.getElementById('next-story');
 const progressBar = document.getElementById('progress-bar');
-const addToNoteBtn = document.getElementById('add-to-note-btn'); // 新增：獲取按鈕
+const addToNoteBtn = document.getElementById('add-to-note-btn');
 
 
 // Note view elements
@@ -26,6 +26,8 @@ const goToNoteBtn = document.getElementById('go-to-note');
 const backToHomeFromNoteBtn = document.getElementById('back-to-home-from-note');
 const wordNoteList = document.getElementById('word-note-list');
 const exportWordsBtn = document.getElementById('export-words-btn');
+const goToStoryNoteBtn = document.getElementById('go-to-story-note-btn');
+const backToStoryFromNoteBtn = document.getElementById('back-to-story-from-note-btn');
 
 let stories = [];
 let isPlaying = false;
@@ -40,6 +42,9 @@ let currentStoryIndex = -1;
 // NEW: State for current story context
 let currentCategoryName = null;
 let currentStoryTitle = null;
+let noteViewCategory = null; // 儲存筆記頁面正在查看的分類
+let noteViewTitle = null;    // 儲存筆記頁面正在查看的標題
+let playbackPositionBeforeNote = 0; // 【新增】用來儲存跳轉到筆記前的音訊位置
 
 
 // --- Storage Functions ---
@@ -113,6 +118,19 @@ function showView(view) {
 function renderNoteView(level = 'categories', categoryName = null, titleName = null) {
     wordNoteList.innerHTML = '';
     const noteActions = document.querySelector('.note-actions');
+
+    // 根據 level 決定是否顯示返回文章按鈕
+    if (level === 'words' && categoryName && titleName) {
+        backToStoryFromNoteBtn.hidden = false;
+        // 儲存當前文章的上下文，以便點擊按鈕後可以返回
+        noteViewCategory = categoryName;
+        noteViewTitle = titleName;
+    } else {
+        backToStoryFromNoteBtn.hidden = true;
+        // 清除上下文
+        noteViewCategory = null;
+        noteViewTitle = null;
+    }
 
     // Helper to create a list item
     const createItem = (text, clickHandler) => {
@@ -264,11 +282,11 @@ addToNoteBtn.addEventListener('click', () => {
         // 2. 將相同的文字複製到剪貼簿
         navigator.clipboard.writeText(selectedText).then(() => {
             // 成功後，通知使用者兩項操作皆完成
-            alert(`'${selectedText}' 已加入筆記並複製到剪貼簿。`);
+            alert(`'${selectedText}' Add to note and copy`);
         }).catch(err => {
             // 如果複製失敗，仍然告知使用者文字已加入筆記
             console.error('Clipboard write failed: ', err);
-            alert(`'${selectedText}' 已加入筆記，但複製失敗。`);
+            alert(`'${selectedText}' Added to note，but fail copy`);
         });
         
         // 3. 清除畫面上的選取範圍
@@ -615,6 +633,7 @@ function stopAudioAndReset() {
   // Clear story context when leaving playback
   currentStoryTitle = null;
   currentCategoryName = null;
+  playbackPositionBeforeNote = 0; // 【新增】重設儲存的位置
 }
 
 rewindBtn.addEventListener('click', () => {
@@ -680,6 +699,50 @@ function seekAudio() {
         audio.currentTime = seekTime;
     }
 }
+
+// --- 【修改】在播放頁面點擊 "Note" 按鈕 ---
+goToStoryNoteBtn.addEventListener('click', () => {
+    // 確保我們知道當前的分類和文章標題
+    if (currentCategoryName && currentStoryTitle) {
+        // 【新增】儲存當前的音訊時間
+        playbackPositionBeforeNote = audio.currentTime;
+
+        // 檢查這篇文章是否有已儲存的單字
+        if (savedWords[currentCategoryName] && savedWords[currentCategoryName][currentStoryTitle] && savedWords[currentCategoryName][currentStoryTitle].size > 0) {
+            renderNoteView('words', currentCategoryName, currentStoryTitle);
+            showView(noteView);
+        } else {
+            alert(`No notes found for "${currentStoryTitle}".\n\nSelect text and click "Add" to save a new word.`);
+        }
+    }
+});
+
+
+// --- 【修改】在筆記頁面點擊 "Back to Story" 按鈕 ---
+backToStoryFromNoteBtn.addEventListener('click', () => {
+    // 使用儲存的分類和標題資訊來返回文章
+    if (noteViewCategory && noteViewTitle) {
+        // 1. 找到對應的文章
+        const story = stories.find(s => s['標題'] === noteViewTitle);
+        if (!story) {
+            alert("Could not find the story to return to.");
+            return;
+        }
+
+        // 2. 重新載入該分類的故事列表，這是必要的步驟
+        showCategory(noteViewCategory); 
+
+        // 3. 在列表中找到這篇文章的索引
+        const indexInList = currentStoryList.findIndex(s => s['標題'] === noteViewTitle);
+        if (indexInList === -1) {
+            alert("Could not find the story within its category list.");
+            return;
+        }
+        
+        // 4. 【修改】顯示播放頁面，並傳入儲存的時間
+        showPlayback(indexInList, playbackPositionBeforeNote);
+    }
+});
 
 window.addEventListener('resize', computeScrollMax, { passive: true });
 audio.addEventListener('ended', () => {
