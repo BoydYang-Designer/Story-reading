@@ -1,103 +1,130 @@
-/* Base layout */
+/* ======================================== */
+/* Redesigned CSS for Reading Challenge   */
+/* Theme: Light Earth Tones               */
+/* ======================================== */
+
+/* 1. CSS Variables & Global Styles
+------------------------------------------ */
+:root {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans", Arial, "PingFang TC", "Microsoft JhengHei", sans-serif;
+  
+  --color-bg: #fdfaf6; /* 溫暖的米白背景 */
+  --color-surface: #ffffff; /* 卡片/容器背景 */
+  --color-primary: #8a7968; /* 穩重的暖棕褐色 (主色) */
+  --color-primary-dark: #746555; /* 主色加深 (用於 hover) */
+  --color-accent: #d4bca2; /* 柔和沙金色 (輔色/高亮) */
+  --color-accent-light: rgba(212, 188, 162, 0.25); /* 輔色變淡 (用於文字 hover) */
+  
+  --color-text: #4a443e; /* 深灰褐色文字 */
+  --color-text-light: #9a9187; /* 淺灰褐色文字 */
+  --color-border: #e9e4dd; /* 邊框顏色 */
+
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 10px rgba(0, 0, 0, 0.06);
+}
+
 * { box-sizing: border-box; }
-html, body { height: 100%; overflow-x: hidden; } /* Prevent horizontal scroll */
+html, body { height: 100%; overflow-x: hidden; }
+
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans", Arial, "PingFang TC", "Microsoft JhengHei", sans-serif;
+  font-family: var(--font-sans);
   margin: 0;
   padding: 20px;
-  background-color: #f5f5f5;
-  color: #111;
-  touch-action: manipulation; /* Prevent double-tap to zoom */
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  touch-action: manipulation;
 }
 
 .container {
   max-width: 880px;
   margin: 0 auto;
   text-align: center;
-  margin-top: 20px; /* 新增這一行以增加頂部空間 */
 }
 
-h1 { font-size: 24px; margin: 0 0 16px; }
-h2 { font-size: 20px; margin: 0 0 12px; }
+h1 { font-size: 24px; margin: 20px 0 16px; font-weight: 600; }
+h2 { font-size: 20px; margin: 0 0 12px; color: var(--color-text-light); font-weight: 400; }
 
 .list {
   display: grid;
-  gap: 12px;
-  /* Add padding to prevent items from being hidden by fixed controls */
+  gap: 16px;
   padding-bottom: 100px;
 }
 
-/* Cards */
+/* 2. Cards & List Items
+------------------------------------------ */
 .category-item, .title-item {
-  background-color: #fff;
-  padding: 14px 16px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
+  background-color: var(--color-surface);
+  padding: 18px 22px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
   cursor: pointer;
   text-align: left;
-  transition: transform .05s ease, background-color .2s ease, border-color .2s ease;
   user-select: none;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
-.category-item:hover, .title-item:hover { background-color: #f2f6ff; border-color: #cfe1ff; }
-.category-item:active, .title-item:active { transform: translateY(1px); }
+.category-item:hover, .title-item:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-accent);
+}
+.category-item:active, .title-item:active {
+  transform: translateY(0px);
+  transition: transform .05s;
+}
 
 /* Special button styles on home screen */
 #go-to-note, #continue-last-session-btn {
-    background-color: #e9f5ff;
-    border-color: #a3d1ff;
+    background-color: #f9f5f0;
+    border-color: var(--color-accent);
     font-weight: 500;
 }
 
-/* Text reading area */
+/* 3. Playback View & Text
+------------------------------------------ */
 #text-container {
   height: 550px;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  background-color: #fff;
-  padding: 20px;
-  padding-top: 7em; 
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  font-size: 16px;
-  line-height: 1.6;
+  background-color: var(--color-surface);
+  padding: 2em;
+  padding-top: 5em;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  font-size: 17px;
+  line-height: 1.8;
   text-align: left;
-  /* Allow text selection in this container */
-  user-select: text; 
-  /* Add padding to prevent text from being hidden by fixed controls */
-  padding-bottom: 100px;
+  user-select: text;
+  color: var(--color-text);
+  /* Keep original padding-bottom for layout compatibility */
+  padding-bottom: 280px; 
 }
-/* Clickable word styling */
+#text-container p { margin: 0 0 1.2em; }
+#text-container p:last-child { margin-bottom: 0; }
+
 #text-container .clickable-word {
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-    /* MODIFIED: The 'user-select: none;' property has been removed to allow text selection. */
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border-radius: 4px;
 }
 #text-container .clickable-word:hover {
-    background-color: #dbeaff;
-    border-radius: 3px;
+  background-color: var(--color-accent-light);
 }
 
-#text-container .word-copied-highlight {
-    background-color: #d1f7d1; /* 淺綠色 */
-    transition: background-color 0.3s ease; /* 讓顏色變化更平滑 */
-    border-radius: 3px;
-}
-
-/* Fixed Controls Container */
+/* 4. Controls & Player
+------------------------------------------ */
 #fixed-controls-container {
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
-    background-color: rgba(255, 255, 255, 0.9);
+    background-color: rgba(253, 250, 246, 0.85); /* Semi-transparent bg */
     padding: 15px 0;
     z-index: 1000;
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
-    border-top: 1px solid #ddd;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-top: 1px solid var(--color-border);
 }
-
-/* Controls */
 .controls {
   max-width: 880px;
   margin: 0 auto;
@@ -106,161 +133,101 @@ h2 { font-size: 20px; margin: 0 0 12px; }
   align-items: center;
   gap: 12px;
 }
-
-/* 新增的進度條樣式 */
 #progress-bar {
     width: 90%;
-    max-width: 400px; /* 在大螢幕上限制最大寬度 */
+    max-width: 400px;
     cursor: pointer;
-    margin-bottom: 5px; /* 與下方按鈕的間距 */
+    margin-bottom: 5px;
+    accent-color: var(--color-primary); /* Themed progress bar */
 }
+.playback-actions { display: flex; gap: 10px; justify-content: center; }
+.navigation-actions { display: flex; gap: 10px; justify-content: center; align-items: center; }
 
-.playback-actions {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-}
-
-/* New style for navigation buttons */
-.navigation-actions {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    align-items: center;
-}
-
+/* 5. Buttons
+------------------------------------------ */
 button {
-  padding: 10px 18px;
+  padding: 10px 22px;
   font-size: 16px;
   cursor: pointer;
-  background-color: #0d6efd;
+  background-color: var(--color-primary);
   color: #fff;
-  border: 1px solid #0d6efd;
-  border-radius: 9999px;
-  transition: background-color .2s ease, box-shadow .2s ease, transform .06s ease;
+  border: 1px solid var(--color-primary);
+  border-radius: 9999px; /* Pill shape */
+  font-weight: 500;
+  transition: background-color .2s ease, transform .1s ease;
 }
-button:hover { background-color: #0b5ed7; }
+button:hover { background-color: var(--color-primary-dark); }
 button:active { transform: translateY(1px); }
+
 button.secondary {
-  background: #fff;
-  color: #0d6efd;
-  border-color: #cfe1ff;
+  background: transparent;
+  color: var(--color-primary);
+  border-color: var(--color-accent);
 }
-button.secondary:hover { background: #f7faff; }
+button.secondary:hover { 
+  background: var(--color-accent-light);
+  border-color: var(--color-accent);
+}
 
-/* Style for the new Add to Note button */
 #add-to-note-btn {
-    background-color: #e9f5ff;
-    color: #0d6efd;
-    border-color: #a3d1ff;
-    font-weight: 500;
+    background-color: #f3ece3;
+    color: var(--color-primary);
+    border-color: var(--color-accent);
 }
-#add-to-note-btn:hover {
-    background-color: #d1e7ff;
-}
+#add-to-note-btn:hover { background-color: #ede3d7; }
 
+#play-pause { min-width: 80px; text-align: center; }
 
-#play-pause {
-  min-width: 80px;
-  text-align: center;
-}
-
-/* Paragraph spacing for story text */
-#text-container p { margin: 0 0 1em; }
-#text-container p:last-child { margin-bottom: 0; }
-
-
-/* Note View Specific Styles */
+/* 6. Note View
+------------------------------------------ */
 #word-note-list .word-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 16px;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 10px;
+    padding: 12px 18px;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    box-shadow: var(--shadow-sm);
 }
-#word-note-list .word-text {
-    font-size: 18px;
-    font-weight: 500;
-}
-#word-note-list .word-item-actions {
-    display: flex;
-    gap: 8px;
-}
-#word-note-list .word-item-actions button {
-    padding: 5px 10px;
-    font-size: 14px;
-}
-.note-actions {
-    margin-top: 20px;
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-}
+#word-note-list .word-text { font-size: 18px; font-weight: 500; }
+#word-note-list .word-item-actions { display: flex; gap: 8px; }
+#word-note-list .word-item-actions button { padding: 5px 10px; font-size: 14px; }
+.note-actions { margin-top: 20px; display: flex; justify-content: center; gap: 12px; }
 
-
-/* Mobile tweaks */
-@media (max-width: 600px) {
-  body { padding: 12px; }
-  h1 { font-size: 20px; }
-  h2 { font-size: 18px; }
-  button { padding: 10px 16px; font-size: 15px; }
-
-  /* Phone: ~5 words/line via larger font */
-  #text-container {
-    height: 400px;
-    font-size: 25px;
-    line-height: 1.65;
-    /* More padding on mobile for the fixed controls */
-    padding-bottom: 120px;
-  }
-}
-
-/* === STYLES FOR NEW STAGING AREA === */
-
+/* 7. Staging Area
+------------------------------------------ */
 #staging-area {
   margin-top: 15px;
-  padding: 10px 15px;
-  background-color: #f8f9fa;
-  border: 1px solid #ddd;
-  border-radius: 10px;
+  padding: 12px 16px;
+  background-color: #f9f6f2; /* Slightly different bg for contrast */
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
   min-height: 80px;
 }
-
 .staging-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   font-size: 14px;
   font-weight: 500;
-  color: #555;
+  color: var(--color-text-light);
 }
+.staging-header button { padding: 4px 10px; font-size: 13px; }
 
-.staging-header button {
-  padding: 4px 10px;
-  font-size: 13px;
-}
-
-#staged-words-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-/* Placeholder text when empty */
+#staged-words-container { display: flex; flex-wrap: wrap; gap: 8px; }
 #staged-words-container:empty::before {
   content: attr(placeholder);
-  color: #999;
+  color: var(--color-text-light);
   font-style: italic;
   font-size: 15px;
 }
 
 .staged-word {
-  background-color: #e9f5ff;
-  color: #0d6efd;
-  border: 1px solid #a3d1ff;
+  background-color: #f3ece3;
+  color: var(--color-primary);
+  border: 1px solid var(--color-accent);
   border-radius: 16px;
   padding: 5px 12px;
   font-size: 16px;
@@ -269,35 +236,31 @@ button.secondary:hover { background: #f7faff; }
   user-select: none;
   transition: background-color 0.2s ease, transform 0.1s ease;
 }
+.staged-word:hover { background-color: #ede3d7; border-color: #c9b49b; }
+.staged-word:active { transform: translateY(1px); }
 
-.staged-word:hover {
-  background-color: #d1e7ff;
-  border-color: #74b7ff;
-}
-
-.staged-word:active {
-  transform: translateY(1px);
-}
-
-/* MODIFICATION: Adjust padding-bottom for text-container */
-/* to ensure staging area is not hidden behind the fixed controls */
-#text-container {
-  /* This value is increased to account for the height of the staging area AND the new buttons below it */
-  padding-bottom: 280px; 
-}
-
-@media (max-width: 600px) {
-  #text-container {
-    padding-bottom: 300px;
-  }
-}
-
-/* === STYLES FOR NEW STAGING ACTIONS CONTAINER === */
 .staging-actions {
   display: flex;
   justify-content: center;
   gap: 10px;
   margin-top: 15px;
-  /* Add bottom margin to create space above the fixed controls */
-  margin-bottom: 140px;
+  /* Keep original margin for layout compatibility */
+  margin-bottom: 140px; 
+}
+
+/* 8. Mobile Responsive
+------------------------------------------ */
+@media (max-width: 600px) {
+  body { padding: 12px; }
+  h1 { font-size: 20px; }
+  h2 { font-size: 18px; }
+  button { padding: 10px 16px; font-size: 15px; }
+
+  #text-container {
+    height: 400px;
+    font-size: 22px;
+    line-height: 1.7;
+    /* Keep original padding for layout compatibility */
+    padding-bottom: 300px;
+  }
 }
