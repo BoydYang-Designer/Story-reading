@@ -25,9 +25,25 @@
       </div>
     </div>
 
+
     <div id="playback-view" hidden>
       <h1 id="playback-title"></h1>
       <div id="text-container"></div>
+
+      <div id="staging-area">
+        <div class="staging-header">
+          <span>Staging Area</span>
+          <button id="clear-staging-btn" class="secondary">Clear</button>
+        </div>
+        <div id="staged-words-container" placeholder="Click words from the text above to add them here...">
+          </div>
+      </div>
+
+      <div class="staging-actions">
+        <button id="add-to-note-btn">Add to Note</button>
+        <button id="go-to-story-note-btn">Note</button>
+      </div>
+
       <div id="fixed-controls-container">
         <div class="controls">
           <input type="range" id="progress-bar" min="0" max="100" value="0">
@@ -36,9 +52,7 @@
             <button id="rewind-5">⏪</button>
             <button id="play-pause">▶️</button>
             <button id="forward-5">⏩</button>
-            <button id="add-to-note-btn">Add</button>
-            <button id="go-to-story-note-btn">Note</button>
-          </div>
+            </div>
           <div class="navigation-actions">
             <button id="prev-story" class="secondary" hidden>上一則</button>
             <button class="secondary" id="back-to-category">Back to Titles</button>
@@ -47,6 +61,7 @@
         </div>
       </div>
     </div>
+
 
     <div id="note-view" hidden>
         <h1>Word Note</h1>

@@ -19,7 +19,8 @@ const prevStoryBtn = document.getElementById('prev-story');
 const nextStoryBtn = document.getElementById('next-story');
 const progressBar = document.getElementById('progress-bar');
 const addToNoteBtn = document.getElementById('add-to-note-btn');
-
+const stagedWordsContainer = document.getElementById('staged-words-container');
+const clearStagingBtn = document.getElementById('clear-staging-btn');
 
 // Note view elements
 const goToNoteBtn = document.getElementById('go-to-note');
@@ -251,25 +252,62 @@ function cleanWord(word) {
 }
 
 
-addToNoteBtn.addEventListener('click', () => {
+textContainer.addEventListener('click', (e) => {
+    // Only act on clicks inside '.clickable-word' spans
+    const wordSpan = e.target.closest('.clickable-word');
+
+    // Make sure the user is not selecting text, but actually clicking
     const selection = window.getSelection();
-    const rawSelectedText = selection.toString().trim();
-    const selectedText = cleanWord(rawSelectedText); 
-    if (selectedText) {
-        addWordToNote(selectedText);
-        navigator.clipboard.writeText(selectedText).then(() => {
-            alert(`'${selectedText}' Add to note and copy`);
-        }).catch(err => {
-            console.error('Clipboard write failed: ', err);
-            alert(`'${selectedText}' Added to note，but fail copy`);
-        });
-        selection.removeAllRanges();
-    } else {
-        alert("Please select text from the story to add to your notes.");
+    if (wordSpan && selection.isCollapsed) {
+        const rawWord = wordSpan.textContent;
+        const cleanedWord = cleanWord(rawWord);
+
+        if (cleanedWord) {
+            const stagedWordEl = document.createElement('span');
+            stagedWordEl.className = 'staged-word';
+            stagedWordEl.textContent = cleanedWord;
+            stagedWordsContainer.appendChild(stagedWordEl);
+        }
     }
 });
 
-// 【修改】parafyAndMakeClickable 函式，使其能處理 em dash 等符號
+
+stagedWordsContainer.addEventListener('click', (e) => {
+    const targetWord = e.target.closest('.staged-word');
+    if (targetWord) {
+        targetWord.remove();
+    }
+});
+
+clearStagingBtn.addEventListener('click', () => {
+    stagedWordsContainer.innerHTML = '';
+});
+
+
+addToNoteBtn.addEventListener('click', () => {
+    const stagedWords = Array.from(stagedWordsContainer.querySelectorAll('.staged-word'));
+    
+    if (stagedWords.length === 0) {
+        alert("Staging area is empty. Click words from the story to add them first.");
+        return;
+    }
+
+    const textToAdd = stagedWords.map(el => el.textContent).join(' ');
+
+    if (textToAdd) {
+        addWordToNote(textToAdd);
+        navigator.clipboard.writeText(textToAdd).then(() => {
+            alert(`'${textToAdd}' has been added to your notes and copied to the clipboard.`);
+        }).catch(err => {
+            console.error('Clipboard write failed: ', err);
+            alert(`'${textToAdd}' was added to your notes, but failed to copy to the clipboard.`);
+        });
+        
+        stagedWordsContainer.innerHTML = '';
+    }
+});
+
+
 function parafyAndMakeClickable(text) {
     const cleaned = String(text)
         .replace(/[“”]/g, '"')
@@ -307,98 +345,6 @@ function parafyAndMakeClickable(text) {
     });
     return frag;
 }
-
-
-// --- Robust logic for both Mouse and Touch events ---
-let pressTimer = null;
-let startX, startY;
-let isDragging = false;
-let currentTarget = null;
-const dragThreshold = 10;
-const pressDelay = 250;
-
-function handleWordCopy(targetElement) {
-    if (targetElement && targetElement.classList.contains('clickable-word')) {
-        const rawWord = targetElement.textContent.trim();
-        const word = cleanWord(rawWord); 
-        if (!word) return;
-        navigator.clipboard.writeText(word).then(() => {
-            addWordToNote(word);
-            targetElement.classList.add('word-copied-highlight');
-            setTimeout(() => {
-                targetElement.classList.remove('word-copied-highlight');
-            }, 1500);
-        }).catch(err => {
-            console.error('Failed to copy word: ', err);
-        });
-    }
-}
-
-function handlePressStart(e) {
-    if (e.type === 'mousedown' && e.button !== 0) return;
-    if (!e.target.classList.contains('clickable-word')) return;
-    const point = e.type === 'touchstart' ? e.touches[0] : e;
-    startX = point.clientX;
-    startY = point.clientY;
-    isDragging = false;
-    currentTarget = e.target;
-    pressTimer = setTimeout(() => {
-        isDragging = true;
-        currentTarget = null;
-    }, pressDelay);
-}
-
-function handlePressMove(e) {
-    if (!pressTimer) return;
-    const point = e.type === 'touchmove' ? e.touches[0] : e;
-    const deltaX = Math.abs(point.clientX - startX);
-    const deltaY = Math.abs(point.clientY - startY);
-    if (deltaX > dragThreshold || deltaY > dragThreshold) {
-        isDragging = true;
-        clearTimeout(pressTimer);
-        pressTimer = null;
-        currentTarget = null;
-    }
-}
-
-// *** START: MODIFIED BLOCK ***
-function handlePressEnd(e) {
-    clearTimeout(pressTimer);
-    pressTimer = null;
-    
-    const selection = window.getSelection();
-    // Key change: If text is already selected (length > 1 to avoid tiny selections from a single click),
-    // exit the function immediately, leaving control to the browser.
-    if (selection && selection.toString().trim().length > 1) {
-        isDragging = false;
-        currentTarget = null;
-        return; 
-    }
-
-    // If not dragging and a target exists (meaning it was a valid quick tap)
-    if (!isDragging && currentTarget) {
-        handleWordCopy(currentTarget);
-    }
-    
-    isDragging = false;
-    currentTarget = null;
-}
-// *** END: MODIFIED BLOCK ***
-
-function handlePressCancel() {
-    clearTimeout(pressTimer);
-    pressTimer = null;
-    isDragging = false;
-    currentTarget = null;
-}
-
-textContainer.addEventListener('mousedown', handlePressStart);
-textContainer.addEventListener('touchstart', handlePressStart, { passive: true });
-textContainer.addEventListener('mousemove', handlePressMove);
-textContainer.addEventListener('touchmove', handlePressMove, { passive: true });
-textContainer.addEventListener('mouseup', handlePressEnd);
-textContainer.addEventListener('touchend', handlePressEnd);
-textContainer.addEventListener('mouseleave', handlePressCancel);
 
 
 function buildAudioCandidates(title) {
@@ -541,6 +487,7 @@ function showCategory(category) {
 }
 
 function showPlayback(index, startTime = 0) {
+  stagedWordsContainer.innerHTML = ''; // Clear staging area for new story
   currentStoryIndex = index;
   const story = currentStoryList[currentStoryIndex];
   if (!story) {
@@ -589,6 +536,7 @@ backToCategoryBtn.addEventListener('click', () => {
 });
 
 function stopAudioAndReset() {
+  stagedWordsContainer.innerHTML = ''; // Clear staging area on exit
   stopScroll();
   try { audio.pause(); } catch {}
   audio.currentTime = 0;

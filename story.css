@@ -216,3 +216,88 @@ button.secondary:hover { background: #f7faff; }
     padding-bottom: 120px;
   }
 }
+
+/* === STYLES FOR NEW STAGING AREA === */
+
+#staging-area {
+  margin-top: 15px;
+  padding: 10px 15px;
+  background-color: #f8f9fa;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  min-height: 80px;
+}
+
+.staging-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #555;
+}
+
+.staging-header button {
+  padding: 4px 10px;
+  font-size: 13px;
+}
+
+#staged-words-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Placeholder text when empty */
+#staged-words-container:empty::before {
+  content: attr(placeholder);
+  color: #999;
+  font-style: italic;
+  font-size: 15px;
+}
+
+.staged-word {
+  background-color: #e9f5ff;
+  color: #0d6efd;
+  border: 1px solid #a3d1ff;
+  border-radius: 16px;
+  padding: 5px 12px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.staged-word:hover {
+  background-color: #d1e7ff;
+  border-color: #74b7ff;
+}
+
+.staged-word:active {
+  transform: translateY(1px);
+}
+
+/* MODIFICATION: Adjust padding-bottom for text-container */
+/* to ensure staging area is not hidden behind the fixed controls */
+#text-container {
+  /* This value is increased to account for the height of the staging area AND the new buttons below it */
+  padding-bottom: 280px; 
+}
+
+@media (max-width: 600px) {
+  #text-container {
+    padding-bottom: 300px;
+  }
+}
+
+/* === STYLES FOR NEW STAGING ACTIONS CONTAINER === */
+.staging-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 15px;
+  /* Add bottom margin to create space above the fixed controls */
+  margin-bottom: 140px;
+}
