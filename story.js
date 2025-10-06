@@ -362,7 +362,7 @@ function setAudioSourceWithFallback(title) {
 function tryNextAudioCandidate() {
   if (!audioTriedCandidates.length) {
     alert('Audio file not found.');
-    playPauseBtn.textContent = '▶️';
+    playPauseBtn.classList.remove('is-playing');
     isPlaying = false;
     return;
   }
@@ -372,7 +372,7 @@ function tryNextAudioCandidate() {
   const playAttempt = audio.play();
   if (playAttempt && typeof playAttempt.then === 'function') {
     playAttempt.catch(() => {
-      playPauseBtn.textContent = '▶️';
+      playPauseBtn.classList.remove('is-playing');
     });
   }
   audio.onerror = () => {
@@ -425,7 +425,15 @@ function renderCategories() {
               const continueBtn = document.createElement('div');
               continueBtn.className = 'category-item';
               continueBtn.id = 'continue-last-session-btn';
-              continueBtn.textContent = '▶️ Continue Last Session';
+              // --- MODIFIED ---
+              // Use innerHTML to add an SVG icon
+              continueBtn.innerHTML = `
+                <svg class="continue-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                  <path d="M8 5v14l11-7z"></path>
+                </svg>
+                <span>Continue Last Session</span>
+              `;
+              // --- END MODIFICATION ---
               continueBtn.tabIndex = 0;
               continueBtn.addEventListener('click', () => resumeLastPlayback(title, time));
               categoryList.appendChild(continueBtn);
@@ -512,7 +520,7 @@ function showPlayback(index, startTime = 0) {
     }
     if (!audio.paused && !audio.ended) {
       isPlaying = true;
-      playPauseBtn.textContent = '⏸️';
+      playPauseBtn.classList.add('is-playing');
       startScroll();
     }
     audio.removeEventListener('loadedmetadata', onLoaded);
@@ -520,7 +528,10 @@ function showPlayback(index, startTime = 0) {
   audio.addEventListener('loadedmetadata', onLoaded);
   if (!audio.paused) {
     isPlaying = true;
-    playPauseBtn.textContent = '⏸️';
+    // --- MODIFIED ---
+    // Use classList to show the correct SVG icon
+    playPauseBtn.classList.add('is-playing');
+    // --- END MODIFICATION ---
     startScroll();
   }
 }
@@ -541,7 +552,7 @@ function stopAudioAndReset() {
   try { audio.pause(); } catch {}
   audio.currentTime = 0;
   isPlaying = false;
-  playPauseBtn.textContent = '▶️';
+  playPauseBtn.classList.remove('is-playing');
   textContainer.scrollTop = 0;
   progressBar.value = 0;
   currentStoryTitle = null;
@@ -569,14 +580,17 @@ playPauseBtn.addEventListener('click', () => {
 
 audio.addEventListener('play', () => {
     isPlaying = true;
-    playPauseBtn.textContent = '⏸️';
+    // --- MODIFIED ---
+    // Use classList to toggle SVG icon visibility
+    playPauseBtn.classList.add('is-playing');
+    // --- END MODIFICATION ---
     startScroll();
     saveLastPlaybackState();
 });
 
 audio.addEventListener('pause', () => {
     isPlaying = false;
-    playPauseBtn.textContent = '▶️';
+    playPauseBtn.classList.remove('is-playing');
     stopScroll();
     saveLastPlaybackState();
 });

@@ -80,6 +80,19 @@ h2 { font-size: 20px; margin: 0 0 12px; color: var(--color-text-light); font-wei
     font-weight: 500;
 }
 
+/* --- Style for new Continue button icon --- */
+#continue-last-session-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.75em;
+}
+#continue-last-session-btn .continue-icon {
+    width: 1.1em;
+    height: 1.1em;
+    fill: var(--color-primary);
+}
+/* --- End of new styles --- */
+
 /* 3. Playback View & Text
 ------------------------------------------ */
 #text-container {
@@ -140,7 +153,65 @@ h2 { font-size: 20px; margin: 0 0 12px; color: var(--color-text-light); font-wei
     margin-bottom: 5px;
     accent-color: var(--color-primary); /* Themed progress bar */
 }
-.playback-actions { display: flex; gap: 10px; justify-content: center; }
+.playback-actions {
+  display: flex;
+  gap: 16px; /* 加大間距 */
+  justify-content: center;
+  align-items: center;
+}
+
+/* 針對包含 SVG 圖示的按鈕進行樣式調整 */
+.playback-actions button {
+  background: transparent;
+  border: none;
+  color: var(--color-text-light); /* 圖示預設顏色 */
+  border-radius: 50%; /* 圓形按鈕 */
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.playback-actions button:hover {
+  color: var(--color-primary);
+  background-color: var(--color-accent-light);
+}
+
+/* 主要的播放/暫停按鈕 */
+#play-pause {
+  width: 64px;
+  height: 64px;
+  background-color: var(--color-primary);
+  color: var(--color-surface); /* 圖示顏色為白色 */
+}
+#play-pause:hover {
+  background-color: var(--color-primary-dark);
+  color: var(--color-surface);
+}
+
+/* SVG 圖示本身的樣式 */
+.playback-actions svg {
+  width: 24px;
+  height: 24px;
+  stroke-width: 1.5; /* 讓線條細一點，更精緻 */
+  /* 關鍵：讓 SVG 的顏色繼承自父層按鈕的 color 屬性 */
+  fill: currentColor;
+  stroke: currentColor;
+}
+#play-pause .icon-play {
+  /* 修正播放圖示的視覺偏移 */
+  margin-left: 3px;
+}
+
+/* SVG 圖示顯示邏輯 */
+.icon-pause { display: none; }
+#play-pause.is-playing .icon-play { display: none; }
+#play-pause.is-playing .icon-pause { display: block; }
+
+
 .navigation-actions { display: flex; gap: 10px; justify-content: center; align-items: center; }
 
 /* 5. Buttons

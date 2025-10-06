@@ -48,11 +48,18 @@
         <div class="controls">
           <input type="range" id="progress-bar" min="0" max="100" value="0">
           
-          <div class="playback-actions">
-            <button id="rewind-5">⏪</button>
-            <button id="play-pause">▶️</button>
-            <button id="forward-5">⏩</button>
-            </div>
+<div class="playback-actions">
+            <button id="rewind-5" title="Rewind 5s">
+              <svg class="icon-rewind" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 19 2 12 11 5 11 19"></polygon><polygon points="22 19 13 12 22 5 22 19"></polygon></svg>
+            </button>
+            <button id="play-pause" title="Play/Pause">
+              <svg class="icon-play" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+              <svg class="icon-pause" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+            </button>
+            <button id="forward-5" title="Forward 5s">
+              <svg class="icon-forward" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 19 22 12 13 5 13 19"></polygon><polygon points="2 19 11 12 2 5 2 19"></polygon></svg>
+            </button>
+          </div>
           <div class="navigation-actions">
             <button id="prev-story" class="secondary" hidden>上一則</button>
             <button class="secondary" id="back-to-category">Back to Titles</button>
