@@ -308,98 +308,11 @@ function parafyAndMakeClickable(text) {
     return frag;
 }
 
-
-// --- Robust logic for both Mouse and Touch events ---
-let pressTimer = null;
-let startX, startY;
-let isDragging = false;
-let currentTarget = null;
-const dragThreshold = 10;
-const pressDelay = 250;
-
-function handleWordCopy(targetElement) {
-    if (targetElement && targetElement.classList.contains('clickable-word')) {
-        const rawWord = targetElement.textContent.trim();
-        const word = cleanWord(rawWord); 
-        if (!word) return;
-        navigator.clipboard.writeText(word).then(() => {
-            addWordToNote(word);
-            targetElement.classList.add('word-copied-highlight');
-            setTimeout(() => {
-                targetElement.classList.remove('word-copied-highlight');
-            }, 1500);
-        }).catch(err => {
-            console.error('Failed to copy word: ', err);
-        });
-    }
-}
-
-function handlePressStart(e) {
-    if (e.type === 'mousedown' && e.button !== 0) return;
-    if (!e.target.classList.contains('clickable-word')) return;
-    const point = e.type === 'touchstart' ? e.touches[0] : e;
-    startX = point.clientX;
-    startY = point.clientY;
-    isDragging = false;
-    currentTarget = e.target;
-    pressTimer = setTimeout(() => {
-        isDragging = true;
-        currentTarget = null;
-    }, pressDelay);
-}
-
-function handlePressMove(e) {
-    if (!pressTimer) return;
-    const point = e.type === 'touchmove' ? e.touches[0] : e;
-    const deltaX = Math.abs(point.clientX - startX);
-    const deltaY = Math.abs(point.clientY - startY);
-    if (deltaX > dragThreshold || deltaY > dragThreshold) {
-        isDragging = true;
-        clearTimeout(pressTimer);
-        pressTimer = null;
-        currentTarget = null;
-    }
-}
-
-// *** START: MODIFIED BLOCK ***
-function handlePressEnd(e) {
-    clearTimeout(pressTimer);
-    pressTimer = null;
-    
-    const selection = window.getSelection();
-    // Key change: If text is already selected (length > 1 to avoid tiny selections from a single click),
-    // exit the function immediately, leaving control to the browser.
-    if (selection && selection.toString().trim().length > 1) {
-        isDragging = false;
-        currentTarget = null;
-        return; 
-    }
-
-    // If not dragging and a target exists (meaning it was a valid quick tap)
-    if (!isDragging && currentTarget) {
-        handleWordCopy(currentTarget);
-    }
-    
-    isDragging = false;
-    currentTarget = null;
-}
-// *** END: MODIFIED BLOCK ***
-
-function handlePressCancel() {
-    clearTimeout(pressTimer);
-    pressTimer = null;
-    isDragging = false;
-    currentTarget = null;
-}
-
-textContainer.addEventListener('mousedown', handlePressStart);
-textContainer.addEventListener('touchstart', handlePressStart, { passive: true });
-textContainer.addEventListener('mousemove', handlePressMove);
-textContainer.addEventListener('touchmove', handlePressMove, { passive: true });
-textContainer.addEventListener('mouseup', handlePressEnd);
-textContainer.addEventListener('touchend', handlePressEnd);
-textContainer.addEventListener('mouseleave', handlePressCancel);
-
+// *** START OF DELETED BLOCK ***
+// The entire block for "Robust logic for both Mouse and Touch events"
+// including variables, functions (handleWordCopy, handlePressStart, etc.),
+// and the textContainer.addEventListener calls has been removed here.
+// *** END OF DELETED BLOCK ***
 
 function buildAudioCandidates(title) {
   const base = 'audio/';
