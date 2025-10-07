@@ -220,8 +220,8 @@ button {
   padding: 10px 22px;
   font-size: 16px;
   cursor: pointer;
-  background-color: var(--color-primary);
-  color: #fff;
+  background: transparent;
+  color: var(--color-primary);
   border: 1px solid var(--color-primary);
   border-radius: 9999px; /* Pill shape */
   font-weight: 500;
@@ -241,7 +241,7 @@ button.secondary:hover {
 }
 
 #add-to-note-btn {
-    background: transparent;
+    background-color: #f3ece3;
     color: var(--color-primary);
     border-color: var(--color-accent);
 }
@@ -251,6 +251,32 @@ button.secondary:hover {
 
 /* 6. Note View
 ------------------------------------------ */
+/* START: Styles for the new add word form */
+#add-word-form {
+  display: flex;
+  gap: 10px;
+  margin: 10px 0 24px; /* Add some space around the form */
+}
+#new-word-input {
+  flex-grow: 1; /* Make the input take up available space */
+  padding: 10px 18px;
+  font-size: 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 9999px; /* Pill shape to match buttons */
+  background-color: var(--color-surface);
+  color: var(--color-text);
+}
+#new-word-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-accent-light);
+}
+#add-manual-word-btn {
+  /* The button will inherit general button styles */
+  flex-shrink: 0; /* Prevent the button from shrinking */
+}
+/* END: New styles */
+
 #word-note-list .word-item {
     display: flex;
     justify-content: space-between;

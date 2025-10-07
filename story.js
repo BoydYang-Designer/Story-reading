@@ -29,6 +29,11 @@ const wordNoteList = document.getElementById('word-note-list');
 const exportWordsBtn = document.getElementById('export-words-btn');
 const goToStoryNoteBtn = document.getElementById('go-to-story-note-btn');
 const backToStoryFromNoteBtn = document.getElementById('back-to-story-from-note-btn');
+// START: New elements for manual word adding
+const addWordForm = document.getElementById('add-word-form');
+const newWordInput = document.getElementById('new-word-input');
+const addManualWordBtn = document.getElementById('add-manual-word-btn');
+// END: New elements
 
 let stories = [];
 let isPlaying = false;
@@ -115,11 +120,16 @@ function showView(view) {
 function renderNoteView(level = 'categories', categoryName = null, titleName = null) {
     wordNoteList.innerHTML = '';
     const noteActions = document.querySelector('.note-actions');
+    
+    // Hide the manual add form by default
+    addWordForm.hidden = true;
 
     if (level === 'words' && categoryName && titleName) {
         backToStoryFromNoteBtn.hidden = false;
         noteViewCategory = categoryName;
         noteViewTitle = titleName;
+        // Show the manual add form ONLY when viewing a word list
+        addWordForm.hidden = false;
     } else {
         backToStoryFromNoteBtn.hidden = true;
         noteViewCategory = null;
@@ -152,7 +162,15 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
         backToHomeFromNoteBtn.onclick = () => renderNoteView('categories');
 
     } else if (level === 'words' && categoryName && titleName) {
-        const words = Array.from(savedWords[categoryName][titleName]).sort((a, b) => a.localeCompare(b));
+        const words = savedWords[categoryName]?.[titleName] 
+            ? Array.from(savedWords[categoryName][titleName]).sort((a, b) => a.localeCompare(b))
+            : [];
+
+        if (words.length === 0) {
+            const p = document.createElement('p');
+            p.textContent = 'No words saved for this story yet.';
+            wordNoteList.appendChild(p);
+        }
 
         for (const word of words) {
             const item = document.createElement('div');
@@ -204,16 +222,17 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
     }
 }
 
-function addWordToNote(text) {
+// MODIFIED: This function now accepts category and title for more flexibility.
+function addWordToNote(text, category, title) {
     const cleanedText = text.trim();
-    if (cleanedText && currentCategoryName && currentStoryTitle) {
-        if (!savedWords[currentCategoryName]) {
-            savedWords[currentCategoryName] = {};
+    if (cleanedText && category && title) {
+        if (!savedWords[category]) {
+            savedWords[category] = {};
         }
-        if (!savedWords[currentCategoryName][currentStoryTitle]) {
-            savedWords[currentCategoryName][currentStoryTitle] = new Set();
+        if (!savedWords[category][title]) {
+            savedWords[category][title] = new Set();
         }
-        savedWords[currentCategoryName][currentStoryTitle].add(cleanedText);
+        savedWords[category][title].add(cleanedText);
         saveWordsToStorage();
     }
 }
@@ -253,10 +272,7 @@ function cleanWord(word) {
 
 
 textContainer.addEventListener('click', (e) => {
-    // Only act on clicks inside '.clickable-word' spans
     const wordSpan = e.target.closest('.clickable-word');
-
-    // Make sure the user is not selecting text, but actually clicking
     const selection = window.getSelection();
     if (wordSpan && selection.isCollapsed) {
         const rawWord = wordSpan.textContent;
@@ -295,7 +311,8 @@ addToNoteBtn.addEventListener('click', () => {
     const textToAdd = stagedWords.map(el => el.textContent).join(' ');
 
     if (textToAdd) {
-        addWordToNote(textToAdd);
+        // MODIFIED: Call the updated function with current story context
+        addWordToNote(textToAdd, currentCategoryName, currentStoryTitle);
         navigator.clipboard.writeText(textToAdd).then(() => {
             alert(`'${textToAdd}' has been added to your notes and copied to the clipboard.`);
         }).catch(err => {
@@ -307,6 +324,34 @@ addToNoteBtn.addEventListener('click', () => {
     }
 });
 
+// START: New event listener for the manual add button
+addManualWordBtn.addEventListener('click', () => {
+    const newWord = newWordInput.value.trim();
+    if (newWord === '') {
+        alert('Please enter a word or sentence.');
+        return;
+    }
+
+    // Use the category/title of the currently viewed note list
+    if (noteViewCategory && noteViewTitle) {
+        addWordToNote(newWord, noteViewCategory, noteViewTitle);
+        newWordInput.value = ''; // Clear the input
+        newWordInput.focus(); // Keep focus on the input for quick adding
+        // Re-render the current list to show the new word
+        renderNoteView('words', noteViewCategory, noteViewTitle);
+    } else {
+        alert('Could not determine the note category. Please navigate to a specific story\'s note list.');
+    }
+});
+
+// Also allow adding by pressing Enter in the input field
+newWordInput.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+        event.preventDefault(); // Prevent any default form submission behavior
+        addManualWordBtn.click();
+    }
+});
+// END: New event listener
 
 function parafyAndMakeClickable(text) {
     const cleaned = String(text)
@@ -321,19 +366,13 @@ function parafyAndMakeClickable(text) {
         if (pText.trim() === '') {
             p.innerHTML = '&nbsp;';
         } else {
-            // 修改分割邏輯：不僅按空白，也按 em dash (—) 和 en dash (–) 分割。
-            // 捕獲組 `()` 會將分隔符號本身也保留在陣列中，方便我們後續處理。
             const parts = pText.split(/(\s+|—|–)/);
 
             parts.forEach(part => {
-                if (!part) return; // 忽略分割後可能產生的空字串
-
-                // 測試這個部分是否為我們定義的分隔符號
+                if (!part) return;
                 if (/^(\s+|—|–)$/.test(part)) {
-                    // 如果是分隔符號，則作為普通文字節點加入，不可點擊
                     p.appendChild(document.createTextNode(part));
                 } else {
-                    // 如果不是分隔符號，代表它是單字，則建立可點擊的 <span>
                     const span = document.createElement('span');
                     span.className = 'clickable-word';
                     span.textContent = part;
@@ -425,15 +464,12 @@ function renderCategories() {
               const continueBtn = document.createElement('div');
               continueBtn.className = 'category-item';
               continueBtn.id = 'continue-last-session-btn';
-              // --- MODIFIED ---
-              // Use innerHTML to add an SVG icon
               continueBtn.innerHTML = `
                 <svg class="continue-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" stroke="none">
                   <path d="M8 5v14l11-7z"></path>
                 </svg>
                 <span>Continue Last Session</span>
               `;
-              // --- END MODIFICATION ---
               continueBtn.tabIndex = 0;
               continueBtn.addEventListener('click', () => resumeLastPlayback(title, time));
               categoryList.appendChild(continueBtn);
@@ -495,7 +531,7 @@ function showCategory(category) {
 }
 
 function showPlayback(index, startTime = 0) {
-  stagedWordsContainer.innerHTML = ''; // Clear staging area for new story
+  stagedWordsContainer.innerHTML = ''; 
   currentStoryIndex = index;
   const story = currentStoryList[currentStoryIndex];
   if (!story) {
@@ -528,10 +564,7 @@ function showPlayback(index, startTime = 0) {
   audio.addEventListener('loadedmetadata', onLoaded);
   if (!audio.paused) {
     isPlaying = true;
-    // --- MODIFIED ---
-    // Use classList to show the correct SVG icon
     playPauseBtn.classList.add('is-playing');
-    // --- END MODIFICATION ---
     startScroll();
   }
 }
@@ -547,7 +580,7 @@ backToCategoryBtn.addEventListener('click', () => {
 });
 
 function stopAudioAndReset() {
-  stagedWordsContainer.innerHTML = ''; // Clear staging area on exit
+  stagedWordsContainer.innerHTML = '';
   stopScroll();
   try { audio.pause(); } catch {}
   audio.currentTime = 0;
@@ -580,10 +613,7 @@ playPauseBtn.addEventListener('click', () => {
 
 audio.addEventListener('play', () => {
     isPlaying = true;
-    // --- MODIFIED ---
-    // Use classList to toggle SVG icon visibility
     playPauseBtn.classList.add('is-playing');
-    // --- END MODIFICATION ---
     startScroll();
     saveLastPlaybackState();
 });
@@ -628,11 +658,13 @@ function seekAudio() {
 goToStoryNoteBtn.addEventListener('click', () => {
     if (currentCategoryName && currentStoryTitle) {
         playbackPositionBeforeNote = audio.currentTime;
-        if (savedWords[currentCategoryName] && savedWords[currentCategoryName][currentStoryTitle] && savedWords[currentCategoryName][currentStoryTitle].size > 0) {
-            renderNoteView('words', currentCategoryName, currentStoryTitle);
-            showView(noteView);
+        if (savedWords[currentCategoryName] && savedWords[currentCategoryName][currentStoryTitle]) {
+             renderNoteView('words', currentCategoryName, currentStoryTitle);
+             showView(noteView);
         } else {
-            alert(`No notes found for "${currentStoryTitle}".\n\nSelect text and click "Add" to save a new word.`);
+             // If no notes exist, still go to the view so the user can add one manually
+             renderNoteView('words', currentCategoryName, currentStoryTitle);
+             showView(noteView);
         }
     }
 });
