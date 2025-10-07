@@ -241,7 +241,7 @@ button.secondary:hover {
 }
 
 #add-to-note-btn {
-    background-color: #f3ece3;
+    background: transparent;
     color: var(--color-primary);
     border-color: var(--color-accent);
 }
@@ -275,6 +275,7 @@ button.secondary:hover {
   border: 1px solid var(--color-border);
   border-radius: 12px;
   min-height: 80px;
+  margin-bottom: 140px; /* Moved from .staging-actions */
 }
 .staging-header {
   display: flex;
@@ -284,6 +285,11 @@ button.secondary:hover {
   font-size: 14px;
   font-weight: 500;
   color: var(--color-text-light);
+}
+.staging-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 .staging-header button { padding: 4px 10px; font-size: 13px; }
 
@@ -310,14 +316,7 @@ button.secondary:hover {
 .staged-word:hover { background-color: #ede3d7; border-color: #c9b49b; }
 .staged-word:active { transform: translateY(1px); }
 
-.staging-actions {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 15px;
-  /* Keep original margin for layout compatibility */
-  margin-bottom: 140px; 
-}
+/* The .staging-actions class has been removed */
 
 /* 8. Mobile Responsive
 ------------------------------------------ */
@@ -328,7 +327,7 @@ button.secondary:hover {
   button { padding: 10px 16px; font-size: 15px; }
 
   #text-container {
-    height: 400px;
+    height: 350px;
     font-size: 22px;
     line-height: 1.7;
     /* Keep original padding for layout compatibility */

@@ -33,15 +33,14 @@
       <div id="staging-area">
         <div class="staging-header">
           <span>Staging Area</span>
-          <button id="clear-staging-btn" class="secondary">Clear</button>
+          <div class="staging-header-actions">
+            <button id="add-to-note-btn">Add to Note</button>
+            <button id="clear-staging-btn" class="secondary">Clear</button>
+            <button id="copy-staged-btn" class="secondary">Copy</button>
+          </div>
         </div>
         <div id="staged-words-container" placeholder="Click words from the text above to add them here...">
           </div>
-      </div>
-
-      <div class="staging-actions">
-        <button id="add-to-note-btn">Add to Note</button>
-        <button id="go-to-story-note-btn">Note</button>
       </div>
 
       <div id="fixed-controls-container">
@@ -63,6 +62,7 @@
           <div class="navigation-actions">
             <button id="prev-story" class="secondary" hidden>上一則</button>
             <button class="secondary" id="back-to-category">Back to Titles</button>
+            <button id="go-to-story-note-btn" class="secondary">Note</button>
             <button id="next-story" class="secondary" hidden>下一則</button>
           </div>
         </div>
