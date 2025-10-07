@@ -41,7 +41,7 @@ body {
   text-align: center;
 }
 
-h1 { font-size: 24px; margin: 20px 0 16px; font-weight: 600; }
+h1 { font-size: 24px; margin: 5px 0 16px; font-weight: 600; }
 h2 { font-size: 20px; margin: 0 0 12px; color: var(--color-text-light); font-weight: 400; }
 
 .list {
@@ -96,7 +96,7 @@ h2 { font-size: 20px; margin: 0 0 12px; color: var(--color-text-light); font-wei
 /* 3. Playback View & Text
 ------------------------------------------ */
 #text-container {
-  height: 550px;
+  height: 500px;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   background-color: var(--color-surface);
