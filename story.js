@@ -163,7 +163,17 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
 
     } else if (level === 'words' && categoryName && titleName) {
         const words = savedWords[categoryName]?.[titleName] 
-            ? Array.from(savedWords[categoryName][titleName]).sort((a, b) => a.localeCompare(b))
+            // START: Sorting logic updated as per your request
+            ? Array.from(savedWords[categoryName][titleName]).sort((a, b) => {
+                // Primary sort: by length (shorter first)
+                const lengthDifference = a.length - b.length;
+                if (lengthDifference !== 0) {
+                    return lengthDifference;
+                }
+                // Secondary sort: alphabetical
+                return a.localeCompare(b);
+              })
+            // END: Sorting logic updated
             : [];
 
         if (words.length === 0) {
