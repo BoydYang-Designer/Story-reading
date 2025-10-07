@@ -41,7 +41,7 @@ body {
   text-align: center;
 }
 
-h1 { font-size: 24px; margin: 5px 0 10px; font-weight: 600; }
+h1 { font-size: 24px; margin: 2px 0 2px; font-weight: 600; }
 h2 { font-size: 20px; margin: 0 0 12px; color: var(--color-text-light); font-weight: 400; }
 
 .list {
@@ -350,10 +350,10 @@ button.secondary:hover {
   body { padding: 12px; }
   h1 { font-size: 15px; }
   h2 { font-size: 18px; }
-  button { padding: 10px 16px; font-size: 15px; }
+  button { padding: 5px 10px; font-size: 15px; }
 
   #text-container {
-    height: 330px;
+    height: 300px;
     font-size: 22px;
     line-height: 1.7;
     /* Keep original padding for layout compatibility */
