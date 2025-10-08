@@ -21,6 +21,7 @@ const progressBar = document.getElementById('progress-bar');
 const addToNoteBtn = document.getElementById('add-to-note-btn');
 const stagedWordsContainer = document.getElementById('staged-words-container');
 const clearStagingBtn = document.getElementById('clear-staging-btn');
+const copyStagedBtn = document.getElementById('copy-staged-btn'); // ** ADDED THIS **
 
 // Note view elements
 const goToNoteBtn = document.getElementById('go-to-note');
@@ -195,7 +196,13 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
             copyBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 navigator.clipboard.writeText(word).then(() => {
-                    alert(`'${word}' copied to clipboard.`);
+                    // ** MODIFIED: Replaced alert with CSS class feedback **
+                    copyBtn.classList.add('btn-success-feedback');
+                    setTimeout(() => {
+                        copyBtn.classList.remove('btn-success-feedback');
+                    }, 500);
+                }).catch(err => {
+                    console.error('Failed to copy word:', err);
                 });
             });
             const deleteBtn = document.createElement('button');
@@ -314,20 +321,20 @@ addToNoteBtn.addEventListener('click', () => {
     const stagedWords = Array.from(stagedWordsContainer.querySelectorAll('.staged-word'));
     
     if (stagedWords.length === 0) {
-        alert("Staging area is empty. Click words from the story to add them first.");
+        // ** MODIFIED: Changed alert to console log for a less intrusive message **
+        console.warn("Staging area is empty. Click words from the story to add them first.");
         return;
     }
 
     const textToAdd = stagedWords.map(el => el.textContent).join(' ');
 
     if (textToAdd) {
-        // MODIFIED: Call the updated function with current story context
         addWordToNote(textToAdd, currentCategoryName, currentStoryTitle);
+        // ** MODIFIED: Removed the alert dialog **
         navigator.clipboard.writeText(textToAdd).then(() => {
-            alert(`'${textToAdd}' has been added to your notes and copied to the clipboard.`);
+            console.log(`'${textToAdd}' has been added to notes and copied.`);
         }).catch(err => {
             console.error('Clipboard write failed: ', err);
-            alert(`'${textToAdd}' was added to your notes, but failed to copy to the clipboard.`);
         });
         
         stagedWordsContainer.innerHTML = '';
@@ -695,6 +702,25 @@ backToStoryFromNoteBtn.addEventListener('click', () => {
         showPlayback(indexInList, playbackPositionBeforeNote);
     }
 });
+
+// ** ADDED THIS: Event listener for the staging area copy button **
+copyStagedBtn.addEventListener('click', () => {
+    const stagedWords = Array.from(stagedWordsContainer.querySelectorAll('.staged-word'));
+    if (stagedWords.length === 0) {
+        console.warn("Staging area is empty.");
+        return;
+    }
+    const textToCopy = stagedWords.map(el => el.textContent).join(' ');
+    navigator.clipboard.writeText(textToCopy).then(() => {
+        copyStagedBtn.classList.add('btn-success-feedback');
+        setTimeout(() => {
+            copyStagedBtn.classList.remove('btn-success-feedback');
+        }, 500);
+    }).catch(err => {
+        console.error('Failed to copy staged words:', err);
+    });
+});
+
 
 window.addEventListener('resize', computeScrollMax, { passive: true });
 audio.addEventListener('ended', () => {

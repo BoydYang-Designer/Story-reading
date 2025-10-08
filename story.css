@@ -53,6 +53,7 @@ h2 { font-size: 20px; margin: 0 0 12px; color: var(--color-text-light); font-wei
 /* 2. Cards & List Items
 ------------------------------------------ */
 .category-item, .title-item {
+  font-size: 18px;
   background-color: var(--color-surface);
   padding: 18px 22px;
   border: 1px solid var(--color-border);
@@ -225,7 +226,7 @@ button {
   border: 1px solid var(--color-primary);
   border-radius: 9999px; /* Pill shape */
   font-weight: 500;
-  transition: background-color .2s ease, transform .1s ease;
+  transition: background-color .2s ease, transform .1s ease, color .2s ease, border-color .2s ease;
 }
 button:hover { background-color: var(--color-primary-dark); }
 button:active { transform: translateY(1px); }
@@ -360,3 +361,12 @@ button.secondary:hover {
     padding-bottom: 300px;
   }
 }
+
+/* START: Style for copy button feedback */
+button.btn-success-feedback {
+    background-color: var(--color-primary) !important;
+    color: var(--color-surface) !important;
+    border-color: var(--color-primary) !important;
+    transition: background-color 0.1s ease-in-out, color 0.1s ease-in-out, border-color 0.1s ease-in-out;
+}
+/* END: Style for copy button feedback */
