@@ -76,9 +76,16 @@
           <input type="text" id="new-word-input" placeholder="Enter a new word or sentence...">
           <button id="add-manual-word-btn">Add</button>
         </div>
-        <div id="word-note-list" class="list"></div>
+        
+        <div id="note-content-wrapper">
+          <h3 class="note-section-header">Words & Phrases</h3>
+          <div id="note-list-words" class="list"></div>
+          
+          <h3 class="note-section-header">Sentences</h3>
+          <div id="note-list-sentences" class="list"></div>
+        </div>
         <div class="note-actions">
-            <button id="export-words-btn">Copy All Words</button>
+            <button id="export-words-btn">Copy All Items</button>
             <button class="secondary" id="back-to-story-from-note-btn" hidden>Back to Story</button>
             <button class="secondary" id="back-to-home-from-note">Back to Home</button>
         </div>

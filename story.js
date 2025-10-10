@@ -21,20 +21,21 @@ const progressBar = document.getElementById('progress-bar');
 const addToNoteBtn = document.getElementById('add-to-note-btn');
 const stagedWordsContainer = document.getElementById('staged-words-container');
 const clearStagingBtn = document.getElementById('clear-staging-btn');
-const copyStagedBtn = document.getElementById('copy-staged-btn'); // ** ADDED THIS **
+const copyStagedBtn = document.getElementById('copy-staged-btn');
 
 // Note view elements
 const goToNoteBtn = document.getElementById('go-to-note');
 const backToHomeFromNoteBtn = document.getElementById('back-to-home-from-note');
-const wordNoteList = document.getElementById('word-note-list');
+// START: New note list elements
+const noteListWords = document.getElementById('note-list-words');
+const noteListSentences = document.getElementById('note-list-sentences');
+// END: New note list elements
 const exportWordsBtn = document.getElementById('export-words-btn');
 const goToStoryNoteBtn = document.getElementById('go-to-story-note-btn');
 const backToStoryFromNoteBtn = document.getElementById('back-to-story-from-note-btn');
-// START: New elements for manual word adding
 const addWordForm = document.getElementById('add-word-form');
 const newWordInput = document.getElementById('new-word-input');
 const addManualWordBtn = document.getElementById('add-manual-word-btn');
-// END: New elements
 
 let stories = [];
 let isPlaying = false;
@@ -56,28 +57,59 @@ let playbackPositionBeforeNote = 0;
 const LAST_SESSION_KEY = 'readingChallengeLastSession';
 const SAVED_WORDS_KEY = 'readingChallengeSavedWordsV2';
 
-function loadWordsFromStorage() {
-  const storedWords = localStorage.getItem(SAVED_WORDS_KEY);
-  if (storedWords) {
-    try {
-      const parsed = JSON.parse(storedWords);
-      for (const category in parsed) {
-        if (typeof parsed[category] === 'object') {
-          for (const title in parsed[category]) {
-            if (Array.isArray(parsed[category][title])) {
-              if (!savedWords[category]) {
-                savedWords[category] = {};
-              }
-              savedWords[category][title] = new Set(parsed[category][title]);
-            }
-          }
-        }
-      }
-    } catch (e) {
-      console.error("Failed to parse words from localStorage", e);
-      savedWords = {};
+// START: New function to classify entries
+/**
+ * Classifies text as 'words' (for words/phrases) or 'sentences'.
+ * @param {string} text The text to classify.
+ * @returns {'words'|'sentences'} The classification type.
+ */
+function classifyEntry(text) {
+    const trimmedText = text.trim();
+    // Count words by splitting on whitespace
+    const wordCount = trimmedText.split(/\s+/).length;
+    // Check for sentence-ending punctuation
+    const hasEndingPunctuation = /[.?!]$/.test(trimmedText);
+
+    // An entry is a sentence if it has more than 4 words OR ends with sentence punctuation.
+    if (wordCount > 4 || hasEndingPunctuation) {
+        return 'sentences';
     }
-  }
+    return 'words';
+}
+// END: New classification function
+
+function loadWordsFromStorage() {
+    const storedWords = localStorage.getItem(SAVED_WORDS_KEY);
+    if (storedWords) {
+        try {
+            const parsed = JSON.parse(storedWords);
+            for (const category in parsed) {
+                if (typeof parsed[category] !== 'object') continue;
+                savedWords[category] = {};
+                for (const title in parsed[category]) {
+                    const entry = parsed[category][title];
+                    // **Migration logic**: Check if data is in the old format (an array)
+                    if (Array.isArray(entry)) {
+                        savedWords[category][title] = { words: new Set(), sentences: new Set() };
+                        entry.forEach(item => {
+                            const type = classifyEntry(item);
+                            savedWords[category][title][type].add(item);
+                        });
+                    } 
+                    // Handle new format
+                    else if (typeof entry === 'object' && entry !== null) {
+                        savedWords[category][title] = {
+                            words: new Set(entry.words || []),
+                            sentences: new Set(entry.sentences || [])
+                        };
+                    }
+                }
+            }
+        } catch (e) {
+            console.error("Failed to parse words from localStorage", e);
+            savedWords = {};
+        }
+    }
 }
 
 function saveWordsToStorage() {
@@ -85,7 +117,11 @@ function saveWordsToStorage() {
     for (const category in savedWords) {
         serializableWords[category] = {};
         for (const title in savedWords[category]) {
-            serializableWords[category][title] = Array.from(savedWords[category][title]);
+            // Save in the new format { words: [], sentences: [] }
+            serializableWords[category][title] = {
+                words: Array.from(savedWords[category][title].words),
+                sentences: Array.from(savedWords[category][title].sentences)
+            };
         }
     }
     localStorage.setItem(SAVED_WORDS_KEY, JSON.stringify(serializableWords));
@@ -100,7 +136,6 @@ function saveLastPlaybackState() {
             time: audio.currentTime
         };
         localStorage.setItem(LAST_SESSION_KEY, JSON.stringify(state));
-        console.log('Playback state saved:', state);
     }
 }
 
@@ -119,139 +154,150 @@ function showView(view) {
 // --- Word Note Functions ---
 
 function renderNoteView(level = 'categories', categoryName = null, titleName = null) {
-    wordNoteList.innerHTML = '';
-    const noteActions = document.querySelector('.note-actions');
-    
-    // Hide the manual add form by default
+    const noteContentWrapper = document.getElementById('note-content-wrapper');
+
+    // Default state for navigation and forms
     addWordForm.hidden = true;
+    backToStoryFromNoteBtn.hidden = true;
 
-    if (level === 'words' && categoryName && titleName) {
-        backToStoryFromNoteBtn.hidden = false;
-        noteViewCategory = categoryName;
-        noteViewTitle = titleName;
-        // Show the manual add form ONLY when viewing a word list
-        addWordForm.hidden = false;
-    } else {
-        backToStoryFromNoteBtn.hidden = true;
-        noteViewCategory = null;
-        noteViewTitle = null;
-    }
-
-    const createItem = (text, clickHandler) => {
+    // Helper function to create a list item for categories or titles
+    const createListItem = (text, clickHandler, container) => {
         const item = document.createElement('div');
         item.className = 'category-item';
         item.textContent = text;
         item.addEventListener('click', clickHandler);
-        wordNoteList.appendChild(item);
+        container.appendChild(item);
     };
 
-    if (level === 'categories') {
-        const categories = Object.keys(savedWords).sort((a, b) => a.localeCompare(b));
-        if (categories.length === 0) {
-            wordNoteList.innerHTML = '<p>No words saved yet. Click on a word in a story to save it here.</p>';
-        } else {
-            categories.forEach(category => createItem(category, () => renderNoteView('titles', category)));
-        }
-        backToHomeFromNoteBtn.textContent = 'Back to Home';
-        backToHomeFromNoteBtn.onclick = () => showView(homeView);
-        noteActions.style.display = 'flex';
+    if (level === 'categories' || level === 'titles') {
+        // For high-level views, create a temporary container
+        noteContentWrapper.innerHTML = '<div class="list" id="temp-list-container"></div>';
+        const tempListContainer = document.getElementById('temp-list-container');
 
-    } else if (level === 'titles' && categoryName) {
-        const titles = Object.keys(savedWords[categoryName]).sort((a, b) => a.localeCompare(b));
-        titles.forEach(title => createItem(title, () => renderNoteView('words', categoryName, title)));
-        backToHomeFromNoteBtn.textContent = 'Back to Categories';
-        backToHomeFromNoteBtn.onclick = () => renderNoteView('categories');
+        if (level === 'categories') {
+            const categories = Object.keys(savedWords).sort((a, b) => a.localeCompare(b));
+            if (categories.length === 0) {
+                tempListContainer.innerHTML = '<p>No notes saved yet. Click on a word in a story to save it here.</p>';
+            } else {
+                categories.forEach(category => createListItem(category, () => renderNoteView('titles', category), tempListContainer));
+            }
+            backToHomeFromNoteBtn.textContent = 'Back to Home';
+            backToHomeFromNoteBtn.onclick = () => showView(homeView);
+        } else { // 'titles' level
+            const titles = Object.keys(savedWords[categoryName]).sort((a, b) => a.localeCompare(b));
+            titles.forEach(title => createListItem(title, () => renderNoteView('words', categoryName, title), tempListContainer));
+            backToHomeFromNoteBtn.textContent = 'Back to Categories';
+            backToHomeFromNoteBtn.onclick = () => renderNoteView('titles', categoryName);
+        }
 
     } else if (level === 'words' && categoryName && titleName) {
-        const words = savedWords[categoryName]?.[titleName] 
-            // START: Sorting logic updated as per your request
-            ? Array.from(savedWords[categoryName][titleName]).sort((a, b) => {
-                // Primary sort: by length (shorter first)
-                const lengthDifference = a.length - b.length;
-                if (lengthDifference !== 0) {
-                    return lengthDifference;
-                }
-                // Secondary sort: alphabetical
-                return a.localeCompare(b);
-              })
-            // END: Sorting logic updated
-            : [];
+        // For the detailed word/sentence view, set up the dual-list structure
+        noteContentWrapper.innerHTML = `
+            <h3 class="note-section-header">Words & Phrases</h3>
+            <div id="note-list-words" class="list"></div>
+            <h3 class="note-section-header">Sentences</h3>
+            <div id="note-list-sentences" class="list"></div>
+        `;
+        // Get references to the newly created containers
+        const noteListWordsContainer = document.getElementById('note-list-words');
+        const noteListSentencesContainer = document.getElementById('note-list-sentences');
+        
+        // Configure UI elements for this view
+        noteViewCategory = categoryName;
+        noteViewTitle = titleName;
+        backToStoryFromNoteBtn.hidden = false;
+        addWordForm.hidden = false;
 
-        if (words.length === 0) {
-            const p = document.createElement('p');
-            p.textContent = 'No words saved for this story yet.';
-            wordNoteList.appendChild(p);
-        }
+        const noteData = savedWords[categoryName]?.[titleName] || { words: new Set(), sentences: new Set() };
+        
+        const sortItems = (set) => Array.from(set).sort((a, b) => {
+            const lengthDifference = a.length - b.length;
+            if (lengthDifference !== 0) return lengthDifference;
+            return a.localeCompare(b);
+        });
 
-        for (const word of words) {
+        const createWordItem = (itemText, type, container) => {
             const item = document.createElement('div');
             item.className = 'word-item';
-            const wordText = document.createElement('span');
-            wordText.className = 'word-text';
-            wordText.textContent = word;
+            
+            const wordTextEl = document.createElement('span');
+            wordTextEl.className = 'word-text';
+            wordTextEl.textContent = itemText;
+            
             const actions = document.createElement('div');
             actions.className = 'word-item-actions';
+            
             const copyBtn = document.createElement('button');
             copyBtn.textContent = 'Copy';
             copyBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                navigator.clipboard.writeText(word).then(() => {
-                    // ** MODIFIED: Replaced alert with CSS class feedback **
+                navigator.clipboard.writeText(itemText).then(() => {
                     copyBtn.classList.add('btn-success-feedback');
-                    setTimeout(() => {
-                        copyBtn.classList.remove('btn-success-feedback');
-                    }, 500);
-                }).catch(err => {
-                    console.error('Failed to copy word:', err);
-                });
+                    setTimeout(() => copyBtn.classList.remove('btn-success-feedback'), 500);
+                }).catch(err => console.error('Failed to copy item:', err));
             });
+            
             const deleteBtn = document.createElement('button');
             deleteBtn.className = 'secondary';
             deleteBtn.textContent = 'Delete';
             deleteBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                if (confirm(`Are you sure you want to delete '${word}'?`)) {
-                    savedWords[categoryName][titleName].delete(word);
-                    if (savedWords[categoryName][titleName].size === 0) {
-                        delete savedWords[categoryName][titleName];
-                    }
-                    if (Object.keys(savedWords[categoryName]).length === 0) {
-                        delete savedWords[categoryName];
-                    }
+                if (confirm(`Are you sure you want to delete '${itemText}'?`)) {
+                    savedWords[categoryName][titleName][type].delete(itemText);
+                    const category = savedWords[categoryName];
+                    const title = category[titleName];
+                    if (title.words.size === 0 && title.sentences.size === 0) delete category[titleName];
+                    if (Object.keys(category).length === 0) delete savedWords[categoryName];
                     saveWordsToStorage();
-                    if (!savedWords[categoryName]) {
-                        renderNoteView('categories');
-                    } else if (!savedWords[categoryName][titleName]) {
-                        renderNoteView('titles', categoryName);
-                    } else {
-                        renderNoteView('words', categoryName, titleName);
-                    }
+                    
+                    if (!savedWords[categoryName]) renderNoteView('categories');
+                    else if (!savedWords[categoryName][titleName]) renderNoteView('titles', categoryName);
+                    else renderNoteView('words', categoryName, titleName);
                 }
             });
+            
             actions.appendChild(copyBtn);
             actions.appendChild(deleteBtn);
-            item.appendChild(wordText);
+            item.appendChild(wordTextEl);
             item.appendChild(actions);
-            wordNoteList.appendChild(item);
+            container.appendChild(item);
+        };
+        
+        const words = sortItems(noteData.words);
+        if (words.length === 0) {
+            noteListWordsContainer.innerHTML = '<p>No words or phrases saved yet.</p>';
+        } else {
+            words.forEach(word => createWordItem(word, 'words', noteListWordsContainer));
         }
+
+        const sentences = sortItems(noteData.sentences);
+        if (sentences.length === 0) {
+            noteListSentencesContainer.innerHTML = '<p>No sentences saved yet.</p>';
+        } else {
+            sentences.forEach(sentence => createWordItem(sentence, 'sentences', noteListSentencesContainer));
+        }
+
         backToHomeFromNoteBtn.textContent = 'Back to Titles';
         backToHomeFromNoteBtn.onclick = () => renderNoteView('titles', categoryName);
     }
 }
 
-// MODIFIED: This function now accepts category and title for more flexibility.
+
 function addWordToNote(text, category, title) {
     const cleanedText = text.trim();
-    if (cleanedText && category && title) {
-        if (!savedWords[category]) {
-            savedWords[category] = {};
-        }
-        if (!savedWords[category][title]) {
-            savedWords[category][title] = new Set();
-        }
-        savedWords[category][title].add(cleanedText);
-        saveWordsToStorage();
+    if (!cleanedText || !category || !title) return;
+
+    if (!savedWords[category]) savedWords[category] = {};
+    if (!savedWords[category][title]) {
+        // Initialize with the new structure
+        savedWords[category][title] = { words: new Set(), sentences: new Set() };
     }
+    
+    // Classify and add to the correct Set
+    const type = classifyEntry(cleanedText);
+    savedWords[category][title][type].add(cleanedText);
+    
+    saveWordsToStorage();
 }
 
 
@@ -261,23 +307,24 @@ goToNoteBtn.addEventListener('click', () => {
 });
 
 exportWordsBtn.addEventListener('click', () => {
-    const allWords = new Set();
+    const allItems = new Set();
     for (const category in savedWords) {
         for (const title in savedWords[category]) {
-            savedWords[category][title].forEach(word => allWords.add(word));
+            savedWords[category][title].words.forEach(word => allItems.add(word));
+            savedWords[category][title].sentences.forEach(sentence => allItems.add(sentence));
         }
     }
-    if (allWords.size === 0) {
-        alert("No words to copy.");
+    if (allItems.size === 0) {
+        alert("No items to copy.");
         return;
     }
-    const sortedWords = Array.from(allWords).sort((a, b) => a.localeCompare(b));
-    const textToCopy = sortedWords.join('\n');
+    const sortedItems = Array.from(allItems).sort((a, b) => a.localeCompare(b));
+    const textToCopy = sortedItems.join('\n');
     navigator.clipboard.writeText(textToCopy).then(() => {
-        alert(`${allWords.size} total words copied to clipboard.`);
+        alert(`${allItems.size} total items copied to clipboard.`);
     }).catch(err => {
-        console.error('Failed to copy words: ', err);
-        alert('Could not copy words. Please try again.');
+        console.error('Failed to copy items: ', err);
+        alert('Could not copy items. Please try again.');
     });
 });
 
@@ -321,7 +368,6 @@ addToNoteBtn.addEventListener('click', () => {
     const stagedWords = Array.from(stagedWordsContainer.querySelectorAll('.staged-word'));
     
     if (stagedWords.length === 0) {
-        // ** MODIFIED: Changed alert to console log for a less intrusive message **
         console.warn("Staging area is empty. Click words from the story to add them first.");
         return;
     }
@@ -330,7 +376,6 @@ addToNoteBtn.addEventListener('click', () => {
 
     if (textToAdd) {
         addWordToNote(textToAdd, currentCategoryName, currentStoryTitle);
-        // ** MODIFIED: Removed the alert dialog **
         navigator.clipboard.writeText(textToAdd).then(() => {
             console.log(`'${textToAdd}' has been added to notes and copied.`);
         }).catch(err => {
@@ -341,34 +386,28 @@ addToNoteBtn.addEventListener('click', () => {
     }
 });
 
-// START: New event listener for the manual add button
 addManualWordBtn.addEventListener('click', () => {
     const newWord = newWordInput.value.trim();
     if (newWord === '') {
         alert('Please enter a word or sentence.');
         return;
     }
-
-    // Use the category/title of the currently viewed note list
     if (noteViewCategory && noteViewTitle) {
         addWordToNote(newWord, noteViewCategory, noteViewTitle);
-        newWordInput.value = ''; // Clear the input
-        newWordInput.focus(); // Keep focus on the input for quick adding
-        // Re-render the current list to show the new word
+        newWordInput.value = '';
+        newWordInput.focus();
         renderNoteView('words', noteViewCategory, noteViewTitle);
     } else {
         alert('Could not determine the note category. Please navigate to a specific story\'s note list.');
     }
 });
 
-// Also allow adding by pressing Enter in the input field
 newWordInput.addEventListener('keydown', (event) => {
     if (event.key === 'Enter') {
-        event.preventDefault(); // Prevent any default form submission behavior
+        event.preventDefault();
         addManualWordBtn.click();
     }
 });
-// END: New event listener
 
 function parafyAndMakeClickable(text) {
     const cleaned = String(text)
@@ -675,14 +714,8 @@ function seekAudio() {
 goToStoryNoteBtn.addEventListener('click', () => {
     if (currentCategoryName && currentStoryTitle) {
         playbackPositionBeforeNote = audio.currentTime;
-        if (savedWords[currentCategoryName] && savedWords[currentCategoryName][currentStoryTitle]) {
-             renderNoteView('words', currentCategoryName, currentStoryTitle);
-             showView(noteView);
-        } else {
-             // If no notes exist, still go to the view so the user can add one manually
-             renderNoteView('words', currentCategoryName, currentStoryTitle);
-             showView(noteView);
-        }
+        renderNoteView('words', currentCategoryName, currentStoryTitle);
+        showView(noteView);
     }
 });
 
@@ -703,7 +736,6 @@ backToStoryFromNoteBtn.addEventListener('click', () => {
     }
 });
 
-// ** ADDED THIS: Event listener for the staging area copy button **
 copyStagedBtn.addEventListener('click', () => {
     const stagedWords = Array.from(stagedWordsContainer.querySelectorAll('.staged-word'));
     if (stagedWords.length === 0) {

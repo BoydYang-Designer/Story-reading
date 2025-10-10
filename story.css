@@ -278,7 +278,29 @@ button.secondary:hover {
 }
 /* END: New styles */
 
-#word-note-list .word-item {
+/* START: Styles for the new note sections */
+#note-content-wrapper .list {
+    padding-bottom: 0; /* Remove bottom padding from lists inside the wrapper */
+}
+
+.note-section-header {
+  text-align: left;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text-light);
+  margin: 28px 0 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--color-border);
+}
+#note-content-wrapper h3:first-of-type {
+    margin-top: 4px;
+}
+/* END: New note section styles */
+
+
+#word-note-list .word-item,
+#note-list-words .word-item, 
+#note-list-sentences .word-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -288,10 +310,14 @@ button.secondary:hover {
     border-radius: 12px;
     box-shadow: var(--shadow-sm);
 }
-#word-note-list .word-text { font-size: 18px; font-weight: 500; }
-#word-note-list .word-item-actions { display: flex; gap: 8px; }
-#word-note-list .word-item-actions button { padding: 5px 10px; font-size: 14px; }
-.note-actions { margin-top: 20px; display: flex; justify-content: center; gap: 12px; }
+.word-text { 
+    font-size: 18px; 
+    font-weight: 500;
+    line-height: 1.5;
+}
+.word-item-actions { display: flex; gap: 8px; align-items: center; }
+.word-item-actions button { padding: 5px 10px; font-size: 14px; }
+.note-actions { margin-top: 30px; display: flex; justify-content: center; gap: 12px; padding-bottom: 100px; }
 
 /* 7. Staging Area
 ------------------------------------------ */
