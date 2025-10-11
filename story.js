@@ -234,7 +234,7 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
             const actions = document.createElement('div');
             actions.className = 'word-item-actions';
 
-            const voiceBtn = document.createElement('button');
+           const voiceBtn = document.createElement('button');
             voiceBtn.textContent = 'Voice';
             voiceBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -249,12 +249,12 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
 
                     wordAudio.play().catch(err => {
                         console.error(`Could not play audio for "${itemText}":`, err);
-                        alert(`Sorry, the audio for "${itemText}" could not be played.`);
+                        // The alert here is removed to prevent a second message.
                     });
 
                     wordAudio.onerror = () => {
                         console.error(`Audio file not found for "${itemText}" at ${audioSrc}`);
-                        alert(`Sorry, an audio file for "${itemText}" was not found.`);
+                        alert(`Audio for "${itemText}" was not found.`);
                     };
 
                 } else { // type === 'sentences'
@@ -262,7 +262,7 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
                     alert(`Voice function for SENTENCE: "${itemText}"`);
                 }
             });
-
+            
             // ▼▼▼ 【修改】此處按鈕的點擊事件 ▼▼▼
             const wordBtn = document.createElement('button');
             wordBtn.textContent = 'Word';
