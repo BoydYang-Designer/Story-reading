@@ -48,7 +48,7 @@ let currentStoryList = [];
 let currentStoryIndex = -1;
 let currentCategoryName = null;
 let currentStoryTitle = null;
-let noteViewCategory = null; 
+let noteViewCategory = null;
 let noteViewTitle = null;
 let playbackPositionBeforeNote = 0;
 
@@ -95,7 +95,7 @@ function loadWordsFromStorage() {
                             const type = classifyEntry(item);
                             savedWords[category][title][type].add(item);
                         });
-                    } 
+                    }
                     // Handle new format
                     else if (typeof entry === 'object' && entry !== null) {
                         savedWords[category][title] = {
@@ -208,7 +208,7 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
         // Get references to the newly created containers
         const noteListWordsContainer = document.getElementById('note-list-words');
         const noteListSentencesContainer = document.getElementById('note-list-sentences');
-        
+
         // Configure UI elements for this view
         noteViewCategory = categoryName;
         noteViewTitle = titleName;
@@ -216,7 +216,7 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
         addWordForm.hidden = false;
 
         const noteData = savedWords[categoryName]?.[titleName] || { words: new Set(), sentences: new Set() };
-        
+
         const sortItems = (set) => Array.from(set).sort((a, b) => {
             const lengthDifference = a.length - b.length;
             if (lengthDifference !== 0) return lengthDifference;
@@ -226,22 +226,37 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
         const createWordItem = (itemText, type, container) => {
             const item = document.createElement('div');
             item.className = 'word-item';
-            
+
             const wordTextEl = document.createElement('span');
             wordTextEl.className = 'word-text';
             wordTextEl.textContent = itemText;
-            
+
             const actions = document.createElement('div');
             actions.className = 'word-item-actions';
-            
+
             const voiceBtn = document.createElement('button');
             voiceBtn.textContent = 'Voice';
             voiceBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                // Check the 'type' to determine the function
+
                 if (type === 'words') {
-                    // Placeholder for future functionality for words/phrases
-                    alert(`Voice function for WORD: "${itemText}"`);
+                    // Use the raw content URL from GitHub
+                    const baseUrl = 'https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/';
+                    // Convert to lowercase for case-insensitive matching
+                    const audioSrc = baseUrl + encodeURIComponent(itemText.trim().toLowerCase()) + '.mp3';
+
+                    const wordAudio = new Audio(audioSrc);
+
+                    wordAudio.play().catch(err => {
+                        console.error(`Could not play audio for "${itemText}":`, err);
+                        alert(`Sorry, the audio for "${itemText}" could not be played.`);
+                    });
+
+                    wordAudio.onerror = () => {
+                        console.error(`Audio file not found for "${itemText}" at ${audioSrc}`);
+                        alert(`Sorry, an audio file for "${itemText}" was not found.`);
+                    };
+
                 } else { // type === 'sentences'
                     // Placeholder for future functionality for sentences
                     alert(`Voice function for SENTENCE: "${itemText}"`);
@@ -265,7 +280,7 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
                     setTimeout(() => copyBtn.classList.remove('btn-success-feedback'), 500);
                 }).catch(err => console.error('Failed to copy item:', err));
             });
-            
+
             const deleteBtn = document.createElement('button');
             deleteBtn.className = 'secondary';
             deleteBtn.textContent = 'Delete';
@@ -278,13 +293,13 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
                     if (title.words.size === 0 && title.sentences.size === 0) delete category[titleName];
                     if (Object.keys(category).length === 0) delete savedWords[categoryName];
                     saveWordsToStorage();
-                    
+
                     if (!savedWords[categoryName]) renderNoteView('categories');
                     else if (!savedWords[categoryName][titleName]) renderNoteView('titles', categoryName);
                     else renderNoteView('words', categoryName, titleName);
                 }
             });
-            
+
             actions.appendChild(voiceBtn);
             actions.appendChild(wordBtn);
             actions.appendChild(copyBtn);
@@ -293,7 +308,7 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
             item.appendChild(actions);
             container.appendChild(item);
         };
-        
+
         const words = sortItems(noteData.words);
         if (words.length === 0) {
             noteListWordsContainer.innerHTML = '<p>No words or phrases saved yet.</p>';
@@ -323,11 +338,11 @@ function addWordToNote(text, category, title) {
         // Initialize with the new structure
         savedWords[category][title] = { words: new Set(), sentences: new Set() };
     }
-    
+
     // Classify and add to the correct Set
     const type = classifyEntry(cleanedText);
     savedWords[category][title][type].add(cleanedText);
-    
+
     saveWordsToStorage();
 }
 
@@ -397,7 +412,7 @@ clearStagingBtn.addEventListener('click', () => {
 
 addToNoteBtn.addEventListener('click', () => {
     const stagedWords = Array.from(stagedWordsContainer.querySelectorAll('.staged-word'));
-    
+
     if (stagedWords.length === 0) {
         console.warn("Staging area is empty. Click words from the story to add them first.");
         return;
@@ -412,7 +427,7 @@ addToNoteBtn.addEventListener('click', () => {
         }).catch(err => {
             console.error('Clipboard write failed: ', err);
         });
-        
+
         stagedWordsContainer.innerHTML = '';
     }
 });
@@ -588,7 +603,7 @@ function resumeLastPlayback(title, time) {
         alert("Could not determine the category for the story from your last session.");
         return;
     }
-    showCategory(category); 
+    showCategory(category);
     const indexInList = currentStoryList.findIndex(s => s['標題'] === title);
     if (indexInList === -1) {
         alert("Could not find the story within its category.");
@@ -618,7 +633,7 @@ function showCategory(category) {
 }
 
 function showPlayback(index, startTime = 0) {
-  stagedWordsContainer.innerHTML = ''; 
+  stagedWordsContainer.innerHTML = '';
   currentStoryIndex = index;
   const story = currentStoryList[currentStoryIndex];
   if (!story) {
@@ -757,7 +772,7 @@ backToStoryFromNoteBtn.addEventListener('click', () => {
             alert("Could not find the story to return to.");
             return;
         }
-        showCategory(noteViewCategory); 
+        showCategory(noteViewCategory);
         const indexInList = currentStoryList.findIndex(s => s['標題'] === noteViewTitle);
         if (indexInList === -1) {
             alert("Could not find the story within its category list.");
@@ -812,7 +827,7 @@ progressBar.addEventListener('input', seekAudio);
             targetList.classList.toggle('collapsed');
         }
     });
-      
+
     loadWordsFromStorage();
     await loadStories();
     renderCategories();
