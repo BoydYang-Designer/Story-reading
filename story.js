@@ -187,7 +187,7 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
             const titles = Object.keys(savedWords[categoryName]).sort((a, b) => a.localeCompare(b));
             titles.forEach(title => createListItem(title, () => renderNoteView('words', categoryName, title), tempListContainer));
             backToHomeFromNoteBtn.textContent = 'Back to Categories';
-            backToHomeFromNoteBtn.onclick = () => renderNoteView('titles', categoryName);
+            backToHomeFromNoteBtn.onclick = () => renderNoteView('categories'); 
         }
 
     } else if (level === 'words' && categoryName && titleName) {
@@ -263,13 +263,27 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
                 }
             });
 
+            // ▼▼▼ 【修改】此處按鈕的點擊事件 ▼▼▼
             const wordBtn = document.createElement('button');
             wordBtn.textContent = 'Word';
             wordBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                // Placeholder for future functionality
-                alert(`Word function for "${itemText}" to be defined.`);
+                // 連結到外部詞彙網站
+                const baseUrl = 'https://boydyang-designer.github.io/English-vocabulary/';
+                const wordForUrl = itemText.trim().toLowerCase();
+                
+                // URL 結構可能只支援單一單字，不支援片語
+                if (wordForUrl.includes(' ')) {
+                    alert("「Word」查詢功能僅適用於單一單字。");
+                    return;
+                }
+                
+                // 在 URL 後面附加單字和 from=story 參數
+                const finalUrl = `${baseUrl}?word=${wordForUrl}&from=story`;
+                // 在同一個分頁中導航以保留瀏覽器歷史紀錄
+                window.location.href = finalUrl;
             });
+            // ▲▲▲ 【修改】結束 ▲▲▲
 
             const copyBtn = document.createElement('button');
             copyBtn.textContent = 'Copy';
