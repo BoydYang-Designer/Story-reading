@@ -234,13 +234,18 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
             const actions = document.createElement('div');
             actions.className = 'word-item-actions';
             
-            // START: New button definitions
             const voiceBtn = document.createElement('button');
             voiceBtn.textContent = 'Voice';
             voiceBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                // Placeholder for future functionality
-                alert(`Voice function for "${itemText}" to be defined.`);
+                // Check the 'type' to determine the function
+                if (type === 'words') {
+                    // Placeholder for future functionality for words/phrases
+                    alert(`Voice function for WORD: "${itemText}"`);
+                } else { // type === 'sentences'
+                    // Placeholder for future functionality for sentences
+                    alert(`Voice function for SENTENCE: "${itemText}"`);
+                }
             });
 
             const wordBtn = document.createElement('button');
@@ -250,7 +255,6 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
                 // Placeholder for future functionality
                 alert(`Word function for "${itemText}" to be defined.`);
             });
-            // END: New button definitions
 
             const copyBtn = document.createElement('button');
             copyBtn.textContent = 'Copy';
@@ -281,7 +285,6 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
                 }
             });
             
-            // Append buttons in the desired order
             actions.appendChild(voiceBtn);
             actions.appendChild(wordBtn);
             actions.appendChild(copyBtn);
