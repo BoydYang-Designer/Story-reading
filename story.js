@@ -191,11 +191,18 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
         }
 
     } else if (level === 'words' && categoryName && titleName) {
-        // For the detailed word/sentence view, set up the dual-list structure
+        // For the detailed word/sentence view, set up the dual-list structure with collapsible headers
         noteContentWrapper.innerHTML = `
-            <h3 class="note-section-header">Words & Phrases</h3>
+            <div class="note-section-header is-expanded" data-target="note-list-words">
+                <h3>Words & Phrases</h3>
+                <span class="toggle-icon"></span>
+            </div>
             <div id="note-list-words" class="list"></div>
-            <h3 class="note-section-header">Sentences</h3>
+
+            <div class="note-section-header is-expanded" data-target="note-list-sentences">
+                <h3>Sentences</h3>
+                <span class="toggle-icon"></span>
+            </div>
             <div id="note-list-sentences" class="list"></div>
         `;
         // Get references to the newly created containers
@@ -766,6 +773,22 @@ progressBar.addEventListener('input', seekAudio);
 
 (async function init() {
   try {
+    // Add event listener for collapsible note sections
+    const noteContentWrapper = document.getElementById('note-content-wrapper');
+    noteContentWrapper.addEventListener('click', (e) => {
+        const header = e.target.closest('.note-section-header');
+        if (!header) return;
+
+        const targetId = header.dataset.target;
+        if (!targetId) return;
+
+        const targetList = document.getElementById(targetId);
+        if (targetList) {
+            header.classList.toggle('is-expanded');
+            targetList.classList.toggle('collapsed');
+        }
+    });
+      
     loadWordsFromStorage();
     await loadStories();
     renderCategories();

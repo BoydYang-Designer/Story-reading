@@ -283,17 +283,52 @@ button.secondary:hover {
     padding-bottom: 0; /* Remove bottom padding from lists inside the wrapper */
 }
 
+/* This is the new clickable header DIV */
 .note-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  
+  /* Copied from old .note-section-header style */
   text-align: left;
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--color-text-light);
   margin: 28px 0 12px;
   padding-bottom: 8px;
   border-bottom: 1px solid var(--color-border);
 }
-#note-content-wrapper h3:first-of-type {
+
+/* Adjust margin for the first header */
+#note-content-wrapper .note-section-header:first-of-type {
     margin-top: 4px;
+}
+
+/* Style the h3 text inside the new header */
+.note-section-header h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--color-text-light);
+}
+
+/* The expand/collapse icon (a triangle) */
+.toggle-icon {
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid var(--color-text-light); /* Points down (expanded) */
+  transition: transform 0.2s ease-in-out;
+}
+
+/* Rotate icon when header is collapsed */
+.note-section-header:not(.is-expanded) .toggle-icon {
+  transform: rotate(-90deg); /* Points right (collapsed) */
+}
+
+/* The class to hide the list */
+.list.collapsed {
+  display: none;
 }
 /* END: New note section styles */
 
