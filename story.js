@@ -172,10 +172,13 @@ function showView(view) {
 function renderNoteView(level = 'categories', categoryName = null, titleName = null) {
     const noteContentWrapper = document.getElementById('note-content-wrapper');
 
-    // Default state for navigation and forms
-    addWordForm.hidden = true;
+    // --- START: MODIFICATION ---
+    // 預設為表單加上 .is-hidden class，確保它被強制隱藏
+    addWordForm.classList.add('is-hidden');
+    // --- END: MODIFICATION ---
+    
     backToStoryFromNoteBtn.hidden = true;
-    exportWordsBtn.hidden = true; // ** NEW: Hide "Copy All Items" button by default **
+    exportWordsBtn.hidden = true; 
 
     // Helper function to create a list item for categories or titles
     const createListItem = (text, clickHandler, container) => {
@@ -187,7 +190,7 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
     };
 
     if (level === 'categories' || level === 'titles') {
-        // For high-level views, create a temporary container
+        // 在第一層和第二層，表單會因為 .is-hidden class 而保持隱藏
         noteContentWrapper.innerHTML = '<div class="list" id="temp-list-container"></div>';
         const tempListContainer = document.getElementById('temp-list-container');
 
@@ -208,7 +211,7 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
         }
 
     } else if (level === 'words' && categoryName && titleName) {
-        // For the detailed word/sentence view, set up the three-list structure with collapsible headers
+        // 在第三層的詳細頁面，才將表單顯示出來
         noteContentWrapper.innerHTML = `
             <div class="note-section-header is-expanded" data-target="note-list-words">
                 <h3>Words</h3>
@@ -228,23 +231,24 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
             </div>
             <div id="note-list-sentences" class="list"></div>
         `;
-        // Get references to the newly created containers
         const noteListWordsContainer = document.getElementById('note-list-words');
         const noteListPhrasesContainer = document.getElementById('note-list-phrases');
         const noteListSentencesContainer = document.getElementById('note-list-sentences');
 
-        // Configure UI elements for this view
         noteViewCategory = categoryName;
         noteViewTitle = titleName;
         backToStoryFromNoteBtn.hidden = false;
-        addWordForm.hidden = false;
-        exportWordsBtn.hidden = false; // ** NEW: Show "Copy All Items" button only on this final page **
+        exportWordsBtn.hidden = false;
+
+        // --- START: MODIFICATION ---
+        // 只有在第三層，才移除 .is-hidden class，讓表單顯示出來
+        addWordForm.classList.remove('is-hidden');
+        // --- END: MODIFICATION ---
 
         const noteData = savedWords[categoryName]?.[titleName] || { words: new Set(), phrases: new Set(), sentences: new Set() };
-
-        const sortItems = (set) => Array.from(set).sort((a, b) => {
-            return a.localeCompare(b);
-        });
+        
+        // (此函式剩下的部分保持不變)
+        const sortItems = (set) => Array.from(set).sort((a, b) => a.localeCompare(b));
 
         const createWordItem = (itemText, type, container) => {
             const item = document.createElement('div');
@@ -257,31 +261,22 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
             const actions = document.createElement('div');
             actions.className = 'word-item-actions';
 
-           const voiceBtn = document.createElement('button');
+            const voiceBtn = document.createElement('button');
             voiceBtn.textContent = 'Voice';
             voiceBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
-
                 if (type === 'words' || type === 'phrases') {
-                    // Use the raw content URL from GitHub
                     const baseUrl = 'https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/';
-                    // Convert to lowercase for case-insensitive matching
                     const audioSrc = baseUrl + encodeURIComponent(itemText.trim().toLowerCase()) + '.mp3';
-
                     const wordAudio = new Audio(audioSrc);
-
                     wordAudio.play().catch(err => {
                         console.error(`Could not play audio for "${itemText}":`, err);
-                        // The alert here is removed to prevent a second message.
                     });
-
                     wordAudio.onerror = () => {
                         console.error(`Audio file not found for "${itemText}" at ${audioSrc}`);
                         alert(`Audio for "${itemText}" was not found.`);
                     };
-
-                } else { // type === 'sentences'
-                    // Placeholder for future functionality for sentences
+                } else {
                     alert(`Voice function for SENTENCE: "${itemText}"`);
                 }
             });
@@ -292,12 +287,10 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
                 e.stopPropagation();
                 const baseUrl = 'https://boydyang-designer.github.io/English-vocabulary/';
                 const wordForUrl = itemText.trim().toLowerCase();
-                
                 if (wordForUrl.includes(' ')) {
                     alert("「Word」查詢功能僅適用於單一單字。");
                     return;
                 }
-                
                 const finalUrl = `${baseUrl}?word=${wordForUrl}&from=story`;
                 window.location.href = finalUrl;
             });
@@ -692,7 +685,7 @@ function showPlayback(index, startTime = 0) {
   prevStoryBtn.hidden = currentStoryIndex <= 0;
   nextStoryBtn.hidden = currentStoryIndex >= currentStoryList.length - 1;
   const onLoaded = () => {
-    if (startTime > 0) {
+    if (startTime > 0) { // <--- 關鍵邏輯
         audio.currentTime = startTime;
     }
     if (!audio.paused && !audio.ended) {
@@ -798,7 +791,7 @@ function seekAudio() {
 
 goToStoryNoteBtn.addEventListener('click', () => {
     if (currentCategoryName && currentStoryTitle) {
-        playbackPositionBeforeNote = audio.currentTime;
+        playbackPositionBeforeNote = audio.currentTime; // <--- 確保這行存在
         renderNoteView('words', currentCategoryName, currentStoryTitle);
         showView(noteView);
     }
@@ -811,12 +804,13 @@ backToStoryFromNoteBtn.addEventListener('click', () => {
             alert("Could not find the story to return to.");
             return;
         }
-        showCategory(noteViewCategory);
+        // 不需要再呼叫 showCategory，因為 showPlayback 內部會處理視圖切換
         const indexInList = currentStoryList.findIndex(s => s['標題'] === noteViewTitle);
         if (indexInList === -1) {
             alert("Could not find the story within its category list.");
             return;
         }
+        // 直接呼叫 showPlayback 並傳入儲存的時間點
         showPlayback(indexInList, playbackPositionBeforeNote);
     }
 });
