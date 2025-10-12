@@ -158,6 +158,13 @@ function showView(view) {
     el.hidden = true;
   }
   view.hidden = false;
+
+  // 當進入 Note 頁面時，為 body 添加 class 以改變主題顏色
+  if (view === noteView) {
+    document.body.classList.add('note-view-active');
+  } else {
+    document.body.classList.remove('note-view-active');
+  }
 }
 
 // --- Word Note Functions ---
@@ -168,6 +175,7 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
     // Default state for navigation and forms
     addWordForm.hidden = true;
     backToStoryFromNoteBtn.hidden = true;
+    exportWordsBtn.hidden = true; // ** NEW: Hide "Copy All Items" button by default **
 
     // Helper function to create a list item for categories or titles
     const createListItem = (text, clickHandler, container) => {
@@ -230,6 +238,7 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
         noteViewTitle = titleName;
         backToStoryFromNoteBtn.hidden = false;
         addWordForm.hidden = false;
+        exportWordsBtn.hidden = false; // ** NEW: Show "Copy All Items" button only on this final page **
 
         const noteData = savedWords[categoryName]?.[titleName] || { words: new Set(), phrases: new Set(), sentences: new Set() };
 

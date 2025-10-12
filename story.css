@@ -23,6 +23,18 @@
   --shadow-md: 0 4px 10px rgba(0, 0, 0, 0.06);
 }
 
+/* --- New: Note View Color Theme --- */
+body.note-view-active {
+  /* A cooler, calmer palette for the note-taking environment */
+  --color-bg: #f5f7f9; /* 淡雅的冷灰藍背景 */
+  --color-primary: #6c7a8d; /* 沉靜的石板藍 (主色) */
+  --color-primary-dark: #5a677a; /* 主色加深 (用於 hover) */
+  --color-accent: #a9b4c4; /* 柔和的霧藍色 (輔色/高亮) */
+  --color-accent-light: rgba(169, 180, 196, 0.25); /* 輔色變淡 (用於文字 hover) */
+  --color-border: #e6e8eb; /* 邊框顏色 */
+}
+
+
 * { box-sizing: border-box; }
 html, body { height: 100%; overflow-x: hidden; }
 
@@ -33,6 +45,7 @@ body {
   background-color: var(--color-bg);
   color: var(--color-text);
   touch-action: manipulation;
+  transition: background-color 0.3s ease-in-out; /* 為背景顏色變化增加平滑過渡效果 */
 }
 
 .container {
