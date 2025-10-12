@@ -234,8 +234,6 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
         const noteData = savedWords[categoryName]?.[titleName] || { words: new Set(), phrases: new Set(), sentences: new Set() };
 
         const sortItems = (set) => Array.from(set).sort((a, b) => {
-            const lengthDifference = a.length - b.length;
-            if (lengthDifference !== 0) return lengthDifference;
             return a.localeCompare(b);
         });
 
