@@ -59,22 +59,22 @@ const SAVED_WORDS_KEY = 'readingChallengeSavedWordsV2';
 
 // START: New function to classify entries
 /**
- * Classifies text as 'words' (for words/phrases) or 'sentences'.
+ * Classifies text as 'words', 'phrases', or 'sentences'.
  * @param {string} text The text to classify.
- * @returns {'words'|'sentences'} The classification type.
+ * @returns {'words'|'phrases'|'sentences'} The classification type.
  */
 function classifyEntry(text) {
     const trimmedText = text.trim();
-    // Count words by splitting on whitespace
     const wordCount = trimmedText.split(/\s+/).length;
-    // Check for sentence-ending punctuation
     const hasEndingPunctuation = /[.?!]$/.test(trimmedText);
 
-    // An entry is a sentence if it has more than 4 words OR ends with sentence punctuation.
     if (wordCount > 4 || hasEndingPunctuation) {
         return 'sentences';
+    } else if (wordCount > 1) { // 2 to 4 words
+        return 'phrases';
+    } else { // 1 word
+        return 'words';
     }
-    return 'words';
 }
 // END: New classification function
 
@@ -88,20 +88,27 @@ function loadWordsFromStorage() {
                 savedWords[category] = {};
                 for (const title in parsed[category]) {
                     const entry = parsed[category][title];
-                    // **Migration logic**: Check if data is in the old format (an array)
+                    // Initialize with the new three-category structure
+                    savedWords[category][title] = { words: new Set(), phrases: new Set(), sentences: new Set() };
+                    
                     if (Array.isArray(entry)) {
-                        savedWords[category][title] = { words: new Set(), sentences: new Set() };
+                        // **Migration logic for oldest format (simple array)**
                         entry.forEach(item => {
                             const type = classifyEntry(item);
                             savedWords[category][title][type].add(item);
                         });
-                    }
-                    // Handle new format
-                    else if (typeof entry === 'object' && entry !== null) {
-                        savedWords[category][title] = {
-                            words: new Set(entry.words || []),
-                            sentences: new Set(entry.sentences || [])
-                        };
+                    } else if (typeof entry === 'object' && entry !== null) {
+                        // **Handle new format and migrate from 2-category format**
+                        // Add sentences first
+                        if(entry.sentences) new Set(entry.sentences).forEach(item => savedWords[category][title].sentences.add(item));
+                        
+                        // Re-classify everything that was in the old 'words' array
+                        if(entry.words) {
+                            new Set(entry.words).forEach(item => {
+                                const type = classifyEntry(item);
+                                savedWords[category][title][type].add(item);
+                            });
+                        }
                     }
                 }
             }
@@ -112,14 +119,16 @@ function loadWordsFromStorage() {
     }
 }
 
+
 function saveWordsToStorage() {
     const serializableWords = {};
     for (const category in savedWords) {
         serializableWords[category] = {};
         for (const title in savedWords[category]) {
-            // Save in the new format { words: [], sentences: [] }
+            // Save in the new format { words: [], phrases: [], sentences: [] }
             serializableWords[category][title] = {
                 words: Array.from(savedWords[category][title].words),
+                phrases: Array.from(savedWords[category][title].phrases),
                 sentences: Array.from(savedWords[category][title].sentences)
             };
         }
@@ -191,13 +200,19 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
         }
 
     } else if (level === 'words' && categoryName && titleName) {
-        // For the detailed word/sentence view, set up the dual-list structure with collapsible headers
+        // For the detailed word/sentence view, set up the three-list structure with collapsible headers
         noteContentWrapper.innerHTML = `
             <div class="note-section-header is-expanded" data-target="note-list-words">
-                <h3>Words & Phrases</h3>
+                <h3>Words</h3>
                 <span class="toggle-icon"></span>
             </div>
             <div id="note-list-words" class="list"></div>
+
+            <div class="note-section-header is-expanded" data-target="note-list-phrases">
+                <h3>Phrases</h3>
+                <span class="toggle-icon"></span>
+            </div>
+            <div id="note-list-phrases" class="list"></div>
 
             <div class="note-section-header is-expanded" data-target="note-list-sentences">
                 <h3>Sentences</h3>
@@ -207,6 +222,7 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
         `;
         // Get references to the newly created containers
         const noteListWordsContainer = document.getElementById('note-list-words');
+        const noteListPhrasesContainer = document.getElementById('note-list-phrases');
         const noteListSentencesContainer = document.getElementById('note-list-sentences');
 
         // Configure UI elements for this view
@@ -215,7 +231,7 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
         backToStoryFromNoteBtn.hidden = false;
         addWordForm.hidden = false;
 
-        const noteData = savedWords[categoryName]?.[titleName] || { words: new Set(), sentences: new Set() };
+        const noteData = savedWords[categoryName]?.[titleName] || { words: new Set(), phrases: new Set(), sentences: new Set() };
 
         const sortItems = (set) => Array.from(set).sort((a, b) => {
             const lengthDifference = a.length - b.length;
@@ -239,7 +255,7 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
             voiceBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
 
-                if (type === 'words') {
+                if (type === 'words' || type === 'phrases') {
                     // Use the raw content URL from GitHub
                     const baseUrl = 'https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/';
                     // Convert to lowercase for case-insensitive matching
@@ -263,27 +279,21 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
                 }
             });
             
-            // ▼▼▼ 【修改】此處按鈕的點擊事件 ▼▼▼
             const wordBtn = document.createElement('button');
             wordBtn.textContent = 'Word';
             wordBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                // 連結到外部詞彙網站
                 const baseUrl = 'https://boydyang-designer.github.io/English-vocabulary/';
                 const wordForUrl = itemText.trim().toLowerCase();
                 
-                // URL 結構可能只支援單一單字，不支援片語
                 if (wordForUrl.includes(' ')) {
                     alert("「Word」查詢功能僅適用於單一單字。");
                     return;
                 }
                 
-                // 在 URL 後面附加單字和 from=story 參數
                 const finalUrl = `${baseUrl}?word=${wordForUrl}&from=story`;
-                // 在同一個分頁中導航以保留瀏覽器歷史紀錄
                 window.location.href = finalUrl;
             });
-            // ▲▲▲ 【修改】結束 ▲▲▲
 
             const copyBtn = document.createElement('button');
             copyBtn.textContent = 'Copy';
@@ -304,7 +314,7 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
                     savedWords[categoryName][titleName][type].delete(itemText);
                     const category = savedWords[categoryName];
                     const title = category[titleName];
-                    if (title.words.size === 0 && title.sentences.size === 0) delete category[titleName];
+                    if (title.words.size === 0 && title.phrases.size === 0 && title.sentences.size === 0) delete category[titleName];
                     if (Object.keys(category).length === 0) delete savedWords[categoryName];
                     saveWordsToStorage();
 
@@ -325,9 +335,16 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
 
         const words = sortItems(noteData.words);
         if (words.length === 0) {
-            noteListWordsContainer.innerHTML = '<p>No words or phrases saved yet.</p>';
+            noteListWordsContainer.innerHTML = '<p>No words saved yet.</p>';
         } else {
             words.forEach(word => createWordItem(word, 'words', noteListWordsContainer));
+        }
+
+        const phrases = sortItems(noteData.phrases);
+        if (phrases.length === 0) {
+            noteListPhrasesContainer.innerHTML = '<p>No phrases saved yet.</p>';
+        } else {
+            phrases.forEach(phrase => createWordItem(phrase, 'phrases', noteListPhrasesContainer));
         }
 
         const sentences = sortItems(noteData.sentences);
@@ -350,7 +367,7 @@ function addWordToNote(text, category, title) {
     if (!savedWords[category]) savedWords[category] = {};
     if (!savedWords[category][title]) {
         // Initialize with the new structure
-        savedWords[category][title] = { words: new Set(), sentences: new Set() };
+        savedWords[category][title] = { words: new Set(), phrases: new Set(), sentences: new Set() };
     }
 
     // Classify and add to the correct Set
@@ -371,6 +388,7 @@ exportWordsBtn.addEventListener('click', () => {
     for (const category in savedWords) {
         for (const title in savedWords[category]) {
             savedWords[category][title].words.forEach(word => allItems.add(word));
+            savedWords[category][title].phrases.forEach(phrase => allItems.add(phrase));
             savedWords[category][title].sentences.forEach(sentence => allItems.add(sentence));
         }
     }

@@ -335,6 +335,7 @@ button.secondary:hover {
 
 #word-note-list .word-item,
 #note-list-words .word-item, 
+#note-list-phrases .word-item,
 #note-list-sentences .word-item {
     display: flex;
     justify-content: space-between;
