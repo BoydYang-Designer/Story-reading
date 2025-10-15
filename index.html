@@ -106,6 +106,7 @@
 
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
   <script>
     const firebaseConfig = {
@@ -118,6 +119,7 @@
       measurementId: "G-HRMT77J4Z2"
     };
     firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore(); 
   </script>
 
   <script src="story.js"></script>

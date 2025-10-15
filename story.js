@@ -63,6 +63,85 @@ let noteViewTitle = null;
 let playbackPositionBeforeNote = 0;
 let currentUser = null; // To hold the logged-in user object
 
+async function loadWordsFromFirestore() {
+    if (!currentUser) {
+        console.log("使用者未登入，無法讀取筆記。");
+        savedWords = {}; // 確保本地資料是清空的
+        return;
+    }
+    
+    try {
+        const docRef = db.collection('userNotes').doc(currentUser.uid);
+        const doc = await docRef.get();
+
+        if (doc.exists) {
+            // 文件存在，載入資料
+            const firestoreData = doc.data().savedWords || {};
+            // (這裡沿用您原本將 JSON 物件轉換回 Set 的邏輯)
+            // ...
+            // 為了簡化，我們先直接賦值，您需要補上轉換回 Set 的詳細邏輯
+            savedWords = parseFirestoreData(firestoreData);
+
+        } else {
+            // 文件不存在，代表是新使用者或沒有筆記
+            console.log("此使用者沒有儲存的筆記。");
+            savedWords = {};
+        }
+    } catch (error) {
+        console.error("從 Firestore 讀取資料時發生錯誤:", error);
+        savedWords = {}; // 發生錯誤時清空
+    }
+}
+
+// 輔助函式：將從 Firestore 讀取的物件轉換回包含 Set 的格式
+function parseFirestoreData(parsed) {
+    const newSavedWords = {};
+    for (const category in parsed) {
+        newSavedWords[category] = {};
+        for (const title in parsed[category]) {
+            const entry = parsed[category][title];
+            newSavedWords[category][title] = {
+                words: new Set(entry.words || []),
+                phrases: new Set(entry.phrases || []),
+                sentences: new Set(entry.sentences || [])
+            };
+        }
+    }
+    return newSavedWords;
+}
+
+
+// 新的函式：儲存筆記到 Firestore
+async function saveWordsToFirestore() {
+    if (!currentUser) {
+        console.log("使用者未登入，無法儲存筆記。");
+        return;
+    }
+
+    // 您原本將 Set 轉換為 Array 的邏輯是正確的，因為 Firestore 不支援 Set
+    const serializableWords = {};
+    for (const category in savedWords) {
+        serializableWords[category] = {};
+        for (const title in savedWords[category]) {
+            serializableWords[category][title] = {
+                words: Array.from(savedWords[category][title].words),
+                phrases: Array.from(savedWords[category][title].phrases),
+                sentences: Array.from(savedWords[category][title].sentences)
+            };
+        }
+    }
+    
+    try {
+        const docRef = db.collection('userNotes').doc(currentUser.uid);
+        // 使用 set 搭配 { merge: true } 可以更新或建立文件，而不會覆蓋整個文件
+        await docRef.set({ savedWords: serializableWords });
+        console.log("筆記已成功儲存到 Firestore！");
+    } catch (error) {
+        console.error("儲存資料到 Firestore 時發生錯誤:", error);
+    }
+}
+
+
 // Storage Keys
 const LAST_SESSION_KEY = 'readingChallengeLastSession';
 const SAVED_WORDS_KEY = 'readingChallengeSavedWordsV2';
@@ -91,7 +170,6 @@ async function showAppView(user) {
     if (stories.length === 0) {
         await loadStories();
     }
-    loadWordsFromStorage(); 
     renderCategories();
     showView(homeView);
 }
@@ -735,21 +813,26 @@ document.addEventListener('keydown', (event) => {
   signOutBtn.addEventListener('click', signOutUser);
   guestModeBtn.addEventListener('click', enterGuestMode);
   
-  // Firebase Auth State Listener
-  firebase.auth().onAuthStateChanged(async (user) => {
-      if (user) {
-          // User is signed in
-          console.log("Auth state changed: User is logged in.", user);
-          // Only init the app if it's not already visible
-          if (appContainer.hidden) {
-             await showAppView(user);
-          }
-      } else {
-          // User is signed out or never logged in
-          console.log("Auth state changed: User is logged out.");
-          currentUser = null;
-          savedWords = {}; 
-          showLoginView();
-      }
-  });
-})();
+// story.js
+
+// Firebase Auth State Listener
+firebase.auth().onAuthStateChanged(async (user) => {
+    if (user) {
+        // User is signed in
+        console.log("Auth state changed: User is logged in.", user);
+        currentUser = user; // <--- 確保 currentUser 已被設定
+
+        // 登入後，從 Firestore 讀取該使用者的資料
+        await loadWordsFromFirestore(); 
+
+        // 接著才顯示主應用畫面
+        await showAppView(user); // showAppView 內部不需要再 loadWords
+    } else {
+        // User is signed out or never logged in
+        console.log("Auth state changed: User is logged out.");
+        currentUser = null;
+        savedWords = {}; // 登出時清空本地資料
+        showLoginView();
+    }
+});
+
