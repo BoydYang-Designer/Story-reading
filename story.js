@@ -111,11 +111,22 @@ function showView(view) {
 
 // --- Firebase Auth Functions ---
 function signIn() {
-function signIn() {
     const provider = new firebase.auth.GoogleAuthProvider();
-    // 將 signInWithPopup 改為 signInWithRedirect 來繞過 GitHub Pages 的安全限制
-    firebase.auth().signInWithRedirect(provider);
+    
+    // 將 signInWithRedirect 改回 signInWithPopup
+    firebase.auth().signInWithPopup(provider)
+        .then((result) => {
+            // 登入成功後，onAuthStateChanged 監聽器會自動處理
+            // 您可以在這裡添加額外的成功後邏輯（如果需要）
+            console.log("Sign-in successful via popup:", result.user);
+        })
+        .catch((error) => {
+            // 處理錯誤，例如使用者關閉彈出視窗
+            console.error("Sign-in popup error:", error.code, error.message);
+        });
 }
+
+// ... 其餘程式碼保持不變
 
 function signOutUser() {
     firebase.auth().signOut().catch((error) => {
