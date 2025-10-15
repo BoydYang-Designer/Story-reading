@@ -7,7 +7,23 @@
   <link rel="stylesheet" href="story.css">
 </head>
 <body>
-  <div class="container">
+
+  <div class="container" id="login-view">
+    <h1>Reading Challenge</h1>
+    <p class="subtitle">Your progress can be saved to the cloud.</p>
+    <div class="login-actions">
+      <button id="google-signin-btn">Sign in with Google</button>
+      <button id="guest-mode-btn" class="secondary">Continue as Guest</button>
+    </div>
+  </div>
+
+  <div class="container" id="app-container" hidden>
+    
+    <div id="user-status" class="user-status-header">
+        <span id="user-info">Guest Mode</span>
+        <button id="sign-out-btn" class="secondary" hidden>Sign Out</button>
+    </div>
+    
     <div id="home-view">
       <h1>Reading Challenge</h1>
       <div id="category-list" class="list"></div>
@@ -24,11 +40,9 @@
       </div>
     </div>
 
-
     <div id="playback-view" hidden>
       <h1 id="playback-title"></h1>
       <div id="text-container"></div>
-
       <div id="staging-area">
         <div class="staging-header">
           <span>Staging Area</span>
@@ -38,15 +52,12 @@
             <button id="copy-staged-btn" class="secondary">Copy</button>
           </div>
         </div>
-        <div id="staged-words-container" placeholder="Click words from the text above to add them here...">
-          </div>
+        <div id="staged-words-container" placeholder="Click words from the text above to add them here..."></div>
       </div>
-
       <div id="fixed-controls-container">
         <div class="controls">
           <input type="range" id="progress-bar" min="0" max="100" value="0">
-          
-<div class="playback-actions">
+          <div class="playback-actions">
             <button id="rewind-5" title="Rewind 5s">
               <svg class="icon-rewind" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 19 2 12 11 5 11 19"></polygon><polygon points="22 19 13 12 22 5 22 19"></polygon></svg>
             </button>
@@ -68,21 +79,17 @@
       </div>
     </div>
 
-
     <div id="note-view" hidden>
         <h1>Word Note</h1>
         <div id="add-word-form" hidden>
           <input type="text" id="new-word-input" placeholder="Enter a new word or sentence...">
           <button id="add-manual-word-btn">Add</button>
         </div>
-        
         <div id="note-content-wrapper">
           <div class="note-section-header"><h3>Words</h3></div>
           <div id="note-list-words" class="list"></div>
-          
           <div class="note-section-header"><h3>Phrases</h3></div>
           <div id="note-list-phrases" class="list"></div>
-
           <div class="note-section-header"><h3>Sentences</h3></div>
           <div id="note-list-sentences" class="list"></div>
         </div>
@@ -92,11 +99,27 @@
             <button class="secondary" id="back-to-home-from-note">Back to Home</button>
         </div>
     </div>
+  </div> 
 
+  <audio id="audio"></audio>
+  <p hidden>This app requires JavaScript to run.</p>
 
-    <audio id="audio"></audio>
-    <p hidden>This app requires JavaScript to run.</p>
-  </div>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDbGZT_q1zNQqdDtUNYy1sC63wHZtD6KAE",
+      authDomain: "my-reading-challenge-app.firebaseapp.com",
+      projectId: "my-reading-challenge-app",
+      storageBucket: "my-reading-challenge-app.firebasestorage.app",
+      messagingSenderId: "650410268845",
+      appId: "1:650410268845:web:f23af9ea10dc04d7adce24",
+      measurementId: "G-HRMT77J4Z2"
+    };
+    firebase.initializeApp(firebaseConfig);
+  </script>
+
   <script src="story.js"></script>
 </body>
 </html>
