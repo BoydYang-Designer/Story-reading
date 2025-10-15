@@ -70,14 +70,14 @@ const SAVED_WORDS_KEY = 'readingChallengeSavedWordsV2';
 
 // --- UI Management ---
 function showLoginView() {
-    loginView.hidden = false;
-    appContainer.hidden = true;
+    loginView.classList.remove('is-hidden');
+    appContainer.classList.add('is-hidden');
 }
 
 async function showAppView(user) {
     currentUser = user;
-    loginView.hidden = true;
-    appContainer.hidden = false;
+    loginView.classList.add('is-hidden');
+    appContainer.classList.remove('is-hidden');
     
     if (user) {
         userInfo.textContent = `Signed in as ${user.displayName}`;
@@ -98,9 +98,9 @@ async function showAppView(user) {
 
 function showView(view) {
     for (const el of [homeView, categoryView, playbackView, noteView]) {
-        el.hidden = true;
+        el.classList.add('is-hidden');
     }
-    view.hidden = false;
+    view.classList.remove('is-hidden');
 
     if (view === noteView) {
         document.body.classList.add('note-view-active');
