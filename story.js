@@ -63,89 +63,9 @@ let noteViewTitle = null;
 let playbackPositionBeforeNote = 0;
 let currentUser = null; // To hold the logged-in user object
 
-async function loadWordsFromFirestore() {
-    if (!currentUser) {
-        console.log("使用者未登入，無法讀取筆記。");
-        savedWords = {}; // 確保本地資料是清空的
-        return;
-    }
-    
-    try {
-        const docRef = db.collection('userNotes').doc(currentUser.uid);
-        const doc = await docRef.get();
-
-        if (doc.exists) {
-            // 文件存在，載入資料
-            const firestoreData = doc.data().savedWords || {};
-            // (這裡沿用您原本將 JSON 物件轉換回 Set 的邏輯)
-            // ...
-            // 為了簡化，我們先直接賦值，您需要補上轉換回 Set 的詳細邏輯
-            savedWords = parseFirestoreData(firestoreData);
-
-        } else {
-            // 文件不存在，代表是新使用者或沒有筆記
-            console.log("此使用者沒有儲存的筆記。");
-            savedWords = {};
-        }
-    } catch (error) {
-        console.error("從 Firestore 讀取資料時發生錯誤:", error);
-        savedWords = {}; // 發生錯誤時清空
-    }
-}
-
-// 輔助函式：將從 Firestore 讀取的物件轉換回包含 Set 的格式
-function parseFirestoreData(parsed) {
-    const newSavedWords = {};
-    for (const category in parsed) {
-        newSavedWords[category] = {};
-        for (const title in parsed[category]) {
-            const entry = parsed[category][title];
-            newSavedWords[category][title] = {
-                words: new Set(entry.words || []),
-                phrases: new Set(entry.phrases || []),
-                sentences: new Set(entry.sentences || [])
-            };
-        }
-    }
-    return newSavedWords;
-}
-
-
-// 新的函式：儲存筆記到 Firestore
-async function saveWordsToFirestore() {
-    if (!currentUser) {
-        console.log("使用者未登入，無法儲存筆記。");
-        return;
-    }
-
-    // 您原本將 Set 轉換為 Array 的邏輯是正確的，因為 Firestore 不支援 Set
-    const serializableWords = {};
-    for (const category in savedWords) {
-        serializableWords[category] = {};
-        for (const title in savedWords[category]) {
-            serializableWords[category][title] = {
-                words: Array.from(savedWords[category][title].words),
-                phrases: Array.from(savedWords[category][title].phrases),
-                sentences: Array.from(savedWords[category][title].sentences)
-            };
-        }
-    }
-    
-    try {
-        const docRef = db.collection('userNotes').doc(currentUser.uid);
-        // 使用 set 搭配 { merge: true } 可以更新或建立文件，而不會覆蓋整個文件
-        await docRef.set({ savedWords: serializableWords });
-        console.log("筆記已成功儲存到 Firestore！");
-    } catch (error) {
-        console.error("儲存資料到 Firestore 時發生錯誤:", error);
-    }
-}
-
-
 // Storage Keys
 const LAST_SESSION_KEY = 'readingChallengeLastSession';
 const SAVED_WORDS_KEY = 'readingChallengeSavedWordsV2';
-
 
 // --- UI Management ---
 function showLoginView() {
@@ -166,7 +86,7 @@ async function showAppView(user) {
         signOutBtn.hidden = true;
     }
     
-    // Load data and render initial view
+    // Load story data if not already loaded
     if (stories.length === 0) {
         await loadStories();
     }
@@ -175,92 +95,123 @@ async function showAppView(user) {
 }
 
 function showView(view) {
-    for (const el of [homeView, categoryView, playbackView, noteView]) {
+    [homeView, categoryView, playbackView, noteView].forEach(el => {
         el.classList.add('is-hidden');
-    }
+    });
     view.classList.remove('is-hidden');
 
-    if (view === noteView) {
-        document.body.classList.add('note-view-active');
-    } else {
-        document.body.classList.remove('note-view-active');
-    }
+    document.body.classList.toggle('note-view-active', view === noteView);
 }
 
 // --- Firebase Auth Functions ---
 function signIn() {
     const provider = new firebase.auth.GoogleAuthProvider();
-    
-    // 將 signInWithRedirect 改回 signInWithPopup
     firebase.auth().signInWithPopup(provider)
         .then((result) => {
-            // 登入成功後，onAuthStateChanged 監聽器會自動處理
-            // 您可以在這裡添加額外的成功後邏輯（如果需要）
             console.log("Sign-in successful via popup:", result.user);
+            // onAuthStateChanged will handle the UI update
         })
         .catch((error) => {
-            // 處理錯誤，例如使用者關閉彈出視窗
             console.error("Sign-in popup error:", error.code, error.message);
+            alert(`Sign-in failed: ${error.message}`);
         });
 }
-
-// ... 其餘程式碼保持不變
 
 function signOutUser() {
     firebase.auth().signOut().catch((error) => {
         console.error("Sign out error:", error);
     });
+    // The onAuthStateChanged listener will handle UI changes
 }
 
-function enterGuestMode() {
-    showAppView(null); // Pass null for guest user
+async function enterGuestMode() {
+    currentUser = null;
+    loadWordsFromStorage(); // Load notes from local storage for guests
+    await showAppView(null);
 }
 
+// --- Data Persistence (Unified) ---
 
-// --- Storage Functions ---
-function classifyEntry(text) {
-    const trimmedText = text.trim();
-    const wordCount = trimmedText.split(/\s+/).length;
-    const hasEndingPunctuation = /[.?!]$/.test(trimmedText);
-
-    if (wordCount > 4 || hasEndingPunctuation) return 'sentences';
-    if (wordCount > 1) return 'phrases';
-    return 'words';
+// Helper to convert Firestore data to local Set format
+function parseFirestoreData(parsed) {
+    const newSavedWords = {};
+    for (const category in parsed) {
+        newSavedWords[category] = {};
+        for (const title in parsed[category]) {
+            const entry = parsed[category][title];
+            newSavedWords[category][title] = {
+                words: new Set(entry.words || []),
+                phrases: new Set(entry.phrases || []),
+                sentences: new Set(entry.sentences || [])
+            };
+        }
+    }
+    return newSavedWords;
 }
 
-function loadWordsFromStorage() {
-    // NOTE: This will be modified later to load from Firestore for logged-in users.
-    const storedWords = localStorage.getItem(SAVED_WORDS_KEY);
-    if (!storedWords) {
-        savedWords = {};
+// Helper to convert local Set format to Firestore-compatible Array format
+function serializeDataForStorage(data) {
+    const serializable = {};
+    for (const category in data) {
+        serializable[category] = {};
+        for (const title in data[category]) {
+            serializable[category][title] = {
+                words: Array.from(data[category][title].words || []),
+                phrases: Array.from(data[category][title].phrases || []),
+                sentences: Array.from(data[category][title].sentences || [])
+            };
+        }
+    }
+    return serializable;
+}
+
+async function loadWordsFromFirestore() {
+    if (!currentUser) {
+        console.log("User not logged in, cannot load from Firestore.");
+        savedWords = {}; 
         return;
     }
     try {
-        const parsed = JSON.parse(storedWords);
-        savedWords = {}; // Reset before loading
-        for (const category in parsed) {
-            if (typeof parsed[category] !== 'object') continue;
-            savedWords[category] = {};
-            for (const title in parsed[category]) {
-                const entry = parsed[category][title];
-                savedWords[category][title] = { words: new Set(), phrases: new Set(), sentences: new Set() };
-                
-                if (Array.isArray(entry)) { // Oldest format
-                    entry.forEach(item => {
-                        const type = classifyEntry(item);
-                        savedWords[category][title][type].add(item);
-                    });
-                } else if (typeof entry === 'object' && entry !== null) { // New format
-                    if(entry.sentences) new Set(entry.sentences).forEach(item => savedWords[category][title].sentences.add(item));
-                    if(entry.phrases) new Set(entry.phrases).forEach(item => savedWords[category][title].phrases.add(item));
-                    if(entry.words) {
-                        new Set(entry.words).forEach(item => {
-                            const type = classifyEntry(item);
-                            savedWords[category][title][type].add(item);
-                        });
-                    }
-                }
-            }
+        const docRef = db.collection('userNotes').doc(currentUser.uid);
+        const doc = await docRef.get();
+        if (doc.exists) {
+            const firestoreData = doc.data().savedWords || {};
+            savedWords = parseFirestoreData(firestoreData);
+            console.log("Notes loaded from Firestore.");
+        } else {
+            console.log("No notes found in Firestore for this user.");
+            savedWords = {};
+        }
+    } catch (error) {
+        console.error("Error loading notes from Firestore:", error);
+        savedWords = {};
+    }
+}
+
+async function saveWordsToFirestore() {
+    if (!currentUser) {
+        console.log("User not logged in, cannot save to Firestore.");
+        return;
+    }
+    const serializableWords = serializeDataForStorage(savedWords);
+    try {
+        const docRef = db.collection('userNotes').doc(currentUser.uid);
+        await docRef.set({ savedWords: serializableWords });
+        console.log("Notes successfully saved to Firestore!");
+    } catch (error) {
+        console.error("Error saving notes to Firestore:", error);
+    }
+}
+
+function loadWordsFromStorage() {
+    try {
+        const storedWords = localStorage.getItem(SAVED_WORDS_KEY);
+        if (storedWords) {
+            const parsed = JSON.parse(storedWords);
+            savedWords = parseFirestoreData(parsed); // Reuse parser
+            console.log("Notes loaded from Local Storage.");
+        } else {
+            savedWords = {};
         }
     } catch (e) {
         console.error("Failed to parse words from localStorage", e);
@@ -269,19 +220,18 @@ function loadWordsFromStorage() {
 }
 
 function saveWordsToStorage() {
-    // NOTE: This will be modified later to save to Firestore for logged-in users.
-    const serializableWords = {};
-    for (const category in savedWords) {
-        serializableWords[category] = {};
-        for (const title in savedWords[category]) {
-            serializableWords[category][title] = {
-                words: Array.from(savedWords[category][title].words),
-                phrases: Array.from(savedWords[category][title].phrases),
-                sentences: Array.from(savedWords[category][title].sentences)
-            };
-        }
-    }
+    const serializableWords = serializeDataForStorage(savedWords);
     localStorage.setItem(SAVED_WORDS_KEY, JSON.stringify(serializableWords));
+    console.log("Notes saved to Local Storage.");
+}
+
+// === NEW UNIFIED SAVE FUNCTION ===
+function persistNotes() {
+    if (currentUser) {
+        saveWordsToFirestore();
+    } else {
+        saveWordsToStorage();
+    }
 }
 
 function saveLastPlaybackState() {
@@ -295,14 +245,38 @@ function clearLastPlaybackState() {
     localStorage.removeItem(LAST_SESSION_KEY);
 }
 
+// --- Word Classification ---
+function classifyEntry(text) {
+    const trimmedText = text.trim();
+    const wordCount = trimmedText.split(/\s+/).length;
+    const hasEndingPunctuation = /[.?!]$/.test(trimmedText);
+    if (wordCount > 4 || hasEndingPunctuation) return 'sentences';
+    if (wordCount > 1) return 'phrases';
+    return 'words';
+}
 
-// --- Word Note Functions (Unchanged) ---
+
+// --- Word Note Functions ---
+function addWordToNote(text, category, title) {
+    const cleanedText = text.trim();
+    if (!cleanedText || !category || !title) return;
+
+    if (!savedWords[category]) savedWords[category] = {};
+    if (!savedWords[category][title]) {
+        savedWords[category][title] = { words: new Set(), phrases: new Set(), sentences: new Set() };
+    }
+
+    const type = classifyEntry(cleanedText);
+    savedWords[category][title][type].add(cleanedText);
+    persistNotes(); // Use the new unified save function
+}
+
 function renderNoteView(level = 'categories', categoryName = null, titleName = null) {
     const noteContentWrapper = document.getElementById('note-content-wrapper');
-    addWordForm.classList.add('is-hidden');
+    addWordForm.hidden = true;
     backToStoryFromNoteBtn.hidden = true;
-    exportWordsBtn.hidden = true; 
-    
+    exportWordsBtn.hidden = true;
+
     const createListItem = (text, clickHandler, container) => {
         const item = document.createElement('div');
         item.className = 'category-item';
@@ -323,11 +297,11 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
             }
             backToHomeFromNoteBtn.textContent = 'Back to Home';
             backToHomeFromNoteBtn.onclick = () => showView(homeView);
-        } else {
-            const titles = Object.keys(savedWords[categoryName]).sort((a, b) => a.localeCompare(b));
+        } else { // level === 'titles'
+            const titles = Object.keys(savedWords[categoryName] || {}).sort((a, b) => a.localeCompare(b));
             titles.forEach(title => createListItem(title, () => renderNoteView('words', categoryName, title), tempListContainer));
             backToHomeFromNoteBtn.textContent = 'Back to Categories';
-            backToHomeFromNoteBtn.onclick = () => renderNoteView('categories'); 
+            backToHomeFromNoteBtn.onclick = () => renderNoteView('categories');
         }
     } else if (level === 'words' && categoryName && titleName) {
         noteContentWrapper.innerHTML = `
@@ -342,7 +316,7 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
         noteViewTitle = titleName;
         backToStoryFromNoteBtn.hidden = false;
         exportWordsBtn.hidden = false;
-        addWordForm.classList.remove('is-hidden');
+        addWordForm.hidden = false;
 
         const noteData = savedWords[categoryName]?.[titleName] || { words: new Set(), phrases: new Set(), sentences: new Set() };
         const sortItems = (set) => Array.from(set).sort((a, b) => a.localeCompare(b));
@@ -355,6 +329,8 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
             wordTextEl.textContent = itemText;
             const actions = document.createElement('div');
             actions.className = 'word-item-actions';
+            
+            // Voice Button
             const voiceBtn = document.createElement('button');
             voiceBtn.textContent = 'Voice';
             voiceBtn.addEventListener('click', (e) => {
@@ -367,6 +343,8 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
                 const wordAudio = new Audio(audioSrc);
                 wordAudio.play().catch(() => alert(`Audio for "${itemText}" was not found.`));
             });
+
+            // Word Button
             const wordBtn = document.createElement('button');
             wordBtn.textContent = 'Word';
             wordBtn.addEventListener('click', (e) => {
@@ -376,8 +354,10 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
                     alert("「Word」查詢功能僅適用於單一單字。");
                     return;
                 }
-                window.location.href = `https://boydyang-designer.github.io/English-vocabulary/?word=${wordForUrl}&from=story`;
+                window.open(`https://boydyang-designer.github.io/English-vocabulary/?word=${wordForUrl}&from=story`, '_blank');
             });
+
+            // Copy Button
             const copyBtn = document.createElement('button');
             copyBtn.textContent = 'Copy';
             copyBtn.addEventListener('click', (e) => {
@@ -387,6 +367,8 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
                     setTimeout(() => copyBtn.classList.remove('btn-success-feedback'), 500);
                 });
             });
+
+            // Delete Button
             const deleteBtn = document.createElement('button');
             deleteBtn.className = 'secondary';
             deleteBtn.textContent = 'Delete';
@@ -401,12 +383,13 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
                     if (Object.keys(savedWords[categoryName]).length === 0) {
                         delete savedWords[categoryName];
                     }
-                    saveWordsToStorage();
+                    persistNotes(); // Use unified save
                     if (!savedWords[categoryName]) renderNoteView('categories');
                     else if (!savedWords[categoryName][titleName]) renderNoteView('titles', categoryName);
                     else renderNoteView('words', categoryName, titleName);
                 }
             });
+
             actions.append(voiceBtn, wordBtn, copyBtn, deleteBtn);
             item.append(wordTextEl, actions);
             container.appendChild(item);
@@ -420,10 +403,10 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
 
         ['words', 'phrases', 'sentences'].forEach(type => {
             const items = sortItems(noteData[type]);
+            containers[type].innerHTML = '';
             if (items.length === 0) {
                 containers[type].innerHTML = `<p>No ${type} saved yet.</p>`;
             } else {
-                containers[type].innerHTML = '';
                 items.forEach(item => createWordItem(item, type, containers[type]));
             }
         });
@@ -434,81 +417,34 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
 }
 
 
-function addWordToNote(text, category, title) {
-    const cleanedText = text.trim();
-    if (!cleanedText || !category || !title) return;
+// --- Event Listeners & Core App Logic ---
 
-    if (!savedWords[category]) savedWords[category] = {};
-    if (!savedWords[category][title]) {
-        savedWords[category][title] = { words: new Set(), phrases: new Set(), sentences: new Set() };
-    }
-
-    const type = classifyEntry(cleanedText);
-    savedWords[category][title][type].add(cleanedText);
-    saveWordsToStorage();
-}
-
-// ... The rest of the functions (parafyAndMakeClickable, buildAudioCandidates, etc.) are mostly unchanged ...
-// ... I will paste them below for completeness ...
-
+// Note view listeners
 goToNoteBtn.addEventListener('click', () => {
     renderNoteView('categories');
     showView(noteView);
 });
 
 exportWordsBtn.addEventListener('click', () => {
-    const allItems = new Set();
+    let allItems = [];
     for (const category in savedWords) {
         for (const title in savedWords[category]) {
-            savedWords[category][title].words.forEach(word => allItems.add(word));
-            savedWords[category][title].phrases.forEach(phrase => allItems.add(phrase));
-            savedWords[category][title].sentences.forEach(sentence => allItems.add(sentence));
+            allItems = allItems.concat(
+                Array.from(savedWords[category][title].words),
+                Array.from(savedWords[category][title].phrases),
+                Array.from(savedWords[category][title].sentences)
+            );
         }
     }
-    if (allItems.size === 0) {
+    const uniqueItems = [...new Set(allItems)];
+    if (uniqueItems.length === 0) {
         alert("No items to copy.");
         return;
     }
-    const textToCopy = Array.from(allItems).sort((a, b) => a.localeCompare(b)).join('\n');
+    const textToCopy = uniqueItems.sort((a, b) => a.localeCompare(b)).join('\n');
     navigator.clipboard.writeText(textToCopy).then(() => {
-        alert(`${allItems.size} total items copied to clipboard.`);
+        alert(`${uniqueItems.length} total items copied to clipboard.`);
     }).catch(err => alert('Could not copy items.'));
-});
-
-function cleanWord(word) {
-  return word ? word.replace(/^[.,?!:;'"`“”‘’()[\]{}\-/*]+|[.,?!:;'"`“”‘’()[\]{}\-/*]+$/g, '') : '';
-}
-
-textContainer.addEventListener('click', (e) => {
-    const wordSpan = e.target.closest('.clickable-word');
-    if (wordSpan && window.getSelection().isCollapsed) {
-        const cleanedWord = cleanWord(wordSpan.textContent);
-        if (cleanedWord) {
-            const stagedWordEl = document.createElement('span');
-            stagedWordEl.className = 'staged-word';
-            stagedWordEl.textContent = cleanedWord;
-            stagedWordsContainer.appendChild(stagedWordEl);
-        }
-    }
-});
-
-stagedWordsContainer.addEventListener('click', (e) => {
-    if (e.target.closest('.staged-word')) e.target.remove();
-});
-
-clearStagingBtn.addEventListener('click', () => {
-    stagedWordsContainer.innerHTML = '';
-});
-
-addToNoteBtn.addEventListener('click', () => {
-    const stagedWords = Array.from(stagedWordsContainer.querySelectorAll('.staged-word'));
-    if (stagedWords.length === 0) return;
-    const textToAdd = stagedWords.map(el => el.textContent).join(' ');
-    if (textToAdd) {
-        addWordToNote(textToAdd, currentCategoryName, currentStoryTitle);
-        navigator.clipboard.writeText(textToAdd);
-        stagedWordsContainer.innerHTML = '';
-    }
 });
 
 addManualWordBtn.addEventListener('click', () => {
@@ -528,6 +464,55 @@ newWordInput.addEventListener('keydown', (event) => {
     }
 });
 
+// Staging area listeners
+function cleanWord(word) {
+  return word ? word.replace(/^[.,?!:;'"`“”‘’()[\]{}\-/*]+|[.,?!:;'"`“”‘’()[\]{}\-/*]+$/g, '') : '';
+}
+
+textContainer.addEventListener('click', (e) => {
+    if (window.getSelection().toString().length > 0) return; // Ignore if user is selecting text
+    const wordSpan = e.target.closest('.clickable-word');
+    if (wordSpan) {
+        const cleanedWord = cleanWord(wordSpan.textContent);
+        if (cleanedWord) {
+            const stagedWordEl = document.createElement('span');
+            stagedWordEl.className = 'staged-word';
+            stagedWordEl.textContent = cleanedWord;
+            stagedWordsContainer.appendChild(stagedWordEl);
+        }
+    }
+});
+
+stagedWordsContainer.addEventListener('click', (e) => {
+    if (e.target.classList.contains('staged-word')) e.target.remove();
+});
+
+clearStagingBtn.addEventListener('click', () => {
+    stagedWordsContainer.innerHTML = '';
+});
+
+addToNoteBtn.addEventListener('click', () => {
+    const stagedWords = Array.from(stagedWordsContainer.querySelectorAll('.staged-word'));
+    if (stagedWords.length === 0) return;
+    const textToAdd = stagedWords.map(el => el.textContent).join(' ');
+    if (textToAdd) {
+        addWordToNote(textToAdd, currentCategoryName, currentStoryTitle);
+        navigator.clipboard.writeText(textToAdd);
+        stagedWordsContainer.innerHTML = '';
+    }
+});
+
+copyStagedBtn.addEventListener('click', () => {
+    const textToCopy = Array.from(stagedWordsContainer.querySelectorAll('.staged-word')).map(el => el.textContent).join(' ');
+    if (textToCopy) {
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            copyStagedBtn.classList.add('btn-success-feedback');
+            setTimeout(() => copyStagedBtn.classList.remove('btn-success-feedback'), 500);
+        });
+    }
+});
+
+// Playback content functions
 function parafyAndMakeClickable(text) {
     const cleaned = String(text).replace(/[“”]/g, '"').replace(/[‘’]/g, "'").trim();
     const paragraphs = cleaned.split(/\n+/);
@@ -539,14 +524,14 @@ function parafyAndMakeClickable(text) {
         } else {
             pText.split(/(\s+|—|–)/).forEach(part => {
                 if (!part) return;
+                const span = document.createElement('span');
                 if (/^(\s+|—|–)$/.test(part)) {
-                    p.appendChild(document.createTextNode(part));
+                    span.textContent = part;
                 } else {
-                    const span = document.createElement('span');
                     span.className = 'clickable-word';
                     span.textContent = part;
-                    p.appendChild(span);
                 }
+                p.appendChild(span);
             });
         }
         frag.appendChild(p);
@@ -572,25 +557,23 @@ function tryNextAudioCandidate() {
   }
   audio.src = audioTriedCandidates.shift();
   audio.load();
-  audio.play().catch(() => playPauseBtn.classList.remove('is-playing'));
-  audio.onerror = tryNextAudioCandidate;
 }
 
+// Scrolling functions
 function computeScrollMax() {
   scrollMax = Math.max(0, textContainer.scrollHeight - textContainer.clientHeight);
 }
 
 function tickScroll() {
-  if (!isPlaying) return;
-  const duration = (Number.isFinite(audio.duration) && audio.duration > 0) ? audio.duration : durationFallback;
-  textContainer.scrollTop = (audio.currentTime / duration) * scrollMax;
-  rafId = window.requestAnimationFrame(tickScroll);
+  if (!isPlaying || !isFinite(audio.duration)) return;
+  textContainer.scrollTop = (audio.currentTime / audio.duration) * scrollMax;
+  rafId = requestAnimationFrame(tickScroll);
 }
 
 function startScroll() {
   if (rafId) cancelAnimationFrame(rafId);
   computeScrollMax();
-  rafId = window.requestAnimationFrame(tickScroll);
+  rafId = requestAnimationFrame(tickScroll);
 }
 
 function stopScroll() {
@@ -598,30 +581,37 @@ function stopScroll() {
   rafId = null;
 }
 
+// Story loading and rendering
 async function loadStories() {
-  const res = await fetch('https://raw.githubusercontent.com/BoydYang-Designer/Story-reading/main/story.json', { cache: 'no-store' });
-  if (!res.ok) throw new Error('Failed to fetch story.json');
-  const data = await res.json();
-  stories = Array.isArray(data['New Words']) ? data['New Words'] : [];
+  try {
+    const res = await fetch('https://raw.githubusercontent.com/BoydYang-Designer/Story-reading/main/story.json', { cache: 'no-store' });
+    if (!res.ok) throw new Error(`Failed to fetch story.json: ${res.statusText}`);
+    const data = await res.json();
+    stories = Array.isArray(data['New Words']) ? data['New Words'] : [];
+  } catch (error) {
+    console.error(error);
+    alert("Could not load story data. Please check your internet connection and try again.");
+  }
 }
 
 function renderCategories() {
   const categories = [...new Set(stories.flatMap(item => item['分類'] || []).map(c => c.trim()).filter(Boolean))].sort();
   categoryList.innerHTML = '';
-  const lastSession = localStorage.getItem(LAST_SESSION_KEY);
-  if (lastSession) {
-      try {
-          const { title, time } = JSON.parse(lastSession);
-          if (title && typeof time === 'number') {
-              const continueBtn = document.createElement('div');
-              continueBtn.className = 'category-item';
-              continueBtn.id = 'continue-last-session-btn';
-              continueBtn.innerHTML = `<svg class="continue-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg><span>Continue Last Session</span>`;
-              continueBtn.addEventListener('click', () => resumeLastPlayback(title, time));
-              categoryList.appendChild(continueBtn);
-          }
-      } catch (e) { console.error("Failed to parse last session data", e); }
-  }
+  try {
+    const lastSession = localStorage.getItem(LAST_SESSION_KEY);
+    if (lastSession) {
+        const { title, time } = JSON.parse(lastSession);
+        if (title && typeof time === 'number') {
+            const continueBtn = document.createElement('div');
+            continueBtn.className = 'category-item';
+            continueBtn.id = 'continue-last-session-btn';
+            continueBtn.innerHTML = `<svg class="continue-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg><span>Continue Last Session</span>`;
+            continueBtn.addEventListener('click', () => resumeLastPlayback(title, time));
+            categoryList.appendChild(continueBtn);
+        }
+    }
+  } catch (e) { console.error("Failed to parse last session data", e); }
+  
   categories.forEach(category => {
     const div = document.createElement('div');
     div.className = 'category-item';
@@ -641,15 +631,18 @@ function resumeLastPlayback(title, time) {
     }
     const category = story['分類']?.[0];
     if (!category) return;
-    showCategory(category);
+    
+    currentStoryList = stories.filter(item => item['分類']?.map(c => c.trim()).includes(category))
+                            .sort((a, b) => String(a['標題']).localeCompare(String(b['標題'])));
     const indexInList = currentStoryList.findIndex(s => s['標題'] === title);
+    
     if (indexInList > -1) {
+        showCategory(category);
         showPlayback(indexInList, time);
     }
 }
 
 function showCategory(category) {
-  showView(categoryView);
   categoryTitle.textContent = category;
   currentCategoryName = category;
   titleList.innerHTML = '';
@@ -662,6 +655,7 @@ function showCategory(category) {
     div.addEventListener('click', () => showPlayback(index));
     titleList.appendChild(div);
   });
+  showView(categoryView);
 }
 
 function showPlayback(index, startTime = 0) {
@@ -671,33 +665,35 @@ function showPlayback(index, startTime = 0) {
   if (!story) return;
   
   currentStoryTitle = story['標題'];
-  showView(playbackView);
   playbackTitle.textContent = currentStoryTitle;
   textContainer.innerHTML = '';
   textContainer.appendChild(parafyAndMakeClickable('\n\n' + story['內文']));
   textContainer.scrollTop = 0;
   progressBar.value = 0;
+  
   setAudioSourceWithFallback(currentStoryTitle);
+
   prevStoryBtn.hidden = currentStoryIndex <= 0;
   nextStoryBtn.hidden = currentStoryIndex >= currentStoryList.length - 1;
 
   const onLoaded = () => {
-    if (startTime > 0) audio.currentTime = startTime;
-    if (!audio.paused) {
-      isPlaying = true;
-      playPauseBtn.classList.add('is-playing');
-      startScroll();
+    if (startTime > 0 && isFinite(audio.duration)) {
+        audio.currentTime = Math.min(startTime, audio.duration);
     }
-    audio.removeEventListener('loadedmetadata', onLoaded);
+    audio.play(); // Autoplay when loaded
+    audio.removeEventListener('canplaythrough', onLoaded);
   };
-  audio.addEventListener('loadedmetadata', onLoaded);
+  audio.addEventListener('canplaythrough', onLoaded);
+
+  showView(playbackView);
 }
 
 function stopAudioAndReset() {
   stagedWordsContainer.innerHTML = '';
   stopScroll();
-  try { audio.pause(); } catch {}
-  audio.currentTime = 0;
+  audio.pause();
+  audio.removeAttribute('src');
+  audio.load();
   isPlaying = false;
   playPauseBtn.classList.remove('is-playing');
   progressBar.value = 0;
@@ -706,96 +702,62 @@ function stopAudioAndReset() {
   playbackPositionBeforeNote = 0;
 }
 
-backToHomeBtn.addEventListener('click', () => {
-  stopAudioAndReset();
-  showView(homeView);
-});
-backToCategoryBtn.addEventListener('click', () => {
-  stopAudioAndReset();
-  showView(categoryView);
-});
+// Button listeners
+backToHomeBtn.addEventListener('click', () => { stopAudioAndReset(); showView(homeView); });
+backToCategoryBtn.addEventListener('click', () => { stopAudioAndReset(); showView(categoryView); });
 rewindBtn.addEventListener('click', () => { audio.currentTime = Math.max(0, audio.currentTime - 5); });
-forwardBtn.addEventListener('click', () => { audio.currentTime = Math.min(audio.duration || 0, audio.currentTime + 5); });
-playPauseBtn.addEventListener('click', () => { isPlaying ? audio.pause() : audio.play(); });
+forwardBtn.addEventListener('click', () => { if(isFinite(audio.duration)) audio.currentTime = Math.min(audio.duration, audio.currentTime + 5); });
+playPauseBtn.addEventListener('click', () => { isPlaying ? audio.pause() : audio.play().catch(e => console.error("Play failed:", e)); });
+prevStoryBtn.addEventListener('click', () => { if (currentStoryIndex > 0) { stopAudioAndReset(); showPlayback(currentStoryIndex - 1); } });
+nextStoryBtn.addEventListener('click', () => { if (currentStoryIndex < currentStoryList.length - 1) { stopAudioAndReset(); showPlayback(currentStoryIndex + 1); } });
 
-audio.addEventListener('play', () => {
-    isPlaying = true;
-    playPauseBtn.classList.add('is-playing');
-    startScroll();
-    saveLastPlaybackState();
-});
-audio.addEventListener('pause', () => {
-    isPlaying = false;
-    playPauseBtn.classList.remove('is-playing');
-    stopScroll();
-    saveLastPlaybackState();
-});
-
-prevStoryBtn.addEventListener('click', () => {
-    if (currentStoryIndex > 0) {
-        stopAudioAndReset();
-        showPlayback(currentStoryIndex - 1);
-    }
-});
-nextStoryBtn.addEventListener('click', () => {
-    if (currentStoryIndex < currentStoryList.length - 1) {
-        stopAudioAndReset();
-        showPlayback(currentStoryIndex + 1);
-    }
-});
-
-function updateProgressBar() {
-    if (audio.duration) progressBar.value = (audio.currentTime / audio.duration) * 100;
-}
-function seekAudio() {
-    if (audio.duration) audio.currentTime = (progressBar.value / 100) * audio.duration;
-}
-
+// Note view navigation
 goToStoryNoteBtn.addEventListener('click', () => {
     if (currentCategoryName && currentStoryTitle) {
         playbackPositionBeforeNote = audio.currentTime;
+        audio.pause(); // Pause audio when going to notes
         renderNoteView('words', currentCategoryName, currentStoryTitle);
         showView(noteView);
     }
 });
+
 backToStoryFromNoteBtn.addEventListener('click', () => {
     if (noteViewCategory && noteViewTitle) {
-        const indexInList = currentStoryList.findIndex(s => s['標題'] === noteViewTitle);
-        if (indexInList > -1) {
-            showPlayback(indexInList, playbackPositionBeforeNote);
+        // Find the story in the master list to get its category
+        const story = stories.find(s => s['標題'] === noteViewTitle);
+        const category = story?.['分類']?.[0];
+        if (category) {
+            // Re-establish context
+            currentStoryList = stories.filter(item => item['分類']?.map(c => c.trim()).includes(category))
+                                      .sort((a, b) => String(a['標題']).localeCompare(String(b['標題'])));
+            const indexInList = currentStoryList.findIndex(s => s['標題'] === noteViewTitle);
+            if (indexInList > -1) {
+                showCategory(category); // Go to title list view first
+                showPlayback(indexInList, playbackPositionBeforeNote); // Then open playback
+            }
         }
     }
 });
 
-copyStagedBtn.addEventListener('click', () => {
-    const textToCopy = Array.from(stagedWordsContainer.querySelectorAll('.staged-word')).map(el => el.textContent).join(' ');
-    if (textToCopy) {
-        navigator.clipboard.writeText(textToCopy).then(() => {
-            copyStagedBtn.classList.add('btn-success-feedback');
-            setTimeout(() => copyStagedBtn.classList.remove('btn-success-feedback'), 500);
-        });
-    }
-});
+// Audio and progress bar listeners
+audio.addEventListener('play', () => { isPlaying = true; playPauseBtn.classList.add('is-playing'); startScroll(); saveLastPlaybackState(); });
+audio.addEventListener('pause', () => { isPlaying = false; playPauseBtn.classList.remove('is-playing'); stopScroll(); saveLastPlaybackState(); });
+audio.addEventListener('ended', () => { clearLastPlaybackState(); stopAudioAndReset(); document.getElementById('continue-last-session-btn')?.remove(); });
+audio.addEventListener('timeupdate', () => { if (isFinite(audio.duration)) progressBar.value = (audio.currentTime / audio.duration) * 100; });
+progressBar.addEventListener('input', () => { if (isFinite(audio.duration)) audio.currentTime = (progressBar.value / 100) * audio.duration; });
 
-window.addEventListener('resize', computeScrollMax, { passive: true });
-audio.addEventListener('ended', () => {
-    clearLastPlaybackState();
-    stopAudioAndReset();
-    document.getElementById('continue-last-session-btn')?.remove();
-});
-audio.addEventListener('timeupdate', updateProgressBar);
-progressBar.addEventListener('input', seekAudio);
-
+// Keyboard shortcuts
 document.addEventListener('keydown', (event) => {
-  if (playbackView.hidden === false) {
-    if(event.code === 'Space') { event.preventDefault(); playPauseBtn.click(); }
-    if(event.code === 'ArrowLeft') { event.preventDefault(); rewindBtn.click(); }
-    if(event.code === 'ArrowRight') { event.preventDefault(); forwardBtn.click(); }
+  if (!playbackView.classList.contains('is-hidden')) {
+    if (event.target.tagName === 'INPUT') return; // Don't interfere with text input
+    if (event.code === 'Space') { event.preventDefault(); playPauseBtn.click(); }
+    if (event.code === 'ArrowLeft') { event.preventDefault(); rewindBtn.click(); }
+    if (event.code === 'ArrowRight') { event.preventDefault(); forwardBtn.click(); }
   }
 });
 
 // --- App Initialization ---
-(function init() {
+function init() {
   // Collapsible note sections listener
   document.getElementById('note-content-wrapper').addEventListener('click', (e) => {
       const header = e.target.closest('.note-section-header');
@@ -803,7 +765,7 @@ document.addEventListener('keydown', (event) => {
           const targetList = document.getElementById(header.dataset.target);
           if (targetList) {
               header.classList.toggle('is-expanded');
-              targetList.classList.toggle('collapsed');
+              targetList.style.display = targetList.style.display === 'none' ? '' : 'none';
           }
       }
   });
@@ -813,26 +775,25 @@ document.addEventListener('keydown', (event) => {
   signOutBtn.addEventListener('click', signOutUser);
   guestModeBtn.addEventListener('click', enterGuestMode);
   
-// story.js
+  window.addEventListener('resize', computeScrollMax, { passive: true });
+}
 
-// Firebase Auth State Listener
+// --- Firebase Auth State Listener (The App's Entry Point) ---
 firebase.auth().onAuthStateChanged(async (user) => {
     if (user) {
-        // User is signed in
+        // User is signed in.
         console.log("Auth state changed: User is logged in.", user);
-        currentUser = user; // <--- 確保 currentUser 已被設定
-
-        // 登入後，從 Firestore 讀取該使用者的資料
-        await loadWordsFromFirestore(); 
-
-        // 接著才顯示主應用畫面
-        await showAppView(user); // showAppView 內部不需要再 loadWords
+        currentUser = user;
+        await loadWordsFromFirestore(); // Load user's notes from the cloud
+        await showAppView(user);
     } else {
-        // User is signed out or never logged in
+        // User is signed out or has never logged in.
         console.log("Auth state changed: User is logged out.");
         currentUser = null;
-        savedWords = {}; // 登出時清空本地資料
+        savedWords = {}; // Clear any local data
         showLoginView();
     }
 });
 
+// Start the application
+init();
