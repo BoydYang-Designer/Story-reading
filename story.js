@@ -111,8 +111,9 @@ function showView(view) {
 
 // --- Firebase Auth Functions ---
 function signIn() {
+function signIn() {
     const provider = new firebase.auth.GoogleAuthProvider();
-    // 將 signInWithPopup 改為 signInWithRedirect
+    // 將 signInWithPopup 改為 signInWithRedirect 來繞過 GitHub Pages 的安全限制
     firebase.auth().signInWithRedirect(provider);
 }
 
