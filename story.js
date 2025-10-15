@@ -112,11 +112,8 @@ function showView(view) {
 // --- Firebase Auth Functions ---
 function signIn() {
     const provider = new firebase.auth.GoogleAuthProvider();
-    firebase.auth().signInWithPopup(provider)
-        .catch((error) => {
-            console.error("Sign in error:", error.code, error.message);
-            alert(`Login failed: ${error.message}`);
-        });
+    // 將 signInWithPopup 改為 signInWithRedirect
+    firebase.auth().signInWithRedirect(provider);
 }
 
 function signOutUser() {
