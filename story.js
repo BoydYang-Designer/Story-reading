@@ -426,7 +426,7 @@ const copyBtn = document.createElement('button');
                 // 使用 setTimeout 確保樣式渲染後再彈出對話框
                 setTimeout(() => {
                     // 2. 彈出確認對話框
-                    if (confirm(`Are you sure you want to delete '${itemText}'?`)) {
+                    if (confirm(`Delete '${itemText}'?`)) {
                         // 3. 如果使用者確認刪除
                         savedWords[categoryName][titleName][type].delete(itemText);
                         
