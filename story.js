@@ -13,6 +13,7 @@ const googleSigninBtn = document.getElementById('google-signin-btn');
 const guestModeBtn = document.getElementById('guest-mode-btn');
 const userInfo = document.getElementById('user-info');
 const signOutBtn = document.getElementById('sign-out-btn');
+const signInFromGuestBtn = document.getElementById('sign-in-from-guest-btn');
 
 // Existing Elements
 const categoryList = document.getElementById('category-list');
@@ -68,9 +69,47 @@ const LAST_SESSION_KEY = 'readingChallengeLastSession';
 const SAVED_WORDS_KEY = 'readingChallengeSavedWordsV2';
 
 // --- UI Management ---
-function showLoginView() {
-    loginView.classList.remove('is-hidden');
-    appContainer.classList.add('is-hidden');
+
+function showAppView(user) {
+    hideAllViews();
+    
+    // 確保應用程式主容器顯示
+    loginView.classList.add('is-hidden');
+    appContainer.classList.remove('is-hidden');
+    
+    // 判斷是否為訪客模式 (user 不存在，或 user.isAnonymous 為 true)
+    const isGuest = !user || user.isAnonymous;
+
+    if (!isGuest) {
+        // --- 帳號登入模式 ---
+        // 顯示使用者名稱或 Email
+        userInfo.textContent = `Signed in as: ${user.displayName || user.email}`;
+        
+        // 顯示 Sign Out 按鈕，隱藏 Sign In 按鈕
+        signOutBtn.classList.remove('is-hidden');
+        signInFromGuestBtn.classList.add('is-hidden');
+        
+        // 如果使用者目前不在 Story/Playback 頁面，預設回到 Home (分類列表)
+        if (!currentStoryCategory || !currentStoryTitle) {
+            renderHomeView();
+        } else {
+            // 保持在當前 Story/Playback 頁面 (假設頁面已透過其他邏輯渲染)
+            // 這裡可以加入重新載入當前故事內容的邏輯，以確保狀態同步
+            // ...
+        }
+
+    } else {
+        // --- 訪客模式 (Guest Mode) ---
+        // 顯示訪客模式狀態
+        userInfo.textContent = 'Guest Mode';
+        
+        // 隱藏 Sign Out 按鈕，顯示 Sign In 按鈕
+        signOutBtn.classList.add('is-hidden');
+        signInFromGuestBtn.classList.remove('is-hidden');
+        
+        // 訪客模式下，預設回到 Home
+        renderHomeView();
+    }
 }
 
 async function showAppView(user) {
@@ -832,12 +871,18 @@ function init() {
       }
   });
 
-  // Auth button listeners
-  googleSigninBtn.addEventListener('click', signIn);
-  signOutBtn.addEventListener('click', signOutUser);
-  guestModeBtn.addEventListener('click', enterGuestMode);
-  
-  window.addEventListener('resize', computeScrollMax, { passive: true });
+googleSigninBtn.addEventListener('click', signIn);
+guestModeBtn.addEventListener('click', enterGuestMode);
+
+// App Header actions
+signOutBtn.addEventListener('click', signOutUser);
+
+// NEW: Sign In from Guest Mode button logic
+if (signInFromGuestBtn) {
+    signInFromGuestBtn.addEventListener('click', signIn);
+}
+ 
+window.addEventListener('resize', computeScrollMax, { passive: true });
 }
 
 // --- Firebase Auth State Listener (The App's Entry Point) ---
