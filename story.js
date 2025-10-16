@@ -165,6 +165,33 @@ function serializeDataForStorage(data) {
     return serializable;
 }
 
+// NEW: Helper function to merge local guest notes into user's notes
+function mergeNotes(guestNotes, userNotes) {
+    const merged = userNotes; // Start with the user's notes
+
+    for (const category in guestNotes) {
+        if (!merged[category]) {
+            merged[category] = guestNotes[category]; // If category doesn't exist, add it entirely
+            continue;
+        }
+        for (const title in guestNotes[category]) {
+            if (!merged[category][title]) {
+                merged[category][title] = guestNotes[category][title]; // If title doesn't exist, add it entirely
+                continue;
+            }
+
+            // If both exist, merge the Sets
+            const guestEntry = guestNotes[category][title];
+            const userEntry = merged[category][title];
+
+            guestEntry.words.forEach(word => userEntry.words.add(word));
+            guestEntry.phrases.forEach(phrase => userEntry.phrases.add(phrase));
+            guestEntry.sentences.forEach(sentence => userEntry.sentences.add(sentence));
+        }
+    }
+    return merged;
+}
+
 async function loadWordsFromFirestore() {
     if (!currentUser) {
         console.log("User not logged in, cannot load from Firestore.");
@@ -784,8 +811,39 @@ firebase.auth().onAuthStateChanged(async (user) => {
         // User is signed in.
         console.log("Auth state changed: User is logged in.", user);
         currentUser = user;
-        await loadWordsFromFirestore(); // Load user's notes from the cloud
+
+        // --- START: MERGE GUEST NOTES LOGIC ---
+        const guestNotesRaw = localStorage.getItem(SAVED_WORDS_KEY);
+        
+        // First, load the user's existing notes from the cloud
+        await loadWordsFromFirestore(); // This will populate `savedWords`
+
+        if (guestNotesRaw) {
+            console.log("Found guest notes in local storage. Merging...");
+            try {
+                // Parse and format guest notes from local storage
+                const guestNotesParsed = JSON.parse(guestNotesRaw);
+                const guestNotes = parseFirestoreData(guestNotesParsed);
+
+                // Merge guest notes into the notes we loaded from Firestore
+                savedWords = mergeNotes(guestNotes, savedWords);
+
+                // Save the newly merged data back to Firestore
+                await saveWordsToFirestore();
+                
+                // Important: Clean up local storage to prevent re-merging
+                localStorage.removeItem(SAVED_WORDS_KEY);
+                console.log("Merge successful and local guest notes cleared.");
+
+            } catch (error) {
+                console.error("Error merging guest notes:", error);
+            }
+        }
+        // --- END: MERGE GUEST NOTES LOGIC ---
+
+        // Finally, show the app view with the complete (and possibly merged) notes
         await showAppView(user);
+
     } else {
         // User is signed out or has never logged in.
         console.log("Auth state changed: User is logged out.");
