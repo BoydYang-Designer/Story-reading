@@ -70,68 +70,49 @@ const SAVED_WORDS_KEY = 'readingChallengeSavedWordsV2';
 
 // --- UI Management ---
 
-function showAppView(user) {
-    hideAllViews();
+// NEW: Function to show the login view
+function showLoginView() {
+    // Hide the main app container and show the login screen
+    appContainer.classList.add('is-hidden');
+    loginView.classList.remove('is-hidden');
     
-    // 確保應用程式主容器顯示
-    loginView.classList.add('is-hidden');
-    appContainer.classList.remove('is-hidden');
-    
-    // 判斷是否為訪客模式 (user 不存在，或 user.isAnonymous 為 true)
-    const isGuest = !user || user.isAnonymous;
+    // Hide all internal app views as a cleanup step
+    [homeView, categoryView, playbackView, noteView].forEach(el => {
+        el.classList.add('is-hidden');
+    });
 
-    if (!isGuest) {
-        // --- 帳號登入模式 ---
-        // 顯示使用者名稱或 Email
-        userInfo.textContent = `Signed in as: ${user.displayName || user.email}`;
-        
-        // 顯示 Sign Out 按鈕，隱藏 Sign In 按鈕
-        signOutBtn.classList.remove('is-hidden');
-        signInFromGuestBtn.classList.add('is-hidden');
-        
-        // 如果使用者目前不在 Story/Playback 頁面，預設回到 Home (分類列表)
-        if (!currentStoryCategory || !currentStoryTitle) {
-            renderHomeView();
-        } else {
-            // 保持在當前 Story/Playback 頁面 (假設頁面已透過其他邏輯渲染)
-            // 這裡可以加入重新載入當前故事內容的邏輯，以確保狀態同步
-            // ...
-        }
-
-    } else {
-        // --- 訪客模式 (Guest Mode) ---
-        // 顯示訪客模式狀態
-        userInfo.textContent = 'Guest Mode';
-        
-        // 隱藏 Sign Out 按鈕，顯示 Sign In 按鈕
-        signOutBtn.classList.add('is-hidden');
-        signInFromGuestBtn.classList.remove('is-hidden');
-        
-        // 訪客模式下，預設回到 Home
-        renderHomeView();
-    }
+    // Reset any ongoing playback state
+    stopAudioAndReset();
 }
 
+// FIXED: Merged and corrected showAppView function
 async function showAppView(user) {
     currentUser = user;
     loginView.classList.add('is-hidden');
     appContainer.classList.remove('is-hidden');
     
-    if (user) {
-        userInfo.textContent = `Signed in as ${user.displayName}`;
-        signOutBtn.hidden = false;
+    const isGuest = !user || user.isAnonymous;
+
+    if (!isGuest) {
+        // --- Signed In Mode ---
+        userInfo.textContent = `Signed in as: ${user.displayName || user.email}`;
+        signOutBtn.classList.remove('is-hidden');
+        signInFromGuestBtn.classList.add('is-hidden');
     } else {
+        // --- Guest Mode ---
         userInfo.textContent = 'Guest Mode';
-        signOutBtn.hidden = true;
+        signOutBtn.classList.add('is-hidden');
+        signInFromGuestBtn.classList.remove('is-hidden');
     }
-    
+
     // Load story data if not already loaded
     if (stories.length === 0) {
         await loadStories();
     }
     renderCategories();
-    showView(homeView);
+    showView(homeView); // Default to home view
 }
+
 
 function showView(view) {
     [homeView, categoryView, playbackView, noteView].forEach(el => {
@@ -424,7 +405,7 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
             });
 
             // Copy Button
-const copyBtn = document.createElement('button');
+            const copyBtn = document.createElement('button');
             copyBtn.className = 'secondary';
             copyBtn.textContent = 'Copy';
             copyBtn.addEventListener('click', (e) => {
@@ -450,7 +431,7 @@ const copyBtn = document.createElement('button');
                 }
             });
 
-// Delete Button
+            // Delete Button
             const deleteBtn = document.createElement('button');
             deleteBtn.className = 'secondary';
             deleteBtn.textContent = 'Delete';
@@ -871,18 +852,18 @@ function init() {
       }
   });
 
-googleSigninBtn.addEventListener('click', signIn);
-guestModeBtn.addEventListener('click', enterGuestMode);
+  googleSigninBtn.addEventListener('click', signIn);
+  guestModeBtn.addEventListener('click', enterGuestMode);
 
-// App Header actions
-signOutBtn.addEventListener('click', signOutUser);
+  // App Header actions
+  signOutBtn.addEventListener('click', signOutUser);
 
-// NEW: Sign In from Guest Mode button logic
-if (signInFromGuestBtn) {
-    signInFromGuestBtn.addEventListener('click', signIn);
-}
+  // NEW: Sign In from Guest Mode button logic
+  if (signInFromGuestBtn) {
+      signInFromGuestBtn.addEventListener('click', signIn);
+  }
  
-window.addEventListener('resize', computeScrollMax, { passive: true });
+  window.addEventListener('resize', computeScrollMax, { passive: true });
 }
 
 // --- Firebase Auth State Listener (The App's Entry Point) ---
@@ -929,7 +910,7 @@ firebase.auth().onAuthStateChanged(async (user) => {
         console.log("Auth state changed: User is logged out.");
         currentUser = null;
         savedWords = {}; // Clear any local data
-        showLoginView();
+        showLoginView(); // FIXED: Call the correct function to show the login screen
     }
 });
 
