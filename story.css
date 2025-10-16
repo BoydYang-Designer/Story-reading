@@ -500,3 +500,41 @@ button.btn-success-feedback {
     border-color: #e57373 !important;      /* A red border for emphasis */
     transition: background-color 0.1s ease, border-color 0.1s ease;
 }
+
+
+/* 確保 Note 頁面容器可以滾動 */
+#note-view {
+    /* 這裡假設 note-view 佔滿螢幕高度，且內部的內容可以滾動 */
+    padding: 20px; /* 內邊距讓內容不會緊貼邊緣 */
+    /* 確保其在父容器中佔據空間，並允許內容滾動 */
+    overflow-y: auto; 
+    height: 100vh; /* 如果它是一個全屏視圖 */
+    box-sizing: border-box; /* 確保 padding 不增加總高度 */
+}
+
+/* 固定輸入表單 */
+#add-word-form {
+    /* 使用 sticky 固定在頂部 */
+    position: sticky;
+    top: 0; /* 固定在視窗或父容器的頂部 */
+    
+    /* 確保它在滾動內容之上 */
+    z-index: 10; 
+    
+    /* 關鍵：給予背景色，讓它覆蓋下方滾動的內容，避免文字穿透 */
+    background-color: var(--color-bg); 
+    
+    /* 增加一些邊框或陰影，使其看起來像懸浮在內容上方 */
+    padding: 10px 0; /* 垂直方向的間距 */
+    border-bottom: 1px solid var(--color-border); /* 底部邊線 */
+    margin-bottom: 10px; /* 與下方內容的間隔 */
+    
+    /* 讓 input 和 button 佈局更美觀 */
+    display: flex;
+    gap: 10px; /* 輸入框和按鈕之間的間隔 */
+}
+
+/* 讓輸入框佔滿剩餘空間 */
+#new-word-input {
+    flex-grow: 1; 
+}
