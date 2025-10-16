@@ -385,14 +385,30 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
             });
 
             // Copy Button
-            const copyBtn = document.createElement('button');
+const copyBtn = document.createElement('button');
+            copyBtn.className = 'secondary';
             copyBtn.textContent = 'Copy';
             copyBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
+
+                // 1. 複製到剪貼簿 (現有邏輯)
                 navigator.clipboard.writeText(itemText).then(() => {
+                    copyBtn.textContent = 'Copied!';
                     copyBtn.classList.add('btn-success-feedback');
-                    setTimeout(() => copyBtn.classList.remove('btn-success-feedback'), 500);
+                    setTimeout(() => {
+                        copyBtn.textContent = 'Copy';
+                        copyBtn.classList.remove('btn-success-feedback');
+                    }, 1000);
+                }).catch(err => {
+                    console.error('Could not copy text: ', err);
                 });
+
+                // 2. **新增邏輯: 將文字填入到手動新增輸入框**
+                const newWordInput = document.getElementById('new-word-input');
+                if (newWordInput) {
+                    newWordInput.value = itemText;
+                    newWordInput.focus(); // 讓輸入框獲得焦點，方便使用者下一步操作
+                }
             });
 
 // Delete Button
