@@ -493,3 +493,10 @@ button.btn-success-feedback {
   padding: 4px 12px;
   font-size: 13px;
 }
+
+/* 10. Deleting Item Feedback */
+.word-item.is-deleting {
+    background-color: #fce8e8 !important; /* A soft red background */
+    border-color: #e57373 !important;      /* A red border for emphasis */
+    transition: background-color 0.1s ease, border-color 0.1s ease;
+}

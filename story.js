@@ -395,26 +395,45 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
                 });
             });
 
-            // Delete Button
+// Delete Button
             const deleteBtn = document.createElement('button');
             deleteBtn.className = 'secondary';
             deleteBtn.textContent = 'Delete';
             deleteBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                if (confirm(`Are you sure you want to delete '${itemText}'?`)) {
-                    savedWords[categoryName][titleName][type].delete(itemText);
-                    const titleData = savedWords[categoryName][titleName];
-                    if (titleData.words.size === 0 && titleData.phrases.size === 0 && titleData.sentences.size === 0) {
-                        delete savedWords[categoryName][titleName];
+                
+                // 1. **優化邏輯: 標記項目為淺紅色 (使用 Class)**
+                //    使用 setTimeout 將樣式標記操作延遲，確保在彈出 confirm 前，瀏覽器有機會渲染樣式
+                //    否則，confirm() 會阻塞主執行緒，導致樣式變化可能看不到。
+                item.classList.add('is-deleting'); 
+
+                // 使用 setTimeout 確保樣式渲染後再彈出對話框
+                setTimeout(() => {
+                    // 2. 彈出確認對話框
+                    if (confirm(`Are you sure you want to delete '${itemText}'?`)) {
+                        // 3. 如果使用者確認刪除
+                        savedWords[categoryName][titleName][type].delete(itemText);
+                        
+                        // 檢查並清理空標題和空類別
+                        const titleData = savedWords[categoryName][titleName];
+                        if (titleData.words.size === 0 && titleData.phrases.size === 0 && titleData.sentences.size === 0) {
+                            delete savedWords[categoryName][titleName];
+                        }
+                        if (Object.keys(savedWords[categoryName]).length === 0) {
+                            delete savedWords[categoryName];
+                        }
+                        
+                        persistNotes(); // 儲存至本地或雲端
+                        
+                        // 4. 重新渲染 Note 視圖 (會自動移除 is-deleting 效果，因為 DOM 元素被替換)
+                        if (!savedWords[categoryName]) renderNoteView('categories');
+                        else if (!savedWords[categoryName][titleName]) renderNoteView('titles', categoryName);
+                        else renderNoteView('words', categoryName, titleName);
+                    } else {
+                        // 5. 如果使用者取消, 立即移除 Class
+                        item.classList.remove('is-deleting');
                     }
-                    if (Object.keys(savedWords[categoryName]).length === 0) {
-                        delete savedWords[categoryName];
-                    }
-                    persistNotes(); // Use unified save
-                    if (!savedWords[categoryName]) renderNoteView('categories');
-                    else if (!savedWords[categoryName][titleName]) renderNoteView('titles', categoryName);
-                    else renderNoteView('words', categoryName, titleName);
-                }
+                }, 50); // 短暫延遲 50ms
             });
 
             actions.append(voiceBtn, wordBtn, copyBtn, deleteBtn);
