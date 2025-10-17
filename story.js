@@ -293,19 +293,25 @@ function clearLastPlaybackState() {
 }
 
 // --- Word Classification ---
+
 function classifyEntry(text) {
     const trimmedText = text.trim();
     const wordCount = trimmedText.split(/\s+/).length;
     const hasEndingPunctuation = /[.?!]$/.test(trimmedText);
+    // 新增：檢查是否包含連字號
+    const hasHyphen = trimmedText.includes('-');
+
     if (wordCount > 4 || hasEndingPunctuation) return 'sentences';
-    if (wordCount > 1) return 'phrases';
+    // 修改：如果單詞數大於1，或者包含連字號，就歸類為片語
+    if (wordCount > 1 || hasHyphen) return 'phrases';
     return 'words';
 }
 
 
 // --- Word Note Functions ---
 function addWordToNote(text, category, title) {
-    const cleanedText = text.trim();
+    // 將 cleanedText 從 const 改為 let，使其可以被修改
+    let cleanedText = text.trim();
     if (!cleanedText || !category || !title) return;
 
     if (!savedWords[category]) savedWords[category] = {};
@@ -314,6 +320,13 @@ function addWordToNote(text, category, title) {
     }
 
     const type = classifyEntry(cleanedText);
+
+    // 新增邏輯：如果類型是片語，將空格替換為連字號
+    if (type === 'phrases') {
+        // 使用正規表示式 \s+ 來處理一個或多個連續空格的情況
+        cleanedText = cleanedText.replace(/\s+/g, '-');
+    }
+
     savedWords[category][title][type].add(cleanedText);
     persistNotes(); // Use the new unified save function
 }
