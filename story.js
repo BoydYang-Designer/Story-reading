@@ -49,6 +49,7 @@ const addManualWordBtn = document.getElementById('add-manual-word-btn');
 
 // State Variables
 let stories = [];
+let vocabularyData = [];
 let isPlaying = false;
 let rafId = null;
 let scrollMax = 0;
@@ -104,9 +105,9 @@ async function showAppView(user) {
         signInFromGuestBtn.classList.remove('is-hidden');
     }
 
-    // Load story data if not already loaded
-    if (stories.length === 0) {
-        await loadStories();
+    // Load story and vocabulary data if not already loaded
+    if (stories.length === 0 || vocabularyData.length === 0) {
+        await loadData(); // <--- 更新函式名稱
     }
     renderCategories();
     showView(homeView); // Default to home view
@@ -331,6 +332,50 @@ function addWordToNote(text, category, title) {
     persistNotes(); // Use the new unified save function
 }
 
+function showNotification(message, type = 'info') {
+    const containerId = 'notification-container';
+    let container = document.getElementById(containerId);
+    if (!container) {
+        container = document.createElement('div');
+        container.id = containerId;
+        // 基本樣式，使其固定在右上角
+        container.style.position = 'fixed';
+        container.style.top = '20px';
+        container.style.right = '20px';
+        container.style.zIndex = '1050';
+        document.body.appendChild(container);
+    }
+
+    const toast = document.createElement('div');
+    // 模仿您在 index.js 中的 class 名稱
+    toast.className = `toast ${type}`; 
+    toast.textContent = message;
+
+    // 添加一些基本樣式讓它可見
+    Object.assign(toast.style, {
+        padding: '10px 20px',
+        backgroundColor: type === 'error' ? '#f44336' : (type === 'warning' ? '#ff9800' : '#4CAF50'),
+        color: 'white',
+        borderRadius: '5px',
+        marginBottom: '10px',
+        boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+        opacity: '0',
+        transition: 'opacity 0.3s'
+    });
+    
+    container.appendChild(toast);
+    
+    // 淡入效果
+    setTimeout(() => { toast.style.opacity = '1'; }, 10);
+
+    // 4秒後自動移除
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.addEventListener('transitionend', () => toast.remove());
+    }, 4000);
+}
+
+
 function renderNoteView(level = 'categories', categoryName = null, titleName = null) {
     const noteContentWrapper = document.getElementById('note-content-wrapper');
     addWordForm.hidden = true;
@@ -396,12 +441,12 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
             voiceBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 if (type === 'sentences') {
-                    alert(`Voice function for SENTENCE: "${itemText}"`);
+                    showNotification(`Voice function for SENTENCES is not available yet.`, 'warning');
                     return;
                 }
                 const audioSrc = `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(itemText.trim().toLowerCase())}.mp3`;
                 const wordAudio = new Audio(audioSrc);
-                wordAudio.play().catch(() => alert(`Audio for "${itemText}" was not found.`));
+                wordAudio.play().catch(() => showNotification(`Audio for "${itemText}" was not found.`, 'error'));
             });
 
             // Word Button
@@ -410,11 +455,29 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
             wordBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 const wordForUrl = itemText.trim().toLowerCase();
+
+                // --- 【核心修改】開始 ---
+                // 步驟 1: 只檢查是否包含空格，允許連字號通過
                 if (wordForUrl.includes(' ')) {
-                    alert("「Word」查詢功能僅適用於單一單字。");
+                    // 同時更新提示文字，使其更精確
+                    showNotification("「Word」查詢功能不適用於包含空格的片語。", 'warning');
                     return;
                 }
-                window.open(`https://boydyang-designer.github.io/English-vocabulary/?word=${wordForUrl}&from=story`, '_blank');
+                // --- 【核心修改】結束 ---
+
+                // 步驟 2: 在已載入的 vocabularyData 中查找單字是否存在 (忽略大小寫)
+                const wordExists = vocabularyData.some(wordObj => 
+                    (wordObj.Words || "").toLowerCase() === wordForUrl
+                );
+
+                // 步驟 3: 根據查找結果決定行為
+                if (wordExists) {
+                    // 如果存在，則在新分頁中開啟
+                    window.open(`https://boydyang-designer.github.io/English-vocabulary/?word=${encodeURIComponent(wordForUrl)}&from=story`, '_blank');
+                } else {
+                    // 如果不存在，顯示提示且不跳轉
+                    showNotification(`單字 "${itemText}" 在詞庫中找不到對應資料。`, 'error');
+                }
             });
 
             // Copy Button
@@ -423,8 +486,6 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
             copyBtn.textContent = 'Copy';
             copyBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
-
-                // 1. 複製到剪貼簿 (現有邏輯)
                 navigator.clipboard.writeText(itemText).then(() => {
                     copyBtn.textContent = 'Copied!';
                     copyBtn.classList.add('btn-success-feedback');
@@ -435,12 +496,10 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
                 }).catch(err => {
                     console.error('Could not copy text: ', err);
                 });
-
-                // 2. **新增邏輯: 將文字填入到手動新增輸入框**
                 const newWordInput = document.getElementById('new-word-input');
                 if (newWordInput) {
                     newWordInput.value = itemText;
-                    newWordInput.focus(); // 讓輸入框獲得焦點，方便使用者下一步操作
+                    newWordInput.focus();
                 }
             });
 
@@ -450,20 +509,10 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
             deleteBtn.textContent = 'Delete';
             deleteBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                
-                // 1. **優化邏輯: 標記項目為淺紅色 (使用 Class)**
-                //    使用 setTimeout 將樣式標記操作延遲，確保在彈出 confirm 前，瀏覽器有機會渲染樣式
-                //    否則，confirm() 會阻塞主執行緒，導致樣式變化可能看不到。
-                item.classList.add('is-deleting'); 
-
-                // 使用 setTimeout 確保樣式渲染後再彈出對話框
+                item.classList.add('is-deleting');
                 setTimeout(() => {
-                    // 2. 彈出確認對話框
                     if (confirm(`Delete '${itemText}'?`)) {
-                        // 3. 如果使用者確認刪除
                         savedWords[categoryName][titleName][type].delete(itemText);
-                        
-                        // 檢查並清理空標題和空類別
                         const titleData = savedWords[categoryName][titleName];
                         if (titleData.words.size === 0 && titleData.phrases.size === 0 && titleData.sentences.size === 0) {
                             delete savedWords[categoryName][titleName];
@@ -471,18 +520,14 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
                         if (Object.keys(savedWords[categoryName]).length === 0) {
                             delete savedWords[categoryName];
                         }
-                        
-                        persistNotes(); // 儲存至本地或雲端
-                        
-                        // 4. 重新渲染 Note 視圖 (會自動移除 is-deleting 效果，因為 DOM 元素被替換)
+                        persistNotes();
                         if (!savedWords[categoryName]) renderNoteView('categories');
                         else if (!savedWords[categoryName][titleName]) renderNoteView('titles', categoryName);
                         else renderNoteView('words', categoryName, titleName);
                     } else {
-                        // 5. 如果使用者取消, 立即移除 Class
                         item.classList.remove('is-deleting');
                     }
-                }, 50); // 短暫延遲 50ms
+                }, 50);
             });
 
             actions.append(voiceBtn, wordBtn, copyBtn, deleteBtn);
@@ -677,15 +722,28 @@ function stopScroll() {
 }
 
 // Story loading and rendering
-async function loadStories() {
+async function loadData() { // <--- 函式更名
   try {
-    const res = await fetch('https://raw.githubusercontent.com/BoydYang-Designer/Story-reading/main/story.json', { cache: 'no-store' });
-    if (!res.ok) throw new Error(`Failed to fetch story.json: ${res.statusText}`);
-    const data = await res.json();
-    stories = Array.isArray(data['New Words']) ? data['New Words'] : [];
+    // 使用 Promise.all 同時獲取兩個 JSON 檔案
+    const [storyRes, vocabRes] = await Promise.all([
+        fetch('https://raw.githubusercontent.com/BoydYang-Designer/Story-reading/main/story.json', { cache: 'no-store' }),
+        fetch('https://boydyang-designer.github.io/English-vocabulary/audio_files/Z_total_words.json', { cache: 'no-store' })
+    ]);
+
+    if (!storyRes.ok) throw new Error(`Failed to fetch story.json: ${storyRes.statusText}`);
+    if (!vocabRes.ok) throw new Error(`Failed to fetch Z_total_words.json: ${vocabRes.statusText}`);
+
+    const storyJson = await storyRes.json();
+    const vocabJson = await vocabRes.json();
+    
+    stories = Array.isArray(storyJson['New Words']) ? storyJson['New Words'] : [];
+    vocabularyData = Array.isArray(vocabJson['New Words']) ? vocabJson['New Words'] : []; // 將單字資料存入新變數
+
+    console.log("✅ Stories and Vocabulary data loaded successfully.");
+
   } catch (error) {
     console.error(error);
-    alert("Could not load story data. Please check your internet connection and try again.");
+    alert("Could not load necessary app data. Please check your internet connection and try again.");
   }
 }
 
