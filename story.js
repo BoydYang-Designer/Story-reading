@@ -215,7 +215,7 @@ async function loadWordsFromFirestore() {
     if (!currentUser) {
         console.log("User not logged in, cannot load from Firestore.");
         savedWords = {}; 
-        return;
+        return; // Keep this part
     }
     try {
         const docRef = db.collection('userNotes').doc(currentUser.uid);
@@ -230,7 +230,8 @@ async function loadWordsFromFirestore() {
         }
     } catch (error) {
         console.error("Error loading notes from Firestore:", error);
-        savedWords = {};
+        // 不要在這裡清空 savedWords，而是向上拋出錯誤
+        throw new Error("Failed to load user notes from Firestore.");
     }
 }
 
@@ -868,48 +869,48 @@ function init() {
 // --- Firebase Auth State Listener (The App's Entry Point) ---
 firebase.auth().onAuthStateChanged(async (user) => {
     if (user) {
-        // User is signed in.
-        console.log("Auth state changed: User is logged in.", user);
-        currentUser = user; // --- 關鍵修正：第一時間就設定全域的 currentUser ---
+        currentUser = user;
 
-        // --- START: MERGE GUEST NOTES LOGIC ---
-        const guestNotesRaw = localStorage.getItem(SAVED_WORDS_KEY);
-        
-        // 現在 currentUser 已經有值，可以安全地從 Firestore 載入資料
-        await loadWordsFromFirestore(); 
+        try {
+            // --- START: NEW TRY BLOCK ---
+            const guestNotesRaw = localStorage.getItem(SAVED_WORDS_KEY);
+            
+            await loadWordsFromFirestore(); // 如果這裡失敗，會直接跳到 catch
 
-        if (guestNotesRaw) {
-            console.log("Found guest notes in local storage. Merging...");
-            try {
-                // 解析並格式化本機儲存的訪客筆記
+            if (guestNotesRaw) {
+                console.log("Found guest notes in local storage. Merging...");
+                
                 const guestNotesParsed = JSON.parse(guestNotesRaw);
                 const guestNotes = parseFirestoreData(guestNotesParsed);
 
-                // 將訪客筆記合併到我們從 Firestore 載入的筆記中
                 savedWords = mergeNotes(guestNotes, savedWords);
 
-                // 將新合併的資料存回 Firestore
-                await saveWordsToFirestore();
+                await saveWordsToFirestore(); // 只有在成功載入後，才進行合併儲存
                 
-                // 重要：清除本機儲存，以防止重複合併
                 localStorage.removeItem(SAVED_WORDS_KEY);
                 console.log("Merge successful and local guest notes cleared.");
-
-            } catch (error) {
-                console.error("Error merging guest notes:", error);
             }
-        }
-        // --- END: MERGE GUEST NOTES LOGIC ---
+            
+            // 成功載入（或合併）後，顯示 App
+            await showAppView(user);
+            // --- END: NEW TRY BLOCK ---
 
-        // 最後，使用完整（且可能已合併）的筆記資料顯示應用程式主畫面
-        await showAppView(user);
+        } catch (error) {
+            // --- START: NEW CATCH BLOCK ---
+            console.error("Critical error during user session initialization:", error);
+            alert("Could not load your saved notes. Please check your internet connection and try again. Your notes will not be saved until the issue is resolved.");
+            
+            // 可以在這裡顯示一個錯誤畫面，或者直接登出使用者以保護資料
+            showLoginView(); 
+            // --- END: NEW CATCH BLOCK ---
+        }
 
     } else {
-        // User is signed out or has never logged in.
+        // User is signed out
         console.log("Auth state changed: User is logged out.");
         currentUser = null;
-        savedWords = {}; // 清除記憶體中的任何資料
-        showLoginView(); // 顯示登入畫面
+        savedWords = {};
+        showLoginView();
     }
 });
 
