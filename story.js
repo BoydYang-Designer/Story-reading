@@ -87,7 +87,6 @@ function showLoginView() {
 
 // FIXED: Merged and corrected showAppView function
 async function showAppView(user) {
-    currentUser = user;
     loginView.classList.add('is-hidden');
     appContainer.classList.remove('is-hidden');
     
@@ -871,28 +870,28 @@ firebase.auth().onAuthStateChanged(async (user) => {
     if (user) {
         // User is signed in.
         console.log("Auth state changed: User is logged in.", user);
-        currentUser = user;
+        currentUser = user; // --- 關鍵修正：第一時間就設定全域的 currentUser ---
 
         // --- START: MERGE GUEST NOTES LOGIC ---
         const guestNotesRaw = localStorage.getItem(SAVED_WORDS_KEY);
         
-        // First, load the user's existing notes from the cloud
-        await loadWordsFromFirestore(); // This will populate `savedWords`
+        // 現在 currentUser 已經有值，可以安全地從 Firestore 載入資料
+        await loadWordsFromFirestore(); 
 
         if (guestNotesRaw) {
             console.log("Found guest notes in local storage. Merging...");
             try {
-                // Parse and format guest notes from local storage
+                // 解析並格式化本機儲存的訪客筆記
                 const guestNotesParsed = JSON.parse(guestNotesRaw);
                 const guestNotes = parseFirestoreData(guestNotesParsed);
 
-                // Merge guest notes into the notes we loaded from Firestore
+                // 將訪客筆記合併到我們從 Firestore 載入的筆記中
                 savedWords = mergeNotes(guestNotes, savedWords);
 
-                // Save the newly merged data back to Firestore
+                // 將新合併的資料存回 Firestore
                 await saveWordsToFirestore();
                 
-                // Important: Clean up local storage to prevent re-merging
+                // 重要：清除本機儲存，以防止重複合併
                 localStorage.removeItem(SAVED_WORDS_KEY);
                 console.log("Merge successful and local guest notes cleared.");
 
@@ -902,15 +901,15 @@ firebase.auth().onAuthStateChanged(async (user) => {
         }
         // --- END: MERGE GUEST NOTES LOGIC ---
 
-        // Finally, show the app view with the complete (and possibly merged) notes
+        // 最後，使用完整（且可能已合併）的筆記資料顯示應用程式主畫面
         await showAppView(user);
 
     } else {
         // User is signed out or has never logged in.
         console.log("Auth state changed: User is logged out.");
         currentUser = null;
-        savedWords = {}; // Clear any local data
-        showLoginView(); // FIXED: Call the correct function to show the login screen
+        savedWords = {}; // 清除記憶體中的任何資料
+        showLoginView(); // 顯示登入畫面
     }
 });
 
