@@ -434,53 +434,47 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
             wordTextEl.textContent = itemText;
             const actions = document.createElement('div');
             actions.className = 'word-item-actions';
-            
-            // Voice Button
-            const voiceBtn = document.createElement('button');
-            voiceBtn.textContent = 'Voice';
-            voiceBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                if (type === 'sentences') {
-                    showNotification(`Voice function for SENTENCES is not available yet.`, 'warning');
-                    return;
-                }
-                const audioSrc = `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(itemText.trim().toLowerCase())}.mp3`;
-                const wordAudio = new Audio(audioSrc);
-                wordAudio.play().catch(() => showNotification(`Audio for "${itemText}" was not found.`, 'error'));
-            });
 
-            // Word Button
-            const wordBtn = document.createElement('button');
-            wordBtn.textContent = 'Word';
-            wordBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const wordForUrl = itemText.trim().toLowerCase();
+            // Conditionally add buttons based on type
+            if (type === 'words' || type === 'phrases') {
+                // Voice Button (for words and phrases only)
+                const voiceBtn = document.createElement('button');
+                voiceBtn.textContent = 'Voice';
+                voiceBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const audioSrc = `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(itemText.trim().toLowerCase())}.mp3`;
+                    const wordAudio = new Audio(audioSrc);
+                    wordAudio.play().catch(() => showNotification(`Audio for "${itemText}" was not found.`, 'error'));
+                });
 
-                // --- 【核心修改】開始 ---
-                // 步驟 1: 只檢查是否包含空格，允許連字號通過
-                if (wordForUrl.includes(' ')) {
-                    // 同時更新提示文字，使其更精確
-                    showNotification("「Word」查詢功能不適用於包含空格的片語。", 'warning');
-                    return;
-                }
-                // --- 【核心修改】結束 ---
+                // Word Button (for words and phrases only)
+                const wordBtn = document.createElement('button');
+                wordBtn.textContent = 'Word';
+                wordBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const wordForUrl = itemText.trim().toLowerCase();
 
-                // 步驟 2: 在已載入的 vocabularyData 中查找單字是否存在 (忽略大小寫)
-                const wordExists = vocabularyData.some(wordObj => 
-                    (wordObj.Words || "").toLowerCase() === wordForUrl
-                );
+                    if (wordForUrl.includes(' ')) {
+                        showNotification("「Word」查詢功能不適用於包含空格的片語。", 'warning');
+                        return;
+                    }
 
-                // 步驟 3: 根據查找結果決定行為
-                if (wordExists) {
-                    // 如果存在，則在新分頁中開啟
-                    window.open(`https://boydyang-designer.github.io/English-vocabulary/?word=${encodeURIComponent(wordForUrl)}&from=story`, '_blank');
-                } else {
-                    // 如果不存在，顯示提示且不跳轉
-                    showNotification(`單字 "${itemText}" 在詞庫中找不到對應資料。`, 'error');
-                }
-            });
+                    const wordExists = vocabularyData.some(wordObj => 
+                        (wordObj.Words || "").toLowerCase() === wordForUrl
+                    );
 
-            // Copy Button
+                    if (wordExists) {
+                        window.open(`https://boydyang-designer.github.io/English-vocabulary/?word=${encodeURIComponent(wordForUrl)}&from=story`, '_blank');
+                    } else {
+                        showNotification(`單字 "${itemText}" 在詞庫中找不到對應資料。`, 'error');
+                    }
+                });
+
+                actions.appendChild(voiceBtn);
+                actions.appendChild(wordBtn);
+            }
+
+            // Copy Button (for all types: words, phrases, sentences)
             const copyBtn = document.createElement('button');
             copyBtn.className = 'secondary';
             copyBtn.textContent = 'Copy';
@@ -503,7 +497,7 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
                 }
             });
 
-            // Delete Button
+            // Delete Button (for all types: words, phrases, sentences)
             const deleteBtn = document.createElement('button');
             deleteBtn.className = 'secondary';
             deleteBtn.textContent = 'Delete';
@@ -530,7 +524,7 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
                 }, 50);
             });
 
-            actions.append(voiceBtn, wordBtn, copyBtn, deleteBtn);
+            actions.append(copyBtn, deleteBtn);
             item.append(wordTextEl, actions);
             container.appendChild(item);
         };
