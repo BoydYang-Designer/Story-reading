@@ -243,7 +243,7 @@ async function saveWordsToFirestore() {
     const serializableWords = serializeDataForStorage(savedWords);
     try {
         const docRef = db.collection('userNotes').doc(currentUser.uid);
-        await docRef.set({ savedWords: serializableWords });
+        await docRef.set({ savedWords: serializableWords }, { merge: true });
         console.log("Notes successfully saved to Firestore!");
     } catch (error) {
         console.error("Error saving notes to Firestore:", error);
