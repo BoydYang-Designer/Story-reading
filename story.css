@@ -108,7 +108,7 @@ h1 { font-size: 25px; font-weight: 600; }
 #text-container {
   height: 400px;
   overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
+  /* -webkit-overflow-scrolling: touch; */ /* <-- 已移除 */
   background-color: var(--color-surface);
   padding-left: 1em;
   padding-right: 1em;
@@ -123,8 +123,10 @@ h1 { font-size: 25px; font-weight: 600; }
   /* Keep original padding-bottom for layout compatibility */
   padding-bottom: 280px;
   /* Add smooth scrolling for user interactions */
-  scroll-behavior: smooth;
+  /* scroll-behavior: smooth; */ /* <-- 已移除 */
 }
+
+
 #text-container p { margin: 0 0 1.2em; }
 #text-container p:last-child { margin-bottom: 0; }
 
