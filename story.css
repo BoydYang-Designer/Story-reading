@@ -155,7 +155,6 @@ h1 { font-size: 25px; font-weight: 600; }
 
 #text-container .timestamp-sentence.is-current {
   background-color: var(--color-accent-light);
-  font-weight: 600;
 }
 /* --- End Timestamp Styles --- */
 
