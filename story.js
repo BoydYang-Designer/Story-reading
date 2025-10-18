@@ -615,29 +615,44 @@ function cleanWord(word) {
 }
 
 textContainer.addEventListener('click', (e) => {
-    if (window.getSelection().toString().length > 0) return; // Ignore if user is selecting text
+    // 忽略使用者用滑鼠選取/反白文字時的點擊
+    if (window.getSelection().toString().length > 0) return;
 
     if (isTimestampMode) {
-        const sentenceSpan = e.target.closest('.timestamp-sentence');
-        if (sentenceSpan) {
-            // Seek audio
-            const startTime = parseFloat(sentenceSpan.dataset.start);
-            if (!isNaN(startTime)) {
-                audio.currentTime = startTime;
+        if (isPlaying) {
+            // 播放中：點擊會跳轉音訊並將整個句子加入暫存區
+            const sentenceSpan = e.target.closest('.timestamp-sentence');
+            if (sentenceSpan) {
+                const startTime = parseFloat(sentenceSpan.dataset.start);
+                if (!isNaN(startTime)) {
+                    audio.currentTime = startTime; // 跳轉音訊到句子開頭
+                }
+                
+                // 清空暫存區並加入點擊的句子
+                stagedWordsContainer.innerHTML = ''; 
+                const sentenceText = sentenceSpan.textContent.trim();
+                if (sentenceText) {
+                    const stagedEl = document.createElement('span');
+                    stagedEl.className = 'staged-word';
+                    stagedEl.textContent = sentenceText;
+                    stagedWordsContainer.appendChild(stagedEl);
+                }
             }
-            
-            // --- MODIFIED BEHAVIOR ---
-            // Clear staging area first, then add the new sentence
-            stagedWordsContainer.innerHTML = ''; 
-            const sentenceText = sentenceSpan.textContent.trim();
-            if (sentenceText) {
-                const stagedEl = document.createElement('span');
-                stagedEl.className = 'staged-word';
-                stagedEl.textContent = sentenceText;
-                stagedWordsContainer.appendChild(stagedEl);
+        } else {
+            // 暫停時：點擊會將單字加入暫存區，不影響音訊
+            const wordSpan = e.target.closest('.clickable-word');
+            if (wordSpan) {
+                const cleanedWord = cleanWord(wordSpan.textContent);
+                if (cleanedWord) {
+                    const stagedWordEl = document.createElement('span');
+                    stagedWordEl.className = 'staged-word';
+                    stagedWordEl.textContent = cleanedWord;
+                    stagedWordsContainer.appendChild(stagedWordEl);
+                }
             }
         }
-    } else { // JSON Mode
+    } else { 
+        // 原始 JSON 模式：總是暫存單字
         const wordSpan = e.target.closest('.clickable-word');
         if (wordSpan) {
             const cleanedWord = cleanWord(wordSpan.textContent);
@@ -650,6 +665,7 @@ textContainer.addEventListener('click', (e) => {
         }
     }
 });
+
 
 stagedWordsContainer.addEventListener('click', (e) => {
     if (e.target.classList.contains('staged-word')) e.target.remove();
@@ -715,15 +731,32 @@ function renderTimestampContent() {
     timestampData.forEach(line => {
         const p = document.createElement('p');
         p.className = 'timestamp-sentence';
-        p.textContent = line.sentence;
         p.dataset.start = line.start;
         p.dataset.end = line.end;
+
+        // NEW: 將句子拆分為單詞並用 span 包裹
+        // 這使得在音訊暫停時單詞可以被單獨點擊
+        line.sentence.split(/(\s+|—|–)/).forEach(part => {
+            if (!part) return;
+            const span = document.createElement('span');
+            // 檢查這部分是否只是空白或破折號
+            if (/^(\s+|—|–)$/.test(part)) {
+                span.textContent = part; // 直接附加
+            } else {
+                // 如果是單詞，使其可點擊
+                span.className = 'clickable-word';
+                span.textContent = part;
+            }
+            p.appendChild(span);
+        });
+        
         frag.appendChild(p);
     });
     textContainer.appendChild(frag);
     lastHighlightedSentence = null;
-    computeScrollMax(); // Recalculate scroll max for the new content
+    computeScrollMax(); // 為新內容重新計算最大滾動距離
 }
+
 
 function buildAudioCandidates(title) {
   return ['audio/' + encodeURIComponent(title.trim()) + '.mp3'];
@@ -1224,4 +1257,3 @@ firebase.auth().onAuthStateChanged(async (user) => {
 
 // Start the application
 init();
-
