@@ -74,6 +74,7 @@ let isTimestampMode = false;
 let timestampData = [];
 let hasTimestampFile = false;
 let lastHighlightedSentence = null;
+let timestampUpdateRafId = null; // For smooth scrolling animation
 
 // Storage Keys
 const LAST_SESSION_KEY = 'readingChallengeLastSession';
@@ -749,19 +750,12 @@ function computeScrollMax() {
 }
 
 function tickScroll() {
-  if (!isPlaying || !isFinite(audio.duration) || isTimestampMode) {
-      stopScroll();
-      return;
-  }
+  if (!isPlaying || !isFinite(audio.duration)) return;
   textContainer.scrollTop = (audio.currentTime / audio.duration) * scrollMax;
   rafId = requestAnimationFrame(tickScroll);
 }
 
 function startScroll() {
-  if (isTimestampMode) {
-      stopScroll();
-      return;
-  }
   if (rafId) cancelAnimationFrame(rafId);
   computeScrollMax();
   rafId = requestAnimationFrame(tickScroll);
@@ -772,19 +766,24 @@ function stopScroll() {
   rafId = null;
 }
 
-// --- New Timestamp Highlight and Scroll ---
-function updateTimestampHighlight(currentTime) {
-    if (!isTimestampMode) return;
+// --- New Smooth Scrolling and Highlight Logic ---
+function timestampUpdateLoop() {
+    if (!isPlaying || !isTimestampMode) {
+        timestampUpdateRafId = null;
+        return;
+    }
 
+    const currentTime = audio.currentTime;
+    
+    // 1. Highlight Logic
     let activeSentence = null;
-    // timestampData is already sorted, so we can find the first match
     for (const line of timestampData) {
         if (currentTime >= line.start && currentTime <= line.end) {
             activeSentence = line;
             break;
         }
     }
-
+    
     const sentenceElement = activeSentence ? textContainer.querySelector(`[data-start="${activeSentence.start}"]`) : null;
     
     if (sentenceElement && sentenceElement !== lastHighlightedSentence) {
@@ -792,8 +791,38 @@ function updateTimestampHighlight(currentTime) {
             lastHighlightedSentence.classList.remove('is-current');
         }
         sentenceElement.classList.add('is-current');
-        sentenceElement.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
         lastHighlightedSentence = sentenceElement;
+    }
+
+    // 2. Smooth Scrolling Logic
+    if (lastHighlightedSentence) {
+        const containerHeight = textContainer.clientHeight;
+        const sentenceTop = lastHighlightedSentence.offsetTop;
+        const sentenceHeight = lastHighlightedSentence.offsetHeight;
+
+        // Calculate the target scroll position to center the sentence
+        const targetScrollTop = sentenceTop - (containerHeight / 2) + (sentenceHeight / 2);
+
+        // Smoothly move towards the target
+        const currentScrollTop = textContainer.scrollTop;
+        const scrollDifference = targetScrollTop - currentScrollTop;
+        
+        // Use an easing factor to make the scroll smooth
+        textContainer.scrollTop += scrollDifference * 0.05;
+    }
+
+    timestampUpdateRafId = requestAnimationFrame(timestampUpdateLoop);
+}
+
+function startTimestampUpdateLoop() {
+    if (timestampUpdateRafId) cancelAnimationFrame(timestampUpdateRafId);
+    timestampUpdateRafId = requestAnimationFrame(timestampUpdateLoop);
+}
+
+function stopTimestampUpdateLoop() {
+    if (timestampUpdateRafId) {
+        cancelAnimationFrame(timestampUpdateRafId);
+        timestampUpdateRafId = null;
     }
 }
 
@@ -956,6 +985,7 @@ function showPlayback(index, startTime = 0) {
   lastHighlightedSentence = null;
   toggleTimestampBtn.classList.remove('is-active');
   toggleTimestampBtn.style.display = 'none';
+  stopTimestampUpdateLoop();
 
   stagedWordsContainer.innerHTML = '';
   currentStoryIndex = index;
@@ -992,6 +1022,7 @@ function showPlayback(index, startTime = 0) {
 function stopAudioAndReset() {
   stagedWordsContainer.innerHTML = '';
   stopScroll();
+  stopTimestampUpdateLoop();
   audio.pause();
   audio.removeAttribute('src');
   audio.load();
@@ -1027,13 +1058,16 @@ toggleTimestampBtn.addEventListener('click', () => {
     toggleTimestampBtn.classList.toggle('is-active', isTimestampMode);
 
     if (isTimestampMode) {
+        stopScroll();
         renderTimestampContent();
-        updateTimestampHighlight(audio.currentTime); // Immediately highlight
+        if (isPlaying) startTimestampUpdateLoop();
     } else {
+        stopTimestampUpdateLoop();
         const story = currentStoryList[currentStoryIndex];
         textContainer.innerHTML = '';
         textContainer.appendChild(parafyAndMakeClickable('\n\n' + story['內文']));
         lastHighlightedSentence = null;
+        if (isPlaying) startScroll();
     }
 });
 
@@ -1067,12 +1101,26 @@ backToStoryFromNoteBtn.addEventListener('click', () => {
 });
 
 // Audio and progress bar listeners
-audio.addEventListener('play', () => { isPlaying = true; playPauseBtn.classList.add('is-playing'); startScroll(); saveLastPlaybackState(); });
-audio.addEventListener('pause', () => { isPlaying = false; playPauseBtn.classList.remove('is-playing'); stopScroll(); saveLastPlaybackState(); });
+audio.addEventListener('play', () => { 
+    isPlaying = true; 
+    playPauseBtn.classList.add('is-playing'); 
+    saveLastPlaybackState(); 
+    if (isTimestampMode) {
+        startTimestampUpdateLoop();
+    } else {
+        startScroll();
+    }
+});
+audio.addEventListener('pause', () => { 
+    isPlaying = false; 
+    playPauseBtn.classList.remove('is-playing'); 
+    saveLastPlaybackState(); 
+    stopScroll(); 
+    stopTimestampUpdateLoop();
+});
 audio.addEventListener('ended', () => { clearLastPlaybackState(); stopAudioAndReset(); document.getElementById('continue-last-session-btn')?.remove(); });
 audio.addEventListener('timeupdate', () => { 
     if (isFinite(audio.duration)) progressBar.value = (audio.currentTime / audio.duration) * 100;
-    if (isTimestampMode) updateTimestampHighlight(audio.currentTime);
 });
 progressBar.addEventListener('input', () => { if (isFinite(audio.duration)) audio.currentTime = (progressBar.value / 100) * audio.duration; });
 

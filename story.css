@@ -121,7 +121,9 @@ h1 { font-size: 25px; font-weight: 600; }
   user-select: text;
   color: var(--color-text);
   /* Keep original padding-bottom for layout compatibility */
-  padding-bottom: 280px; 
+  padding-bottom: 280px;
+  /* Add smooth scrolling for user interactions */
+  scroll-behavior: smooth;
 }
 #text-container p { margin: 0 0 1.2em; }
 #text-container p:last-child { margin-bottom: 0; }
@@ -567,3 +569,4 @@ button.btn-success-feedback {
 #new-word-input {
     flex-grow: 1; 
 }
+
