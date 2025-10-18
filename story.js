@@ -935,8 +935,7 @@ function parseTimestampText(text) {
 }
 
 async function loadTimestampForStory(title) {
-    // 變更：將路徑改為相對路徑的 'audio/' 資料夾，並使用 .trim() 確保與音訊檔名一致
-    const url = `audio/${encodeURIComponent(title.trim())} Timestamp.txt`;
+    const url = `https://raw.githubusercontent.com/BoydYang-Designer/Story-reading/main/Timestamp/${encodeURIComponent(title)} Timestamp.txt`;
     try {
         const response = await fetch(url);
         if (response.ok) {
