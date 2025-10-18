@@ -818,7 +818,7 @@ function timestampUpdateLoop() {
     // d. Apply smoothing (easing) to the final target position
     const currentScrollTop = textContainer.scrollTop;
     const scrollDifference = targetScrollTop - currentScrollTop;
-    textContainer.scrollTop += scrollDifference * 0.05; // Adjust the 0.05 factor to change "smoothness"
+    textContainer.scrollTop += scrollDifference * 0.1; // Adjust the 0.05 factor to change "smoothness"
 
     timestampUpdateRafId = requestAnimationFrame(timestampUpdateLoop);
 }
