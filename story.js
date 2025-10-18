@@ -1083,12 +1083,33 @@ function stopAudioAndReset() {
   lastHighlightedSentence = null;
 }
 
+// ========== START: MODIFIED CODE BLOCK ==========
+
+// HELPER FUNCTION FOR PAUSING to ensure synchronous state updates
+function pauseAudio() {
+    audio.pause();
+    isPlaying = false;
+    playPauseBtn.classList.remove('is-playing');
+    saveLastPlaybackState();
+    stopScroll();
+    stopTimestampUpdateLoop();
+}
+
 // Button listeners
 backToHomeBtn.addEventListener('click', () => { stopAudioAndReset(); showView(homeView); });
 backToCategoryBtn.addEventListener('click', () => { stopAudioAndReset(); showView(categoryView); });
 rewindBtn.addEventListener('click', () => { audio.currentTime = Math.max(0, audio.currentTime - 5); });
 forwardBtn.addEventListener('click', () => { if(isFinite(audio.duration)) audio.currentTime = Math.min(audio.duration, audio.currentTime + 5); });
-playPauseBtn.addEventListener('click', () => { isPlaying ? audio.pause() : audio.play().catch(e => console.error("Play failed:", e)); });
+
+// UPDATED PLAY/PAUSE BUTTON LISTENER
+playPauseBtn.addEventListener('click', () => {
+    if (isPlaying) {
+        pauseAudio(); // Call the helper function to pause immediately
+    } else {
+        audio.play().catch(e => console.error("Play failed:", e));
+    }
+});
+
 prevStoryBtn.addEventListener('click', () => { if (currentStoryIndex > 0) { showPlayback(currentStoryIndex - 1); } });
 nextStoryBtn.addEventListener('click', () => { if (currentStoryIndex < currentStoryList.length - 1) { showPlayback(currentStoryIndex + 1); } });
 
@@ -1156,13 +1177,18 @@ audio.addEventListener('play', () => {
         startScroll();
     }
 });
+
+// UPDATED PAUSE EVENT LISTENER
 audio.addEventListener('pause', () => { 
-    isPlaying = false; 
-    playPauseBtn.classList.remove('is-playing'); 
-    saveLastPlaybackState(); 
-    stopScroll(); 
-    stopTimestampUpdateLoop();
+    // This now acts as a safeguard for pauses not initiated by the button.
+    // If the button was clicked, isPlaying is already false, so this won't run.
+    if (isPlaying) {
+        pauseAudio();
+    }
 });
+
+// ========== END: MODIFIED CODE BLOCK ==========
+
 audio.addEventListener('ended', () => { clearLastPlaybackState(); stopAudioAndReset(); document.getElementById('continue-last-session-btn')?.remove(); });
 audio.addEventListener('timeupdate', () => { 
     if (isFinite(audio.duration)) progressBar.value = (audio.currentTime / audio.duration) * 100;
