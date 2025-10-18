@@ -722,6 +722,7 @@ function renderTimestampContent() {
     });
     textContainer.appendChild(frag);
     lastHighlightedSentence = null;
+    computeScrollMax(); // Recalculate scroll max for the new content
 }
 
 function buildAudioCandidates(title) {
@@ -766,16 +767,16 @@ function stopScroll() {
   rafId = null;
 }
 
-// --- New Smooth Scrolling and Highlight Logic ---
+// --- New Predictive Smooth Scrolling and Highlight Logic ---
 function timestampUpdateLoop() {
-    if (!isPlaying || !isTimestampMode) {
+    if (!isPlaying || !isTimestampMode || !isFinite(audio.duration) || audio.duration === 0) {
         timestampUpdateRafId = null;
         return;
     }
 
     const currentTime = audio.currentTime;
     
-    // 1. Highlight Logic
+    // 1. Highlight Logic (remains the same)
     let activeSentence = null;
     for (const line of timestampData) {
         if (currentTime >= line.start && currentTime <= line.end) {
@@ -794,25 +795,34 @@ function timestampUpdateLoop() {
         lastHighlightedSentence = sentenceElement;
     }
 
-    // 2. Smooth Scrolling Logic
+    // 2. Predictive Smooth Scrolling Logic
+    // a. Calculate base scroll position from overall progress
+    const progress = currentTime / audio.duration;
+    const baseScrollTop = progress * scrollMax;
+
+    let targetScrollTop = baseScrollTop;
+
+    // b. If a sentence is active, calculate the corrective position
     if (lastHighlightedSentence) {
         const containerHeight = textContainer.clientHeight;
         const sentenceTop = lastHighlightedSentence.offsetTop;
         const sentenceHeight = lastHighlightedSentence.offsetHeight;
-
-        // Calculate the target scroll position to center the sentence
-        const targetScrollTop = sentenceTop - (containerHeight / 2) + (sentenceHeight / 2);
-
-        // Smoothly move towards the target
-        const currentScrollTop = textContainer.scrollTop;
-        const scrollDifference = targetScrollTop - currentScrollTop;
+        const correctiveScrollTop = sentenceTop - (containerHeight / 2) + (sentenceHeight / 2);
         
-        // Use an easing factor to make the scroll smooth
-        textContainer.scrollTop += scrollDifference * 0.05;
+        // c. Blend the base scroll and corrective scroll.
+        // Give more weight to the corrective scroll to ensure focus.
+        const weight = 0.8;
+        targetScrollTop = (baseScrollTop * (1 - weight)) + (correctiveScrollTop * weight);
     }
+    
+    // d. Apply smoothing (easing) to the final target position
+    const currentScrollTop = textContainer.scrollTop;
+    const scrollDifference = targetScrollTop - currentScrollTop;
+    textContainer.scrollTop += scrollDifference * 0.05; // Adjust the 0.05 factor to change "smoothness"
 
     timestampUpdateRafId = requestAnimationFrame(timestampUpdateLoop);
 }
+
 
 function startTimestampUpdateLoop() {
     if (timestampUpdateRafId) cancelAnimationFrame(timestampUpdateRafId);
@@ -1011,6 +1021,7 @@ function showPlayback(index, startTime = 0) {
     if (startTime > 0 && isFinite(audio.duration)) {
         audio.currentTime = Math.min(startTime, audio.duration);
     }
+    computeScrollMax(); // Compute scroll max after content is loaded and audio is ready
     audio.play(); // Autoplay when loaded
     audio.removeEventListener('canplaythrough', onLoaded);
   };
@@ -1067,6 +1078,7 @@ toggleTimestampBtn.addEventListener('click', () => {
         textContainer.innerHTML = '';
         textContainer.appendChild(parafyAndMakeClickable('\n\n' + story['內文']));
         lastHighlightedSentence = null;
+        computeScrollMax();
         if (isPlaying) startScroll();
     }
 });
