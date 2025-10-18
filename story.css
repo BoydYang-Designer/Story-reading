@@ -135,6 +135,27 @@ h1 { font-size: 25px; font-weight: 600; }
   background-color: var(--color-accent-light);
 }
 
+/* --- New Timestamp Styles --- */
+#text-container .timestamp-sentence {
+  display: block;
+  padding: 4px 8px;
+  margin-bottom: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+#text-container .timestamp-sentence:hover {
+  background-color: var(--color-accent-light);
+}
+
+#text-container .timestamp-sentence.is-current {
+  background-color: var(--color-accent-light);
+  font-weight: 600;
+}
+/* --- End Timestamp Styles --- */
+
+
 /* 4. Controls & Player
 ------------------------------------------ */
 #fixed-controls-container {
@@ -190,6 +211,13 @@ h1 { font-size: 25px; font-weight: 600; }
   color: var(--color-primary);
   background-color: var(--color-accent-light);
 }
+
+/* --- New Style for Active Timestamp Button --- */
+#toggle-timestamp-btn.is-active {
+    color: var(--color-surface);
+    background-color: var(--color-primary);
+}
+
 
 /* 主要的播放/暫停按鈕 */
 #play-pause {

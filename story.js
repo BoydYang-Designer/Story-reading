@@ -35,6 +35,10 @@ const stagedWordsContainer = document.getElementById('staged-words-container');
 const clearStagingBtn = document.getElementById('clear-staging-btn');
 const copyStagedBtn = document.getElementById('copy-staged-btn');
 
+// --- New Timestamp Feature Element ---
+const toggleTimestampBtn = document.getElementById('toggle-timestamp-btn');
+
+
 // Note view elements
 const goToNoteBtn = document.getElementById('go-to-note');
 const backToHomeFromNoteBtn = document.getElementById('back-to-home-from-note');
@@ -64,6 +68,12 @@ let noteViewCategory = null;
 let noteViewTitle = null;
 let playbackPositionBeforeNote = 0;
 let currentUser = null; // To hold the logged-in user object
+
+// --- New Timestamp State Variables ---
+let isTimestampMode = false;
+let timestampData = [];
+let hasTimestampFile = false;
+let lastHighlightedSentence = null;
 
 // Storage Keys
 const LAST_SESSION_KEY = 'readingChallengeLastSession';
@@ -605,14 +615,37 @@ function cleanWord(word) {
 
 textContainer.addEventListener('click', (e) => {
     if (window.getSelection().toString().length > 0) return; // Ignore if user is selecting text
-    const wordSpan = e.target.closest('.clickable-word');
-    if (wordSpan) {
-        const cleanedWord = cleanWord(wordSpan.textContent);
-        if (cleanedWord) {
-            const stagedWordEl = document.createElement('span');
-            stagedWordEl.className = 'staged-word';
-            stagedWordEl.textContent = cleanedWord;
-            stagedWordsContainer.appendChild(stagedWordEl);
+
+    if (isTimestampMode) {
+        const sentenceSpan = e.target.closest('.timestamp-sentence');
+        if (sentenceSpan) {
+            // Seek audio
+            const startTime = parseFloat(sentenceSpan.dataset.start);
+            if (!isNaN(startTime)) {
+                audio.currentTime = startTime;
+            }
+            
+            // --- MODIFIED BEHAVIOR ---
+            // Clear staging area first, then add the new sentence
+            stagedWordsContainer.innerHTML = ''; 
+            const sentenceText = sentenceSpan.textContent.trim();
+            if (sentenceText) {
+                const stagedEl = document.createElement('span');
+                stagedEl.className = 'staged-word';
+                stagedEl.textContent = sentenceText;
+                stagedWordsContainer.appendChild(stagedEl);
+            }
+        }
+    } else { // JSON Mode
+        const wordSpan = e.target.closest('.clickable-word');
+        if (wordSpan) {
+            const cleanedWord = cleanWord(wordSpan.textContent);
+            if (cleanedWord) {
+                const stagedWordEl = document.createElement('span');
+                stagedWordEl.className = 'staged-word';
+                stagedWordEl.textContent = cleanedWord;
+                stagedWordsContainer.appendChild(stagedWordEl);
+            }
         }
     }
 });
@@ -673,6 +706,23 @@ function parafyAndMakeClickable(text) {
     return frag;
 }
 
+// --- New Timestamp Rendering Function ---
+function renderTimestampContent() {
+    textContainer.innerHTML = '';
+    textContainer.scrollTop = 0;
+    const frag = document.createDocumentFragment();
+    timestampData.forEach(line => {
+        const p = document.createElement('p');
+        p.className = 'timestamp-sentence';
+        p.textContent = line.sentence;
+        p.dataset.start = line.start;
+        p.dataset.end = line.end;
+        frag.appendChild(p);
+    });
+    textContainer.appendChild(frag);
+    lastHighlightedSentence = null;
+}
+
 function buildAudioCandidates(title) {
   return ['audio/' + encodeURIComponent(title.trim()) + '.mp3'];
 }
@@ -699,12 +749,19 @@ function computeScrollMax() {
 }
 
 function tickScroll() {
-  if (!isPlaying || !isFinite(audio.duration)) return;
+  if (!isPlaying || !isFinite(audio.duration) || isTimestampMode) {
+      stopScroll();
+      return;
+  }
   textContainer.scrollTop = (audio.currentTime / audio.duration) * scrollMax;
   rafId = requestAnimationFrame(tickScroll);
 }
 
 function startScroll() {
+  if (isTimestampMode) {
+      stopScroll();
+      return;
+  }
   if (rafId) cancelAnimationFrame(rafId);
   computeScrollMax();
   rafId = requestAnimationFrame(tickScroll);
@@ -714,6 +771,32 @@ function stopScroll() {
   if (rafId) cancelAnimationFrame(rafId);
   rafId = null;
 }
+
+// --- New Timestamp Highlight and Scroll ---
+function updateTimestampHighlight(currentTime) {
+    if (!isTimestampMode) return;
+
+    let activeSentence = null;
+    // timestampData is already sorted, so we can find the first match
+    for (const line of timestampData) {
+        if (currentTime >= line.start && currentTime <= line.end) {
+            activeSentence = line;
+            break;
+        }
+    }
+
+    const sentenceElement = activeSentence ? textContainer.querySelector(`[data-start="${activeSentence.start}"]`) : null;
+    
+    if (sentenceElement && sentenceElement !== lastHighlightedSentence) {
+        if (lastHighlightedSentence) {
+            lastHighlightedSentence.classList.remove('is-current');
+        }
+        sentenceElement.classList.add('is-current');
+        sentenceElement.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+        lastHighlightedSentence = sentenceElement;
+    }
+}
+
 
 // Story loading and rendering
 async function loadData() { // <--- 函式更名
@@ -740,6 +823,66 @@ async function loadData() { // <--- 函式更名
     alert("Could not load necessary app data. Please check your internet connection and try again.");
   }
 }
+
+// --- New Timestamp Data Loading and Parsing ---
+function timeToSeconds(timeStr) {
+    const parts = timeStr.split(':');
+    const secondsParts = parts[2].split('.');
+    const minutes = parseInt(parts[1], 10);
+    const seconds = parseInt(secondsParts[0], 10);
+    const milliseconds = parseInt(secondsParts[1], 10);
+    return (minutes * 60) + seconds + (milliseconds / 1000);
+}
+
+function parseTimestampText(text) {
+    const lines = text.trim().split('\n');
+    const data = [];
+    const regex = /\[(\d{2}:\d{2}:\d{2}\.\d{3}) --> (\d{2}:\d{2}:\d{2}\.\d{3})\](.*)/;
+    const shortRegex = /\[(\d{2}:\d{2}\.\d{3}) --> (\d{2}:\d{2}\.\d{3})\](.*)/; // Handle mm:ss.sss
+
+    for (const line of lines) {
+        let match = line.match(regex);
+        if (!match) {
+             match = line.match(shortRegex);
+             if (match) {
+                 // Prepend '00:' to match the longer format for the parser
+                 match[1] = '00:' + match[1];
+                 match[2] = '00:' + match[2];
+             }
+        }
+        
+        if (match) {
+            data.push({
+                start: timeToSeconds(match[1]),
+                end: timeToSeconds(match[2]),
+                sentence: match[3].trim()
+            });
+        }
+    }
+    return data;
+}
+
+async function loadTimestampForStory(title) {
+    const url = `https://raw.githubusercontent.com/BoydYang-Designer/Story-reading/main/Timestamp/${encodeURIComponent(title)} Timestamp.txt`;
+    try {
+        const response = await fetch(url);
+        if (response.ok) {
+            const text = await response.text();
+            timestampData = parseTimestampText(text);
+            hasTimestampFile = timestampData.length > 0;
+            toggleTimestampBtn.style.display = hasTimestampFile ? 'flex' : 'none';
+        } else {
+            console.warn(`Timestamp file not found for "${title}" (404)`);
+            hasTimestampFile = false;
+            toggleTimestampBtn.style.display = 'none';
+        }
+    } catch (error) {
+        console.error("Error fetching timestamp file:", error);
+        hasTimestampFile = false;
+        toggleTimestampBtn.style.display = 'none';
+    }
+}
+
 
 function renderCategories() {
   const categories = [...new Set(stories.flatMap(item => item['分類'] || []).map(c => c.trim()).filter(Boolean))].sort();
@@ -806,6 +949,14 @@ function showCategory(category) {
 }
 
 function showPlayback(index, startTime = 0) {
+  // Reset timestamp state on story change
+  isTimestampMode = false;
+  timestampData = [];
+  hasTimestampFile = false;
+  lastHighlightedSentence = null;
+  toggleTimestampBtn.classList.remove('is-active');
+  toggleTimestampBtn.style.display = 'none';
+
   stagedWordsContainer.innerHTML = '';
   currentStoryIndex = index;
   const story = currentStoryList[currentStoryIndex];
@@ -813,12 +964,15 @@ function showPlayback(index, startTime = 0) {
   
   currentStoryTitle = story['標題'];
   playbackTitle.textContent = currentStoryTitle;
+  
+  // Render default JSON content first
   textContainer.innerHTML = '';
   textContainer.appendChild(parafyAndMakeClickable('\n\n' + story['內文']));
   textContainer.scrollTop = 0;
   progressBar.value = 0;
   
   setAudioSourceWithFallback(currentStoryTitle);
+  loadTimestampForStory(currentStoryTitle); // Asynchronously load timestamp file
 
   prevStoryBtn.hidden = currentStoryIndex <= 0;
   nextStoryBtn.hidden = currentStoryIndex >= currentStoryList.length - 1;
@@ -847,6 +1001,11 @@ function stopAudioAndReset() {
   currentStoryTitle = null;
   currentCategoryName = null;
   playbackPositionBeforeNote = 0;
+
+  // Reset timestamp state as well
+  isTimestampMode = false;
+  toggleTimestampBtn.classList.remove('is-active');
+  lastHighlightedSentence = null;
 }
 
 // Button listeners
@@ -855,8 +1014,29 @@ backToCategoryBtn.addEventListener('click', () => { stopAudioAndReset(); showVie
 rewindBtn.addEventListener('click', () => { audio.currentTime = Math.max(0, audio.currentTime - 5); });
 forwardBtn.addEventListener('click', () => { if(isFinite(audio.duration)) audio.currentTime = Math.min(audio.duration, audio.currentTime + 5); });
 playPauseBtn.addEventListener('click', () => { isPlaying ? audio.pause() : audio.play().catch(e => console.error("Play failed:", e)); });
-prevStoryBtn.addEventListener('click', () => { if (currentStoryIndex > 0) { stopAudioAndReset(); showPlayback(currentStoryIndex - 1); } });
-nextStoryBtn.addEventListener('click', () => { if (currentStoryIndex < currentStoryList.length - 1) { stopAudioAndReset(); showPlayback(currentStoryIndex + 1); } });
+prevStoryBtn.addEventListener('click', () => { if (currentStoryIndex > 0) { showPlayback(currentStoryIndex - 1); } });
+nextStoryBtn.addEventListener('click', () => { if (currentStoryIndex < currentStoryList.length - 1) { showPlayback(currentStoryIndex + 1); } });
+
+// --- New Timestamp Toggle Logic ---
+toggleTimestampBtn.addEventListener('click', () => {
+    if (!hasTimestampFile) {
+        alert('無 Timestamp');
+        return;
+    }
+    isTimestampMode = !isTimestampMode;
+    toggleTimestampBtn.classList.toggle('is-active', isTimestampMode);
+
+    if (isTimestampMode) {
+        renderTimestampContent();
+        updateTimestampHighlight(audio.currentTime); // Immediately highlight
+    } else {
+        const story = currentStoryList[currentStoryIndex];
+        textContainer.innerHTML = '';
+        textContainer.appendChild(parafyAndMakeClickable('\n\n' + story['內文']));
+        lastHighlightedSentence = null;
+    }
+});
+
 
 // Note view navigation
 goToStoryNoteBtn.addEventListener('click', () => {
@@ -890,7 +1070,10 @@ backToStoryFromNoteBtn.addEventListener('click', () => {
 audio.addEventListener('play', () => { isPlaying = true; playPauseBtn.classList.add('is-playing'); startScroll(); saveLastPlaybackState(); });
 audio.addEventListener('pause', () => { isPlaying = false; playPauseBtn.classList.remove('is-playing'); stopScroll(); saveLastPlaybackState(); });
 audio.addEventListener('ended', () => { clearLastPlaybackState(); stopAudioAndReset(); document.getElementById('continue-last-session-btn')?.remove(); });
-audio.addEventListener('timeupdate', () => { if (isFinite(audio.duration)) progressBar.value = (audio.currentTime / audio.duration) * 100; });
+audio.addEventListener('timeupdate', () => { 
+    if (isFinite(audio.duration)) progressBar.value = (audio.currentTime / audio.duration) * 100;
+    if (isTimestampMode) updateTimestampHighlight(audio.currentTime);
+});
 progressBar.addEventListener('input', () => { if (isFinite(audio.duration)) audio.currentTime = (progressBar.value / 100) * audio.duration; });
 
 // Keyboard shortcuts
@@ -981,3 +1164,4 @@ firebase.auth().onAuthStateChanged(async (user) => {
 
 // Start the application
 init();
+
