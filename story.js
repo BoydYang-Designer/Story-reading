@@ -474,8 +474,20 @@ async function playSentenceSnippet(sentenceText, storyTitle) {
     }, duration);
 }
 
+// NEW helper function to get the current expansion state of note sections
+function getExpansionStates() {
+    const states = {};
+    const headers = document.querySelectorAll('#note-content-wrapper .note-section-header');
+    headers.forEach(header => {
+        const targetId = header.dataset.target;
+        if (targetId) {
+            states[targetId] = header.classList.contains('is-expanded');
+        }
+    });
+    return states;
+}
 
-function renderNoteView(level = 'categories', categoryName = null, titleName = null) {
+function renderNoteView(level = 'categories', categoryName = null, titleName = null, expansionStates = null) {
     const noteContentWrapper = document.getElementById('note-content-wrapper');
     addWordForm.hidden = true;
     backToStoryFromNoteBtn.hidden = true;
@@ -508,14 +520,27 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
             backToHomeFromNoteBtn.onclick = () => renderNoteView('categories');
         }
     } else if (level === 'words' && categoryName && titleName) {
+        
+        // Helper function to build each collapsible section's HTML
+        const buildSectionHTML = (type, title) => {
+            const listId = `note-list-${type}`;
+            // Default to collapsed unless a specific state is passed
+            const isExpanded = expansionStates ? expansionStates[listId] === true : false;
+            const headerClass = isExpanded ? 'note-section-header is-expanded' : 'note-section-header';
+            const listStyle = isExpanded ? '' : 'style="display: none;"';
+
+            return `
+                <div class="${headerClass}" data-target="${listId}"><h3>${title}</h3><span class="toggle-icon"></span></div>
+                <div id="${listId}" class="list" ${listStyle}></div>
+            `;
+        };
+        
         noteContentWrapper.innerHTML = `
-            <div class="note-section-header" data-target="note-list-words"><h3>Words</h3><span class="toggle-icon"></span></div>
-            <div id="note-list-words" class="list" style="display: none;"></div>
-            <div class="note-section-header" data-target="note-list-phrases"><h3>Phrases</h3><span class="toggle-icon"></span></div>
-            <div id="note-list-phrases" class="list" style="display: none;"></div>
-            <div class="note-section-header" data-target="note-list-sentences"><h3>Sentences</h3><span class="toggle-icon"></span></div>
-            <div id="note-list-sentences" class="list" style="display: none;"></div>
+            ${buildSectionHTML('words', 'Words')}
+            ${buildSectionHTML('phrases', 'Phrases')}
+            ${buildSectionHTML('sentences', 'Sentences')}
         `;
+        
         noteViewCategory = categoryName;
         noteViewTitle = titleName;
         backToStoryFromNoteBtn.hidden = false;
@@ -615,6 +640,8 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
                 item.classList.add('is-deleting');
                 setTimeout(() => {
                     if (confirm(`Delete '${itemText}'?`)) {
+                        const currentState = getExpansionStates(); // Capture state before re-render
+                        
                         savedWords[categoryName][titleName][type].delete(itemText);
                         const titleData = savedWords[categoryName][titleName];
                         if (titleData.words.size === 0 && titleData.phrases.size === 0 && titleData.sentences.size === 0) {
@@ -624,9 +651,14 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
                             delete savedWords[categoryName];
                         }
                         persistNotes();
-                        if (!savedWords[categoryName]) renderNoteView('categories');
-                        else if (!savedWords[categoryName][titleName]) renderNoteView('titles', categoryName);
-                        else renderNoteView('words', categoryName, titleName);
+                        
+                        if (!savedWords[categoryName]) {
+                            renderNoteView('categories');
+                        } else if (!savedWords[categoryName][titleName]) {
+                            renderNoteView('titles', categoryName);
+                        } else {
+                            renderNoteView('words', categoryName, titleName, currentState); // Pass state
+                        }
                     } else {
                         item.classList.remove('is-deleting');
                     }
@@ -693,10 +725,11 @@ exportWordsBtn.addEventListener('click', () => {
 addManualWordBtn.addEventListener('click', () => {
     const newWord = newWordInput.value.trim();
     if (newWord && noteViewCategory && noteViewTitle) {
+        const currentState = getExpansionStates(); // Capture state
         addWordToNote(newWord, noteViewCategory, noteViewTitle);
         newWordInput.value = '';
         newWordInput.focus();
-        renderNoteView('words', noteViewCategory, noteViewTitle);
+        renderNoteView('words', noteViewCategory, noteViewTitle, currentState); // Pass state
     }
 });
 
