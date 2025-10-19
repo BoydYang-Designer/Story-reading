@@ -69,6 +69,11 @@ let noteViewTitle = null;
 let playbackPositionBeforeNote = 0;
 let currentUser = null; // To hold the logged-in user object
 
+// --- New State Variables for Sentence Playback ---
+let timestampCache = {};
+let noteAudioPlayer = new Audio();
+let currentSnippetTimeout = null;
+
 // --- New Timestamp State Variables ---
 let isTimestampMode = false;
 let timestampData = [];
@@ -386,6 +391,89 @@ function showNotification(message, type = 'info') {
     }, 4000);
 }
 
+// --- NEW: Functions for Sentence Playback ---
+async function getTimestampForStory(title) {
+    if (timestampCache[title]) {
+        return timestampCache[title];
+    }
+
+    const url = `https://raw.githubusercontent.com/BoydYang-Designer/Story-reading/main/Timestamp/${encodeURIComponent(title)} Timestamp.txt`;
+    try {
+        const response = await fetch(url);
+        if (response.ok) {
+            const text = await response.text();
+            const data = parseTimestampText(text); // Uses existing parser
+            timestampCache[title] = data;
+            return data;
+        } else {
+            console.warn(`Timestamp file not found for "${title}"`);
+            timestampCache[title] = null; // Cache the failure
+            return null;
+        }
+    } catch (error) {
+        console.error(`Error fetching timestamp for ${title}:`, error);
+        timestampCache[title] = null;
+        return null;
+    }
+}
+
+async function playSentenceSnippet(sentenceText, storyTitle) {
+    // Stop any currently playing snippet from this feature
+    if (currentSnippetTimeout) {
+        clearTimeout(currentSnippetTimeout);
+        currentSnippetTimeout = null;
+    }
+    noteAudioPlayer.pause();
+
+    // Also pause the main player if it's running
+    if (isPlaying) {
+        pauseAudio();
+    }
+
+    const timestampData = await getTimestampForStory(storyTitle);
+    if (!timestampData || timestampData.length === 0) {
+        showNotification(`Timestamp data not found for "${storyTitle}".`, 'error');
+        return;
+    }
+
+    // Normalize sentence for better matching by removing punctuation and making it lowercase
+    const normalize = (text) => text.trim().replace(/[.,?!'"`“”‘’]/g, '').toLowerCase();
+    const normalizedSentence = normalize(sentenceText);
+
+    const match = timestampData.find(line => normalize(line.sentence) === normalizedSentence);
+
+    if (!match) {
+        showNotification('Could not find the exact sentence in the story timestamp.', 'warning');
+        console.warn(`No match found for: "${normalizedSentence}"`);
+        return;
+    }
+
+    const { start, end } = match;
+    const duration = (end - start) * 1000;
+
+    // Check for invalid duration
+    if (duration <= 0) {
+        showNotification('Invalid timestamp duration for this sentence.', 'error');
+        return;
+    }
+    
+    const audioSrc = 'audio/' + encodeURIComponent(storyTitle.trim()) + '.mp3';
+    
+    noteAudioPlayer.src = audioSrc;
+    noteAudioPlayer.currentTime = start;
+    
+    noteAudioPlayer.play().catch(e => {
+        console.error("Snippet play failed:", e);
+        showNotification('Could not play audio for this sentence.', 'error');
+    });
+
+    // Set a timeout to stop playback precisely at the end time
+    currentSnippetTimeout = setTimeout(() => {
+        noteAudioPlayer.pause();
+        currentSnippetTimeout = null;
+    }, duration);
+}
+
 
 function renderNoteView(level = 'categories', categoryName = null, titleName = null) {
     const noteContentWrapper = document.getElementById('note-content-wrapper');
@@ -483,7 +571,17 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
 
                 actions.appendChild(voiceBtn);
                 actions.appendChild(wordBtn);
+            } else if (type === 'sentences') {
+                const voiceBtn = document.createElement('button');
+                voiceBtn.textContent = 'Voice';
+                voiceBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    // noteViewTitle is the current story title
+                    playSentenceSnippet(itemText, noteViewTitle);
+                });
+                actions.appendChild(voiceBtn);
             }
+
 
             // Copy Button (for all types: words, phrases, sentences)
             const copyBtn = document.createElement('button');
@@ -1283,3 +1381,4 @@ firebase.auth().onAuthStateChanged(async (user) => {
 
 // Start the application
 init();
+
