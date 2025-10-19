@@ -421,12 +421,12 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
         }
     } else if (level === 'words' && categoryName && titleName) {
         noteContentWrapper.innerHTML = `
-            <div class="note-section-header is-expanded" data-target="note-list-words"><h3>Words</h3><span class="toggle-icon"></span></div>
-            <div id="note-list-words" class="list"></div>
-            <div class="note-section-header is-expanded" data-target="note-list-phrases"><h3>Phrases</h3><span class="toggle-icon"></span></div>
-            <div id="note-list-phrases" class="list"></div>
-            <div class="note-section-header is-expanded" data-target="note-list-sentences"><h3>Sentences</h3><span class="toggle-icon"></span></div>
-            <div id="note-list-sentences" class="list"></div>
+            <div class="note-section-header" data-target="note-list-words"><h3>Words</h3><span class="toggle-icon"></span></div>
+            <div id="note-list-words" class="list" style="display: none;"></div>
+            <div class="note-section-header" data-target="note-list-phrases"><h3>Phrases</h3><span class="toggle-icon"></span></div>
+            <div id="note-list-phrases" class="list" style="display: none;"></div>
+            <div class="note-section-header" data-target="note-list-sentences"><h3>Sentences</h3><span class="toggle-icon"></span></div>
+            <div id="note-list-sentences" class="list" style="display: none;"></div>
         `;
         noteViewCategory = categoryName;
         noteViewTitle = titleName;
