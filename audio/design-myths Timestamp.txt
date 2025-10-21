@@ -1,0 +1,8 @@
+[00:00:00.000 --> 00:00:05.200] One common idea I often question is that good design must always be something never before seen.
+[00:00:05.920 --> 00:00:11.680] In reality, originality only matters when it enhances function, evokes emotion,
+[00:00:11.680 --> 00:00:15.920] strength and storytelling, or truly resonates with the user's experience.
+[00:00:16.640 --> 00:00:22.080] Being different for the sake of it isn't enough. Users rely on familiar patterns to navigate
+[00:00:22.080 --> 00:00:28.240] products. If we change too much, we risk confusing or frustrating them. Good design isn't about
+[00:00:28.240 --> 00:00:33.840] constant invention. It's about making the best choices for the user. Great designers know when
+[00:00:33.840 --> 00:00:40.080] to follow conventions and when to break them. They use creativity to enhance usability and experience,
+[00:00:40.080 --> 00:00:42.080] not just to stand out.
