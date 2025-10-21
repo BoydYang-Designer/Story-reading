@@ -108,7 +108,6 @@ h1 { font-size: 25px; font-weight: 600; }
 #text-container {
   height: 400px;
   overflow-y: auto;
-  /* -webkit-overflow-scrolling: touch; */ /* <-- 已移除 */
   background-color: var(--color-surface);
   padding-left: 1em;
   padding-right: 1em;
@@ -120,10 +119,7 @@ h1 { font-size: 25px; font-weight: 600; }
   text-align: left;
   user-select: text;
   color: var(--color-text);
-  /* Keep original padding-bottom for layout compatibility */
   padding-bottom: 280px;
-  /* Add smooth scrolling for user interactions */
-  /* scroll-behavior: smooth; */ /* <-- 已移除 */
 }
 
 
@@ -139,7 +135,7 @@ h1 { font-size: 25px; font-weight: 600; }
   background-color: var(--color-accent-light);
 }
 
-/* --- New Timestamp Styles --- */
+/* --- Timestamp Mode Sentence Styles --- */
 #text-container .timestamp-sentence {
   display: block;
   padding: 4px 8px;
@@ -156,7 +152,26 @@ h1 { font-size: 25px; font-weight: 600; }
 #text-container .timestamp-sentence.is-current {
   background-color: var(--color-accent-light);
 }
-/* --- End Timestamp Styles --- */
+
+/* --- NEW: Continuous Highlight Styles for JSON Mode --- */
+#text-container span.is-current-sentence {
+  background-color: var(--color-accent-light);
+  transition: background-color 0.3s ease;
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+#text-container span.is-current-sentence.highlight-start {
+  border-top-left-radius: 6px;
+  border-bottom-left-radius: 6px;
+  padding-left: 4px;
+}
+
+#text-container span.is-current-sentence.highlight-end {
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+  padding-right: 4px;
+}
 
 
 /* 4. Controls & Player
@@ -215,12 +230,10 @@ h1 { font-size: 25px; font-weight: 600; }
   background-color: var(--color-accent-light);
 }
 
-/* --- New Style for Active Timestamp Button --- */
 #toggle-timestamp-btn.is-active {
     color: var(--color-surface);
     background-color: var(--color-primary);
 }
-
 
 /* 主要的播放/暫停按鈕 */
 #play-pause {
@@ -239,12 +252,10 @@ h1 { font-size: 25px; font-weight: 600; }
   width: 24px;
   height: 24px;
   stroke-width: 1.5; /* 讓線條細一點，更精緻 */
-  /* 關鍵：讓 SVG 的顏色繼承自父層按鈕的 color 屬性 */
   fill: currentColor;
   stroke: currentColor;
 }
 #play-pause .icon-play {
-  /* 修正播放圖示的視覺偏移 */
   margin-left: 3px;
 }
 
@@ -293,18 +304,17 @@ button.secondary:hover {
 
 /* 6. Note View
 ------------------------------------------ */
-/* START: Styles for the new add word form */
 #add-word-form {
   display: flex;
   gap: 10px;
-  margin: 10px 0 24px; /* Add some space around the form */
+  margin: 10px 0 24px;
 }
 #new-word-input {
-  flex-grow: 1; /* Make the input take up available space */
+  flex-grow: 1;
   padding: 10px 18px;
   font-size: 16px;
   border: 1px solid var(--color-border);
-  border-radius: 9999px; /* Pill shape to match buttons */
+  border-radius: 9999px;
   background-color: var(--color-surface);
   color: var(--color-text);
 }
@@ -314,37 +324,29 @@ button.secondary:hover {
   box-shadow: 0 0 0 3px var(--color-accent-light);
 }
 #add-manual-word-btn {
-  /* The button will inherit general button styles */
-  flex-shrink: 0; /* Prevent the button from shrinking */
+  flex-shrink: 0;
 }
-/* END: New styles */
 
-/* START: Styles for the new note sections */
 #note-content-wrapper .list {
-    padding-bottom: 0; /* Remove bottom padding from lists inside the wrapper */
+    padding-bottom: 0;
 }
 
-/* This is the new clickable header DIV */
 .note-section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
   user-select: none;
-  
-  /* Copied from old .note-section-header style */
   text-align: left;
   margin: 28px 0 12px;
   padding-bottom: 8px;
   border-bottom: 1px solid var(--color-border);
 }
 
-/* Adjust margin for the first header */
 #note-content-wrapper .note-section-header:first-of-type {
     margin-top: 4px;
 }
 
-/* Style the h3 text inside the new header */
 .note-section-header h3 {
     margin: 0;
     font-size: 16px;
@@ -352,29 +354,19 @@ button.secondary:hover {
     color: var(--color-text-light);
 }
 
-/* The expand/collapse icon (a triangle) */
 .toggle-icon {
   width: 0;
   height: 0;
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
-  border-top: 5px solid var(--color-text-light); /* Points down (expanded) */
+  border-top: 5px solid var(--color-text-light);
   transition: transform 0.2s ease-in-out;
 }
 
-/* Rotate icon when header is collapsed */
 .note-section-header:not(.is-expanded) .toggle-icon {
-  transform: rotate(-90deg); /* Points right (collapsed) */
+  transform: rotate(-90deg);
 }
 
-/* The class to hide the list */
-.list.collapsed {
-  display: none;
-}
-/* END: New note section styles */
-
-
-#word-note-list .word-item,
 #note-list-words .word-item, 
 #note-list-phrases .word-item,
 #note-list-sentences .word-item {
@@ -401,11 +393,11 @@ button.secondary:hover {
 #staging-area {
   margin-top: 5px;
   padding: 12px 16px;
-  background-color: #f9f6f2; /* Slightly different bg for contrast */
+  background-color: #f9f6f2;
   border: 1px solid var(--color-border);
   border-radius: 12px;
   min-height: 80px;
-  margin-bottom: 140px; /* Moved from .staging-actions */
+  margin-bottom: 140px;
 }
 .staging-header {
   display: flex;
@@ -446,8 +438,6 @@ button.secondary:hover {
 .staged-word:hover { background-color: #ede3d7; border-color: #c9b49b; }
 .staged-word:active { transform: translateY(1px); }
 
-/* The .staging-actions class has been removed */
-
 /* 8. Mobile Responsive
 ------------------------------------------ */
 @media (max-width: 600px) {
@@ -460,19 +450,16 @@ button.secondary:hover {
     height: 280px;
     font-size: 22px;
     line-height: 1.7;
-    /* Keep original padding for layout compatibility */
     padding-bottom: 300px;
   }
 }
 
-/* START: Style for copy button feedback */
 button.btn-success-feedback {
     background-color: var(--color-primary) !important;
     color: var(--color-surface) !important;
     border-color: var(--color-primary) !important;
     transition: background-color 0.1s ease-in-out, color 0.1s ease-in-out, border-color 0.1s ease-in-out;
 }
-/* END: Style for copy button feedback */
 
 
 /* 9. Login & User Status Styles
@@ -482,7 +469,7 @@ button.btn-success-feedback {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100vh; /* Make it full height */
+  height: 100vh;
   padding: 20px;
 }
 
@@ -528,45 +515,31 @@ button.btn-success-feedback {
 
 /* 10. Deleting Item Feedback */
 .word-item.is-deleting {
-    background-color: #fce8e8 !important; /* A soft red background */
-    border-color: #e57373 !important;      /* A red border for emphasis */
+    background-color: #fce8e8 !important;
+    border-color: #e57373 !important;
     transition: background-color 0.1s ease, border-color 0.1s ease;
 }
 
 
-/* 確保 Note 頁面容器可以滾動 */
 #note-view {
-    /* 這裡假設 note-view 佔滿螢幕高度，且內部的內容可以滾動 */
-    padding: 20px; /* 內邊距讓內容不會緊貼邊緣 */
-    /* 確保其在父容器中佔據空間，並允許內容滾動 */
+    padding: 20px;
     overflow-y: auto; 
-    height: 100vh; /* 如果它是一個全屏視圖 */
-    box-sizing: border-box; /* 確保 padding 不增加總高度 */
+    height: 100vh;
+    box-sizing: border-box;
 }
 
-/* 固定輸入表單 */
 #add-word-form {
-    /* 使用 sticky 固定在頂部 */
     position: sticky;
-    top: 0; /* 固定在視窗或父容器的頂部 */
-    
-    /* 確保它在滾動內容之上 */
+    top: 0;
     z-index: 10; 
-    
-    /* 關鍵：給予背景色，讓它覆蓋下方滾動的內容，避免文字穿透 */
     background-color: var(--color-bg); 
-    
-    /* 增加一些邊框或陰影，使其看起來像懸浮在內容上方 */
-    padding: 10px 0; /* 垂直方向的間距 */
-    border-bottom: 1px solid var(--color-border); /* 底部邊線 */
-    margin-bottom: 10px; /* 與下方內容的間隔 */
-    
-    /* 讓 input 和 button 佈局更美觀 */
+    padding: 10px 0;
+    border-bottom: 1px solid var(--color-border);
+    margin-bottom: 10px;
     display: flex;
-    gap: 10px; /* 輸入框和按鈕之間的間隔 */
+    gap: 10px;
 }
 
-/* 讓輸入框佔滿剩餘空間 */
 #new-word-input {
     flex-grow: 1; 
 }

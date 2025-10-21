@@ -55,7 +55,6 @@ const addManualWordBtn = document.getElementById('add-manual-word-btn');
 let stories = [];
 let vocabularyData = [];
 let isPlaying = false;
-let rafId = null;
 let scrollMax = 0;
 let durationFallback = 59;
 let audioTriedCandidates = [];
@@ -80,6 +79,11 @@ let timestampData = [];
 let hasTimestampFile = false;
 let lastHighlightedSentence = null;
 let timestampUpdateRafId = null; // For smooth scrolling animation
+
+// --- NEW State Variables for JSON Mode Highlighting ---
+let jsonModeUpdateRafId = null;
+let lastHighlightedWords = [];
+let lastActiveSentenceStart = -1; // To track the current sentence
 
 // Storage Keys
 const LAST_SESSION_KEY = 'readingChallengeLastSession';
@@ -865,16 +869,12 @@ function renderTimestampContent() {
         p.dataset.start = line.start;
         p.dataset.end = line.end;
 
-        // NEW: 將句子拆分為單詞並用 span 包裹
-        // 這使得在音訊暫停時單詞可以被單獨點擊
         line.sentence.split(/(\s+|—|–)/).forEach(part => {
             if (!part) return;
             const span = document.createElement('span');
-            // 檢查這部分是否只是空白或破折號
             if (/^(\s+|—|–)$/.test(part)) {
-                span.textContent = part; // 直接附加
+                span.textContent = part;
             } else {
-                // 如果是單詞，使其可點擊
                 span.className = 'clickable-word';
                 span.textContent = part;
             }
@@ -885,7 +885,7 @@ function renderTimestampContent() {
     });
     textContainer.appendChild(frag);
     lastHighlightedSentence = null;
-    computeScrollMax(); // 為新內容重新計算最大滾動距離
+    computeScrollMax();
 }
 
 
@@ -914,24 +914,23 @@ function computeScrollMax() {
   scrollMax = Math.max(0, textContainer.scrollHeight - textContainer.clientHeight);
 }
 
-function tickScroll() {
-  if (!isPlaying || !isFinite(audio.duration)) return;
-  textContainer.scrollTop = (audio.currentTime / audio.duration) * scrollMax;
-  rafId = requestAnimationFrame(tickScroll);
+// --- NEW: Functions to stop animation loops ---
+function stopJsonModeHighlightLoop() {
+    if (jsonModeUpdateRafId) {
+        cancelAnimationFrame(jsonModeUpdateRafId);
+        jsonModeUpdateRafId = null;
+    }
 }
 
-function startScroll() {
-  if (rafId) cancelAnimationFrame(rafId);
-  computeScrollMax();
-  rafId = requestAnimationFrame(tickScroll);
+function stopTimestampUpdateLoop() {
+    if (timestampUpdateRafId) {
+        cancelAnimationFrame(timestampUpdateRafId);
+        timestampUpdateRafId = null;
+    }
 }
 
-function stopScroll() {
-  if (rafId) cancelAnimationFrame(rafId);
-  rafId = null;
-}
 
-// --- New Predictive Smooth Scrolling and Highlight Logic ---
+// --- NEW: Predictive Smooth Scrolling and Highlight Logic for Timestamp Mode ---
 function timestampUpdateLoop() {
     if (!isPlaying || !isTimestampMode || !isFinite(audio.duration) || audio.duration === 0) {
         timestampUpdateRafId = null;
@@ -940,7 +939,7 @@ function timestampUpdateLoop() {
 
     const currentTime = audio.currentTime;
     
-    // 1. Highlight Logic (remains the same)
+    // 1. Highlight Logic
     let activeSentence = null;
     for (const line of timestampData) {
         if (currentTime >= line.start && currentTime <= line.end) {
@@ -960,51 +959,139 @@ function timestampUpdateLoop() {
     }
 
     // 2. Predictive Smooth Scrolling Logic
-    // a. Calculate base scroll position from overall progress
     const progress = currentTime / audio.duration;
     const baseScrollTop = progress * scrollMax;
-
     let targetScrollTop = baseScrollTop;
 
-    // b. If a sentence is active, calculate the corrective position
     if (lastHighlightedSentence) {
         const containerHeight = textContainer.clientHeight;
         const sentenceTop = lastHighlightedSentence.offsetTop;
         const sentenceHeight = lastHighlightedSentence.offsetHeight;
         const correctiveScrollTop = sentenceTop - (containerHeight / 2) + (sentenceHeight / 2);
         
-        // c. Blend the base scroll and corrective scroll.
-        // Give more weight to the corrective scroll to ensure focus.
         const weight = 0.8;
         targetScrollTop = (baseScrollTop * (1 - weight)) + (correctiveScrollTop * weight);
     }
     
-    // d. Apply smoothing (easing) to the final target position
     const currentScrollTop = textContainer.scrollTop;
     const scrollDifference = targetScrollTop - currentScrollTop;
-    textContainer.scrollTop += scrollDifference * 0.1; // Adjust the 0.05 factor to change "smoothness"
+    textContainer.scrollTop += scrollDifference * 0.1;
 
     timestampUpdateRafId = requestAnimationFrame(timestampUpdateLoop);
 }
 
 
-function startTimestampUpdateLoop() {
-    if (timestampUpdateRafId) cancelAnimationFrame(timestampUpdateRafId);
-    timestampUpdateRafId = requestAnimationFrame(timestampUpdateLoop);
-}
-
-function stopTimestampUpdateLoop() {
-    if (timestampUpdateRafId) {
-        cancelAnimationFrame(timestampUpdateRafId);
-        timestampUpdateRafId = null;
+// --- REVISED: Highlight and Scroll Logic for JSON Mode for Continuous Highlighting ---
+function jsonModeHighlightLoop() {
+    if (!isPlaying || isTimestampMode || !isFinite(audio.duration) || audio.duration === 0 || !hasTimestampFile) {
+        jsonModeUpdateRafId = null;
+        return;
     }
+
+    const currentTime = audio.currentTime;
+
+    let activeSentenceData = null;
+    for (const line of timestampData) {
+        if (currentTime >= line.start && currentTime <= line.end) {
+            activeSentenceData = line;
+            break;
+        }
+    }
+
+    if (activeSentenceData) {
+        // 當句子切換時，才需要重新尋找並設定高亮單字
+        if (activeSentenceData.start !== lastActiveSentenceStart) {
+            lastActiveSentenceStart = activeSentenceData.start;
+
+            // 清除先前的高亮
+            lastHighlightedWords.forEach(span => span.classList.remove('is-current-sentence', 'highlight-start', 'highlight-end'));
+            lastHighlightedWords = [];
+
+            const normalize = (text) => text
+                .replace(/[^a-zA-Z0-9]/g, '')
+                .toLowerCase();
+
+            const normalizedTargetSentence = normalize(activeSentenceData.sentence);
+            
+            // --- 修改開始 ---
+            // 搜尋所有 span (包含單字與空白)，以實現連續高亮效果
+            const allSpans = Array.from(textContainer.querySelectorAll('p > span'));
+            // --- 修改結束 ---
+            
+            let found = false;
+
+            for (let i = 0; i < allSpans.length; i++) {
+                let tempSpanBuffer = [];
+                let tempText = '';
+                for (let j = i; j < allSpans.length; j++) {
+                    const currentSpan = allSpans[j];
+                    tempSpanBuffer.push(currentSpan);
+                    tempText += currentSpan.textContent;
+                    const normalizedCurrentText = normalize(tempText);
+
+                    if (normalizedCurrentText === normalizedTargetSentence) {
+                        lastHighlightedWords = tempSpanBuffer;
+                        found = true;
+                        break;
+                    }
+                    if (normalizedCurrentText.length > normalizedTargetSentence.length + 5) { // 優化：如果長度超出太多就跳出
+                        break;
+                    }
+                }
+                if (found) break;
+            }
+
+            // 如果找到對應的單字，就加上高亮效果
+            if (found) {
+                lastHighlightedWords.forEach((span, index) => {
+                    span.classList.add('is-current-sentence');
+                    if (index === 0) span.classList.add('highlight-start');
+                    if (index === lastHighlightedWords.length - 1) span.classList.add('highlight-end');
+                });
+            }
+        }
+    } else {
+        // 如果沒有正在播放的句子，清除所有高亮
+        if (lastActiveSentenceStart !== -1) {
+            lastHighlightedWords.forEach(span => span.classList.remove('is-current-sentence', 'highlight-start', 'highlight-end'));
+            lastHighlightedWords = [];
+            lastActiveSentenceStart = -1;
+        }
+    }
+
+    // --- NEW: 持續平滑滾動邏輯 (此部分在每一幀都會執行) ---
+    const progress = currentTime / audio.duration;
+    const baseScrollTop = progress * scrollMax;
+    let targetScrollTop = baseScrollTop;
+
+    // 如果有高亮的單字，微調滾動目標，使其盡量保持在畫面中央
+    if (lastHighlightedWords.length > 0) {
+        const firstWord = lastHighlightedWords[0];
+        const containerHeight = textContainer.clientHeight;
+        const wordTop = firstWord.offsetTop;
+        const wordHeight = firstWord.offsetHeight;
+        
+        // 計算能讓當前句子置中的滾動位置
+        const correctiveScrollTop = wordTop - (containerHeight / 2) + (wordHeight / 2);
+        
+        // 混合預測性滾動和修正性滾動，讓句子置中佔較大權重
+        const weight = 0.8; 
+        targetScrollTop = (baseScrollTop * (1 - weight)) + (correctiveScrollTop * weight);
+    }
+    
+    const currentScrollTop = textContainer.scrollTop;
+    const scrollDifference = targetScrollTop - currentScrollTop;
+    
+    // 使用插值法實現平滑滾動效果
+    textContainer.scrollTop += scrollDifference * 0.1;
+
+    jsonModeUpdateRafId = requestAnimationFrame(jsonModeHighlightLoop);
 }
 
 
 // Story loading and rendering
-async function loadData() { // <--- 函式更名
+async function loadData() {
   try {
-    // 使用 Promise.all 同時獲取兩個 JSON 檔案
     const [storyRes, vocabRes] = await Promise.all([
         fetch('https://raw.githubusercontent.com/BoydYang-Designer/Story-reading/main/story.json', { cache: 'no-store' }),
         fetch('https://boydyang-designer.github.io/English-vocabulary/audio_files/Z_total_words.json', { cache: 'no-store' })
@@ -1017,7 +1104,7 @@ async function loadData() { // <--- 函式更名
     const vocabJson = await vocabRes.json();
     
     stories = Array.isArray(storyJson['New Words']) ? storyJson['New Words'] : [];
-    vocabularyData = Array.isArray(vocabJson['New Words']) ? vocabJson['New Words'] : []; // 將單字資料存入新變數
+    vocabularyData = Array.isArray(vocabJson['New Words']) ? vocabJson['New Words'] : [];
 
     console.log("✅ Stories and Vocabulary data loaded successfully.");
 
@@ -1041,14 +1128,13 @@ function parseTimestampText(text) {
     const lines = text.trim().split('\n');
     const data = [];
     const regex = /\[(\d{2}:\d{2}:\d{2}\.\d{3}) --> (\d{2}:\d{2}:\d{2}\.\d{3})\](.*)/;
-    const shortRegex = /\[(\d{2}:\d{2}\.\d{3}) --> (\d{2}:\d{2}\.\d{3})\](.*)/; // Handle mm:ss.sss
+    const shortRegex = /\[(\d{2}:\d{2}\.\d{3}) --> (\d{2}:\d{2}\.\d{3})\](.*)/;
 
     for (const line of lines) {
         let match = line.match(regex);
         if (!match) {
              match = line.match(shortRegex);
              if (match) {
-                 // Prepend '00:' to match the longer format for the parser
                  match[1] = '00:' + match[1];
                  match[2] = '00:' + match[2];
              }
@@ -1077,11 +1163,13 @@ async function loadTimestampForStory(title) {
         } else {
             console.warn(`Timestamp file not found for "${title}" (404)`);
             hasTimestampFile = false;
+            timestampData = [];
             toggleTimestampBtn.style.display = 'none';
         }
     } catch (error) {
         console.error("Error fetching timestamp file:", error);
         hasTimestampFile = false;
+        timestampData = [];
         toggleTimestampBtn.style.display = 'none';
     }
 }
@@ -1152,7 +1240,6 @@ function showCategory(category) {
 }
 
 function showPlayback(index, startTime = 0) {
-  // Reset timestamp state on story change
   isTimestampMode = false;
   timestampData = [];
   hasTimestampFile = false;
@@ -1160,6 +1247,10 @@ function showPlayback(index, startTime = 0) {
   toggleTimestampBtn.classList.remove('is-active');
   toggleTimestampBtn.style.display = 'none';
   stopTimestampUpdateLoop();
+  stopJsonModeHighlightLoop();
+  lastHighlightedWords = [];
+  lastActiveSentenceStart = -1;
+
 
   stagedWordsContainer.innerHTML = '';
   currentStoryIndex = index;
@@ -1169,14 +1260,13 @@ function showPlayback(index, startTime = 0) {
   currentStoryTitle = story['標題'];
   playbackTitle.textContent = currentStoryTitle;
   
-  // Render default JSON content first
   textContainer.innerHTML = '';
   textContainer.appendChild(parafyAndMakeClickable('\n\n' + story['內文']));
   textContainer.scrollTop = 0;
   progressBar.value = 0;
   
   setAudioSourceWithFallback(currentStoryTitle);
-  loadTimestampForStory(currentStoryTitle); // Asynchronously load timestamp file
+  loadTimestampForStory(currentStoryTitle);
 
   prevStoryBtn.hidden = currentStoryIndex <= 0;
   nextStoryBtn.hidden = currentStoryIndex >= currentStoryList.length - 1;
@@ -1185,8 +1275,8 @@ function showPlayback(index, startTime = 0) {
     if (startTime > 0 && isFinite(audio.duration)) {
         audio.currentTime = Math.min(startTime, audio.duration);
     }
-    computeScrollMax(); // Compute scroll max after content is loaded and audio is ready
-    audio.play(); // Autoplay when loaded
+    computeScrollMax();
+    // audio.play(); // <--- 已移除此行以防止自動播放
     audio.removeEventListener('canplaythrough', onLoaded);
   };
   audio.addEventListener('canplaythrough', onLoaded);
@@ -1196,8 +1286,8 @@ function showPlayback(index, startTime = 0) {
 
 function stopAudioAndReset() {
   stagedWordsContainer.innerHTML = '';
-  stopScroll();
   stopTimestampUpdateLoop();
+  stopJsonModeHighlightLoop();
   audio.pause();
   audio.removeAttribute('src');
   audio.load();
@@ -1208,22 +1298,20 @@ function stopAudioAndReset() {
   currentCategoryName = null;
   playbackPositionBeforeNote = 0;
 
-  // Reset timestamp state as well
   isTimestampMode = false;
   toggleTimestampBtn.classList.remove('is-active');
   lastHighlightedSentence = null;
+  lastHighlightedWords = [];
+  lastActiveSentenceStart = -1;
 }
 
-// ========== START: MODIFIED CODE BLOCK ==========
-
-// HELPER FUNCTION FOR PAUSING to ensure synchronous state updates
 function pauseAudio() {
     audio.pause();
     isPlaying = false;
     playPauseBtn.classList.remove('is-playing');
     saveLastPlaybackState();
-    stopScroll();
     stopTimestampUpdateLoop();
+    stopJsonModeHighlightLoop();
 }
 
 // Button listeners
@@ -1232,10 +1320,9 @@ backToCategoryBtn.addEventListener('click', () => { stopAudioAndReset(); showVie
 rewindBtn.addEventListener('click', () => { audio.currentTime = Math.max(0, audio.currentTime - 5); });
 forwardBtn.addEventListener('click', () => { if(isFinite(audio.duration)) audio.currentTime = Math.min(audio.duration, audio.currentTime + 5); });
 
-// UPDATED PLAY/PAUSE BUTTON LISTENER
 playPauseBtn.addEventListener('click', () => {
     if (isPlaying) {
-        pauseAudio(); // Call the helper function to pause immediately
+        pauseAudio();
     } else {
         audio.play().catch(e => console.error("Play failed:", e));
     }
@@ -1244,7 +1331,6 @@ playPauseBtn.addEventListener('click', () => {
 prevStoryBtn.addEventListener('click', () => { if (currentStoryIndex > 0) { showPlayback(currentStoryIndex - 1); } });
 nextStoryBtn.addEventListener('click', () => { if (currentStoryIndex < currentStoryList.length - 1) { showPlayback(currentStoryIndex + 1); } });
 
-// --- New Timestamp Toggle Logic ---
 toggleTimestampBtn.addEventListener('click', () => {
     if (!hasTimestampFile) {
         alert('無 Timestamp');
@@ -1254,26 +1340,30 @@ toggleTimestampBtn.addEventListener('click', () => {
     toggleTimestampBtn.classList.toggle('is-active', isTimestampMode);
 
     if (isTimestampMode) {
-        stopScroll();
+        stopJsonModeHighlightLoop();
+        lastHighlightedWords.forEach(span => span.classList.remove('is-current-sentence', 'highlight-start', 'highlight-end'));
+        lastHighlightedWords = [];
+        lastActiveSentenceStart = -1;
+        
         renderTimestampContent();
-        if (isPlaying) startTimestampUpdateLoop();
+        if (isPlaying) timestampUpdateLoop();
     } else {
         stopTimestampUpdateLoop();
+        
         const story = currentStoryList[currentStoryIndex];
         textContainer.innerHTML = '';
         textContainer.appendChild(parafyAndMakeClickable('\n\n' + story['內文']));
         lastHighlightedSentence = null;
         computeScrollMax();
-        if (isPlaying) startScroll();
+        
+        if (isPlaying) jsonModeHighlightLoop();
     }
 });
 
-
-// Note view navigation
 goToStoryNoteBtn.addEventListener('click', () => {
     if (currentCategoryName && currentStoryTitle) {
         playbackPositionBeforeNote = audio.currentTime;
-        audio.pause(); // Pause audio when going to notes
+        if (isPlaying) pauseAudio();
         renderNoteView('words', currentCategoryName, currentStoryTitle);
         showView(noteView);
     }
@@ -1281,44 +1371,36 @@ goToStoryNoteBtn.addEventListener('click', () => {
 
 backToStoryFromNoteBtn.addEventListener('click', () => {
     if (noteViewCategory && noteViewTitle) {
-        // Find the story in the master list to get its category
         const story = stories.find(s => s['標題'] === noteViewTitle);
         const category = story?.['分類']?.[0];
         if (category) {
-            // Re-establish context
             currentStoryList = stories.filter(item => item['分類']?.map(c => c.trim()).includes(category))
                                       .sort((a, b) => String(a['標題']).localeCompare(String(b['標題'])));
             const indexInList = currentStoryList.findIndex(s => s['標題'] === noteViewTitle);
             if (indexInList > -1) {
-                showCategory(category); // Go to title list view first
-                showPlayback(indexInList, playbackPositionBeforeNote); // Then open playback
+                showCategory(category);
+                showPlayback(indexInList, playbackPositionBeforeNote);
             }
         }
     }
 });
 
-// Audio and progress bar listeners
 audio.addEventListener('play', () => { 
     isPlaying = true; 
     playPauseBtn.classList.add('is-playing'); 
     saveLastPlaybackState(); 
     if (isTimestampMode) {
-        startTimestampUpdateLoop();
+        timestampUpdateLoop();
     } else {
-        startScroll();
+        jsonModeHighlightLoop();
     }
 });
 
-// UPDATED PAUSE EVENT LISTENER
 audio.addEventListener('pause', () => { 
-    // This now acts as a safeguard for pauses not initiated by the button.
-    // If the button was clicked, isPlaying is already false, so this won't run.
     if (isPlaying) {
         pauseAudio();
     }
 });
-
-// ========== END: MODIFIED CODE BLOCK ==========
 
 audio.addEventListener('ended', () => { clearLastPlaybackState(); stopAudioAndReset(); document.getElementById('continue-last-session-btn')?.remove(); });
 audio.addEventListener('timeupdate', () => { 
@@ -1326,19 +1408,16 @@ audio.addEventListener('timeupdate', () => {
 });
 progressBar.addEventListener('input', () => { if (isFinite(audio.duration)) audio.currentTime = (progressBar.value / 100) * audio.duration; });
 
-// Keyboard shortcuts
 document.addEventListener('keydown', (event) => {
   if (!playbackView.classList.contains('is-hidden')) {
-    if (event.target.tagName === 'INPUT') return; // Don't interfere with text input
+    if (event.target.tagName === 'INPUT') return;
     if (event.code === 'Space') { event.preventDefault(); playPauseBtn.click(); }
     if (event.code === 'ArrowLeft') { event.preventDefault(); rewindBtn.click(); }
     if (event.code === 'ArrowRight') { event.preventDefault(); forwardBtn.click(); }
   }
 });
 
-// --- App Initialization ---
 function init() {
-  // Collapsible note sections listener
   document.getElementById('note-content-wrapper').addEventListener('click', (e) => {
       const header = e.target.closest('.note-section-header');
       if (header?.dataset.target) {
@@ -1352,11 +1431,7 @@ function init() {
 
   googleSigninBtn.addEventListener('click', signIn);
   guestModeBtn.addEventListener('click', enterGuestMode);
-
-  // App Header actions
   signOutBtn.addEventListener('click', signOutUser);
-
-  // NEW: Sign In from Guest Mode button logic
   if (signInFromGuestBtn) {
       signInFromGuestBtn.addEventListener('click', signIn);
   }
@@ -1364,47 +1439,28 @@ function init() {
   window.addEventListener('resize', computeScrollMax, { passive: true });
 }
 
-// --- Firebase Auth State Listener (The App's Entry Point) ---
 firebase.auth().onAuthStateChanged(async (user) => {
     if (user) {
         currentUser = user;
-
         try {
-            // --- START: NEW TRY BLOCK ---
             const guestNotesRaw = localStorage.getItem(SAVED_WORDS_KEY);
-            
-            await loadWordsFromFirestore(); // 如果這裡失敗，會直接跳到 catch
-
+            await loadWordsFromFirestore();
             if (guestNotesRaw) {
                 console.log("Found guest notes in local storage. Merging...");
-                
                 const guestNotesParsed = JSON.parse(guestNotesRaw);
                 const guestNotes = parseFirestoreData(guestNotesParsed);
-
                 savedWords = mergeNotes(guestNotes, savedWords);
-
-                await saveWordsToFirestore(); // 只有在成功載入後，才進行合併儲存
-                
+                await saveWordsToFirestore();
                 localStorage.removeItem(SAVED_WORDS_KEY);
                 console.log("Merge successful and local guest notes cleared.");
             }
-            
-            // 成功載入（或合併）後，顯示 App
             await showAppView(user);
-            // --- END: NEW TRY BLOCK ---
-
         } catch (error) {
-            // --- START: NEW CATCH BLOCK ---
             console.error("Critical error during user session initialization:", error);
             alert("Could not load your saved notes. Please check your internet connection and try again. Your notes will not be saved until the issue is resolved.");
-            
-            // 可以在這裡顯示一個錯誤畫面，或者直接登出使用者以保護資料
             showLoginView(); 
-            // --- END: NEW CATCH BLOCK ---
         }
-
     } else {
-        // User is signed out
         console.log("Auth state changed: User is logged out.");
         currentUser = null;
         savedWords = {};
@@ -1412,6 +1468,4 @@ firebase.auth().onAuthStateChanged(async (user) => {
     }
 });
 
-// Start the application
 init();
-
