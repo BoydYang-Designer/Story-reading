@@ -1239,50 +1239,83 @@ function showCategory(category) {
   showView(categoryView);
 }
 
-function showPlayback(index, startTime = 0) {
+// ===== MODIFIED FUNCTION =====
+async function showPlayback(index, startTime = 0, maintainTimestampMode = false) {
+  // 儲存切換前的模式狀態
+  const wasTimestampMode = maintainTimestampMode && isTimestampMode;
+
+  // 停止當前的動畫循環和音訊
+  stopTimestampUpdateLoop();
+  stopJsonModeHighlightLoop();
+  if (isPlaying) {
+      pauseAudio();
+  }
+  audio.removeAttribute('src');
+  audio.load();
+
+  // 重設狀態（稍後會根據 maintainTimestampMode 重新設定）
   isTimestampMode = false;
   timestampData = [];
   hasTimestampFile = false;
   lastHighlightedSentence = null;
   toggleTimestampBtn.classList.remove('is-active');
   toggleTimestampBtn.style.display = 'none';
-  stopTimestampUpdateLoop();
-  stopJsonModeHighlightLoop();
   lastHighlightedWords = [];
   lastActiveSentenceStart = -1;
-
-
   stagedWordsContainer.innerHTML = '';
+
+  // 載入新故事的資料
   currentStoryIndex = index;
   const story = currentStoryList[currentStoryIndex];
   if (!story) return;
-  
+
   currentStoryTitle = story['標題'];
   playbackTitle.textContent = currentStoryTitle;
-  
-  textContainer.innerHTML = '';
-  textContainer.appendChild(parafyAndMakeClickable('\n\n' + story['內文']));
+  textContainer.innerHTML = ''; // 清空
   textContainer.scrollTop = 0;
   progressBar.value = 0;
-  
-  setAudioSourceWithFallback(currentStoryTitle);
-  loadTimestampForStory(currentStoryTitle);
 
   prevStoryBtn.hidden = currentStoryIndex <= 0;
   nextStoryBtn.hidden = currentStoryIndex >= currentStoryList.length - 1;
 
+  // 等待新故事的時間戳檔案載入
+  await loadTimestampForStory(currentStoryTitle); // 這會更新 hasTimestampFile 和按鈕可見性
+
+  // 根據是否保持模式來決定渲染哪個內容
+  if (wasTimestampMode && hasTimestampFile) {
+      // 保持 Timestamp 模式
+      isTimestampMode = true;
+      toggleTimestampBtn.classList.add('is-active');
+      renderTimestampContent();
+  } else {
+      // 預設使用 JSON 模式
+      isTimestampMode = false;
+      toggleTimestampBtn.classList.remove('is-active');
+      textContainer.appendChild(parafyAndMakeClickable('\n\n' + story['內文']));
+  }
+
+  // 設定音訊來源
+  setAudioSourceWithFallback(currentStoryTitle);
+
   const onLoaded = () => {
-    if (startTime > 0 && isFinite(audio.duration)) {
-        audio.currentTime = Math.min(startTime, audio.duration);
+    audio.removeEventListener('canplaythrough', onLoaded); // 立即移除監聽器
+    if (isFinite(audio.duration)) {
+        if (startTime > 0) {
+            audio.currentTime = Math.min(startTime, audio.duration);
+        }
+        computeScrollMax();
+
+        // 如果是自動切換下一首，則自動播放
+        if (wasTimestampMode) {
+            playPauseBtn.click(); // 觸發播放
+        }
     }
-    computeScrollMax();
-    // audio.play(); // <--- 已移除此行以防止自動播放
-    audio.removeEventListener('canplaythrough', onLoaded);
   };
   audio.addEventListener('canplaythrough', onLoaded);
 
   showView(playbackView);
 }
+// ===== END OF MODIFIED FUNCTION =====
 
 function stopAudioAndReset() {
   stagedWordsContainer.innerHTML = '';
@@ -1328,8 +1361,10 @@ playPauseBtn.addEventListener('click', () => {
     }
 });
 
-prevStoryBtn.addEventListener('click', () => { if (currentStoryIndex > 0) { showPlayback(currentStoryIndex - 1); } });
-nextStoryBtn.addEventListener('click', () => { if (currentStoryIndex < currentStoryList.length - 1) { showPlayback(currentStoryIndex + 1); } });
+// ===== MODIFIED LINE =====
+prevStoryBtn.addEventListener('click', () => { if (currentStoryIndex > 0) { showPlayback(currentStoryIndex - 1, 0, isTimestampMode); } });
+// ===== MODIFIED LINE =====
+nextStoryBtn.addEventListener('click', () => { if (currentStoryIndex < currentStoryList.length - 1) { showPlayback(currentStoryIndex + 1, 0, isTimestampMode); } });
 
 toggleTimestampBtn.addEventListener('click', () => {
     if (!hasTimestampFile) {
@@ -1402,7 +1437,49 @@ audio.addEventListener('pause', () => {
     }
 });
 
-audio.addEventListener('ended', () => { clearLastPlaybackState(); stopAudioAndReset(); document.getElementById('continue-last-session-btn')?.remove(); });
+// ===== MODIFIED EVENT LISTENER =====
+audio.addEventListener('ended', () => {
+    clearLastPlaybackState();
+    document.getElementById('continue-last-session-btn')?.remove();
+
+    // --- 請求 1 & 2 的核心邏輯 ---
+
+    // 1. 基本重設（為了允許重播）
+    isPlaying = false;
+    playPauseBtn.classList.remove('is-playing');
+    audio.currentTime = 0;
+    progressBar.value = 0;
+    stopTimestampUpdateLoop();
+    stopJsonModeHighlightLoop();
+
+    // 重設高亮狀態
+    if (isTimestampMode) {
+        if (lastHighlightedSentence) {
+            lastHighlightedSentence.classList.remove('is-current');
+            lastHighlightedSentence = null;
+        }
+    } else {
+        lastHighlightedWords.forEach(span => span.classList.remove('is-current-sentence', 'highlight-start', 'highlight-end'));
+        lastHighlightedWords = [];
+        lastActiveSentenceStart = -1;
+    }
+    textContainer.scrollTop = 0; // 滾動到頂部
+
+    // 2. 檢查是否在 Timestamp 模式下自動播放下一則
+    if (isTimestampMode && currentStoryIndex < currentStoryList.length - 1) {
+        // 是 Timestamp 模式，且有下一則故事
+        console.log("Timestamp 模式結束，自動播放下一則...");
+        // 呼叫 showPlayback，並傳入 true 來保持 Timestamp 模式
+        showPlayback(currentStoryIndex + 1, 0, true);
+    } else {
+        // 不是 Timestamp 模式，或是最後一則故事
+        // 則不執行任何動作。
+        // 此時，使用者點擊播放鍵（playPauseBtn）將會從頭重播（因為 isPlaying = false 且 currentTime = 0）
+        console.log("播放結束。");
+    }
+});
+// ===== END OF MODIFIED EVENT LISTENER =====
+
 audio.addEventListener('timeupdate', () => { 
     if (isFinite(audio.duration)) progressBar.value = (audio.currentTime / audio.duration) * 100;
 });
