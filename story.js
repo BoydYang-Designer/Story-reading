@@ -51,6 +51,8 @@ const addWordForm = document.getElementById('add-word-form');
 const newWordInput = document.getElementById('new-word-input');
 const addManualWordBtn = document.getElementById('add-manual-word-btn');
 // --- NEWLY ADDED ELEMENTS ---
+// ===== MODIFIED LINE =====
+const prevNoteBtn = document.getElementById('prev-note-btn');
 const nextNoteBtn = document.getElementById('next-note-btn');
 const noteViewTitleEl = document.getElementById('note-view-title');
 
@@ -501,8 +503,12 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
     addWordForm.hidden = true;
     backToStoryFromNoteBtn.hidden = true;
     exportWordsBtn.hidden = true;
+    // ===== MODIFIED BLOCK START =====
+    prevNoteBtn.hidden = true; // Hide "Previous Note" by default
+    prevNoteBtn.onclick = null; // Clear previous listener
     nextNoteBtn.hidden = true; // Hide "Next Note" by default
     nextNoteBtn.onclick = null; // Clear previous listener
+    // ===== MODIFIED BLOCK END =====
 
     backToStoryFromNoteBtn.classList.remove('is-highlighted');
     backToHomeFromNoteBtn.classList.remove('is-highlighted');
@@ -571,11 +577,25 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
         backToHomeFromNoteBtn.classList.add('is-highlighted');
     }
 
-        // --- New "Next Note" logic ---
+        // --- New "Next/Prev Note" logic ---
         const storyList = stories.filter(item => item['分類']?.map(c => c.trim()).includes(categoryName))
                                  .sort((a, b) => String(a['標題']).localeCompare(String(b['標題'])));
         const currentIndex = storyList.findIndex(story => story['標題'] === titleName);
         
+        // --- NEW "Previous Note" logic ---
+        if (currentIndex > 0) {
+            const prevStory = storyList[currentIndex - 1];
+            prevNoteBtn.hidden = false;
+            prevNoteBtn.onclick = () => {
+                currentNoteOrigin = 'menu';
+                playbackPositionBeforeNote = 0;
+                const currentState = getExpansionStates();
+                renderNoteView('words', categoryName, prevStory['標題'], currentState);
+            };
+        }
+        // --- END "Previous Note" logic ---
+        
+        // --- Existing "Next Note" logic ---
         if (currentIndex > -1 && currentIndex < storyList.length - 1) {
             const nextStory = storyList[currentIndex + 1];
             nextNoteBtn.hidden = false;
