@@ -71,7 +71,6 @@
             <button id="forward-5" title="Forward 5s">
               <svg class="icon-forward" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 19 22 12 13 5 13 19"></polygon><polygon points="2 19 11 12 2 5 2 19"></polygon></svg>
             </button>
-            <!-- New Timestamp Toggle Button -->
             <button id="toggle-timestamp-btn" title="Toggle Timestamp" style="display: none;">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-toggle-ts"><path d="M3 15h18M4 10h16M10 3v4M14 3v4M8 21v-4M12 21v-4M16 21v-4"/></svg>
             </button>
@@ -87,7 +86,7 @@
     </div>
 
 <div id="note-view" class="is-hidden">
-    <h1>Word Note</h1>
+    <h1 id="note-view-title">Word Note</h1>
 
     <div id="add-word-form"> 
         <input type="text" id="new-word-input" placeholder="Enter a new word or sentence...">
@@ -107,6 +106,7 @@
         <button id="export-words-btn">Copy All Items</button>
         <button class="secondary" id="back-to-story-from-note-btn" hidden>Back to Story</button>
         <button class="secondary" id="back-to-home-from-note">Back to Home</button>
+        <button class="secondary" id="next-note-btn" hidden>Next Note</button>
     </div>
 </div>
   </div> 

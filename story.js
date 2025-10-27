@@ -50,6 +50,9 @@ const backToStoryFromNoteBtn = document.getElementById('back-to-story-from-note-
 const addWordForm = document.getElementById('add-word-form');
 const newWordInput = document.getElementById('new-word-input');
 const addManualWordBtn = document.getElementById('add-manual-word-btn');
+// --- NEWLY ADDED ELEMENTS ---
+const nextNoteBtn = document.getElementById('next-note-btn');
+const noteViewTitleEl = document.getElementById('note-view-title');
 
 // State Variables
 let stories = [];
@@ -491,11 +494,14 @@ function getExpansionStates() {
     return states;
 }
 
+// ===== MODIFIED FUNCTION =====
 function renderNoteView(level = 'categories', categoryName = null, titleName = null, expansionStates = null) {
     const noteContentWrapper = document.getElementById('note-content-wrapper');
     addWordForm.hidden = true;
     backToStoryFromNoteBtn.hidden = true;
     exportWordsBtn.hidden = true;
+    nextNoteBtn.hidden = true; // Hide "Next Note" by default
+    nextNoteBtn.onclick = null; // Clear previous listener
 
     const createListItem = (text, clickHandler, container) => {
         const item = document.createElement('div');
@@ -506,6 +512,7 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
     };
 
     if (level === 'categories' || level === 'titles') {
+        noteViewTitleEl.textContent = 'Word Note'; // Reset title
         noteContentWrapper.innerHTML = '<div class="list" id="temp-list-container"></div>';
         const tempListContainer = document.getElementById('temp-list-container');
         if (level === 'categories') {
@@ -525,6 +532,8 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
         }
     } else if (level === 'words' && categoryName && titleName) {
         
+        noteViewTitleEl.textContent = `Note: ${titleName}`; // Set story-specific title
+
         // Helper function to build each collapsible section's HTML
         const buildSectionHTML = (type, title) => {
             const listId = `note-list-${type}`;
@@ -550,6 +559,22 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
         backToStoryFromNoteBtn.hidden = false;
         exportWordsBtn.hidden = false;
         addWordForm.hidden = false;
+
+        // --- New "Next Note" logic ---
+        const storyList = stories.filter(item => item['分類']?.map(c => c.trim()).includes(categoryName))
+                                 .sort((a, b) => String(a['標題']).localeCompare(String(b['標題'])));
+        const currentIndex = storyList.findIndex(story => story['標題'] === titleName);
+        
+        if (currentIndex > -1 && currentIndex < storyList.length - 1) {
+            const nextStory = storyList[currentIndex + 1];
+            nextNoteBtn.hidden = false;
+            nextNoteBtn.onclick = () => {
+                playbackPositionBeforeNote = 0; // Reset playback position for the new story
+                const currentState = getExpansionStates(); // Preserve expansion state
+                renderNoteView('words', categoryName, nextStory['標題'], currentState);
+            };
+        }
+        // --- End of new logic ---
 
         const noteData = savedWords[categoryName]?.[titleName] || { words: new Set(), phrases: new Set(), sentences: new Set() };
         const sortItems = (set) => Array.from(set).sort((a, b) => a.localeCompare(b));
@@ -694,6 +719,7 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
         backToHomeFromNoteBtn.onclick = () => renderNoteView('titles', categoryName);
     }
 }
+// ===== END OF MODIFIED FUNCTION =====
 
 
 // --- Event Listeners & Core App Logic ---
@@ -1414,6 +1440,8 @@ backToStoryFromNoteBtn.addEventListener('click', () => {
             const indexInList = currentStoryList.findIndex(s => s['標題'] === noteViewTitle);
             if (indexInList > -1) {
                 showCategory(category);
+                // This now correctly uses noteViewTitle and playbackPositionBeforeNote
+                // which will be 0 if "Next Note" was clicked.
                 showPlayback(indexInList, playbackPositionBeforeNote);
             }
         }
