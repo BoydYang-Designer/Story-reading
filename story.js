@@ -70,6 +70,7 @@ let noteViewCategory = null;
 let noteViewTitle = null;
 let playbackPositionBeforeNote = 0;
 let currentUser = null; // To hold the logged-in user object
+let currentNoteOrigin = 'menu'; // NEW: Tracks how user entered the note view ('menu' or 'story')
 
 // --- New State Variables for Sentence Playback ---
 let timestampCache = {};
@@ -503,6 +504,9 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
     nextNoteBtn.hidden = true; // Hide "Next Note" by default
     nextNoteBtn.onclick = null; // Clear previous listener
 
+    backToStoryFromNoteBtn.classList.remove('is-highlighted');
+    backToHomeFromNoteBtn.classList.remove('is-highlighted');
+
     const createListItem = (text, clickHandler, container) => {
         const item = document.createElement('div');
         item.className = 'category-item';
@@ -560,6 +564,13 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
         exportWordsBtn.hidden = false;
         addWordForm.hidden = false;
 
+        if (currentNoteOrigin === 'story') {
+        backToStoryFromNoteBtn.classList.add('is-highlighted');
+    } else {
+        // This handles 'menu' path, 'Next Note' click, etc.
+        backToHomeFromNoteBtn.classList.add('is-highlighted');
+    }
+
         // --- New "Next Note" logic ---
         const storyList = stories.filter(item => item['分類']?.map(c => c.trim()).includes(categoryName))
                                  .sort((a, b) => String(a['標題']).localeCompare(String(b['標題'])));
@@ -569,10 +580,11 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
             const nextStory = storyList[currentIndex + 1];
             nextNoteBtn.hidden = false;
             nextNoteBtn.onclick = () => {
-                playbackPositionBeforeNote = 0; // Reset playback position for the new story
-                const currentState = getExpansionStates(); // Preserve expansion state
-                renderNoteView('words', categoryName, nextStory['標題'], currentState);
-            };
+            currentNoteOrigin = 'menu'; // Treat this as a menu navigation
+            playbackPositionBeforeNote = 0; // Reset playback position for the new story
+            const currentState = getExpansionStates(); // Preserve expansion state
+            renderNoteView('words', categoryName, nextStory['標題'], currentState);
+        };
         }
         // --- End of new logic ---
 
@@ -726,6 +738,7 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
 
 // Note view listeners
 goToNoteBtn.addEventListener('click', () => {
+    currentNoteOrigin = 'menu'; // Set origin to menu
     renderNoteView('categories');
     showView(noteView);
 });
@@ -1423,6 +1436,7 @@ toggleTimestampBtn.addEventListener('click', () => {
 
 goToStoryNoteBtn.addEventListener('click', () => {
     if (currentCategoryName && currentStoryTitle) {
+        currentNoteOrigin = 'story'; // Set origin to story
         playbackPositionBeforeNote = audio.currentTime;
         if (isPlaying) pauseAudio();
         renderNoteView('words', currentCategoryName, currentStoryTitle);

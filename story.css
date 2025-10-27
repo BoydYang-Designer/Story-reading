@@ -544,3 +544,15 @@ button.btn-success-feedback {
     flex-grow: 1; 
 }
 
+/* 11. Note View Highlight */
+/* 用於在 Note 畫面中高亮顯示主要的返回按鈕 */
+.note-actions button.is-highlighted {
+    background-color: var(--color-primary);
+    color: var(--color-surface);
+    border-color: var(--color-primary);
+}
+/* 確保滑鼠懸停(hover)時的樣式也正確 */
+.note-actions button.is-highlighted:hover {
+    background-color: var(--color-primary-dark);
+    color: var(--color-surface);
+}
