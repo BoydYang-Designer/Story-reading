@@ -595,7 +595,7 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
                 voiceBtn.textContent = 'Voice';
                 voiceBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    const audioSrc = `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(itemText.trim().toLowerCase())}.mp3`;
+                    const audioSrc = `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(itemText.trim())}.mp3`;
                     const wordAudio = new Audio(audioSrc);
                     wordAudio.play().catch(() => showNotification(`Audio for "${itemText}" was not found.`, 'error'));
                 });
