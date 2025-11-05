@@ -1,60 +1,60 @@
-[00:00:00.000 --> 00:00:06.720] Part 1-8. He decided to return to his friend's stable by the longest route possible.
-[00:00:06.720 --> 00:00:11.700] As he walked past the city's castle, he interrupted his return and climbed the stone ramp that
+[00:00:00.000 --> 00:00:06.720] Part 1-8: He decided to return to his friend’s stable by the longest route possible.
+[00:00:06.720 --> 00:00:11.700] As he walked past the city’s castle, he interrupted his return, and climbed the stone ramp that
 [00:00:11.700 --> 00:00:17.120] led to the top of the wall. From there, he could see Africa in the distance. Someone had
-[00:00:17.120 --> 00:00:22.600] once told him that it was from there that the moors had come to occupy all of Spain.
+[00:00:17.120 --> 00:00:22.600] once told him that it was from there that the Moors had come, to occupy all of Spain.
 [00:00:22.600 --> 00:00:26.560] He could see almost the entire city from where he sat, including the plaza where he had
-[00:00:26.560 --> 00:00:31.720] talked with the old man. Curse the moment I met that old man he thought. He had come to
+[00:00:26.560 --> 00:00:31.720] talked with the old man. Curse the moment I met that old man, he thought. He had come to
 [00:00:31.720 --> 00:00:37.200] the town only to find a woman who could interpret his dream. Neither the woman nor the old man
 [00:00:37.200 --> 00:00:42.200] was at all impressed by the fact that he was a shepherd. They were solitary individuals
-[00:00:42.200 --> 00:00:46.640] who no longer believed in things, and didn't understand that shepherds become attached
-[00:00:46.640 --> 00:00:51.840] to their sheep. He knew everything about each member of his flock. He knew which ones
+[00:00:42.200 --> 00:00:46.640] who no longer believed in things, and didn’t understand that shepherds become attached
+[00:00:46.640 --> 00:00:51.840] to their sheep. He knew everything about each member of his flock: he knew which ones
 [00:00:51.840 --> 00:00:56.600] were lame, which one was to give birth two months from now, and which were the laziest.
-[00:00:56.600 --> 00:01:01.120] He knew how to share them and how to slaughter them. If he ever decided to leave them, they
-[00:01:01.120 --> 00:01:07.520] would suffer. The wind began to pick up. He knew that wind. People called it the Levantre,
-[00:01:07.520 --> 00:01:12.120] because on it the moors had come from the Levant at the eastern end of the Mediterranean.
-[00:01:12.120 --> 00:01:17.160] The Levantre increased in intensity. Here I am between my flock and my treasure, the
+[00:00:56.600 --> 00:01:01.120] He knew how to shear them, and how to slaughter them. If he ever decided to leave them, they
+[00:01:01.120 --> 00:01:07.520] would suffer. The wind began to pick up. He knew that wind: people called it the levanter,
+[00:01:07.520 --> 00:01:12.120] because on it the Moors had come from the Levant at the eastern end of the Mediterranean.
+[00:01:12.120 --> 00:01:17.160] The levanter increased in intensity. Here I am, between my flock and my treasure, the
 [00:01:17.160 --> 00:01:21.640] boy thought. He had to choose between something he had become accustomed to and something
-[00:01:21.640 --> 00:01:26.600] he wanted to have. There was also the merchant's daughter, but she wasn't as important as
-[00:01:26.600 --> 00:01:32.360] his flock, because she didn't depend on him. Maybe she didn't even remember him. He
-[00:01:32.360 --> 00:01:37.360] was sure that it made no difference to her on which day he appeared. For her, every day
-[00:01:37.360 --> 00:01:41.640] was the same, and when each day is the same as the next, it's because people fail to
+[00:01:21.640 --> 00:01:26.600] he wanted to have. There was also the merchant’s daughter, but she wasn’t as important as
+[00:01:26.600 --> 00:01:32.360] his flock, because she didn’t depend on him. Maybe she didn’t even remember him. He
+[00:01:32.360 --> 00:01:37.360] was sure that it made no difference to her on which day he appeared: for her, every day
+[00:01:37.360 --> 00:01:41.640] was the same, and when each day is the same as the next, it’s because people fail to
 [00:01:41.640 --> 00:01:46.400] recognize the good things that happen in their lives every day that the sun rises. I left
-[00:01:46.400 --> 00:01:51.280] my father, my mother, and the town castle behind. They have gotten used to my being away
-[00:01:51.440 --> 00:01:56.360] and so have I. The sheep will get used to my not being there to the boy thought. From where
-[00:01:56.360 --> 00:02:02.120] he sat, he could observe the plaza. People continued to come and go from the baker's shop.
-[00:02:02.120 --> 00:02:06.840] A young couple sat on the bench where he had talked with the old man and they kissed. That
-[00:02:06.840 --> 00:02:12.000] baker, he said to himself without completing the thought. The Levantre was still getting
-[00:02:12.000 --> 00:02:17.360] stronger and he felt its force on his face. That wind had brought the moors, yes, but it
+[00:01:46.400 --> 00:01:51.280] my father, my mother, and the town castle behind. They have gotten used to my being away,
+[00:01:51.440 --> 00:01:56.360] and so have I. The sheep will get used to my not being there, too, the boy thought. From where
+[00:01:56.360 --> 00:02:02.120] he sat, he could observe the plaza. People continued to come and go from the baker’s shop.
+[00:02:02.120 --> 00:02:06.840] A young couple sat on the bench where he had talked with the old man, and they kissed. “That
+[00:02:06.840 --> 00:02:12.000] baker he said to himself, without completing the thought. The levanter was still getting
+[00:02:12.000 --> 00:02:17.360] stronger, and he felt its force on his face. That wind had brought the Moors, yes, but it
 [00:02:17.360 --> 00:02:21.800] had also brought the smell of the desert and of veiled women. It had brought with it the
-[00:02:21.800 --> 00:02:26.480] sweat and the dreams of men who had once left to search for the unknown and for gold and
-[00:02:26.480 --> 00:02:31.240] adventure and for the pyramids. The boy felt jealous of the freedom of the wind and
+[00:02:21.800 --> 00:02:26.480] sweat and the dreams of men who had once left to search for the unknown, and for gold and
+[00:02:26.480 --> 00:02:31.240] adventure and for the Pyramids. The boy felt jealous of the freedom of the wind, and
 [00:02:31.240 --> 00:02:36.600] saw that he could have the same freedom. There was nothing to hold him back except himself.
-[00:02:36.600 --> 00:02:40.840] The sheep, the merchants' daughter, and the fields of Andalusia were only steps along
-[00:02:40.840 --> 00:02:46.480] the way to his personal legend. The next day, the boy met the old man at noon. He brought
-[00:02:46.480 --> 00:02:52.280] six sheep with him. I'm surprised, the boy said. My friend bought all the other sheep
-[00:02:52.280 --> 00:02:57.280] immediately. He said that he had always dreamed of being a shepherd and that it was a good
-[00:02:57.280 --> 00:03:04.440] omen. That's the way it always is, said the old man. It's called the principle of favorability.
-[00:03:04.440 --> 00:03:09.720] When you play cards the first time you are almost sure to win. Beginners luck. Why is
-[00:03:09.720 --> 00:03:14.880] that? Because there is a force that wants you to realize your personal legend. It wets
-[00:03:14.880 --> 00:03:19.920] your appetite with the taste of success. Then the old man began to inspect the sheep and
-[00:03:19.920 --> 00:03:24.960] he saw that one was lame. The boy explained that it wasn't important since that sheep
-[00:03:24.960 --> 00:03:30.240] was the most intelligent of the flock and produced the most wool. Where is the treasure, he
-[00:03:30.240 --> 00:03:36.440] asked? It's in Egypt near the pyramids. The boy was startled. The old woman had said
-[00:03:36.440 --> 00:03:41.600] the same thing. But she hadn't charged him anything. In order to find the treasure you
+[00:02:36.600 --> 00:02:40.840] The sheep, the merchant’s daughter, and the fields of Andalusia were only steps along
+[00:02:40.840 --> 00:02:46.480] the way to his Personal Legend. The next day, the boy met the old man at noon. He brought
+[00:02:46.480 --> 00:02:52.280] six sheep with him. “I’m surprised,” the boy said. “My friend bought all the other sheep
+[00:02:52.280 --> 00:02:57.280] immediately. He said that he had always dreamed of being a shepherd, and that it was a good
+[00:02:57.280 --> 00:03:04.440] omen.” “That’s the way it always is,” said the old man. “It’s called the principle of favorability.
+[00:03:04.440 --> 00:03:09.720] When you play cards the first time, you are almost sure to win. Beginner’s luck.” “Why is
+[00:03:09.720 --> 00:03:14.880] that?” “Because there is a force that wants you to realize your Personal Legend; it whets
+[00:03:14.880 --> 00:03:19.920] your appetite with a taste of success.” Then the old man began to inspect the sheep, and
+[00:03:19.920 --> 00:03:24.960] he saw that one was lame. The boy explained that it wasn’t important, since that sheep
+[00:03:24.960 --> 00:03:30.240] was the most intelligent of the flock, and produced the most wool. “Where is the treasure?” he
+[00:03:30.240 --> 00:03:36.440] asked. “It’s in Egypt, near the Pyramids.” The boy was startled. The old woman had said
+[00:03:36.440 --> 00:03:41.600] the same thing. But she hadn’t charged him anything. “In order to find the treasure, you
 [00:03:41.600 --> 00:03:46.920] will have to follow the omens. God has prepared a path for everyone to follow. You just have
-[00:03:46.920 --> 00:03:52.200] to read the omens that he left for you. Before the boy could reply, a butterfly appeared
+[00:03:46.920 --> 00:03:52.200] to read the omens that he left for you.” Before the boy could reply, a butterfly appeared
 [00:03:52.200 --> 00:03:56.780] and fluttered between him and the old man. He remembered something his grandfather had
-[00:03:56.780 --> 00:04:02.600] once told him that butterflies were a good omen, like crickets and like grasshoppers, like
-[00:04:02.600 --> 00:04:04.600] lizards and forleaf clovers.
-[00:04:05.000 --> 00:04:10.360] That's right, said the old man, able to read the boy's thoughts. Just as your grandfather
-[00:04:10.360 --> 00:04:15.840] taught you, these are good omens. The old man opened his cape and the boy was struck by
+[00:03:56.780 --> 00:04:02.600] once told him: that butterflies were a good omen. Like crickets, and like grasshoppers; like
+[00:04:02.600 --> 00:04:04.600] lizards and four-leaf clovers.
+[00:04:05.000 --> 00:04:10.360] “That’s right,” said the old man, able to read the boy’s thoughts. “Just as your grandfather
+[00:04:10.360 --> 00:04:15.840] taught you. These are good omens.” The old man opened his cape, and the boy was struck by
 [00:04:15.840 --> 00:04:22.360] what he saw. The old man wore a breastplate of heavy gold, covered with precious stones.
-[00:04:22.360 --> 00:04:27.640] The boy recalled the brilliance he had noticed on the previous day. He really was a king.
+[00:04:22.360 --> 00:04:27.640] The boy recalled the brilliance he had noticed on the previous day. He really was a king!
 [00:04:27.640 --> 00:04:30.880] He must be disguised to avoid encounters with thieves.
-[00:04:31.200 --> 00:04:36.040] Take these, said the old man, holding out a white stone and a black stone that had been
-[00:04:36.040 --> 00:04:41.200] embedded at the center of the breastplate. They are called urimen thumbum. The black
-[00:04:41.200 --> 00:04:47.000] signifies, yes, and the white no. When you are unable to read the omens they will help
-[00:04:47.000 --> 00:04:53.760] you to do so. Always ask an objective question. But if you can try to make your own decisions,
-[00:04:53.760 --> 00:04:58.620] the treasure is at the pyramids that you already knew. But I had to insist on the payment
-[00:04:58.620 --> 00:05:03.500] of six sheep because I helped you to make your decision. The boy put the stones in his pouch.
-[00:05:04.300 --> 00:05:06.540] From then on he would make his own decisions.
+[00:04:31.200 --> 00:04:36.040] “Take these,” said the old man, holding out a white stone and a black stone that had been
+[00:04:36.040 --> 00:04:41.200] embedded at the center of the breastplate. “They are called urimen thumbum. The black
+[00:04:41.200 --> 00:04:47.000] signifies ‘yes,’ and the white ‘no.’ When you are unable to read the omens, they will help
+[00:04:47.000 --> 00:04:53.760] you to do so. Always ask an objective question. “But, if you can, try to make your own decisions.
+[00:04:53.760 --> 00:04:58.620] The treasure is at the Pyramids; that you already knew. But I had to insist on the payment
+[00:04:58.620 --> 00:05:03.500] of six sheep because I helped you to make your decision.” The boy put the stones in his pouch.
+[00:05:04.300 --> 00:05:06.540] From then on, he would make his own decisions.
