@@ -1,72 +1,72 @@
-[00:00:00.000 --> 00:00:06.520] Part 2-18. At night they spread their sleeping gear and kept their fires hidden. The desert
-[00:00:06.520 --> 00:00:11.720] nights were cold and were becoming darker and darker as the phases of the moon passed.
+[00:00:00.000 --> 00:00:06.520] Part 2 - 18 At night, they spread their sleeping gear and kept their fires hidden. The desert
+[00:00:06.520 --> 00:00:11.720] nights were cold, and were becoming darker and darker as the phases of the moon passed.
 [00:00:11.720 --> 00:00:15.800] They went on for a week, speaking only of the precautions they needed to follow in
-[00:00:15.800 --> 00:00:20.880] order to avoid the battles between the tribes. The war continued and at times the wind
-[00:00:20.880 --> 00:00:26.200] carried the sweet sickly smell of blood. Battles had been fought nearby and the wind
+[00:00:15.800 --> 00:00:20.880] order to avoid the battles between the tribes. The war continued, and at times the wind
+[00:00:20.880 --> 00:00:26.200] carried the sweet, sickly smell of blood. Battles had been fought nearby, and the wind
 [00:00:26.200 --> 00:00:30.560] reminded the boy that there was the language of omens, always ready to show him what his
-[00:00:30.560 --> 00:00:36.040] eyes had failed to observe. On the seventh day the alchemist decided to make camp earlier
-[00:00:36.040 --> 00:00:41.880] than usual. The falcon flew off to find game and the alchemist offered his water container
+[00:00:30.560 --> 00:00:36.040] eyes had failed to observe. On the seventh day, the alchemist decided to make camp earlier
+[00:00:36.040 --> 00:00:41.880] than usual. The falcon flew off to find game, and the alchemist offered his water container
 [00:00:41.880 --> 00:00:42.880] to the boy.
-[00:00:42.880 --> 00:00:46.640] �You are almost at the end of your journey,' said the alchemist.
-[00:00:46.640 --> 00:00:52.000] �I congratulate you for having pursued your personal legend. And you've told me nothing
-[00:00:52.000 --> 00:00:56.320] along the way,� said the boy. �I thought you were going to teach me some of the things
-[00:00:56.320 --> 00:01:01.080] you know. A while ago I rode through the desert with a man who had books on alchemy, but
-[00:01:01.080 --> 00:01:06.520] I wasn't able to learn anything from them. There is only one way to learn, the alchemist
-[00:01:06.520 --> 00:01:11.080] answered. It's through action. Everything you need to know you have learned through your
-[00:01:11.080 --> 00:01:16.560] journey. You need to learn only one thing more. The boy wanted to know what that was, but
-[00:01:16.560 --> 00:01:21.760] the alchemist was searching the horizon looking for the falcon. Why are you called the alchemist?
-[00:01:21.760 --> 00:01:27.200] Because that's what I am. And what went wrong when other alchemists tried to make gold
-[00:01:27.200 --> 00:01:32.920] and were unable to do so? They were looking only for gold,� his companion answered.
-[00:01:32.920 --> 00:01:37.320] �They were seeking the treasure of their personal legend, without wanting actually to
-[00:01:37.320 --> 00:01:42.440] live out the personal legend. What is it that I still need to know,� the boy asked.
+[00:00:42.880 --> 00:00:46.640] “You are almost at the end of your journey,” said the alchemist.
+[00:00:46.640 --> 00:00:52.000] “I congratulate you for having pursued your Personal Legend.” “And you’ve told me nothing
+[00:00:52.000 --> 00:00:56.320] along the way,” said the boy. “I thought you were going to teach me some of the things
+[00:00:56.320 --> 00:01:01.080] you know. A while ago, I rode through the desert with a man who had books on alchemy. But
+[00:01:01.080 --> 00:01:06.520] I wasn’t able to learn anything from them.” “There is only one way to learn,” the alchemist
+[00:01:06.520 --> 00:01:11.080] answered. “It’s through action. Everything you need to know you have learned through your
+[00:01:11.080 --> 00:01:16.560] journey. You need to learn only one thing more.” The boy wanted to know what that was, but
+[00:01:16.560 --> 00:01:21.760] the alchemist was searching the horizon, looking for the falcon. “Why are you called the alchemist?”
+[00:01:21.760 --> 00:01:27.200] “Because that’s what I am.” “And what went wrong when other alchemists tried to make gold
+[00:01:27.200 --> 00:01:32.920] and were unable to do so?” “They were looking only for gold,” his companion answered.
+[00:01:32.920 --> 00:01:37.320] “They were seeking the treasure of their Personal Legend, without wanting actually to
+[00:01:37.320 --> 00:01:42.440] live out the Personal Legend.” “What is it that I still need to know?” the boy asked.
 [00:01:42.440 --> 00:01:47.640] But the alchemist continued to look to the horizon. And finally the falcon returned
-[00:01:47.640 --> 00:01:52.400] with their meal. They dug a hole and lit their fire in it so that the light of the flames
+[00:01:47.640 --> 00:01:52.400] with their meal. They dug a hole and lit their fire in it, so that the light of the flames
 [00:01:52.400 --> 00:01:53.400] would not be seen.
-[00:01:53.400 --> 00:01:58.960] �I'm an alchemist simply because I'm an alchemist,� he said as he prepared the meal.
-[00:01:58.960 --> 00:02:03.000] �I learned the science from my grandfather who learned from his father and so on back
-[00:02:03.000 --> 00:02:07.560] to the creation of the world. In those times the master work could be written simply
-[00:02:07.560 --> 00:02:13.080] on an emerald. But men began to reject simple things and to write tracks, interpretations,
+[00:01:53.400 --> 00:01:58.960] “I’m an alchemist simply because I’m an alchemist,” he said, as he prepared the meal.
+[00:01:58.960 --> 00:02:03.000] “I learned the science from my grandfather, who learned from his father, and so on, back
+[00:02:03.000 --> 00:02:07.560] to the creation of the world. In those times, the Master Work could be written simply
+[00:02:07.560 --> 00:02:13.080] on an emerald. But men began to reject simple things, and to write tracts, interpretations,
 [00:02:13.080 --> 00:02:17.840] and philosophical studies. They also began to feel that they knew a better way than others
-[00:02:17.840 --> 00:02:22.240] had. Yet the emerald tablet is still alive today.
-[00:02:22.240 --> 00:02:27.320] What was written on the emerald tablet? The boy wanted to know. The alchemist began to
-[00:02:27.320 --> 00:02:32.880] draw in the sand and completed his drawing in less than five minutes. As he drew, the boy
-[00:02:32.880 --> 00:02:37.120] thought of the old king and the plaza where they had met that day. It seemed as if it
+[00:02:17.840 --> 00:02:22.240] had. Yet the Emerald Tablet is still alive today.”
+[00:02:22.240 --> 00:02:27.320] “What was written on the Emerald Tablet?” the boy wanted to know. The alchemist began to
+[00:02:27.320 --> 00:02:32.880] draw in the sand, and completed his drawing in less than five minutes. As he drew, the boy
+[00:02:32.880 --> 00:02:37.120] thought of the old king, and the plaza where they had met that day; it seemed as if it
 [00:02:37.120 --> 00:02:39.120] had taken place years and years ago.
-[00:02:39.640 --> 00:02:44.760] This is what was written on the emerald tablet,� said the alchemist when he had finished.
+[00:02:39.640 --> 00:02:44.760] “This is what was written on the Emerald Tablet,” said the alchemist, when he had finished.
 [00:02:44.760 --> 00:02:47.280] The boy tried to read what was written in the sand.
-[00:02:47.280 --> 00:02:53.160] �It's a code� said the boy a bit disappointed. It looks like what I saw in the Englishman's
-[00:02:53.160 --> 00:02:54.160] books.
-[00:02:54.160 --> 00:03:00.280] �No, the alchemist answered. It's like the flight of those two hawks. It can't be understood
-[00:03:00.280 --> 00:03:06.160] by reason alone. The emerald tablet is a direct passage to the soul of the world. The
+[00:02:47.280 --> 00:02:53.160] “It’s a code,” said the boy, a bit disappointed. “It looks like what I saw in the Englishman’s
+[00:02:53.160 --> 00:02:54.160] books.”
+[00:02:54.160 --> 00:03:00.280] “No,” the alchemist answered. “It’s like the flight of those two hawks; it can’t be understood
+[00:03:00.280 --> 00:03:06.160] by reason alone. The Emerald Tablet is a direct passage to the Soul of the World. “The
 [00:03:06.160 --> 00:03:11.600] wise men understood that this natural world is only an image and a copy of paradise.
 [00:03:11.600 --> 00:03:16.840] The existence of this world is simply a guarantee that there exists a world that is perfect.
-[00:03:16.840 --> 00:03:21.800] God created the world so that through its visible objects, men could understand his spiritual
-[00:03:21.800 --> 00:03:26.000] teachings and the marvels of his wisdom. That's what I mean by action.
-[00:03:26.000 --> 00:03:30.200] �Should I understand the emerald tablet?� the boy asked.
-[00:03:30.200 --> 00:03:34.880] �Perhaps if you were in a laboratory of alchemy, this would be the right time to study
-[00:03:34.960 --> 00:03:40.280] the best way to understand the emerald tablet. But you are in the desert. So immerse yourself
-[00:03:40.280 --> 00:03:45.400] in it. The desert will give you an understanding of the world. In fact, anything on the face
-[00:03:45.400 --> 00:03:50.080] of the earth will do that. You don't even have to understand the desert. All you have
-[00:03:50.080 --> 00:03:56.360] to do is contemplate a simple grain of sand, and you will see in it all the marvels of creation.
-[00:03:56.360 --> 00:04:01.920] How do I immerse myself in the desert? Listen to your heart. It knows all things because
-[00:04:01.920 --> 00:04:07.000] it came from the soul of the world, and it will one day return there. They crossed the
+[00:03:16.840 --> 00:03:21.800] God created the world so that, through its visible objects, men could understand his spiritual
+[00:03:21.800 --> 00:03:26.000] teachings and the marvels of his wisdom. That’s what I mean by action.”
+[00:03:26.000 --> 00:03:30.200] “Should I understand the Emerald Tablet?” the boy asked.
+[00:03:30.200 --> 00:03:34.880] “Perhaps, if you were in a laboratory of alchemy, this would be the right time to study
+[00:03:34.960 --> 00:03:40.280] the best way to understand the Emerald Tablet. But you are in the desert. So immerse yourself
+[00:03:40.280 --> 00:03:45.400] in it. The desert will give you an understanding of the world; in fact, anything on the face
+[00:03:45.400 --> 00:03:50.080] of the earth will do that. You don’t even have to understand the desert: all you have
+[00:03:50.080 --> 00:03:56.360] to do is contemplate a simple grain of sand, and you will see in it all the marvels of creation.”
+[00:03:56.360 --> 00:04:01.920] “How do I immerse myself in the desert?” “Listen to your heart. It knows all things, because
+[00:04:01.920 --> 00:04:07.000] it came from the Soul of the World, and it will one day return there.” They crossed the
 [00:04:07.000 --> 00:04:12.480] desert for another two days in silence. The alchemist had become much more cautious,
 [00:04:12.480 --> 00:04:16.840] because they were approaching the area where the most violent battles were being waged.
-[00:04:16.840 --> 00:04:22.440] As they moved along, the boy tried to listen to his heart. It was not easy to do. In earlier
-[00:04:22.440 --> 00:04:27.880] times, his heart had always been ready to tell its story, but lately that wasn't true.
+[00:04:16.840 --> 00:04:22.440] As they moved along, the boy tried to listen to his heart. It was not easy to do; in earlier
+[00:04:22.440 --> 00:04:27.880] times, his heart had always been ready to tell its story, but lately that wasn’t true.
 [00:04:27.880 --> 00:04:32.320] There had been times when his heart spent hours telling of its sadness, and at other times
 [00:04:32.320 --> 00:04:38.240] it became so emotional over the desert sunrise that the boy had to hide his tears. His heart
 [00:04:38.240 --> 00:04:42.920] beat fastest when it spoke to the boy of treasure, and more slowly when the boy stared
 [00:04:42.920 --> 00:04:48.560] entranced at the endless horizons of the desert. But his heart was never quiet, even when
-[00:04:48.560 --> 00:04:54.240] the boy and the alchemist had fallen into silence. Why do we have to listen to our hearts?
-[00:04:54.240 --> 00:04:59.000] The boy asked when they had made camp that day. Because wherever your heart is, that is
-[00:04:59.000 --> 00:05:05.600] where you'll find your treasure. But my heart is agitated, the boy said. It has its dreams,
-[00:05:05.600 --> 00:05:10.440] it gets emotional and it's become passionate over a woman of the desert. It asks things
-[00:05:10.440 --> 00:05:15.480] of me, and it keeps me from sleeping many nights when I'm thinking about her. Well, that's
-[00:05:15.480 --> 00:05:21.040] good. Your heart is alive. Keep listening to what it has to say. During the next three
-[00:05:21.040 --> 00:05:27.480] days, the two travelers passed by a number of armed tribesmen and saw others on the horizon.
-[00:05:27.480 --> 00:05:32.160] The boy's heart began to speak of fear. It told him stories it had heard from the soul
-[00:05:32.160 --> 00:05:37.720] of the world, stories of men who sought to find their treasure and never succeeded. Sometimes
+[00:04:48.560 --> 00:04:54.240] the boy and the alchemist had fallen into silence. “Why do we have to listen to our hearts?”
+[00:04:54.240 --> 00:04:59.000] the boy asked, when they had made camp that day. “Because, wherever your heart is, that is
+[00:04:59.000 --> 00:05:05.600] where you’ll find your treasure.” “But my heart is agitated,” the boy said. “It has its dreams,
+[00:05:05.600 --> 00:05:10.440] it gets emotional, and it’s become passionate over a woman of the desert. It asks things
+[00:05:10.440 --> 00:05:15.480] of me, and it keeps me from sleeping many nights, when I’m thinking about her.” “Well, that’s
+[00:05:15.480 --> 00:05:21.040] good. Your heart is alive. Keep listening to what it has to say.” During the next three
+[00:05:21.040 --> 00:05:27.480] days, the two travelers passed by a number of armed tribesmen, and saw others on the horizon.
+[00:05:27.480 --> 00:05:32.160] The boy’s heart began to speak of fear. It told him stories it had heard from the Soul
+[00:05:32.160 --> 00:05:37.720] of the World, stories of men who sought to find their treasure and never succeeded. Sometimes
 [00:05:37.720 --> 00:05:42.000] it frightened the boy with the idea that he might not find his treasure, or that he might
-[00:05:42.000 --> 00:05:47.400] die there in the desert. At other times, it told the boy that it was satisfied. It had
+[00:05:42.000 --> 00:05:47.400] die there in the desert. At other times, it told the boy that it was satisfied: it had
 [00:05:47.400 --> 00:05:48.800] found love and riches.

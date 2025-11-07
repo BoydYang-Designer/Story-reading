@@ -14,16 +14,16 @@
 [00:01:10.000 --> 00:01:13.000] But instead of being saddened, he was happy.
 [00:01:13.000 --> 00:01:16.500] He no longer had to seek out food and water for the sheep;
 [00:01:16.500 --> 00:01:19.000] he could go in search of his treasure, instead.
-[00:01:19.500 --> 00:01:22.500] He had not ascended his pocket, but he had faith.
+[00:01:19.500 --> 00:01:22.500] He had not a cent in his pocket, but he had faith.
 [00:01:22.500 --> 00:01:29.000] He had decided, the night before, that he would be as much an adventurer as the ones he had admired in books.
 [00:01:29.000 --> 00:01:31.500] He walked slowly through the market.
 [00:01:31.500 --> 00:01:36.500] The merchants were assembling their stalls, and the boy helped a candy seller to do his.
 [00:01:36.500 --> 00:01:39.300] The candy seller had a smile on his face:
 [00:01:39.300 --> 00:01:44.100] he was happy, aware of what his life was about, and ready to begin a day’s work.
-[00:01:44.100 --> 00:01:49.100] His smile reminded the boy of the old man, the mysterious old king he had met.
+[00:01:44.100 --> 00:01:49.100] His smile reminded the boy of the old man—the mysterious old king he had met.
 [00:01:49.100 --> 00:01:55.100] “This candy merchant isn’t making candy so that later he can travel or marry a shopkeeper’s daughter.
 [00:01:55.100 --> 00:01:59.100] He’s doing it because it’s what he wants to do,” thought the boy.
-[00:01:59.100 --> 00:02:06.100] He realized that he could do the same thing the old man had done, since whether a person was near to or far from his Personal Legend.
+[00:01:59.100 --> 00:02:06.100] He realized that he could do the same thing the old man had done—sense whether a person was near to or far from his Personal Legend.
 [00:02:06.100 --> 00:02:11.100] Just by looking at them. It’s easy, and yet I’ve never done it before, he thought.
 [00:02:11.100 --> 00:02:16.100] When the stall was assembled, the candy seller offered the boy the first sweet he had made for the day.
 [00:02:16.100 --> 00:02:19.100] The boy thanked him, ate it, and went on his way.
@@ -42,8 +42,8 @@
 [00:03:16.100 --> 00:03:19.100] “All things are one,” the old man had said.
 [00:03:19.100 --> 00:03:24.100] The crystal merchant awoke with the day, and felt the same anxiety that he felt every morning.
 [00:03:24.100 --> 00:03:31.100] He had been in the same place for thirty years: a shop at the top of a hilly street where few customers passed.
-[00:03:31.100 --> 00:03:37.100] Now it was too late to change anything, the only thing he had ever learned to do was to buy and sell crystal glassware.
-[00:03:37.100 --> 00:03:46.100] There had been a time when many people knew of his shop: Arab merchants, French and English geologists, German soldiers who were always well healed.
+[00:03:31.100 --> 00:03:37.100] Now it was too late to change anything—the only thing he had ever learned to do was to buy and sell crystal glassware.
+[00:03:37.100 --> 00:03:46.100] There had been a time when many people knew of his shop: Arab merchants, French and English geologists, German soldiers who were always well-heeled.
 [00:03:46.100 --> 00:03:54.100] In those days it had been wonderful to be selling crystal, and he had thought how he would become rich, and have beautiful women at his side as he grew older.
 [00:03:54.100 --> 00:03:57.100] But, as time passed, Tangier had changed.
 [00:03:57.100 --> 00:04:02.100] The nearby city of Ceuta had grown faster than Tangier, and business had fallen off.
@@ -62,7 +62,7 @@
 [00:05:02.100 --> 00:05:04.100] The man looked at him without responding.
 [00:05:04.100 --> 00:05:07.100] “In exchange, you could give me something to eat.”
 [00:05:07.100 --> 00:05:12.100] The man still said nothing, and the boy sensed that he was going to have to make a decision.
-[00:05:12.100 --> 00:05:16.100] In his pouch, he had his jacket he certainly wasn’t going to need it in the desert.
+[00:05:12.100 --> 00:05:16.100] In his pouch, he had his jacket—he certainly wasn’t going to need it in the desert.
 [00:05:16.100 --> 00:05:20.100] Taking the jacket out, he began to clean the glasses.
 [00:05:20.100 --> 00:05:28.100] In half an hour, he had cleaned all the glasses in the window, and, as he was doing so, two customers had entered the shop and bought some crystal.
 [00:05:28.100 --> 00:05:32.100] When he had completed the cleaning, he asked the man for something to eat.
@@ -83,7 +83,7 @@
 [00:06:27.100 --> 00:06:31.100] “I’ll work all night, until dawn, and I’ll clean every piece of crystal in your shop.
 [00:06:31.100 --> 00:06:35.100] In return, I need money to get to Egypt tomorrow.”
 [00:06:35.100 --> 00:06:39.100] The merchant laughed. “Even if you cleaned my crystal for an entire year
-[00:06:40.100 --> 00:06:45.100] even if you earned a good commission selling every piece, you would still have to borrow money to get to Egypt.
+[00:06:40.100 --> 00:06:45.100] . . . even if you earned a good commission selling every piece, you would still have to borrow money to get to Egypt.
 [00:06:45.100 --> 00:06:49.100] There are thousands of kilometers of desert between here and there.”
 [00:06:49.100 --> 00:06:53.100] There was a moment of silence so profound that it seemed the city was asleep.
 [00:06:53.100 --> 00:07:00.100] No sound from the bazaars, no arguments among the merchants, no men climbing to the towers to chant.
@@ -95,4 +95,4 @@
 [00:07:24.100 --> 00:07:29.100] “I can give you the money you need to get back to your country, my son,” said the crystal merchant.
 [00:07:29.100 --> 00:07:34.100] The boy said nothing. He got up, adjusted his clothing, and picked up his pouch.
 [00:07:34.100 --> 00:07:41.100] “I’ll work for you,” he said. And after another long silence, he added, “I need money to buy some sheep.”
-[00:07:41.100 --> 00:07:43.100] The end of part one.
+[00:07:41.100 --> 00:07:43.100]

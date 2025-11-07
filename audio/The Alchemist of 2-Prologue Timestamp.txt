@@ -1,18 +1,18 @@
 [00:00:00.000 --> 00:00:03.800] The alchemist picked up a book that someone in the caravan had brought.
-[00:00:03.800 --> 00:00:07.560] Leaping through the pages he found a story about Narcissus.
+[00:00:03.800 --> 00:00:07.560] Leafing through the pages, he found a story about Narcissus.
 [00:00:07.560 --> 00:00:14.480] The alchemist knew the legend of Narcissus, a youth who knelt daily beside a lake to contemplate his own beauty.
-[00:00:14.480 --> 00:00:19.800] He was so fascinated by himself that one morning he fell into the lake and drowned.
-[00:00:19.800 --> 00:00:24.320] At the spot where he fell, a flower was born, which was called the Narcissus.
+[00:00:14.480 --> 00:00:19.800] He was so fascinated by himself that, one morning, he fell into the lake and drowned.
+[00:00:19.800 --> 00:00:24.320] At the spot where he fell, a flower was born, which was called the narcissus.
 [00:00:24.320 --> 00:00:27.920] But this was not how the author of the book ended the story.
 [00:00:28.000 --> 00:00:37.400] He said that when Narcissus died, the goddesses of the forest appeared and found the lake, which had been fresh water, transformed into a lake of salty tears.
-[00:00:37.400 --> 00:00:40.200] Why do you weep, the goddesses asked?
-[00:00:40.200 --> 00:00:43.480] I weep for Narcissus, the lake replied.
-[00:00:43.480 --> 00:00:53.240] Ah, it is no surprise that you weep for Narcissus, they said, for though we always pursued him in the forest, you alone could contemplate his beauty close at hand.
-[00:00:53.240 --> 00:00:57.680] But was Narcissus beautiful? The lake asked.
-[00:00:57.760 --> 00:01:01.760] Who better than you to know that, the goddesses said in wonder.
-[00:01:01.760 --> 00:01:06.840] After all, it was by your banks that he knelt each day to contemplate himself.
+[00:00:37.400 --> 00:00:40.200] “Why do you weep?” the goddesses asked.
+[00:00:40.200 --> 00:00:43.480] “I weep for Narcissus,” the lake replied.
+[00:00:43.480 --> 00:00:53.240] “Ah, it is no surprise that you weep for Narcissus,” they said, “for though we always pursued him in the forest, you alone could contemplate his beauty close at hand.”
+[00:00:53.240 --> 00:00:57.680] “But . . . was Narcissus beautiful?” the lake asked.
+[00:00:57.760 --> 00:01:01.760] “Who better than you to know that?” the goddesses said in wonder.
+[00:01:01.760 --> 00:01:06.840] “After all, it was by your banks that he knelt each day to contemplate himself!”
 [00:01:06.840 --> 00:01:09.080] The lake was silent for some time.
-[00:01:09.080 --> 00:01:10.480] Finally it said.
-[00:01:10.480 --> 00:01:14.560] I weep for Narcissus but I never noticed that Narcissus was beautiful.
-[00:01:14.560 --> 00:01:21.760] I weep because each time he knelt beside my banks I could see in the depths of his eyes, my own beauty reflected.
-[00:01:21.760 --> 00:01:24.920] What a lovely story, the alchemist thought.
+[00:01:09.080 --> 00:01:10.480] Finally, it said:
+[00:01:10.480 --> 00:01:14.560] “I weep for Narcissus, but I never noticed that Narcissus was beautiful.
+[00:01:14.560 --> 00:01:21.760] I weep because, each time he knelt beside my banks, I could see, in the depths of his eyes, my own beauty reflected.”
+[00:01:21.760 --> 00:01:24.920] “What a lovely story,” the alchemist thought.
