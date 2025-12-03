@@ -45,17 +45,18 @@
 [00:04:01.440 --> 00:04:06.720] the present was full of surprises, and they had to be aware of many things: Where was the enemy’s
 [00:04:07.680 --> 00:04:12.320] sword? Where was his horse? What kind of blow should one deliver next in order to remain alive?
 [00:04:12.960 --> 00:04:18.400] The camel driver was not a fighter, and he had consulted with seers. Many of them had been
-[00:04:18.400 --> 00:04:27.200] right about what they said, while some had been wrong. Then, one day, the oldest seer he had ever
-[00:04:27.200 --> 00:04:32.160] sought out (and the one most to be feared) had asked why the camel driver was so interested in the
-[00:04:33.120 --> 00:04:39.920] future. “Well . . . so I can do things,” he had responded. “And so I can change those things that I don’t want to
-[00:04:39.920 --> 00:04:46.160] happen.” “But then they wouldn’t be a part of your future,” the seer had said. “Well, maybe I just want
-[00:04:46.160 --> 00:04:51.280] to know the future so I can prepare myself for what’s coming.” “If good things are coming, they will
-[00:04:51.280 --> 00:04:57.760] be a pleasant surprise,” said the seer. “If bad things are, and you know in advance, you will suffer
-[00:04:57.760 --> 00:05:03.280] greatly before they even occur.” “I want to know about the future because I’m a man,” the camel
-[00:05:03.280 --> 00:05:09.440] driver had said to the seer. “And men always live their lives based on the future.” The seer was a
-[00:05:09.440 --> 00:05:14.800] specialist in the casting of twigs; he threw them on the ground, and made interpretations based on
-[00:05:14.800 --> 00:05:20.560] how they fell. That day, he didn’t make a cast. He wrapped the twigs in a piece of cloth and put
-[00:05:20.560 --> 00:05:27.360] them back in his bag. “I make my living forecasting the future for people,” he said. “I know the science of
-[00:05:27.360 --> 00:05:32.400] the twigs, and I know how to use them to penetrate to the place where all is written. There, I can
-[00:05:32.400 --> 00:05:37.520] read the past, discover what has already been forgotten, and understand the omens that are here in the
-[00:05:37.520 --> 00:05:39.040] present.
+[00:04:18.400 --> 00:04:24.320] right about what they said, while some had been wrong. Then, one day, the oldest seer he had ever
+[00:04:24.320 --> 00:04:29.680] sought out (and the one most to be feared) had asked why the camel driver was so interested in the future.
+[00:04:30.400 --> 00:04:37.200] “Well . . . so I can do things,” he had responded. “And so I can change those things that I don’t want to
+[00:04:37.200 --> 00:04:41.760] happen.” “But then they wouldn’t be a part of your future,” the seer had said.
+[00:04:42.320 --> 00:04:46.240] “Well, maybe I just want to know the future so I can prepare myself for what’s coming.”
+[00:04:46.960 --> 00:04:50.960] “If good things are coming, they will be a pleasant surprise,” said the seer.
+[00:04:51.680 --> 00:04:56.560] “If bad things are, and you know in advance, you will suffer greatly before they even occur.”
+[00:04:57.200 --> 00:05:01.920] “I want to know about the future because I’m a man,” the camel driver had said to the seer.
+[00:05:02.560 --> 00:05:08.080] “And men always live their lives based on the future.” The seer was a specialist in the casting of
+[00:05:08.080 --> 00:05:13.920] twigs; he threw them on the ground, and made interpretations based on how they fell. That day, he
+[00:05:13.920 --> 00:05:18.800] didn’t make a cast. He wrapped the twigs in a piece of cloth and put them back in his bag.
+[00:05:19.440 --> 00:05:22.880] “I make my living forecasting the future for people,” he said.
+[00:05:23.520 --> 00:05:27.680] “I know the science of the twigs, and I know how to use them to penetrate to the place where
+[00:05:27.680 --> 00:05:32.640] all is written. There, I can read the past, discover what has already been forgotten,
+[00:05:32.640 --> 00:05:38.800] and understand the omens that are here in the present.
