@@ -408,7 +408,7 @@ async function getTimestampForStory(title) {
     }
     
     const fileName = `${title} Timestamp.txt`;
-    const url = `https://raw.githubusercontent.com/BoydYang-Designer/Story-reading/main/audio/${encodeURIComponent(title)} Timestamp.txt`;
+    const url = `https://raw.githubusercontent.com/BoydYang-Designer/Story-reading/main/audio/${encodeURIComponent(fileName)}`;
     try {
         const response = await fetch(url);
         if (response.ok) {
@@ -1213,8 +1213,7 @@ function parseTimestampText(text) {
 
 async function loadTimestampForStory(title) {
     const fileName = `${title} Timestamp.txt`;
-    const url = `https://raw.githubusercontent.com/BoydYang-Designer/Story-reading/main/audio/${encodeURIComponent(title)} Timestamp.txt`;
-    try {
+    const url = `https://raw.githubusercontent.com/BoydYang-Designer/Story-reading/main/audio/${encodeURIComponent(fileName)}`;
         const response = await fetch(url);
         if (response.ok) {
             const text = await response.text();
