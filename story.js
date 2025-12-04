@@ -1210,9 +1210,13 @@ function parseTimestampText(text) {
     return data;
 }
 
+
+
+// === 修正後的正確版本 ===
 async function loadTimestampForStory(title) {
     const url = `https://raw.githubusercontent.com/BoydYang-Designer/Story-reading/main/audio/${encodeURIComponent(title)} Timestamp.txt`;
 
+    try { // <--- 【補上這一行】
         const response = await fetch(url);
         if (response.ok) {
             const text = await response.text();
@@ -1225,13 +1229,14 @@ async function loadTimestampForStory(title) {
             timestampData = [];
             toggleTimestampBtn.style.display = 'none';
         }
-    } catch (error) {
+    } catch (error) { // 現在這裡的 catch 會有對應的 try 了
         console.error("Error fetching timestamp file:", error);
         hasTimestampFile = false;
         timestampData = [];
         toggleTimestampBtn.style.display = 'none';
     }
 }
+
 
 
 function renderCategories() {
