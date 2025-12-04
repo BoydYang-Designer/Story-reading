@@ -1216,7 +1216,7 @@ function parseTimestampText(text) {
 async function loadTimestampForStory(title) {
     const url = `https://raw.githubusercontent.com/BoydYang-Designer/Story-reading/main/audio/${encodeURIComponent(title)} Timestamp.txt`;
 
-    try { // <--- 【補上這一行】
+    try {  // <--- 【請補上這一行】
         const response = await fetch(url);
         if (response.ok) {
             const text = await response.text();
@@ -1229,7 +1229,7 @@ async function loadTimestampForStory(title) {
             timestampData = [];
             toggleTimestampBtn.style.display = 'none';
         }
-    } catch (error) { // 現在這裡的 catch 會有對應的 try 了
+    } catch (error) { // 現在這裡正確了，因為前面有 try
         console.error("Error fetching timestamp file:", error);
         hasTimestampFile = false;
         timestampData = [];
