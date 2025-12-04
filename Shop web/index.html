@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>智慧購物清單</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <header>
+        <h1>購物管家</h1>
+        <div class="header-btns">
+            <input type="file" id="importFile" accept=".json" style="display: none;">
+            <button id="importBtn" class="icon-btn"><i class="fas fa-file-import"></i> 匯入</button>
+            <button id="exportBtn" class="icon-btn"><i class="fas fa-file-export"></i> 備份</button>
+        </div>
+    </header>
+
+    <main>
+        <div class="tabs">
+            <button class="tab-btn active" data-target="dashboard">查詢與分析</button>
+            <button class="tab-btn" data-target="list">清單管理</button>
+            <button class="tab-btn" data-target="add">新增/編輯</button>
+        </div>
+
+        <section id="dashboard" class="page active">
+            <div class="card search-card">
+                <h3><i class="fas fa-search"></i> 價格查詢</h3>
+                <div class="input-group row">
+                    <select id="searchYear"><option value="">所有年份</option></select>
+                    <select id="searchMonth">
+                        <option value="">所有月份</option>
+                        <option value="1">1月</option><option value="2">2月</option><option value="3">3月</option>
+                        <option value="4">4月</option><option value="5">5月</option><option value="6">6月</option>
+                        <option value="7">7月</option><option value="8">8月</option><option value="9">9月</option>
+                        <option value="10">10月</option><option value="11">11月</option><option value="12">12月</option>
+                    </select>
+                </div>
+                <input type="text" id="searchInput" placeholder="輸入商品名稱關鍵字...">
+                <div id="searchResults" class="result-list"></div>
+            </div>
+
+            <div class="card analysis-card">
+                <h3><i class="fas fa-chart-line"></i> 頻率與 CP 值分析</h3>
+                <div id="analysisOutput"></div>
+            </div>
+        </section>
+
+        <section id="list" class="page">
+            <div class="category-filter">
+                <button class="cat-btn active" onclick="filterCategory('all')">全部</button>
+                <button class="cat-btn" onclick="filterCategory('Home')">Home</button>
+                <button class="cat-btn" onclick="filterCategory('Family')">Family</button>
+                <button class="cat-btn" onclick="filterCategory('Uncle')">舅舅</button>
+            </div>
+            <div id="shoppingList" class="item-list"></div>
+        </section>
+
+        <section id="add" class="page">
+            <div class="card form-card">
+                <h3 id="formTitle">新增購買紀錄</h3>
+                <form id="addForm">
+                    <div class="input-group">
+                        <label>日期</label>
+                        <input type="date" id="date" required>
+                    </div>
+                    <div class="input-group">
+                        <label>賣場</label>
+                        <select id="store" required>
+                            <option value="Costco">Costco</option>
+                            <option value="POYA">寶雅 (POYA)</option>
+                            <option value="Carrefour">家樂福</option>
+                            <option value="IKEA">IKEA</option>
+                            <option value="Other">其他</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>品名</label>
+                        <input type="text" id="itemName" required>
+                    </div>
+                    <div class="input-group row">
+                        <div><label>價格</label><input type="number" id="price" placeholder="0" required></div>
+                        <div><label>規格</label><input type="text" id="spec"></div>
+                    </div>
+                    <div class="input-group">
+                        <label>歸屬</label>
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" id="tagHome" value="Home"> Home</label>
+                            <label><input type="checkbox" id="tagFamily" value="Family"> Family</label>
+                            <label><input type="checkbox" id="tagUncle" value="Uncle"> 舅舅</label>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>備註</label>
+                        <textarea id="note" rows="2"></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">儲存資料</button>
+                    <button type="button" id="cancelEdit" class="cancel-btn" style="display:none;">取消編輯</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
