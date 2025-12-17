@@ -407,7 +407,7 @@ async function getTimestampForStory(title) {
         return timestampCache[title];
     }
     
-const url = `https://raw.githubusercontent.com/BoydYang-Designer/Story-reading/main/audio/${encodeURIComponent(title)} Timestamp.txt`;
+const url = `https://raw.githubusercontent.com/BoydYang-Designer/Story-reading/main/audio/${encodeURIComponent(title.trim())} Timestamp.txt`;
     try {
         const response = await fetch(url);
         if (response.ok) {
@@ -467,7 +467,10 @@ async function playSentenceSnippet(sentenceText, storyTitle) {
         return;
     }
     
-    const audioSrc = 'audio/' + encodeURIComponent(storyTitle.trim()) + '.mp3';
+    // 修改前
+return ['audio/' + encodeURIComponent(title.trim()) + '.mp3'];
+
+// 這裡您也已經有寫 trim() 了，所以音檔應該是可以播放的，主要是 Timestamp 讀取的部分漏了 trim()。
     
     noteAudioPlayer.src = audioSrc;
     noteAudioPlayer.currentTime = start;
@@ -1214,7 +1217,7 @@ function parseTimestampText(text) {
 
 // === 修正後的正確版本 ===
 async function loadTimestampForStory(title) {
-    const url = `https://raw.githubusercontent.com/BoydYang-Designer/Story-reading/main/audio/${encodeURIComponent(title)} Timestamp.txt`;
+const url = `https://raw.githubusercontent.com/BoydYang-Designer/Story-reading/main/audio/${encodeURIComponent(title.trim())} Timestamp.txt`;
 
     try {  // <--- 【請補上這一行】
         const response = await fetch(url);
