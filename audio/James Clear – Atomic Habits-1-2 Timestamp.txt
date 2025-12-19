@@ -25,14 +25,14 @@
 [00:02:32.000 --> 00:02:39.000] We all deal with setbacks, but in the long run, the quality of our lives often depends on the quality of our habits.
 [00:02:39.000 --> 00:02:45.000] With the same habits, you'll end up with the same results. But with better habits, anything is possible.
 [00:02:45.000 --> 00:02:52.000] Maybe there are people who can achieve incredible success overnight. I don't know any of them, and I'm certainly not one of them.
-[00:02:52.000 --> 00:02:58.000] There wasn't one defining moment in my journey from Medicine, Duce, coma to Academic All-American. There were many.
+[00:02:52.000 --> 00:02:58.000] There wasn't one defining moment in my journey from Medicine, Duce, coma to Academic All-American. there were many.
 [00:02:58.000 --> 00:03:08.000] It was a gradual evolution, a long series of small wins and tiny breakthroughs. The only way I made progress, the only choice I had to be honest, was to start small.
 [00:03:08.000 --> 00:03:16.000] And I employed this same strategy a few years later when I started my own business and began working on this book.
 [00:03:16.000 --> 00:03:19.000] How and Why I Wrote This Book.
 [00:03:20.000 --> 00:03:32.000] In November 2012, I began publishing articles at JamesClear.com. For years, I had been keeping notes about my personal experiments with habits, and I was finally ready to share some of them publicly.
 [00:03:32.000 --> 00:03:46.000] I began by publishing a new article every Monday and Thursday. Within a few months, this simple writing habit led to my first 1000 email subscribers, and by the end of 2013, that number had grown to more than 30,000 people.
 [00:03:46.000 --> 00:03:54.000] In 2014, my email list expanded to over 100,000 subscribers, which made it one of the fastest growing newsletters on the internet.
-[00:03:54.000 --> 00:04:03.000] I had felt like an imposter when I began writing two years earlier, but now I was becoming known as an expert on habits, a new label that excited me, but that also felt uncomfortable.
+[00:03:54.000 --> 00:04:03.000] I had felt like an impostor when I began writing two years earlier, but now I was becoming known as an expert on habits, a new label that excited me, but that also felt uncomfortable.
 [00:04:03.000 --> 00:04:09.000] I had never considered myself a master of the topic, for rather someone who was experimenting alongside my readers.
 [00:04:10.000 --> 00:04:18.000] In 2015, I reached 200,000 email subscribers and signed a book deal with Penguin Random House to begin writing the book you're listening to now.
 [00:04:18.000 --> 00:04:28.000] As my audience grew, so did my business opportunities. I was increasingly asked to speak at top companies about the science of habit formation, behavior change, and continuous improvement.
@@ -41,38 +41,38 @@
 [00:04:39.000 --> 00:04:48.000] Incredibly, my writing was read by over 8 million people that year. Coaches in the NFL, NBA, and MLB began reading my work and sharing it with their teams.
 [00:04:48.000 --> 00:04:59.000] And at the start of 2017, I launched the Habits Academy, which became the premier training platform for organizations and individuals interested in building better habits and life and work.
 [00:05:00.000 --> 00:05:05.000] Fortune 500 companies and growing start-ups began to enroll their leaders and train their staff.
-[00:05:05.000 --> 00:05:11.000] In total,, over 10,000 leaders,, managers,, coaches,, and teachers have graduated from the Habits Academy.
+[00:05:05.000 --> 00:05:11.000] In total, over 10,000 leaders, managers, coaches, and teachers have graduated from the Habits Academy.
 [00:05:11.000 --> 00:05:17.000] And my work with them has taught me an incredible amount about what it takes to make habits work in the real world.
 [00:05:17.000 --> 00:05:21.000] You can learn more by visiting HabitsAcademy.com.
 [00:05:22.000 --> 00:05:32.000] As I put the finishing touches on this book in 2018, JamesClear.com is receiving millions of visitors per month and nearly 500,000 people subscribe to my weekly email newsletter.
 [00:05:32.000 --> 00:05:39.000] A number that is so far beyond my expectations when I began that I'm not even sure what to think of it.
 [00:05:39.000 --> 00:05:42.000] How this book will benefit you.
-[00:05:42.000 --> 00:05:49.000] The entrepreneur and investor, Naval Rovacant, has said,, to write a great book,, you must first become the book.
+[00:05:42.000 --> 00:05:49.000] The entrepreneur and investor, Naval Rovacant, has said, to write a great book, you must first become the book.
 [00:05:49.000 --> 00:05:53.000] I originally learned about the ideas mentioned here because I had to live them.
-[00:05:53.000 --> 00:06:06.000] I had to rely on small habits to rebound from my injury,, to get stronger in the gym,, to perform at a high level in the field,, to become a writer,, to build a successful business,, and simply to develop into a responsible adult.
-[00:06:06.000 --> 00:06:14.000] Small habits helped me fulfill my potential,. And since you're listening to this book, I'm guessing you'd like to fulfill yours as well.
-[00:06:14.000 --> 00:06:21.000] In what follows, I will share a step-by-step plan for building better habits, not for days or weeks,, but for a lifetime.
+[00:05:53.000 --> 00:06:06.000] I had to rely on small habits to rebound from my injury, to get stronger in the gym, to perform at a high level in the field, to become a writer, to build a successful business, and simply to develop into a responsible adult.
+[00:06:06.000 --> 00:06:14.000] Small habits helped me fulfill my potential. And since you're listening to this book, I'm guessing you'd like to fulfill yours as well.
+[00:06:14.000 --> 00:06:21.000] In what follows, I will share a step-by-step plan for building better habits, not for days or weeks, but for a lifetime.
 [00:06:21.000 --> 00:06:28.000] While science supports everything I've written, this book is not meant to be an academic research paper. It's an operating manual.
 [00:06:28.000 --> 00:06:37.000] You'll find wisdom and practical advice, front and center, as I explain the science of how to create and change your habits in a way that is easy to understand and apply.
 [00:06:37.000 --> 00:06:45.000] The fields I draw on, biology, neuroscience, philosophy, psychology, and more have been around for many years.
 [00:06:45.000 --> 00:06:54.000] What I offer you is a synthesis of the best ideas smart people figured out a long time ago, as well as the most compelling discoveries scientists have made recently.
-[00:06:54.000 --> 00:07:01.000] My contribution,, I hope,, is to find the ideas that matter most and connect them in a way that is highly actionable.
-[00:07:01.000 --> 00:07:08.000] Anything wise you hear, you should credit to the many experts who preceded me.. Anything foolish,, assume it is my air.
+[00:06:54.000 --> 00:07:01.000] My contribution, I hope, is to find the ideas that matter most and connect them in a way that is highly actionable.
+[00:07:01.000 --> 00:07:08.000] Anything wise you hear, you should credit to the many experts who preceded me. Anything foolish, assume it is my air.
 [00:07:08.000 --> 00:07:19.000] The backbone of this book is my four-step model of habits, cue, craving, response, and reward, and the four laws of behavior change that evolve out of these steps.
-[00:07:19.000 --> 00:07:36.000] Readers with the psychology background may recognize some of these terms from operant conditioning,, which was first proposed as “stimulus, response, reward” by BF Skinner in the 1930s, and has been popularized more recently as Q routine, reward” and the Power of Habit by Charles DuHig.
-[00:07:36.000 --> 00:07:43.000] Behavioral scientists like Skinner realized that if you offered the right reward or punishment,, you could get people to act in a certain way.
-[00:07:43.000 --> 00:07:54.000] But while Skinner's model did an excellent job of explaining how external stimuli influenced our habits,, it lacked a good explanation for how our thoughts,, feelings,, and beliefs impact our behavior.
+[00:07:19.000 --> 00:07:36.000] Readers with the psychology background may recognize some of these terms from operant conditioning, which was first proposed as “stimulus response reward” by BF Skinner in the 1930s, and has been popularized more recently as Q routine reward” and the Power of Habit by Charles DuHig.
+[00:07:36.000 --> 00:07:43.000] Behavioral scientists like Skinner realized that if you offered the right reward or punishment, you could get people to act in a certain way.
+[00:07:43.000 --> 00:07:54.000] But while Skinner's model did an excellent job of explaining how external stimuli influenced our habits, it lacked a good explanation for how our thoughts, feelings, and beliefs impact our behavior.
 [00:07:54.000 --> 00:07:58.000] Internal states, our moods and emotions matter too.
-[00:07:58.000 --> 00:08:04.000] In recent decades,, scientists have begun to determine the connection between our thoughts, feelings, and behavior.
+[00:07:58.000 --> 00:08:04.000] In recent decades, scientists have begun to determine the connection between our thoughts, feelings, and behavior.
 [00:08:04.000 --> 00:08:08.000] This research too, will be covered here.
-[00:08:08.000 --> 00:08:14.000] In total,, the framework I offer is an integrated model of the cognitive and behavioral sciences.
+[00:08:08.000 --> 00:08:14.000] In total, the framework I offer is an integrated model of the cognitive and behavioral sciences.
 [00:08:14.000 --> 00:08:23.000] I believe it is one of the first models of human behavior to accurately account for both the influence of external stimuli and internal emotions on our habits.
-[00:08:23.000 --> 00:08:33.000] While some of the language may be familiar,, I'm confident that the details and the applications of the four laws of behavior change will offer a new way to think about your habits.
-[00:08:33.000 --> 00:08:39.000] Human behavior is always changing. Situations to situation, moment to moment,, second to second.
+[00:08:23.000 --> 00:08:33.000] While some of the language may be familiar, I'm confident that the details and the applications of the four laws of behavior change will offer a new way to think about your habits.
+[00:08:33.000 --> 00:08:39.000] Human behavior is always changing. situation to situation, moment to moment, second to second.
 [00:08:39.000 --> 00:08:44.000] But this book is about what doesn't change. It's about the fundamentals of human behavior.
-[00:08:44.000 --> 00:08:53.000] The lasting principles you can rely on year after year.. The ideas you can build a business around,, build a family around,, build a life around.
-[00:08:53.000 --> 00:08:59.000] There is no one right way to create better habits,. But this book describes the best way I know.
+[00:08:44.000 --> 00:08:53.000] The lasting principles you can rely on year after year. The ideas you can build a business around, build a family around, build a life around.
+[00:08:53.000 --> 00:08:59.000] There is no one right way to create better habits. But this book describes the best way I know.
 [00:08:59.000 --> 00:09:04.000] An approach that will be effective, regardless of where you start or what you're trying to change.
 [00:09:04.000 --> 00:09:09.000] The strategies I cover will be relevant to anyone looking for a step-by-step system for improvement.
-[00:09:09.000 --> 00:09:15.000] Whether your goals center on health,, money,, productivity,, relationships,, or all of the above.
-[00:09:15.000 --> 00:09:21.000] As long as human behavior is involved,, this book will be your guide.
+[00:09:09.000 --> 00:09:15.000] Whether your goals center on health, money, productivity, relationships, or all of the above.
+[00:09:15.000 --> 00:09:21.000] As long as human behavior is involved, this book will be your guide.
