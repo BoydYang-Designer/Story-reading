@@ -5,7 +5,7 @@
 [00:00:14.320 --> 00:00:19.840] Certainly, there are some aspects of your identity that tend to remain unchanged over time,
 [00:00:19.840 --> 00:00:23.120] like identifying as someone who is tall or short.
 [00:00:23.120 --> 00:00:28.040] But even for more fixed qualities and characteristics, whether you view them in a positive or negative
-[00:00:28.040 --> 00:00:32.200] light, is determined by your experiences throughout life.
+[00:00:28.040 --> 00:00:32.200] light is determined by your experiences throughout life.
 [00:00:32.200 --> 00:00:37.120] To put it more precisely, your habits are how you embody your identity.
 [00:00:37.120 --> 00:00:41.120] When you make your bed each day, you embody the identity of an organized person.
 [00:00:41.120 --> 00:00:45.040] When you write each day, you embody the identity of a creative person.
@@ -13,18 +13,19 @@
 [00:00:49.160 --> 00:00:53.640] The more you repeat a behavior, the more you reinforce the identity associated with that
 [00:00:53.640 --> 00:00:54.640] behavior.
 [00:00:54.880 --> 00:01:00.480] In fact, the word identity was originally derived from the Latin words Ascentias, which means
-[00:01:00.480 --> 00:01:04.120] Being, and Identidem, which means Repeatedly.
-[00:01:04.120 --> 00:01:08.400] Your identity is literally your repeated beingness.
-[00:01:08.400 --> 00:01:12.880] Whatever your identity is right now, you only believe it because you have proof of it.
-[00:01:12.880 --> 00:01:17.600] If you go to church every Sunday for 20 years, you have evidence that you are religious.
-[00:01:17.600 --> 00:01:22.120] If you study biology for one hour every night, you have evidence that you are a student.
-[00:01:22.120 --> 00:01:26.720] If you go to the gym even when it's snowing, you have evidence that you are committed to fitness.
-[00:01:26.720 --> 00:01:31.480] The more evidence you have for a belief, the more strongly you will believe in it.
-[00:01:31.480 --> 00:01:34.840] For most of my early life, I didn't consider myself a writer.
-[00:01:34.840 --> 00:01:38.320] If you were to ask any of my high school teachers or college professors, they would tell
-[00:01:38.320 --> 00:01:42.280] you I was an average writer at best, certainly not a standout.
-[00:01:42.280 --> 00:01:46.120] When I began my writing career, I published a new article every Monday and Thursday for
-[00:01:46.120 --> 00:01:48.480] the first few years.
+[00:01:00.480 --> 00:01:04.160] Being, and Identidem, which means repeatedly.
+[00:01:04.160 --> 00:01:08.480] Your identity is literally your repeated beingness.
+[00:01:08.480 --> 00:01:12.920] Whatever your identity is right now, you only believe it because you have proof of it.
+[00:01:12.920 --> 00:01:17.640] If you go to church every Sunday for 20 years, you have evidence that you are religious.
+[00:01:17.640 --> 00:01:22.160] If you study biology for one hour every night, you have evidence that you are a student.
+[00:01:22.160 --> 00:01:25.960] If you go to the gym even when it's snowing, you have evidence that you are committed to
+[00:01:25.960 --> 00:01:26.960] fitness.
+[00:01:26.960 --> 00:01:31.520] The more evidence you have for a belief, the more strongly you will believe in it.
+[00:01:31.520 --> 00:01:34.840] For most of my early life, I didn't consider myself a writer.
+[00:01:34.840 --> 00:01:38.520] If you were to ask any of my high school teachers or college professors, they would tell you
+[00:01:38.520 --> 00:01:42.280] I was an average writer at best, certainly not a standout.
+[00:01:42.280 --> 00:01:46.160] When I began my writing career, I published a new article every Monday and Thursday for
+[00:01:46.160 --> 00:01:48.480] the first few years.
 [00:01:48.480 --> 00:01:51.520] As the evidence grew, so did my identity as a writer.
 [00:01:51.520 --> 00:01:53.120] I didn't start out as a writer.
 [00:01:53.120 --> 00:01:56.000] I became one through my habits.
@@ -119,4 +120,4 @@
 [00:06:53.080 --> 00:06:56.400] A concept we will explore in depth in the next chapter.
 [00:06:56.400 --> 00:07:01.120] But it is important to let your values,, principles,, and identity drive the loop, rather than your
 [00:07:01.120 --> 00:07:02.120] results.
-[00:07:02.120 --> 00:07:04.720] The focus should always be on becoming that type of person.
+[00:07:02.120 --> 00:07:06.640] The focus should always be on becoming that type of person,, not getting a particular outcome.
