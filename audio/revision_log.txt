@@ -1,96 +1,188 @@
 修正報告 (標點符號已受保護)
 參考: Atomic habits ( PDFDrive ).pdf
 ==============================
-【檔案: James Clear – Atomic Habits-1-2 Timestamp.txt】
-  - [拼錯修正]: There -> there
-  - [拼錯修正]: imposter -> impostor
-  - [拼錯修正]: startups -> start-ups
-  - [拼錯修正]: subscribed -> subscribe
-  - [拼錯修正]: discovery -> discoveries
-  - [拼錯修正]: operating -> operant
-  - [拼錯修正]: stimulus -> “stimulus
-  - [拼錯修正]: reward -> reward”
-  - [拼錯修正]: Routine -> routine
-  - [拼錯修正]: Reward -> reward”
-  - [拼錯修正]: realize -> realized
-  - [拼錯修正]: influence -> influenced
-  - [拼錯修正]: Situations -> situation
-  - [拼錯修正]: goal -> goals
+【檔案: James Clear – Atomic Habits-2-1 Timestamp.txt】
+  - [拼錯修正]: Thorndeck -> Thorndike
+  - [拼錯修正]: few -> fewer
+  - [拼錯修正]: Thorndeck -> Thorndike
+  - [拼錯修正]: behaviors -> “behaviors
+  - [拼錯修正]: what -> What
 
-【檔案: James Clear – Atomic Habits-1-2.txt】
-  - [拼錯修正]: Changes -> changes
-  - [拼錯修正]: There -> there
-  - [拼錯修正]: imposter -> impostor
-  - [拼錯修正]: startups -> start-ups
-  - [拼錯修正]: subscribed -> subscribe
-  - [拼錯修正]: book -> book.”
-  - [拼錯修正]: discovery -> discoveries
-  - [拼錯修正]: operating -> operant
-  - [拼錯修正]: stimulus -> “stimulus
-  - [拼錯修正]: reward -> reward”
-  - [拼錯修正]: Routine -> routine
-  - [拼錯修正]: Reward -> reward”
-  - [拼錯修正]: DuHig -> Duhigg
-  - [拼錯修正]: realize -> realized
-  - [拼錯修正]: influence -> influenced
-  - [拼錯修正]: Situations -> situation
-  - [拼錯修正]: Whether -> whether
-  - [拼錯修正]: goal -> goals
+【檔案: James Clear – Atomic Habits-2-1.txt】
+  - [拼錯修正]: Thorndeck -> Thorndike
+  - [拼錯修正]: few -> fewer
+  - [拼錯修正]: Thorndeck -> Thorndike
+  - [拼錯修正]: behaviors -> “behaviors
+  - [拼錯修正]: repeated -> repeated.”
+  - [拼錯修正]: what -> What
 
-【檔案: James Clear – Atomic Habits-1-3 Timestamp.txt】
-  - [拼錯修正]: cyclist -> cyclists
-  - [拼錯修正]: riding -> writing
-  - [拼錯修正]: healthy -> unhealthy
-  - [拼錯修正]: adjust -> adjusts
-  - [拼錯修正]: DC -> D.C
-  - [拼錯修正]: towards -> toward
+【檔案: James Clear – Atomic Habits-2-3 Timestamp.txt】
+  - [拼錯修正]: tied -> tie
 
-【檔案: James Clear – Atomic Habits-1-3.txt】
-  - [拼錯修正]: interest -> interest.”
-  - [拼錯修正]: Slowly -> slowly
+【檔案: James Clear – Atomic Habits-2-3.txt】
+  - [拼錯修正]: biting -> Biting
+  - [拼錯修正]: drinking -> Drinking
+  - [拼錯修正]: donut -> doughnut
+  - [拼錯修正]: tied -> tie
 
-【檔案: James Clear – Atomic Habits-1-4 Timestamp.txt】
-  - [拼錯修正]: itself -> itself.”
-  - [拼錯修正]: focus -> Focus
-  - [拼錯修正]: cyclist -> cyclists
+【檔案: James Clear – Atomic Habits-2-2 Timestamp.txt】
+  - [拼錯修正]: Duhig -> Duhigg
 
-【檔案: James Clear – Atomic Habits-1-4.txt】
-  - [拼錯修正]: itself -> itself.”
-  - [拼錯修正]: focus -> Focus
-  - [拼錯修正]: cyclist -> cyclists
+【檔案: James Clear – Atomic Habits-2-2.txt】
+  - [拼錯修正]: Will -> “Will
+  - [拼錯修正]: life -> life?”
+  - [拼錯修正]: Where -> where
+  - [拼錯修正]: When -> when
+  - [拼錯修正]: creating -> craving
+  - [拼錯修正]: change -> change—
 
-【檔案: James Clear – Atomic Habits-1-5 Timestamp.txt】
-  - [拼錯修正]: worse -> “worse”
+【檔案: James Clear – Atomic Habits-2-5 Timestamp.txt】
+  - [拼錯修正]: until -> “Until
+  - [拼錯修正]: Subway -> subway
+  - [拼錯修正]: System -> system
+  - [拼錯修正]: birthed -> berthed
+  - [拼錯修正]: great -> greatest
+  - [拼錯修正]: habit -> Habits
+  - [拼錯修正]: scorecard -> Scorecard
 
-【檔案: James Clear – Atomic Habits-1-5.txt】
-  - [拼錯修正]: better -> “better”
-  - [拼錯修正]: worse -> “worse”
+【檔案: James Clear – Atomic Habits-2-5.txt】
+  - [拼錯修正]: Signal -> “Signal
+  - [拼錯修正]: green -> green.”
+  - [拼錯修正]: All -> “All
+  - [拼錯修正]: clear -> clear!”
+  - [拼錯修正]: Subway -> subway
+  - [拼錯修正]: System -> system
+  - [拼錯修正]: birthed -> berthed
+  - [拼錯修正]: husband -> husband.”
+  - [拼錯修正]: great -> greatest
+  - [拼錯修正]: habit -> Habits
+  - [拼錯修正]: scorecard -> Scorecard
 
-【檔案: James Clear – Atomic Habits-1-6 Timestamp.txt】
-  - [拼錯修正]: plays -> play
+【檔案: James Clear – Atomic Habits-2-4 Timestamp.txt】
+  - [拼錯修正]: four -> Four
+  - [拼錯修正]: laws -> Laws
+  - [拼錯修正]: behavior -> Behavior
+  - [拼錯修正]: change -> Change
+  - [拼錯修正]: look -> look,”
 
-【檔案: James Clear – Atomic Habits-1-6.txt】
-  - [拼錯修正]: process -> process).”
-  - [拼錯修正]: voting -> Voting
-  - [拼錯修正]: and -> an
-  - [拼錯修正]: For -> “For
-  - [拼錯修正]: fingernails -> fingernails,”
-  - [拼錯修正]: It -> “It
-  - [拼錯修正]: it -> bit
-  - [拼錯修正]: My -> “My
-  - [拼錯修正]: that -> that—
-  - [拼錯修正]: them -> them.”
-  - [拼錯修正]: being -> “being
-  - [拼錯修正]: voter -> voter”
+【檔案: James Clear – Atomic Habits-2-4.txt】
+  - [拼錯修正]: either -> either.”
+  - [拼錯修正]: You -> “You
+  - [拼錯修正]: now -> now.”
+  - [拼錯修正]: battleships -> battleship’s
+  - [拼錯修正]: Experience -> Experienced
+
+【檔案: James Clear – Atomic Habits-2-7 Timestamp.txt】
+  - [拼錯修正]: they -> They
+  - [拼錯修正]: router -> route
+  - [拼錯修正]: playing -> planning
+  - [拼錯修正]: provide -> provided
+  - [拼錯修正]: healthier -> healthier”
+  - [拼錯修正]: more -> more,”
+  - [拼錯修正]: just -> “just
+  - [拼錯修正]: it -> it”
+  - [拼錯修正]: more -> more”
+  - [拼錯修正]: productive -> productive”
+  - [拼錯修正]: vote -> vote”
+  - [拼錯修正]: simply -> Simply
+  - [拼錯修正]: locations -> location
+  - [拼錯修正]: Zweeg -> Zweig
+  - [拼錯修正]: Denise -> Denis
+  - [拼錯修正]: no -> “no
+  - [拼錯修正]: beauty -> beauty”
+  - [拼錯修正]: mantle -> mantel
+  - [拼錯修正]: effect -> Effect
+
+【檔案: James Clear – Atomic Habits-2-7.txt】
+  - [拼錯修正]: no -> “no
+  - [拼錯修正]: beauty -> beauty”
+  - [拼錯修正]: mantle -> mantel
+  - [拼錯修正]: effect -> Effect
+  - [拼錯修正]: effect -> Effect
+
+【檔案: James Clear – Atomic Habits-2-6 Timestamp.txt】
+  - [拼錯修正]: tomorrow -> “Tomorrow
+  - [拼錯修正]: lunch -> lunch,”
+  - [拼錯修正]: habit -> Habits
+  - [拼錯修正]: scorecard -> Scorecard
+  - [拼錯修正]: motivation -> “motivation”
+  - [拼錯修正]: presentations -> presentation
+
+【檔案: James Clear – Atomic Habits-2-6.txt】
+  - [拼錯修正]: Does -> “Does
+  - [拼錯修正]: identity -> identity?”
+  - [拼錯修正]: habit -> Habits
+  - [拼錯修正]: scorecard -> Scorecard
+  - [拼錯修正]: health -> health.”
+  - [拼錯修正]: tomorrow -> “Tomorrow
+  - [拼錯修正]: lunch -> lunch,”
+  - [拼錯修正]: habit -> Habits
+  - [拼錯修正]: scorecard -> Scorecard
+  - [拼錯修正]: best -> Best
+  - [拼錯修正]: start -> Start
+  - [拼錯修正]: habit -> Habit
+  - [拼錯修正]: motivation -> “motivation”
+  - [拼錯修正]: presentations -> presentation
+  - [拼錯修正]: weeks -> week
+  - [拼錯修正]: During -> “During
+
+【檔案: James Clear – Atomic Habits-2-9 Timestamp.txt】
+  - [拼錯修正]: is -> “is
+  - [拼錯修正]: light -> Light
+  - [拼錯修正]: tasting -> “tasting
+  - [拼錯修正]: air -> air”
+
+【檔案: James Clear – Atomic Habits-2-9.txt】
+  - [拼錯修正]: suggestion -> Suggestion
+  - [拼錯修正]: impulse -> Impulse
+  - [拼錯修正]: buying -> Buying
+  - [拼錯修正]: is -> “is
+  - [拼錯修正]: light -> Light
+  - [拼錯修正]: tasting -> “tasting
+  - [拼錯修正]: air -> air”
+
+【檔案: James Clear – Atomic Habits-2-8 Timestamp.txt】
+  - [拼錯修正]: tiny -> Tiny
+  - [拼錯修正]: habits -> Habits
+  - [拼錯修正]: meditation -> Meditation
+  - [拼錯修正]: make -> Make
+  - [拼錯修正]: take -> Take
+  - [拼錯修正]: make -> Make
+  - [拼錯修正]: place -> Place
+  - [拼錯修正]: take -> Take
+  - [拼錯修正]: One -> “One
+  - [拼錯修正]: take -> Take
+  - [拼錯修正]: brush -> Brush
+  - [拼錯修正]: brew -> Brew
+  - [拼錯修正]: take -> Take
+  - [拼錯修正]: happened -> happen
   - [拼錯修正]: re -> are
-  - [拼錯修正]: math -> math.”
-  - [拼錯修正]: plays -> play
 
-【檔案: James Clear – Atomic Habits-1-7.txt】
-  - [拼錯修正]: decide -> Decide
-  - [拼錯修正]: prove -> Prove
-  - [拼錯修正]: want -> want?”
-  - [拼錯修正]: startup -> start-up
-  - [拼錯修正]: employees -> employees.”
-  - [拼錯修正]: Feedback -> feedback
-  - [拼錯修正]: Loops -> loops
+【檔案: James Clear – Atomic Habits-2-8.txt】
+  - [拼錯修正]: tiny -> Tiny
+  - [拼錯修正]: habits -> Habits
+  - [拼錯修正]: after -> “After
+  - [拼錯修正]: meditation -> Meditation
+  - [拼錯修正]: make -> Make
+  - [拼錯修正]: take -> Take
+  - [拼錯修正]: make -> Make
+  - [拼錯修正]: place -> Place
+  - [拼錯修正]: take -> Take
+  - [拼錯修正]: One -> “One
+  - [拼錯修正]: out -> out.”
+  - [拼錯修正]: take -> Take
+  - [拼錯修正]: brush -> Brush
+  - [拼錯修正]: brew -> Brew
+  - [拼錯修正]: take -> Take
+  - [拼錯修正]: happened -> happen
+  - [拼錯修正]: re -> are
+
+【檔案: James Clear – Atomic Habits-2-10 Timestamp.txt】
+  - [拼錯修正]: meters -> meter
+  - [拼錯修正]: spillage -> “spillage”
+  - [拼錯修正]: stationary -> stationery
+
+【檔案: James Clear – Atomic Habits-2-10.txt】
+  - [拼錯修正]: meters -> meter
+  - [拼錯修正]: spillage -> “spillage”
+  - [拼錯修正]: stationary -> stationery
