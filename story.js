@@ -27,6 +27,7 @@ const titleList = document.getElementById('title-list');
 const playbackTitle = document.getElementById('playback-title');
 const textContainer = document.getElementById('text-container');
 const audio = document.getElementById('audio');
+const backToCategoryBtn = document.getElementById('back-to-category');
 const playPauseBtn = document.getElementById('play-pause');
 const backToHomeBtn = document.getElementById('back-to-home');
 const backToSubCategoryBtn = document.getElementById('back-to-sub-category');
@@ -559,7 +560,7 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
             backToHomeFromNoteBtn.textContent = 'Back to Categories';
             backToHomeFromNoteBtn.onclick = () => renderNoteView('categories');
         }
-    } else if (level === 'words' && categoryName && titleName) {
+} else if (level === 'words' && categoryName && titleName) {
         
         noteViewTitleEl.textContent = `Note: ${titleName}`; // Set story-specific title
 
@@ -898,6 +899,27 @@ addToNoteBtn.addEventListener('click', () => {
         stagedWordsContainer.innerHTML = '';
     }
 });
+
+// --- 新增 Back to Titles 邏輯 ---
+if (backToCategoryBtn) {
+    backToCategoryBtn.addEventListener('click', () => {
+        // 1. 先暫存當前的分類名稱 (例如 "生活")，因為 stopAudioAndReset 會把它清空
+        const targetCategory = currentCategoryName;
+        
+        // 2. 停止音訊並重置播放狀態 (清除高亮、暫存區等)
+        stopAudioAndReset();
+        
+        // 3. 恢復並重新渲染該分類的文章列表
+        if (targetCategory) {
+            showCategory(targetCategory);
+        } else {
+            // 如果狀態遺失，則回到首頁
+            renderMajorCategories();
+            showView(homeView);
+        }
+    });
+}
+
 
 copyStagedBtn.addEventListener('click', () => {
     const textToCopy = Array.from(stagedWordsContainer.querySelectorAll('.staged-word')).map(el => el.textContent).join(' ');
@@ -1506,17 +1528,6 @@ playPauseBtn.addEventListener('click', () => {
 });
 
 
-
-rewindBtn.addEventListener('click', () => { audio.currentTime = Math.max(0, audio.currentTime - 5); });
-forwardBtn.addEventListener('click', () => { if(isFinite(audio.duration)) audio.currentTime = Math.min(audio.duration, audio.currentTime + 5); });
-
-playPauseBtn.addEventListener('click', () => {
-    if (isPlaying) {
-        pauseAudio();
-    } else {
-        audio.play().catch(e => console.error("Play failed:", e));
-    }
-});
 
 // ===== MODIFIED LINE =====
 prevStoryBtn.addEventListener('click', () => { if (currentStoryIndex > 0) { showPlayback(currentStoryIndex - 1, 0, isTimestampMode); } });
