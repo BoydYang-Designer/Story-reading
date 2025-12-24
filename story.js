@@ -150,6 +150,46 @@ async function showAppView(user) {
     showView(homeView); // Default to home view
 }
 
+// ==========================================
+//  NEW: 建立帶有圖片的清單項目的輔助函式
+// ==========================================
+function createListItemWithImage(text, onClick) {
+    const container = document.createElement('div');
+    container.className = 'list-item-with-image'; // 記得在 CSS 設定這個 class 的樣式
+
+    // 嘗試建立圖片
+    const img = document.createElement('img');
+    img.className = 'category-thumb';
+    img.alt = text;
+    
+    // 設定圖片路徑
+    // 假設圖片放在 images 資料夾，檔名跟 text 一樣
+    // 使用 encodeURIComponent 避免檔名中有特殊字元導致路徑錯誤
+    // 例如 "Atomic Habits" -> "images/Atomic%20Habits.jpg"
+    img.src = `images/${text}.jpg`; 
+
+    // 錯誤處理：如果找不到 jpg，嘗試找 png，再找不到就隱藏圖片
+    img.onerror = function() {
+        if (this.src.endsWith('.jpg')) {
+            this.src = `images/${text}.png`; // 嘗試載入 png
+        } else {
+            this.classList.add('img-hidden'); // 真的找不到，隱藏圖片，只顯示文字
+            // 您也可以在這裡設定一張預設圖：
+            // this.src = 'images/default-cover.jpg';
+        }
+    };
+
+    const span = document.createElement('span');
+    span.textContent = text;
+    // span.style.fontWeight = '500'; // 建議移至 CSS 設定
+
+    container.appendChild(img);
+    container.appendChild(span);
+
+    container.addEventListener('click', onClick);
+
+    return container;
+}
 
 function showView(view) {
     // 加入 subCategoryView 到隱藏列表
@@ -1307,6 +1347,9 @@ function renderMajorCategories() {
   });
 }
 
+// ==========================================
+//  MODIFIED: 顯示子分類 (Render Sub Categories)
+// ==========================================
 function showSubCategories(major) {
   currentMajorCategory = major; // 儲存狀態
   subCategoryHeader.textContent = major;
@@ -1318,14 +1361,11 @@ function showSubCategories(major) {
   // 2. 從這些故事中，抓取不重複的「分類」
   const categories = [...new Set(storiesInMajor.flatMap(item => item['分類'] || []).map(c => c.trim()).filter(Boolean))].sort();
 
-  // 3. 產生分類按鈕 (例如 "The Alchemist", "AI")
+  // 3. 產生分類按鈕 (帶有圖片)
   categories.forEach(category => {
-    const div = document.createElement('div');
-    div.className = 'category-item';
-    div.textContent = category;
-    // 點擊後進入第三層 (文章列表)
-    div.addEventListener('click', () => showCategory(category));
-    subCategoryList.appendChild(div);
+    // 使用新的輔助函式 createListItemWithImage
+    const item = createListItemWithImage(category, () => showCategory(category));
+    subCategoryList.appendChild(item);
   });
 
   showView(subCategoryView);
@@ -1352,9 +1392,14 @@ function resumeLastPlayback(title, time) {
     }
 }
 
+// ==========================================
+//  MODIFIED: 顯示文章列表 (Render Title List)
+// ==========================================
 function showCategory(category) {
   categoryTitle.textContent = category;
   currentCategoryName = category;
+  
+  // 注意：原本您的變數是 titleList，為了相容性我們繼續使用 titleList
   titleList.innerHTML = '';
 
   // 修改篩選邏輯：同時比對「大類」與「分類」
@@ -1365,11 +1410,10 @@ function showCategory(category) {
   }).sort((a, b) => String(a['標題']).localeCompare(String(b['標題'])));
 
   currentStoryList.forEach((item, index) => {
-    const div = document.createElement('div');
-    div.className = 'title-item';
-    div.textContent = item['標題'];
-    div.addEventListener('click', () => showPlayback(index));
-    titleList.appendChild(div);
+    // 使用新的輔助函式 createListItemWithImage
+    // 這裡傳入的是故事的「標題」，所以會去讀取對應標題的圖片
+    const itemEl = createListItemWithImage(item['標題'], () => showPlayback(index));
+    titleList.appendChild(itemEl);
   });
   
   showView(categoryView);

@@ -556,3 +556,33 @@ button.btn-success-feedback {
     background-color: var(--color-primary-dark);
     color: var(--color-surface);
 }
+
+/* 新增的清單項目樣式，讓圖片跟文字橫向排列 */
+.list-item-with-image {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* 圖片跟文字的間距 */
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.2s;
+}
+
+.list-item-with-image:hover {
+    background-color: #f5f5f5;
+}
+
+/* 圖片樣式 */
+.category-thumb {
+    width: 60px;  /* 你可以自己調整圖片大小 */
+    height: 60px;
+    object-fit: cover; /* 保持圖片比例，多餘部分裁切 */
+    border-radius: 6px; /* 圓角看起來比較舒服 */
+    background-color: #ddd; /* 圖片載入前的背景色 */
+    flex-shrink: 0; /* 防止圖片被擠壓 */
+}
+
+/* 如果找不到圖片，這個 class 會被用來隱藏 img 標籤 */
+.img-hidden {
+    display: none;
+}
