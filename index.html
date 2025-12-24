@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>Reading Challenge</title>
   <link rel="stylesheet" href="story.css">
+  <link rel="icon" href="data:,">
 </head>
 <body>
 
@@ -27,10 +28,17 @@
     <button id="sign-out-btn" class="secondary is-hidden">Sign Out</button>
 </div>
     
-    <div id="home-view">
-      <h1>Reading Challenge</h1>
-      <div id="category-list" class="list"></div>
+<div id="home-view">
+      <h1>Reading Challenge</h1> <div id="major-category-list" class="list"></div>
       <div id="go-to-note" class="category-item">Note</div>
+    </div>
+
+    <div id="sub-category-view" class="is-hidden">
+      <h1 id="sub-category-header"></h1>
+      <div id="sub-category-list" class="list"></div>
+      <div class="controls">
+          <button class="secondary" id="back-to-major-view">Back to Main Menu</button>
+      </div>
     </div>
 
     <div id="category-view" class="is-hidden">
@@ -38,7 +46,7 @@
       <div id="title-list" class="list"></div>
       <div id="fixed-controls-container">
         <div class="controls">
-            <button class="secondary" id="back-to-home">Back to Categories</button>
+            <button class="secondary" id="back-to-sub-category">Back to Categories</button>
         </div>
       </div>
     </div>

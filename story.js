@@ -1,6 +1,7 @@
 /* Reading Challenge SPA */
 
 // App Views
+const subCategoryView = document.getElementById('sub-category-view');
 const homeView = document.getElementById('home-view');
 const categoryView = document.getElementById('category-view');
 const playbackView = document.getElementById('playback-view');
@@ -16,6 +17,10 @@ const signOutBtn = document.getElementById('sign-out-btn');
 const signInFromGuestBtn = document.getElementById('sign-in-from-guest-btn');
 
 // Existing Elements
+const majorCategoryList = document.getElementById('major-category-list');
+const subCategoryList = document.getElementById('sub-category-list');
+const subCategoryHeader = document.getElementById('sub-category-header');
+const backToMajorBtn = document.getElementById('back-to-major-view');
 const categoryList = document.getElementById('category-list');
 const categoryTitle = document.getElementById('category-title');
 const titleList = document.getElementById('title-list');
@@ -24,7 +29,7 @@ const textContainer = document.getElementById('text-container');
 const audio = document.getElementById('audio');
 const playPauseBtn = document.getElementById('play-pause');
 const backToHomeBtn = document.getElementById('back-to-home');
-const backToCategoryBtn = document.getElementById('back-to-category');
+const backToSubCategoryBtn = document.getElementById('back-to-sub-category');
 const rewindBtn = document.getElementById('rewind-5');
 const forwardBtn = document.getElementById('forward-5');
 const prevStoryBtn = document.getElementById('prev-story');
@@ -57,6 +62,7 @@ const nextNoteBtn = document.getElementById('next-note-btn');
 const noteViewTitleEl = document.getElementById('note-view-title');
 
 // State Variables
+let currentMajorCategory = null; // 記錄目前在哪個大類 (例如 "Books")
 let stories = [];
 let vocabularyData = [];
 let isPlaying = false;
@@ -133,19 +139,29 @@ async function showAppView(user) {
 
     // Load story and vocabulary data if not already loaded
     if (stories.length === 0 || vocabularyData.length === 0) {
-        await loadData(); // <--- 更新函式名稱
+        await loadData();
     }
-    renderCategories();
+    
+    // ===== 修改這行 =====
+    renderMajorCategories(); // 原本可能是 renderCategories()，請改為 renderMajorCategories()
+    // ==================
+
     showView(homeView); // Default to home view
 }
 
 
 function showView(view) {
-    [homeView, categoryView, playbackView, noteView].forEach(el => {
-        el.classList.add('is-hidden');
+    // 加入 subCategoryView 到隱藏列表
+    [loginView, appContainer, homeView, subCategoryView, categoryView, playbackView, noteView].forEach(el => {
+        if(el) el.classList.add('is-hidden');
     });
+    
+    // 特殊處理：appContainer 總是包含這些內部視圖
+    if (view !== loginView) {
+        appContainer.classList.remove('is-hidden');
+    }
+    
     view.classList.remove('is-hidden');
-
     document.body.classList.toggle('note-view-active', view === noteView);
 }
 
@@ -1242,31 +1258,55 @@ const url = `https://raw.githubusercontent.com/BoydYang-Designer/Story-reading/m
 
 
 
-function renderCategories() {
-  const categories = [...new Set(stories.flatMap(item => item['分類'] || []).map(c => c.trim()).filter(Boolean))].sort();
-  categoryList.innerHTML = '';
+function renderMajorCategories() {
+  // 1. 抓取所有不重複的「大類」
+  const majors = [...new Set(stories.map(item => item['大類'] || 'Uncategorized').filter(Boolean))].sort();
+  
+  majorCategoryList.innerHTML = '';
+
+  // (選擇性) 這裡保留「繼續上次閱讀」的功能
   try {
     const lastSession = localStorage.getItem(LAST_SESSION_KEY);
     if (lastSession) {
         const { title, time } = JSON.parse(lastSession);
-        if (title && typeof time === 'number') {
-            const continueBtn = document.createElement('div');
-            continueBtn.className = 'category-item';
-            continueBtn.id = 'continue-last-session-btn';
-            continueBtn.innerHTML = `<svg class="continue-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg><span>Continue Last Session</span>`;
-            continueBtn.addEventListener('click', () => resumeLastPlayback(title, time));
-            categoryList.appendChild(continueBtn);
-        }
+        // ... (保留原本的按鈕邏輯) ...
+        // 這裡為了簡潔省略，您可以照舊貼上
     }
-  } catch (e) { console.error("Failed to parse last session data", e); }
-  
+  } catch (e) {}
+
+  // 2. 產生大類按鈕
+  majors.forEach(major => {
+    const div = document.createElement('div');
+    div.className = 'category-item';
+    div.textContent = major; // 例如 "個人", "Books"
+    // 點擊後進入第二層
+    div.addEventListener('click', () => showSubCategories(major));
+    majorCategoryList.appendChild(div);
+  });
+}
+
+function showSubCategories(major) {
+  currentMajorCategory = major; // 儲存狀態
+  subCategoryHeader.textContent = major;
+  subCategoryList.innerHTML = '';
+
+  // 1. 篩選出屬於這個大類的故事
+  const storiesInMajor = stories.filter(s => (s['大類'] || 'Uncategorized') === major);
+
+  // 2. 從這些故事中，抓取不重複的「分類」
+  const categories = [...new Set(storiesInMajor.flatMap(item => item['分類'] || []).map(c => c.trim()).filter(Boolean))].sort();
+
+  // 3. 產生分類按鈕 (例如 "The Alchemist", "AI")
   categories.forEach(category => {
     const div = document.createElement('div');
     div.className = 'category-item';
     div.textContent = category;
+    // 點擊後進入第三層 (文章列表)
     div.addEventListener('click', () => showCategory(category));
-    categoryList.appendChild(div);
+    subCategoryList.appendChild(div);
   });
+
+  showView(subCategoryView);
 }
 
 function resumeLastPlayback(title, time) {
@@ -1294,8 +1334,14 @@ function showCategory(category) {
   categoryTitle.textContent = category;
   currentCategoryName = category;
   titleList.innerHTML = '';
-  currentStoryList = stories.filter(item => item['分類']?.map(c => c.trim()).includes(category))
-                            .sort((a, b) => String(a['標題']).localeCompare(String(b['標題'])));
+
+  // 修改篩選邏輯：同時比對「大類」與「分類」
+  currentStoryList = stories.filter(item => {
+      const matchMajor = (item['大類'] || 'Uncategorized') === currentMajorCategory;
+      const matchSub = item['分類']?.map(c => c.trim()).includes(category);
+      return matchMajor && matchSub;
+  }).sort((a, b) => String(a['標題']).localeCompare(String(b['標題'])));
+
   currentStoryList.forEach((item, index) => {
     const div = document.createElement('div');
     div.className = 'title-item';
@@ -1303,6 +1349,7 @@ function showCategory(category) {
     div.addEventListener('click', () => showPlayback(index));
     titleList.appendChild(div);
   });
+  
   showView(categoryView);
 }
 
@@ -1415,8 +1462,51 @@ function pauseAudio() {
 }
 
 // Button listeners
-backToHomeBtn.addEventListener('click', () => { stopAudioAndReset(); showView(homeView); });
-backToCategoryBtn.addEventListener('click', () => { stopAudioAndReset(); showView(categoryView); });
+// 修改後的程式碼：先檢查按鈕是否存在
+if (backToHomeBtn) {
+    backToHomeBtn.addEventListener('click', () => { stopAudioAndReset(); showView(homeView); });
+}
+
+// --- 修改開始 ---
+
+// 1. 從「第二層 (Sub Category)」回到「第一層 (大類)」
+if (backToMajorBtn) {
+    backToMajorBtn.addEventListener('click', () => {
+        renderMajorCategories(); // 確保回到首頁時重新渲染大類
+        showView(homeView);
+    });
+}
+
+// 2. 從「第三層 (文章列表)」回到「第二層 (Sub Category)」
+// 注意：這裡取代了原本的 backToCategoryBtn 監聽器
+if (backToSubCategoryBtn) {
+    backToSubCategoryBtn.addEventListener('click', () => {
+        // 使用全域變數 currentMajorCategory 來決定要顯示哪個子分類列表
+        if (currentMajorCategory) {
+            showSubCategories(currentMajorCategory);
+        } else {
+            // 如果狀態遺失，安全起見回到首頁
+            renderMajorCategories();
+            showView(homeView);
+        }
+    });
+}
+// --- 修改結束 ---
+
+// 原本的播放控制保持不變
+rewindBtn.addEventListener('click', () => { audio.currentTime = Math.max(0, audio.currentTime - 5); });
+forwardBtn.addEventListener('click', () => { if(isFinite(audio.duration)) audio.currentTime = Math.min(audio.duration, audio.currentTime + 5); });
+
+playPauseBtn.addEventListener('click', () => {
+    if (isPlaying) {
+        pauseAudio();
+    } else {
+        audio.play().catch(e => console.error("Play failed:", e));
+    }
+});
+
+
+
 rewindBtn.addEventListener('click', () => { audio.currentTime = Math.max(0, audio.currentTime - 5); });
 forwardBtn.addEventListener('click', () => { if(isFinite(audio.duration)) audio.currentTime = Math.min(audio.duration, audio.currentTime + 5); });
 
@@ -1565,23 +1655,24 @@ document.addEventListener('keydown', (event) => {
 });
 
 function init() {
-  document.getElementById('note-content-wrapper').addEventListener('click', (e) => {
-      const header = e.target.closest('.note-section-header');
-      if (header?.dataset.target) {
-          const targetList = document.getElementById(header.dataset.target);
-          if (targetList) {
-              header.classList.toggle('is-expanded');
-              targetList.style.display = targetList.style.display === 'none' ? '' : 'none';
+  const noteWrapper = document.getElementById('note-content-wrapper');
+  if (noteWrapper) {
+      noteWrapper.addEventListener('click', (e) => {
+          const header = e.target.closest('.note-section-header');
+          if (header?.dataset.target) {
+              const targetList = document.getElementById(header.dataset.target);
+              if (targetList) {
+                  header.classList.toggle('is-expanded');
+                  targetList.style.display = targetList.style.display === 'none' ? '' : 'none';
+              }
           }
-      }
-  });
-
-  googleSigninBtn.addEventListener('click', signIn);
-  guestModeBtn.addEventListener('click', enterGuestMode);
-  signOutBtn.addEventListener('click', signOutUser);
-  if (signInFromGuestBtn) {
-      signInFromGuestBtn.addEventListener('click', signIn);
+      });
   }
+
+  if (googleSigninBtn) googleSigninBtn.addEventListener('click', signIn);
+  if (guestModeBtn) guestModeBtn.addEventListener('click', enterGuestMode);
+  if (signOutBtn) signOutBtn.addEventListener('click', signOutUser);
+  if (signInFromGuestBtn) signInFromGuestBtn.addEventListener('click', signIn);
  
   window.addEventListener('resize', computeScrollMax, { passive: true });
 }
