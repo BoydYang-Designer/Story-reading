@@ -1532,8 +1532,61 @@ function pauseAudio() {
     stopJsonModeHighlightLoop();
 }
 
+// --- New Helper Functions for Timestamp Navigation ---
+
+function skipToNextSentence() {
+    if (!timestampData || timestampData.length === 0) return;
+    
+    const currentTime = audio.currentTime;
+    // 找到第一個 "開始時間" 晚於當前時間的句子 (加 0.2s 緩衝避免卡在同一句)
+    const nextSent = timestampData.find(line => line.start > currentTime + 0.2);
+    
+    if (nextSent) {
+        audio.currentTime = nextSent.start;
+    } else {
+        // 如果找不到(已經是最後一句之後)，就跳到結束
+        audio.currentTime = audio.duration;
+    }
+}
+
+function skipToPrevSentence() {
+    if (!timestampData || timestampData.length === 0) return;
+
+    const currentTime = audio.currentTime;
+    
+    // 1. 找出目前正在播放(或是剛播完)的是哪一句的索引
+    let currentIndex = -1;
+    for (let i = 0; i < timestampData.length; i++) {
+        // 只要句子的開始時間小於當前時間，它就是潛在的"當前句"
+        if (timestampData[i].start <= currentTime + 0.2) {
+            currentIndex = i;
+        } else {
+            break; // 後面的句子還沒開始，停止搜尋
+        }
+    }
+
+    if (currentIndex === -1) {
+        audio.currentTime = 0;
+        return;
+    }
+
+    const currentSent = timestampData[currentIndex];
+
+    // 2. 判斷邏輯：
+    // 如果播放超過該句開頭 1.5 秒，按「上一句」通常是想「重聽這一句」。
+    // 如果剛開始播不到 1.5 秒，按「上一句」才是真的跳到「前一句」。
+    if (currentTime > currentSent.start + 1.5) {
+        audio.currentTime = currentSent.start;
+    } else {
+        if (currentIndex > 0) {
+            audio.currentTime = timestampData[currentIndex - 1].start;
+        } else {
+            audio.currentTime = 0;
+        }
+    }
+}
+
 // Button listeners
-// 修改後的程式碼：先檢查按鈕是否存在
 if (backToHomeBtn) {
     backToHomeBtn.addEventListener('click', () => { stopAudioAndReset(); showView(homeView); });
 }
@@ -1562,11 +1615,23 @@ if (backToSubCategoryBtn) {
         }
     });
 }
-// --- 修改結束 ---
 
-// 原本的播放控制保持不變
-rewindBtn.addEventListener('click', () => { audio.currentTime = Math.max(0, audio.currentTime - 5); });
-forwardBtn.addEventListener('click', () => { if(isFinite(audio.duration)) audio.currentTime = Math.min(audio.duration, audio.currentTime + 5); });
+
+rewindBtn.addEventListener('click', () => { 
+    if (isTimestampMode && hasTimestampFile) {
+        skipToPrevSentence();
+    } else {
+        audio.currentTime = Math.max(0, audio.currentTime - 5); 
+    }
+});
+
+forwardBtn.addEventListener('click', () => { 
+    if (isTimestampMode && hasTimestampFile) {
+        skipToNextSentence();
+    } else {
+        if(isFinite(audio.duration)) audio.currentTime = Math.min(audio.duration, audio.currentTime + 5); 
+    }
+});
 
 playPauseBtn.addEventListener('click', () => {
     if (isPlaying) {
