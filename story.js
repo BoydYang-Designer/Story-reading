@@ -572,15 +572,15 @@ function getExpansionStates() {
 // ===== MODIFIED FUNCTION =====
 function renderNoteView(level = 'categories', categoryName = null, titleName = null, expansionStates = null) {
     const noteContentWrapper = document.getElementById('note-content-wrapper');
-    addWordForm.hidden = true;
+    
+    // Explicitly hide form and buttons by default
+    addWordForm.style.display = 'none'; // Ensure hidden in Categories/Titles
     backToStoryFromNoteBtn.hidden = true;
     exportWordsBtn.hidden = true;
-    // ===== MODIFIED BLOCK START =====
-    prevNoteBtn.hidden = true; // Hide "Previous Note" by default
-    prevNoteBtn.onclick = null; // Clear previous listener
-    nextNoteBtn.hidden = true; // Hide "Next Note" by default
-    nextNoteBtn.onclick = null; // Clear previous listener
-    // ===== MODIFIED BLOCK END =====
+    prevNoteBtn.hidden = true; 
+    prevNoteBtn.onclick = null; 
+    nextNoteBtn.hidden = true; 
+    nextNoteBtn.onclick = null; 
 
     backToStoryFromNoteBtn.classList.remove('is-highlighted');
     backToHomeFromNoteBtn.classList.remove('is-highlighted');
@@ -594,9 +594,10 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
     };
 
     if (level === 'categories' || level === 'titles') {
-        noteViewTitleEl.textContent = 'Word Note'; // Reset title
+        noteViewTitleEl.textContent = 'Word Note'; 
         noteContentWrapper.innerHTML = '<div class="list" id="temp-list-container"></div>';
         const tempListContainer = document.getElementById('temp-list-container');
+        
         if (level === 'categories') {
             const categories = Object.keys(savedWords).sort((a, b) => a.localeCompare(b));
             if (categories.length === 0) {
@@ -612,14 +613,16 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
             backToHomeFromNoteBtn.textContent = 'Back to Categories';
             backToHomeFromNoteBtn.onclick = () => renderNoteView('categories');
         }
-} else if (level === 'words' && categoryName && titleName) {
+    } else if (level === 'words' && categoryName && titleName) {
         
-        noteViewTitleEl.textContent = `Note: ${titleName}`; // Set story-specific title
+        noteViewTitleEl.textContent = `Note: ${titleName}`; 
+        
+        // Show the input form ONLY in this view
+        addWordForm.style.display = 'flex'; 
 
         // Helper function to build each collapsible section's HTML
         const buildSectionHTML = (type, title) => {
             const listId = `note-list-${type}`;
-            // Default to collapsed unless a specific state is passed
             const isExpanded = expansionStates ? expansionStates[listId] === true : false;
             const headerClass = isExpanded ? 'note-section-header is-expanded' : 'note-section-header';
             const listStyle = isExpanded ? '' : 'style="display: none;"';
@@ -640,21 +643,18 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
         noteViewTitle = titleName;
         backToStoryFromNoteBtn.hidden = false;
         exportWordsBtn.hidden = false;
-        addWordForm.hidden = false;
 
         if (currentNoteOrigin === 'story') {
-        backToStoryFromNoteBtn.classList.add('is-highlighted');
-    } else {
-        // This handles 'menu' path, 'Next Note' click, etc.
-        backToHomeFromNoteBtn.classList.add('is-highlighted');
-    }
+            backToStoryFromNoteBtn.classList.add('is-highlighted');
+        } else {
+            backToHomeFromNoteBtn.classList.add('is-highlighted');
+        }
 
-        // --- New "Next/Prev Note" logic ---
+        // --- Navigation Logic ---
         const storyList = stories.filter(item => item['分類']?.map(c => c.trim()).includes(categoryName))
                                  .sort((a, b) => String(a['標題']).localeCompare(String(b['標題'])));
         const currentIndex = storyList.findIndex(story => story['標題'] === titleName);
         
-        // --- NEW "Previous Note" logic ---
         if (currentIndex > 0) {
             const prevStory = storyList[currentIndex - 1];
             prevNoteBtn.hidden = false;
@@ -665,20 +665,17 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
                 renderNoteView('words', categoryName, prevStory['標題'], currentState);
             };
         }
-        // --- END "Previous Note" logic ---
         
-        // --- Existing "Next Note" logic ---
         if (currentIndex > -1 && currentIndex < storyList.length - 1) {
             const nextStory = storyList[currentIndex + 1];
             nextNoteBtn.hidden = false;
             nextNoteBtn.onclick = () => {
-            currentNoteOrigin = 'menu'; // Treat this as a menu navigation
-            playbackPositionBeforeNote = 0; // Reset playback position for the new story
-            const currentState = getExpansionStates(); // Preserve expansion state
-            renderNoteView('words', categoryName, nextStory['標題'], currentState);
-        };
+                currentNoteOrigin = 'menu'; 
+                playbackPositionBeforeNote = 0; 
+                const currentState = getExpansionStates(); 
+                renderNoteView('words', categoryName, nextStory['標題'], currentState);
+            };
         }
-        // --- End of new logic ---
 
         const noteData = savedWords[categoryName]?.[titleName] || { words: new Set(), phrases: new Set(), sentences: new Set() };
         const sortItems = (set) => Array.from(set).sort((a, b) => a.localeCompare(b));
@@ -686,62 +683,54 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
         const createWordItem = (itemText, type, container) => {
             const item = document.createElement('div');
             item.className = 'word-item';
-            const wordTextEl = document.createElement('span');
+            
+            // Container for text or input
+            let wordTextEl = document.createElement('span');
             wordTextEl.className = 'word-text';
             wordTextEl.textContent = itemText;
+            
             const actions = document.createElement('div');
             actions.className = 'word-item-actions';
 
-            // Conditionally add buttons based on type
-            if (type === 'words' || type === 'phrases') {
-                // Voice Button (for words and phrases only)
-                const voiceBtn = document.createElement('button');
-                voiceBtn.textContent = 'Voice';
-                voiceBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
+            // 1. Voice Button
+            const voiceBtn = document.createElement('button');
+            voiceBtn.textContent = 'Voice';
+            voiceBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (type === 'sentences') {
+                    playSentenceSnippet(itemText, noteViewTitle);
+                } else {
                     const audioSrc = `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(itemText.trim())}.mp3`;
                     const wordAudio = new Audio(audioSrc);
                     wordAudio.play().catch(() => showNotification(`Audio for "${itemText}" was not found.`, 'error'));
-                });
+                }
+            });
+            actions.appendChild(voiceBtn);
 
-                // Word Button (for words and phrases only)
+            // 2. Word Button (only for words/phrases)
+            if (type === 'words' || type === 'phrases') {
                 const wordBtn = document.createElement('button');
                 wordBtn.textContent = 'Word';
                 wordBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
                     const wordForUrl = itemText.trim().toLowerCase();
-
                     if (wordForUrl.includes(' ')) {
                         showNotification("「Word」查詢功能不適用於包含空格的片語。", 'warning');
                         return;
                     }
-
                     const wordExists = vocabularyData.some(wordObj => 
                         (wordObj.Words || "").toLowerCase() === wordForUrl
                     );
-
                     if (wordExists) {
                         window.open(`https://boydyang-designer.github.io/English-vocabulary/?word=${encodeURIComponent(wordForUrl)}&from=story`, '_blank');
                     } else {
                         showNotification(`單字 "${itemText}" 在詞庫中找不到對應資料。`, 'error');
                     }
                 });
-
-                actions.appendChild(voiceBtn);
                 actions.appendChild(wordBtn);
-            } else if (type === 'sentences') {
-                const voiceBtn = document.createElement('button');
-                voiceBtn.textContent = 'Voice';
-                voiceBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    // noteViewTitle is the current story title
-                    playSentenceSnippet(itemText, noteViewTitle);
-                });
-                actions.appendChild(voiceBtn);
             }
 
-
-            // Copy Button (for all types: words, phrases, sentences)
+            // 3. Copy Button
             const copyBtn = document.createElement('button');
             copyBtn.className = 'secondary';
             copyBtn.textContent = 'Copy';
@@ -754,17 +743,83 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
                         copyBtn.textContent = 'Copy';
                         copyBtn.classList.remove('btn-success-feedback');
                     }, 1000);
-                }).catch(err => {
-                    console.error('Could not copy text: ', err);
                 });
-                const newWordInput = document.getElementById('new-word-input');
-                if (newWordInput) {
-                    newWordInput.value = itemText;
-                    newWordInput.focus();
+            });
+            actions.appendChild(copyBtn);
+
+            // 4. Edit Button (NEW)
+            const editBtn = document.createElement('button');
+            editBtn.className = 'secondary';
+            editBtn.textContent = 'Edit';
+            
+            let isEditing = false; // Toggle state
+
+            editBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                
+                if (!isEditing) {
+                    // --- Start Editing Mode ---
+                    isEditing = true;
+                    item.classList.add('is-editing');
+                    
+                    // Create input
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.value = itemText;
+                    input.className = 'edit-word-input'; // Useful for CSS styling
+                    // Inline style for immediate effect
+                    input.style.flex = '1';
+                    input.style.marginRight = '8px';
+                    input.style.padding = '5px';
+                    input.style.fontSize = '1rem';
+
+                    // Replace span with input
+                    wordTextEl.replaceWith(input);
+                    input.focus();
+
+                    // Change button to Save
+                    editBtn.textContent = 'Save';
+                    editBtn.classList.remove('secondary'); // Make it look primary
+                    
+                    // Allow saving via Enter key
+                    input.addEventListener('keydown', (k) => {
+                        if(k.key === 'Enter') editBtn.click();
+                    });
+
+                } else {
+                    // --- Save Mode ---
+                    const input = item.querySelector('input');
+                    const newValue = input.value.trim();
+                    
+                    // If changed and not empty
+                    if (newValue && newValue !== itemText) {
+                         // Update Data
+                         savedWords[categoryName][titleName][type].delete(itemText);
+                         savedWords[categoryName][titleName][type].add(newValue);
+                         persistNotes();
+                         
+                         // Re-render to sort and clean up
+                         const currentState = getExpansionStates();
+                         renderNoteView('words', categoryName, titleName, currentState);
+                    } else {
+                        // Cancel/Revert if empty or no change
+                        const span = document.createElement('span');
+                        span.className = 'word-text';
+                        span.textContent = itemText;
+                        
+                        input.replaceWith(span);
+                        wordTextEl = span; // Update reference
+                        
+                        editBtn.textContent = 'Edit';
+                        editBtn.classList.add('secondary');
+                        item.classList.remove('is-editing');
+                        isEditing = false;
+                    }
                 }
             });
+            actions.appendChild(editBtn);
 
-            // Delete Button (for all types: words, phrases, sentences)
+            // 5. Delete Button
             const deleteBtn = document.createElement('button');
             deleteBtn.className = 'secondary';
             deleteBtn.textContent = 'Delete';
@@ -773,7 +828,7 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
                 item.classList.add('is-deleting');
                 setTimeout(() => {
                     if (confirm(`Delete '${itemText}'?`)) {
-                        const currentState = getExpansionStates(); // Capture state before re-render
+                        const currentState = getExpansionStates(); 
                         
                         savedWords[categoryName][titleName][type].delete(itemText);
                         const titleData = savedWords[categoryName][titleName];
@@ -790,15 +845,15 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
                         } else if (!savedWords[categoryName][titleName]) {
                             renderNoteView('titles', categoryName);
                         } else {
-                            renderNoteView('words', categoryName, titleName, currentState); // Pass state
+                            renderNoteView('words', categoryName, titleName, currentState); 
                         }
                     } else {
                         item.classList.remove('is-deleting');
                     }
                 }, 50);
             });
+            actions.appendChild(deleteBtn);
 
-            actions.append(copyBtn, deleteBtn);
             item.append(wordTextEl, actions);
             container.appendChild(item);
         };
@@ -824,6 +879,7 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
     }
 }
 // ===== END OF MODIFIED FUNCTION =====
+
 
 
 // --- Event Listeners & Core App Logic ---
