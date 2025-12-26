@@ -21,6 +21,7 @@ const majorCategoryList = document.getElementById('major-category-list');
 const subCategoryList = document.getElementById('sub-category-list');
 const subCategoryHeader = document.getElementById('sub-category-header');
 const backToMajorBtn = document.getElementById('back-to-major-view');
+const continueReadingContainer = document.getElementById('continue-reading-container');
 const categoryList = document.getElementById('category-list');
 const categoryTitle = document.getElementById('category-title');
 const titleList = document.getElementById('title-list');
@@ -1336,23 +1337,66 @@ function renderMajorCategories() {
   const majors = [...new Set(stories.map(item => item['大類'] || 'Uncategorized').filter(Boolean))].sort();
   
   majorCategoryList.innerHTML = '';
+  
+  // 【新增邏輯】每次渲染時先清空繼續閱讀區塊
+  if (continueReadingContainer) {
+      continueReadingContainer.innerHTML = ''; 
+  }
 
-  // (選擇性) 這裡保留「繼續上次閱讀」的功能
+  // 【新增邏輯】檢查是否有上次閱讀紀錄
   try {
     const lastSession = localStorage.getItem(LAST_SESSION_KEY);
-    if (lastSession) {
+    
+    // 確保有紀錄、且容器存在
+    if (lastSession && continueReadingContainer) {
         const { title, time } = JSON.parse(lastSession);
-        // ... (保留原本的按鈕邏輯) ...
-        // 這裡為了簡潔省略，您可以照舊貼上
-    }
-  } catch (e) {}
+        
+        // 檢查該文章是否還存在於目前的資料庫中 (避免舊資料錯誤)
+        const storyExists = stories.some(s => s['標題'] === title);
+        
+        // 只有當時間大於 5 秒且文章存在時才顯示 (避免剛開始聽就顯示)
+        if (storyExists && time > 5) {
+            const continueBtn = document.createElement('div');
+            
+            // 使用 category-item 樣式保持一致，並加上額外樣式區別
+            continueBtn.className = 'category-item'; 
+            
+            // 設定特殊的綠色樣式，讓它看起來像是一個提示
+            continueBtn.style.backgroundColor = '#e8f5e9'; 
+            continueBtn.style.border = '1px solid #4CAF50';
+            continueBtn.style.color = '#2E7D32';
+            continueBtn.style.fontWeight = 'bold';
+            continueBtn.style.marginBottom = '15px'; // 與 Note 按鈕保持距離
+            
+            // 格式化時間 (例如: 125秒 -> 2:05)
+            const minutes = Math.floor(time / 60);
+            const seconds = Math.floor(time % 60).toString().padStart(2, '0');
+            
+            // 設定按鈕內容
+            continueBtn.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                    <span>Continue: ${title}</span>
+                    <span style="font-size: 0.9em; opacity: 0.8;">${minutes}:${seconds}</span>
+                </div>
+            `;
+            
+            // 點擊事件：呼叫原本就有的 resumeLastPlayback
+            continueBtn.addEventListener('click', () => {
+                resumeLastPlayback(title, time);
+            });
 
-  // 2. 產生大類按鈕
+            continueReadingContainer.appendChild(continueBtn);
+        }
+    }
+  } catch (e) {
+      console.error("Error loading last session:", e);
+  }
+
+  // 2. 產生原本的大類按鈕
   majors.forEach(major => {
     const div = document.createElement('div');
     div.className = 'category-item';
-    div.textContent = major; // 例如 "個人", "Books"
-    // 點擊後進入第二層
+    div.textContent = major; 
     div.addEventListener('click', () => showSubCategories(major));
     majorCategoryList.appendChild(div);
   });
