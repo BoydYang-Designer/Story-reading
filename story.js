@@ -307,26 +307,38 @@ function mergeNotes(guestNotes, userNotes) {
     return merged;
 }
 
+// ===== UPDATED FUNCTION: LOAD NOTES AND LAST SESSION FROM FIRESTORE =====
 async function loadWordsFromFirestore() {
     if (!currentUser) {
         console.log("User not logged in, cannot load from Firestore.");
         savedWords = {}; 
-        return; // Keep this part
+        return; 
     }
     try {
         const docRef = db.collection('userNotes').doc(currentUser.uid);
         const doc = await docRef.get();
         if (doc.exists) {
-            const firestoreData = doc.data().savedWords || {};
+            const data = doc.data(); // Get the full document data
+            
+            // 1. Load Notes
+            const firestoreData = data.savedWords || {};
             savedWords = parseFirestoreData(firestoreData);
-            console.log("Notes loaded from Firestore.");
+
+            // 2. === NEW: Sync Last Playback Session ===
+            // This ensures that when we log in on PC, we get the progress from Mobile
+            if (data.lastSession) {
+                localStorage.setItem(LAST_SESSION_KEY, JSON.stringify(data.lastSession));
+                console.log("Last session synced from Cloud:", data.lastSession);
+            }
+            // ===========================================
+
+            console.log("Notes and session loaded from Firestore.");
         } else {
-            console.log("No notes found in Firestore for this user.");
+            console.log("No data found in Firestore for this user.");
             savedWords = {};
         }
     } catch (error) {
         console.error("Error loading notes from Firestore:", error);
-        // 不要在這裡清空 savedWords，而是向上拋出錯誤
         throw new Error("Failed to load user notes from Firestore.");
     }
 }
@@ -377,10 +389,22 @@ function persistNotes() {
     }
 }
 
+// ===== UPDATED FUNCTION: SAVE PLAYBACK STATE TO CLOUD =====
 function saveLastPlaybackState() {
     if (currentStoryIndex > -1 && currentStoryList[currentStoryIndex]) {
         const state = { title: currentStoryList[currentStoryIndex]['標題'], time: audio.currentTime };
+        
+        // 1. Save locally (as backup and for offline use)
         localStorage.setItem(LAST_SESSION_KEY, JSON.stringify(state));
+
+        // 2. === NEW: If logged in, sync to Cloud ===
+        if (currentUser) {
+            // Using merge: true to avoid overwriting the 'savedWords' field
+            db.collection('userNotes').doc(currentUser.uid).set({ 
+                lastSession: state 
+            }, { merge: true }).catch(err => console.error("Error saving session to cloud:", err));
+        }
+        // ===========================================
     }
 }
 
@@ -537,10 +561,12 @@ async function playSentenceSnippet(sentenceText, storyTitle) {
     }
     
     // 修改前
-return ['audio/' + encodeURIComponent(title.trim()) + '.mp3'];
-
-// 這裡您也已經有寫 trim() 了，所以音檔應該是可以播放的，主要是 Timestamp 讀取的部分漏了 trim()。
+    // return ['audio/' + encodeURIComponent(title.trim()) + '.mp3'];
+    // 這裡您也已經有寫 trim() 了，所以音檔應該是可以播放的，主要是 Timestamp 讀取的部分漏了 trim()。
     
+    // 正確設定音源
+    const audioSrc = `audio/${encodeURIComponent(storyTitle.trim())}.mp3`;
+
     noteAudioPlayer.src = audioSrc;
     noteAudioPlayer.currentTime = start;
     
