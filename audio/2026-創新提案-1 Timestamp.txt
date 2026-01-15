@@ -1,0 +1,31 @@
+[00:00:00.000 --> 00:00:02.620] The reason I created this concept is that in the current
+[00:00:02.620 --> 00:00:05.660] stroller market, most stroller handlebars rotate downward
+[00:00:05.660 --> 00:00:06.900] during folding.
+[00:00:06.900 --> 00:00:09.820] Even when a folding stroller can stand upright on its own,
+[00:00:09.820 --> 00:00:12.420] users still need to carefully find the right balance to
+[00:00:12.420 --> 00:00:14.520] ensure it stands firmly.
+[00:00:14.520 --> 00:00:17.980] In addition, many auto-fold strollers require the seat to
+[00:00:17.980 --> 00:00:20.920] be folded first before the frame can fold.
+[00:00:20.920 --> 00:00:23.820] Some designs allow the seat to fold and then automatically
+[00:00:23.820 --> 00:00:25.820] trigger the frame folding.
+[00:00:25.820 --> 00:00:28.560] But this creates safety concerns as there is a risk of
+[00:00:28.560 --> 00:00:30.040] accidental folding.
+[00:00:30.040 --> 00:00:32.800] Even strollers with a one-press button for fully automatic
+[00:00:32.800 --> 00:00:36.560] folding face similar safety issues.
+[00:00:36.560 --> 00:00:39.960] The main idea of this concept is to achieve a single
+[00:00:39.960 --> 00:00:43.200] continuous folding motion without compromising safety.
+[00:00:43.200 --> 00:00:46.840] First, the user releases the one hand folding button and
+[00:00:46.840 --> 00:00:48.760] rotates the handlebar.
+[00:00:48.760 --> 00:00:52.840] As the handlebar rotates, the seat rotates simultaneously.
+[00:00:52.840 --> 00:00:56.520] At this stage, the stroller is not yet committed to folding.
+[00:00:56.640 --> 00:00:59.360] The user can simply rotate the handlebar back to
+[00:00:59.360 --> 00:01:02.000] return it to the open position.
+[00:01:02.000 --> 00:01:04.160] Once the user is certain they want to fold the stroller,
+[00:01:04.160 --> 00:01:08.520] they continue rotating the handlebar to the upright position.
+[00:01:08.520 --> 00:01:11.520] At this point, the seat locking mechanism is released,
+[00:01:11.520 --> 00:01:14.800] allowing the seat to fold automatically by gravity.
+[00:01:14.800 --> 00:01:18.120] Simultaneously, both the front leg hinge and rear leg hinge
+[00:01:18.120 --> 00:01:20.080] are released.
+[00:01:20.080 --> 00:01:22.680] The user then continues the motion by pushing the handlebar
+[00:01:22.680 --> 00:01:25.880] downward, bringing the front and rear legs closer together
+[00:01:25.880 --> 00:01:27.920] to reach the final folded position.
