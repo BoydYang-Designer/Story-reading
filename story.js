@@ -837,7 +837,11 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
                 } else {
                     const audioSrc = `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(itemText.trim())}.mp3`;
                     const wordAudio = new Audio(audioSrc);
-                    wordAudio.play().catch(() => showNotification(`Audio for "${itemText}" was not found.`, 'error'));
+                    wordAudio.play().catch(() => {
+                        // 如果 MP3 播放失敗,使用 TTS
+                        console.log(`Audio not found for "${itemText}", using TTS instead`);
+                        speakText(itemText);
+                    });
                 }
             });
             actions.appendChild(voiceBtn);
@@ -1140,13 +1144,14 @@ function isWordMatchVariation(word1, word2) {
     return false;
 }
 
-// NEW: Function to play audio for a saved word
+// NEW: Function to play audio for a saved word (with TTS fallback)
 function playWordAudio(word) {
     const audioSrc = `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(word.trim())}.mp3`;
     const wordAudio = new Audio(audioSrc);
     wordAudio.play().catch((error) => {
-        console.log(`Audio not found for "${word}":`, error);
-        showNotification(`Audio for "${word}" was not found.`, 'error');
+        console.log(`Audio not found for "${word}", using TTS instead:`, error);
+        // 如果 MP3 播放失敗,使用 TTS 作為備用方案
+        speakText(word);
     });
 }
 
@@ -1190,6 +1195,9 @@ textContainer.addEventListener('click', (e) => {
                             // Fallback to clicked word if not found
                             playWordAudio(cleanedWord);
                         }
+                    } else {
+                        // NEW: If word is not saved, use TTS to speak it
+                        speakText(cleanedWord);
                     }
                     
                     const stagedWordEl = document.createElement('span');
@@ -1215,6 +1223,9 @@ textContainer.addEventListener('click', (e) => {
                         // Fallback to clicked word if not found
                         playWordAudio(cleanedWord);
                     }
+                } else if (!isPlaying) {
+                    // NEW: If word is not saved and player is paused, use TTS
+                    speakText(cleanedWord);
                 }
                 
                 const stagedWordEl = document.createElement('span');
@@ -2193,5 +2204,90 @@ firebase.auth().onAuthStateChanged(async (user) => {
         showLoginView();
     }
 });
+
+// ===== TTS (Text-to-Speech) Functions =====
+// 使用瀏覽器內建的 Web Speech API 來朗讀文字
+
+/**
+ * 使用 TTS 朗讀指定文字
+ * @param {string} text - 要朗讀的文字
+ */
+function speakText(text) {
+    // 1. 如果有正在播放的語音,先停止
+    window.speechSynthesis.cancel();
+
+    // 2. 建立發音請求
+    const utterance = new SpeechSynthesisUtterance(text);
+    
+    // 3. 設定語言 (英文)
+    utterance.lang = 'en-US'; 
+    
+    // 4. 設定速度 (1 為正常速度)
+    utterance.rate = 1.0; 
+    
+    // 5. 播放
+    window.speechSynthesis.speak(utterance);
+}
+
+/**
+ * 從點擊座標抓取該位置的單字
+ * @param {number} x - 點擊的 X 座標
+ * @param {number} y - 點擊的 Y 座標
+ * @returns {string|null} - 回傳單字文字,如果沒有則回傳 null
+ */
+function getWordAtPoint(x, y) {
+    let range;
+    let textNode;
+    let offset;
+
+    // 標準瀏覽器方法 (Chrome, Edge, Firefox, Safari)
+    if (document.caretRangeFromPoint) {
+        range = document.caretRangeFromPoint(x, y);
+        if (!range) return null;
+        textNode = range.startContainer;
+        offset = range.startOffset;
+    } else if (document.caretPositionFromPoint) { // Firefox fallback
+        const rangePosition = document.caretPositionFromPoint(x, y);
+        if (!rangePosition) return null;
+        textNode = rangePosition.offsetNode;
+        offset = rangePosition.offset;
+    } else {
+        return null;
+    }
+
+    // 確保點擊的是文字節點 (Text Node)
+    if (!textNode || textNode.nodeType !== Node.TEXT_NODE) return null;
+
+    const data = textNode.textContent;
+    
+    // 往回找單字起點
+    let start = offset;
+    while (start > 0 && isWordChar(data.charAt(start - 1))) {
+        start--;
+    }
+    
+    // 往後找單字終點
+    let end = offset;
+    while (end < data.length && isWordChar(data.charAt(end))) {
+        end++;
+    }
+
+    const word = data.slice(start, end);
+    // 過濾掉空白或標點符號的誤點擊
+    if (word.trim().length > 0) {
+        return word.trim();
+    }
+    return null;
+}
+
+/**
+ * 判斷字元是否為單字的一部分
+ * @param {string} char - 要檢查的字元
+ * @returns {boolean} - 是否為單字字元
+ */
+function isWordChar(char) {
+    // 包含字母、數字、連字符、撇號和重音字母
+    return /^[a-zA-Z0-9\-\u00C0-\u00FF']$/.test(char);
+}
 
 init();
