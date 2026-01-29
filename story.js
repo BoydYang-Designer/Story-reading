@@ -450,7 +450,7 @@ function getSavedWordsForCurrentStory(categoryName, titleName) {
 // 2. 模糊比對邏輯 (處理複數、過去式、進行式)
 function isWordSaved(rawText, savedSet) {
     // 先移除標點符號並轉小寫 (例如 "running." -> "running")
-    const word = rawText.replace(/^[.,?!:;'"`“”‘’()[\]{}\-/*]+|[.,?!:;'"`“”‘’()[\]{}\-/*]+$/g, '').toLowerCase();
+    const word = rawText.replace(/^[.,?!:;'"`""''()[\]{}\-/*]+|[.,?!:;'"`""''()[\]{}\-/*]+$/g, '').toLowerCase();
     
     if (!word) return false;
 
@@ -460,6 +460,9 @@ function isWordSaved(rawText, savedSet) {
     // B. 簡單的詞尾變化還原 (Heuristic Stemming)
     // 注意：這無法處理不規則變化 (如 go -> went)，但能處理大部分情況
     
+    // === FORWARD MATCHING: Check if text word matches saved word ===
+    // (Text word is a variation of saved word)
+    
     // 1. 複數/第三人稱單數 (ends with 's') -> 移除 's'
     if (word.endsWith('s') && savedSet.has(word.slice(0, -1))) return true;
     
@@ -468,15 +471,49 @@ function isWordSaved(rawText, savedSet) {
     
     // 3. 過去式 (ends with 'ed') -> 移除 'd' 或 'ed'
     if (word.endsWith('ed')) {
-        if (savedSet.has(word.slice(0, -1))) return true; // e.g., dance -> danced
-        if (savedSet.has(word.slice(0, -2))) return true; // e.g., play -> played
+        if (savedSet.has(word.slice(0, -1))) return true; // e.g., danced -> dance
+        if (savedSet.has(word.slice(0, -2))) return true; // e.g., played -> play
     }
     
     // 4. 進行式 (ends with 'ing') -> 移除 'ing'
-    if (word.endsWith('ing') && savedSet.has(word.slice(0, -3))) return true; // e.g., playing -> play
+    if (word.endsWith('ing')) {
+        if (savedSet.has(word.slice(0, -3))) return true; // e.g., playing -> play
+        // 5. 進行式去e加ing的情況 (e.g., making -> make) -> 移除 'ing' 補 'e'
+        if (savedSet.has(word.slice(0, -3) + 'e')) return true;
+    }
     
-    // 5. 進行式去e加ing的情況 (e.g., make -> making) -> 移除 'ing' 補 'e'
-    if (word.endsWith('ing') && savedSet.has(word.slice(0, -3) + 'e')) return true;
+    // === REVERSE MATCHING: Check if saved words are variations of text word ===
+    // (Saved word is base form, text word is variation)
+    // This handles cases like: text="recognized", saved="recognize"
+    
+    for (const savedWord of savedSet) {
+        // Check if saved word + common endings = text word
+        
+        // Past tense variations
+        if (word === savedWord + 'd') return true;  // e.g., recognize -> recognized
+        if (word === savedWord + 'ed') return true; // e.g., play -> played
+        
+        // For words ending in 'e', check if removing 'e' and adding 'ed' matches
+        if (savedWord.endsWith('e') && word === savedWord.slice(0, -1) + 'ed') return true; // e.g., love -> loved
+        
+        // Present participle / gerund variations
+        if (word === savedWord + 'ing') return true; // e.g., play -> playing
+        if (savedWord.endsWith('e') && word === savedWord.slice(0, -1) + 'ing') return true; // e.g., love -> loving
+        
+        // Plural / third person variations
+        if (word === savedWord + 's') return true;   // e.g., play -> plays
+        if (word === savedWord + 'es') return true;  // e.g., box -> boxes
+        
+        // For words ending in consonant+y, check if changing 'y' to 'ies' matches
+        if (savedWord.endsWith('y') && savedWord.length > 1) {
+            const beforeY = savedWord[savedWord.length - 2];
+            // Check if it's consonant + y (not vowel + y)
+            if (!/[aeiou]/.test(beforeY)) {
+                if (word === savedWord.slice(0, -1) + 'ies') return true; // e.g., carry -> carries
+                if (word === savedWord.slice(0, -1) + 'ied') return true; // e.g., carry -> carried
+            }
+        }
+    }
 
     return false;
 }
