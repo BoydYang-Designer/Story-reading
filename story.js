@@ -484,13 +484,16 @@ function isWordSaved(rawText, savedSet) {
     
     // === REVERSE MATCHING: Check if saved words are variations of text word ===
     // (Saved word is base form, text word is variation)
-    // This handles cases like: text="recognized", saved="recognize"
+    // Examples that work with this logic:
+    //   - text="recognized", saved="recognize" (recognize + d = recognized)
+    //   - text="Alchemist", saved="alchemist" (case-insensitive, handled by toLowerCase)
+    // Note: "wiped" -> "wipe" is already handled by FORWARD matching above
     
     for (const savedWord of savedSet) {
         // Check if saved word + common endings = text word
         
         // Past tense variations
-        if (word === savedWord + 'd') return true;  // e.g., recognize -> recognized
+        if (word === savedWord + 'd') return true;  // e.g., wipe -> wiped, recognize -> recognized
         if (word === savedWord + 'ed') return true; // e.g., play -> played
         
         // For words ending in 'e', check if removing 'e' and adding 'ed' matches
@@ -1068,6 +1071,75 @@ function cleanWord(word) {
   return word ? word.replace(/^[.,?!:;'"`“”‘’()[\]{}\-/*]+|[.,?!:;'"`“”‘’()[\]{}\-/*]+$/g, '') : '';
 }
 
+// NEW: Function to find the actual saved word form from notes
+function findSavedWordForm(clickedWord, categoryName, titleName) {
+    if (!categoryName || !titleName) return null;
+    
+    const storyData = savedWords[categoryName]?.[titleName];
+    if (!storyData) return null;
+    
+    const normalizedClicked = clickedWord.toLowerCase().trim();
+    
+    // Check in words
+    if (storyData.words) {
+        for (const savedWord of storyData.words) {
+            const normalizedSaved = savedWord.toLowerCase().trim();
+            // Direct match
+            if (normalizedClicked === normalizedSaved) {
+                return savedWord;
+            }
+            // Check if they match using the same logic as isWordSaved
+            if (isWordMatchVariation(normalizedClicked, normalizedSaved)) {
+                return savedWord;
+            }
+        }
+    }
+    
+    // Check in phrases
+    if (storyData.phrases) {
+        for (const savedPhrase of storyData.phrases) {
+            const normalizedSaved = savedPhrase.toLowerCase().trim();
+            if (normalizedClicked === normalizedSaved) {
+                return savedPhrase;
+            }
+            if (isWordMatchVariation(normalizedClicked, normalizedSaved)) {
+                return savedPhrase;
+            }
+        }
+    }
+    
+    return null;
+}
+
+// Helper function to check if two normalized words are variations of each other
+function isWordMatchVariation(word1, word2) {
+    // Try forward matching (word1 is variation of word2)
+    if (word1.endsWith('s') && word1.slice(0, -1) === word2) return true;
+    if (word1.endsWith('es') && word1.slice(0, -2) === word2) return true;
+    if (word1.endsWith('ed') && (word1.slice(0, -1) === word2 || word1.slice(0, -2) === word2)) return true;
+    if (word1.endsWith('ing') && (word1.slice(0, -3) === word2 || word1.slice(0, -3) + 'e' === word2)) return true;
+    
+    // Try reverse matching (word2 is base form, word1 is variation)
+    if (word1 === word2 + 'd') return true;
+    if (word1 === word2 + 'ed') return true;
+    if (word2.endsWith('e') && word1 === word2.slice(0, -1) + 'ed') return true;
+    if (word1 === word2 + 'ing') return true;
+    if (word2.endsWith('e') && word1 === word2.slice(0, -1) + 'ing') return true;
+    if (word1 === word2 + 's') return true;
+    if (word1 === word2 + 'es') return true;
+    
+    // Consonant+y changes
+    if (word2.endsWith('y') && word2.length > 1) {
+        const beforeY = word2[word2.length - 2];
+        if (!/[aeiou]/.test(beforeY)) {
+            if (word1 === word2.slice(0, -1) + 'ies') return true;
+            if (word1 === word2.slice(0, -1) + 'ied') return true;
+        }
+    }
+    
+    return false;
+}
+
 // NEW: Function to play audio for a saved word
 function playWordAudio(word) {
     const audioSrc = `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(word.trim())}.mp3`;
@@ -1110,7 +1182,14 @@ textContainer.addEventListener('click', (e) => {
                 if (cleanedWord) {
                     // NEW: If word is saved and player is paused, play its audio
                     if (wordSpan.classList.contains('is-saved-word')) {
-                        playWordAudio(cleanedWord);
+                        // Find the actual saved word form from notes
+                        const savedForm = findSavedWordForm(cleanedWord, currentCategoryName, currentStoryTitle);
+                        if (savedForm) {
+                            playWordAudio(savedForm);
+                        } else {
+                            // Fallback to clicked word if not found
+                            playWordAudio(cleanedWord);
+                        }
                     }
                     
                     const stagedWordEl = document.createElement('span');
@@ -1128,12 +1207,20 @@ textContainer.addEventListener('click', (e) => {
             if (cleanedWord) {
                 // NEW: If word is saved and player is paused, play its audio
                 if (!isPlaying && wordSpan.classList.contains('is-saved-word')) {
-                    playWordAudio(cleanedWord);
+                    // Find the actual saved word form from notes
+                    const savedForm = findSavedWordForm(cleanedWord, currentCategoryName, currentStoryTitle);
+                    if (savedForm) {
+                        playWordAudio(savedForm);
+                    } else {
+                        // Fallback to clicked word if not found
+                        playWordAudio(cleanedWord);
+                    }
                 }
                 
                 const stagedWordEl = document.createElement('span');
                 stagedWordEl.className = 'staged-word';
                 stagedWordEl.textContent = cleanedWord;
+                stagedWordsContainer.appendChild(stagedWordEl);
                 stagedWordsContainer.appendChild(stagedWordEl);
             }
         }
