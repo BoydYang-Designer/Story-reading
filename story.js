@@ -1014,6 +1014,16 @@ function cleanWord(word) {
   return word ? word.replace(/^[.,?!:;'"`“”‘’()[\]{}\-/*]+|[.,?!:;'"`“”‘’()[\]{}\-/*]+$/g, '') : '';
 }
 
+// NEW: Function to play audio for a saved word
+function playWordAudio(word) {
+    const audioSrc = `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(word.trim())}.mp3`;
+    const wordAudio = new Audio(audioSrc);
+    wordAudio.play().catch((error) => {
+        console.log(`Audio not found for "${word}":`, error);
+        showNotification(`Audio for "${word}" was not found.`, 'error');
+    });
+}
+
 textContainer.addEventListener('click', (e) => {
     // 忽略使用者用滑鼠選取/反白文字時的點擊
     if (window.getSelection().toString().length > 0) return;
@@ -1044,6 +1054,11 @@ textContainer.addEventListener('click', (e) => {
             if (wordSpan) {
                 const cleanedWord = cleanWord(wordSpan.textContent);
                 if (cleanedWord) {
+                    // NEW: If word is saved and player is paused, play its audio
+                    if (wordSpan.classList.contains('is-saved-word')) {
+                        playWordAudio(cleanedWord);
+                    }
+                    
                     const stagedWordEl = document.createElement('span');
                     stagedWordEl.className = 'staged-word';
                     stagedWordEl.textContent = cleanedWord;
@@ -1057,6 +1072,11 @@ textContainer.addEventListener('click', (e) => {
         if (wordSpan) {
             const cleanedWord = cleanWord(wordSpan.textContent);
             if (cleanedWord) {
+                // NEW: If word is saved and player is paused, play its audio
+                if (!isPlaying && wordSpan.classList.contains('is-saved-word')) {
+                    playWordAudio(cleanedWord);
+                }
+                
                 const stagedWordEl = document.createElement('span');
                 stagedWordEl.className = 'staged-word';
                 stagedWordEl.textContent = cleanedWord;
