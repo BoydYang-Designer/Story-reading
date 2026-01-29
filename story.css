@@ -586,3 +586,15 @@ button.btn-success-feedback {
 .img-hidden {
     display: none;
 }
+
+/* story.css - 新增 */
+
+/* 已儲存單字的樣式 */
+.clickable-word.is-saved-word {
+  /* 方案 A: 底部加上明顯的顏色線條 */
+  border-bottom: 2px solid var(--color-primary); 
+  font-weight: 600; /* 加粗 */
+  
+  /* 方案 B (如果你喜歡背景色，可以選這個，但要小心跟播放顏色衝突) */
+  /* background-color: rgba(138, 121, 104, 0.15); */
+}

@@ -412,6 +412,58 @@ function clearLastPlaybackState() {
     localStorage.removeItem(LAST_SESSION_KEY);
 }
 
+// story.js - 新增 Helper Functions
+
+// 1. 取得所有已儲存單字的 Set (將所有分類、所有文章下的 Words 集合起來)
+function getAllSavedWordsSet() {
+    const set = new Set();
+    // 遍歷 savedWords 物件
+    for (const cat in savedWords) {
+        for (const title in savedWords[cat]) {
+            const data = savedWords[cat][title];
+            if (data.words) {
+                // 轉為小寫存入，方便比對
+                data.words.forEach(w => set.add(w.toLowerCase().trim()));
+            }
+        }
+    }
+    return set;
+}
+
+// 2. 模糊比對邏輯 (處理複數、過去式、進行式)
+function isWordSaved(rawText, savedSet) {
+    // 先移除標點符號並轉小寫 (例如 "running." -> "running")
+    const word = rawText.replace(/^[.,?!:;'"`“”‘’()[\]{}\-/*]+|[.,?!:;'"`“”‘’()[\]{}\-/*]+$/g, '').toLowerCase();
+    
+    if (!word) return false;
+
+    // A. 直接命中 (例如 saved: "apple", text: "apple")
+    if (savedSet.has(word)) return true;
+
+    // B. 簡單的詞尾變化還原 (Heuristic Stemming)
+    // 注意：這無法處理不規則變化 (如 go -> went)，但能處理大部分情況
+    
+    // 1. 複數/第三人稱單數 (ends with 's') -> 移除 's'
+    if (word.endsWith('s') && savedSet.has(word.slice(0, -1))) return true;
+    
+    // 2. 複數 (ends with 'es') -> 移除 'es' (e.g., boxes -> box)
+    if (word.endsWith('es') && savedSet.has(word.slice(0, -2))) return true;
+    
+    // 3. 過去式 (ends with 'ed') -> 移除 'd' 或 'ed'
+    if (word.endsWith('ed')) {
+        if (savedSet.has(word.slice(0, -1))) return true; // e.g., dance -> danced
+        if (savedSet.has(word.slice(0, -2))) return true; // e.g., play -> played
+    }
+    
+    // 4. 進行式 (ends with 'ing') -> 移除 'ing'
+    if (word.endsWith('ing') && savedSet.has(word.slice(0, -3))) return true; // e.g., playing -> play
+    
+    // 5. 進行式去e加ing的情況 (e.g., make -> making) -> 移除 'ing' 補 'e'
+    if (word.endsWith('ing') && savedSet.has(word.slice(0, -3) + 'e')) return true;
+
+    return false;
+}
+
 // --- Word Classification ---
 
 function classifyEntry(text) {
@@ -1066,10 +1118,16 @@ copyStagedBtn.addEventListener('click', () => {
 });
 
 // Playback content functions
+
 function parafyAndMakeClickable(text) {
     const cleaned = String(text).replace(/[“”]/g, '"').replace(/[‘’]/g, "'").trim();
     const paragraphs = cleaned.split(/\n+/);
     const frag = document.createDocumentFragment();
+    
+    // --- 新增：先取得所有已存單字 ---
+    const savedSet = getAllSavedWordsSet();
+    // -----------------------------
+
     paragraphs.forEach(pText => {
         const p = document.createElement('p');
         if (pText.trim() === '') {
@@ -1083,6 +1141,12 @@ function parafyAndMakeClickable(text) {
                 } else {
                     span.className = 'clickable-word';
                     span.textContent = part;
+                    
+                    // --- 新增：檢查是否為已存單字 ---
+                    if (isWordSaved(part, savedSet)) {
+                        span.classList.add('is-saved-word');
+                    }
+                    // -----------------------------
                 }
                 p.appendChild(span);
             });
@@ -1093,10 +1157,16 @@ function parafyAndMakeClickable(text) {
 }
 
 // --- New Timestamp Rendering Function ---
+
 function renderTimestampContent() {
     textContainer.innerHTML = '';
     textContainer.scrollTop = 0;
     const frag = document.createDocumentFragment();
+    
+    // --- 新增：先取得所有已存單字 ---
+    const savedSet = getAllSavedWordsSet();
+    // -----------------------------
+
     timestampData.forEach(line => {
         const p = document.createElement('p');
         p.className = 'timestamp-sentence';
@@ -1111,6 +1181,12 @@ function renderTimestampContent() {
             } else {
                 span.className = 'clickable-word';
                 span.textContent = part;
+
+                // --- 新增：檢查是否為已存單字 ---
+                if (isWordSaved(part, savedSet)) {
+                    span.classList.add('is-saved-word');
+                }
+                // -----------------------------
             }
             p.appendChild(span);
         });
