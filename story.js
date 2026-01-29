@@ -430,6 +430,23 @@ function getAllSavedWordsSet() {
     return set;
 }
 
+// NEW: Get saved words only for the current story
+function getSavedWordsForCurrentStory(categoryName, titleName) {
+    const set = new Set();
+    if (!categoryName || !titleName) return set;
+    
+    const storyData = savedWords[categoryName]?.[titleName];
+    if (storyData && storyData.words) {
+        storyData.words.forEach(w => set.add(w.toLowerCase().trim()));
+    }
+    // Also include phrases for highlighting
+    if (storyData && storyData.phrases) {
+        storyData.phrases.forEach(p => set.add(p.toLowerCase().trim()));
+    }
+    return set;
+}
+
+
 // 2. 模糊比對邏輯 (處理複數、過去式、進行式)
 function isWordSaved(rawText, savedSet) {
     // 先移除標點符號並轉小寫 (例如 "running." -> "running")
@@ -1139,13 +1156,13 @@ copyStagedBtn.addEventListener('click', () => {
 
 // Playback content functions
 
-function parafyAndMakeClickable(text) {
+function parafyAndMakeClickable(text, categoryName = null, titleName = null) {
     const cleaned = String(text).replace(/[“”]/g, '"').replace(/[‘’]/g, "'").trim();
     const paragraphs = cleaned.split(/\n+/);
     const frag = document.createDocumentFragment();
     
     // --- 新增：先取得所有已存單字 ---
-    const savedSet = getAllSavedWordsSet();
+    const savedSet = getSavedWordsForCurrentStory(categoryName, titleName);
     // -----------------------------
 
     paragraphs.forEach(pText => {
@@ -1184,7 +1201,7 @@ function renderTimestampContent() {
     const frag = document.createDocumentFragment();
     
     // --- 新增：先取得所有已存單字 ---
-    const savedSet = getAllSavedWordsSet();
+    const savedSet = getSavedWordsForCurrentStory(currentCategoryName, currentStoryTitle);
     // -----------------------------
 
     timestampData.forEach(line => {
@@ -1698,7 +1715,7 @@ async function showPlayback(index, startTime = 0, maintainTimestampMode = false)
       // 預設使用 JSON 模式
       isTimestampMode = false;
       toggleTimestampBtn.classList.remove('is-active');
-      textContainer.appendChild(parafyAndMakeClickable('\n\n' + story['內文']));
+      textContainer.appendChild(parafyAndMakeClickable('\n\n' + story['內文'], currentCategoryName, currentStoryTitle));
   }
 
   // 設定音訊來源
@@ -1891,7 +1908,7 @@ toggleTimestampBtn.addEventListener('click', () => {
         
         const story = currentStoryList[currentStoryIndex];
         textContainer.innerHTML = '';
-        textContainer.appendChild(parafyAndMakeClickable('\n\n' + story['內文']));
+        textContainer.appendChild(parafyAndMakeClickable('\n\n' + story['內文'], currentCategoryName, currentStoryTitle));
         lastHighlightedSentence = null;
         computeScrollMax();
         
