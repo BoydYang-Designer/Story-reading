@@ -1,45 +1,56 @@
-[00:00:00.000 --> 00:00:06.560] Part 1-5 So the boy was disappointed; he decided that he would never again believe in dreams.
-[00:00:07.280 --> 00:00:11.840] He remembered that he had a number of things he had to take care of: he went to the market for
-[00:00:11.840 --> 00:00:16.320] something to eat, he traded his book for one that was thicker, and he found a bench in the plaza
-[00:00:16.320 --> 00:00:21.200] where he could sample the new wine he had bought. The day was hot, and the wine was refreshing.
-[00:00:21.760 --> 00:00:25.440] The sheep were at the gates of the city, in a stable that belonged to a friend.
-[00:00:26.080 --> 00:00:31.040] The boy knew a lot of people in the city. That was what made traveling appeal to him. He always
-[00:00:31.040 --> 00:00:35.920] made new friends, and he didn’t need to spend all of his time with them. When someone sees the
-[00:00:35.920 --> 00:00:40.480] same people every day, as had happened with him at the seminary, they wind up becoming a part of
-[00:00:40.480 --> 00:00:46.000] that person’s life. And then they want the person to change. If someone isn’t what others want
-[00:00:46.000 --> 00:00:51.600] them to be, the others become angry. Everyone seems to have a clear idea of how other people should
-[00:00:51.600 --> 00:00:57.600] lead their lives, but none about his or her own. He decided to wait until the sun had sunk a bit
-[00:00:57.600 --> 00:01:02.960] lower in the sky before following his flock back through the fields. Three days from now, he would
-[00:01:02.960 --> 00:01:08.560] be with the merchant’s daughter. He started to read the book he had bought. On the very first page
-[00:01:08.560 --> 00:01:14.160] it described a burial ceremony. And the names of the people involved were very difficult to pronounce.
-[00:01:14.880 --> 00:01:18.960] If he ever wrote a book, he thought, he would present one person at a time, so that the reader
-[00:01:18.960 --> 00:01:23.920] wouldn’t have to worry about memorizing a lot of names. When he was finally able to concentrate
-[00:01:23.920 --> 00:01:28.800] on what he was reading, he liked the book better; the burial was on a snowy day, and he welcomed
-[00:01:28.800 --> 00:01:34.400] the feeling of being cold. As he read on, an old man sat down at his side and tried to strike up a
-[00:01:34.400 --> 00:01:39.680] conversation. “What are they doing?” the old man asked, pointing at the people in the plaza.
-[00:01:40.400 --> 00:01:45.760] “Working,” the boy answered dryly, making it look as if he wanted to concentrate on his reading.
-[00:01:46.400 --> 00:01:50.480] Actually, he was thinking about shearing his sheep in front of the merchant’s daughter,
-[00:01:50.480 --> 00:01:54.240] so that she could see that he was someone who was capable of doing difficult things.
-[00:01:55.040 --> 00:02:00.640] He had already imagined the scene many times; every time, the girl became fascinated when he explained
-[00:02:00.640 --> 00:02:05.760] that the sheep had to be sheared from back to front. He also tried to remember some good stories to
-[00:02:05.760 --> 00:02:11.120] relate as he sheared the sheep. Most of them he had read in books, but he would tell them as if
-[00:02:11.120 --> 00:02:16.160] they were from his personal experience. She would never know the difference, because she didn’t know
-[00:02:16.160 --> 00:02:21.520] how to read. Meanwhile, the old man persisted in his attempt to strike up a conversation.
-[00:02:22.480 --> 00:02:27.040] He said that he was tired and thirsty, and asked if he might have a sip of the boy’s wine.
-[00:02:27.680 --> 00:02:33.040] The boy offered his bottle, hoping that the old man would leave him alone. But the old man wanted
-[00:02:33.040 --> 00:02:38.400] to talk, and he asked the boy what book he was reading. The boy was tempted to be rude, and move to
-[00:02:38.480 --> 00:02:44.240] another bench, but his father had taught him to be respectful of the elderly. So he held out the book
-[00:02:44.240 --> 00:02:49.440] to the man for two reasons: first, that he, himself, wasn’t sure how to pronounce the title;
-[00:02:50.080 --> 00:02:54.320] and second, that if the old man didn’t know how to read, he would probably feel ashamed and
-[00:02:54.320 --> 00:03:00.400] decide of his own accord to change benches. “Hmm said the old man, looking at all sides of the book,
-[00:03:00.400 --> 00:03:05.520] as if it were some strange object. “This is an important book, but it’s really irritating.”
-[00:03:06.160 --> 00:03:10.240] The boy was shocked. The old man knew how to read, and had already read the book.
-[00:03:10.960 --> 00:03:16.000] And if the book was irritating, as the old man had said, the boy still had time to change it for
-[00:03:16.000 --> 00:03:21.120] another. “It’s a book that says the same thing almost all the other books in the world say,”
-[00:03:21.120 --> 00:03:26.720] continued the old man. “It describes people’s inability to choose their own Personal Legends.
-[00:03:26.720 --> 00:03:30.400] And it ends up saying that everyone believes the world’s greatest lie.”
-[00:03:31.280 --> 00:03:35.360] “What’s the world’s greatest lie?” the boy asked, completely surprised.
-[00:03:36.000 --> 00:03:41.200] “It’s this: that at a certain point in our lives, we lose control of what’s happening to us,
-[00:03:41.200 --> 00:03:45.360] and our lives become controlled by fate. That’s the world’s greatest lie.”
-[00:03:46.080 --> 00:03:51.760] “That’s never happened to me,” the boy said. “They wanted me to be a priest, but I decided to become
-[00:03:51.760 --> 00:03:56.960] a shepherd.” “Much better,” said the old man. “Because you really like to travel.”
+[00:00:00.000 --> 00:00:01.180] Part 1 -5.
+[00:00:01.900 --> 00:00:03.060] So the boy was disappointed.
+[00:00:03.900 --> 00:00:06.420] He decided that he would never again believe in dreams.
+[00:00:07.320 --> 00:00:10.280] He remembered that he had a number of things he had to take care of.
+[00:00:10.820 --> 00:00:12.640] He went to the market for something to eat.
+[00:00:12.760 --> 00:00:18.320] He traded his book for one that was thicker, and he found a bench in the plaza where he could sample the new wine he had bought.
+[00:00:19.100 --> 00:00:21.020] The day was hot and the wine was refreshing.
+[00:00:21.880 --> 00:00:25.420] The sheep were at the gates of the city in a stable that belonged to a friend.
+[00:00:25.880 --> 00:00:27.820] The boy knew a lot of people in the city.
+[00:00:28.480 --> 00:00:30.480] That was what made traveling appeal to him.
+[00:00:30.640 --> 00:00:34.320] He always made new friends, and he didn't need to spend all of his time with them.
+[00:00:34.980 --> 00:00:41.500] When someone sees the same people every day as had happened with him at the seminary, they wind up becoming a part of that person's life.
+[00:00:42.060 --> 00:00:43.720] And then they want the person to change.
+[00:00:44.500 --> 00:00:48.020] If someone isn't what others want them to be, the others become angry.
+[00:00:48.800 --> 00:00:54.400] Everyone seems to have a clear idea of how other people should lead their lives, but none about his or her own.
+[00:00:55.160 --> 00:01:00.800] He decided to wait until the sun had sunk a bit lower in the sky before following his flock back through the fields.
+[00:01:01.580 --> 00:01:04.260] Three days from now, he would be with the merchant's daughter.
+[00:01:04.980 --> 00:01:06.620] He started to read the book he had bought.
+[00:01:07.440 --> 00:01:10.260] On the very first page, it described a burial ceremony.
+[00:01:11.040 --> 00:01:14.060] And the names of the people involved were very difficult to pronounce.
+[00:01:14.880 --> 00:01:21.360] If he ever wrote a book, he thought he would present one person at a time so that the reader wouldn't have to worry about memorizing a lot of names.
+[00:01:21.920 --> 00:01:26.040] When he was finally able to concentrate on what he was reading, he liked the book better.
+[00:01:26.600 --> 00:01:30.060] The burial was on a snowy day, and he welcomed the feeling of being cold.
+[00:01:30.620 --> 00:01:34.820] As he read on, an old man sat down at his side and tried to strike up a conversation.
+[00:01:35.720 --> 00:01:36.600] What are they doing?
+[00:01:37.060 --> 00:01:39.620] The old man asked, pointing at the people in the plaza.
+[00:01:40.340 --> 00:01:45.660] Working, the boy answered dryly, making it look as if he wanted to concentrate on his reading.
+[00:01:46.340 --> 00:01:54.240] Actually, he was thinking about shearing his sheep in front of the merchant's daughter so that she could see that he was someone who was capable of doing difficult things.
+[00:01:55.140 --> 00:01:57.360] He had already imagined the scene many times.
+[00:01:57.880 --> 00:02:02.900] Every time, the girl became fascinated when he explained that the sheep had to be sheared from back to front.
+[00:02:03.520 --> 00:02:07.120] He also tried to remember some good stories to relate as he sheared the sheep.
+[00:02:07.840 --> 00:02:13.040] Most of them he had read in books, but he would tell them as if they were from his personal experience.
+[00:02:13.820 --> 00:02:16.820] She would never know the difference because she didn't know how to read.
+[00:02:17.500 --> 00:02:21.280] Meanwhile, the old man persisted in his attempt to strike up a conversation.
+[00:02:22.380 --> 00:02:27.060] He said that he was tired and thirsty and asked if he might have a sip of the boy's wine.
+[00:02:27.800 --> 00:02:31.380] The boy offered his bottle, hoping that the old man would leave him alone.
+[00:02:32.000 --> 00:02:35.500] But the old man wanted to talk and he asked the boy what book he was reading.
+[00:02:36.280 --> 00:02:42.320] The boy was tempted to be rude and moved to another bench, but his father had taught him to be respectful of the elderly.
+[00:02:43.080 --> 00:02:45.520] So he held out the book to the man for two reasons.
+[00:02:46.180 --> 00:02:49.400] First, that he himself wasn't sure how to pronounce the title.
+[00:02:50.080 --> 00:02:56.420] And second, that if the old man didn't know how to read, he would probably feel ashamed and decide of his own accord to change benches.
+[00:02:57.180 --> 00:03:02.000] Hmm, said the old man, looking at all sides of the book as if it were some strange object.
+[00:03:02.760 --> 00:03:05.380] This is an important book, but it's really irritating.
+[00:03:05.960 --> 00:03:07.040] The boy was shocked.
+[00:03:07.580 --> 00:03:10.340] The old man knew how to read and had already read the book.
+[00:03:11.040 --> 00:03:16.340] And if the book was irritating, as the old man had said, the boy still had time to change it for another.
+[00:03:17.020 --> 00:03:22.240] It's a book that says the same thing almost all the other books in the world say, continued the old man.
+[00:03:22.820 --> 00:03:26.420] It describes people's inability to choose their own personal legends.
+[00:03:26.980 --> 00:03:30.480] And it ends up saying that everyone believes the world's greatest lie.
+[00:03:31.180 --> 00:03:32.920] What's the world's greatest lie?
+[00:03:33.320 --> 00:03:35.040] The boy asked, completely surprised.
+[00:03:36.140 --> 00:03:43.200] It's this, that at a certain point in our lives, we lose control of what's happening to us, and our lives become controlled by fate.
+[00:03:43.800 --> 00:03:45.380] That's the world's greatest lie.
+[00:03:46.080 --> 00:03:48.400] That's never happened to me, the boy said.
+[00:03:49.100 --> 00:03:52.220] They wanted me to be a priest, but I decided to become a shepherd.
+[00:03:53.120 --> 00:03:56.960] Much better, said the old man, because you really like to travel.
