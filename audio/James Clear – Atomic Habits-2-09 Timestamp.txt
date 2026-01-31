@@ -1,97 +1,64 @@
-[00:00:00.000 --> 00:00:06.200] At first glance, this sounds reasonable, but soon I realized that the trigger was unclear.
-[00:00:06.200 --> 00:00:08.440] Would I do my pushups before 8 lunch?
-[00:00:08.440 --> 00:00:09.600] After 8 lunch?
-[00:00:09.600 --> 00:00:11.240] Where would I do them?
-[00:00:11.240 --> 00:00:15.960] After a few inconsistent days, I changed my habits back to when I close my laptop for
-[00:00:15.960 --> 00:00:16.960] lunch.
-[00:00:16.960 --> 00:00:18.960] I will do 10 pushups next to my desk.
-[00:00:18.960 --> 00:00:21.240] Ambiguity gone.
-[00:00:21.240 --> 00:00:26.760] Habits like Read More or Eat Better are worthy causes, but these goals do not provide instruction
-[00:00:26.760 --> 00:00:28.720] on how and when to act.
-[00:00:28.720 --> 00:00:32.920] You need to be specific and clear after I close the door, after I brush my teeth, after
-[00:00:32.920 --> 00:00:34.360] I sit down at the table.
-[00:00:34.360 --> 00:00:36.800] The specificity is important.
-[00:00:36.800 --> 00:00:41.280] The more tightly bound your new habit is to a specific queue, the better the odds are
-[00:00:41.280 --> 00:00:44.040] that you will notice when the time comes to act.
-[00:00:44.040 --> 00:00:48.800] Remember, the first law of behavior change is to make it obvious.
-[00:00:48.800 --> 00:00:52.800] Strategies like implementation intentions and habit stacking are among the most practical
-[00:00:52.800 --> 00:00:58.280] ways to create obvious cues for your habits and design a clear plan for when and where
-[00:00:58.280 --> 00:01:01.520] to take action.
-[00:01:01.520 --> 00:01:02.760] Chapter summary.
-[00:01:02.760 --> 00:01:06.840] The first law of behavior change is make it obvious.
-[00:01:06.840 --> 00:01:11.040] The two most common cues are time and location.
-[00:01:11.040 --> 00:01:15.480] Creating an implementation intention is a strategy you can use to pair a new habit with
-[00:01:15.480 --> 00:01:18.040] a specific time and location.
-[00:01:18.040 --> 00:01:25.680] The implementation intention formula is I will behavior at time in location.
-[00:01:25.680 --> 00:01:30.440] Another stacking is a strategy you can use to pair a new habit with a current habit.
-[00:01:30.440 --> 00:01:40.080] The habit stacking formula is after current habit I will new habit.
-[00:01:40.080 --> 00:01:41.920] Chapter 6.
-[00:01:41.920 --> 00:01:43.600] Motivation is overrated.
-[00:01:43.600 --> 00:01:47.600] Environment often matters more.
-[00:01:47.600 --> 00:01:52.240] Anne Thorndyke, a primary care physician at Massachusetts General Hospital in Boston,
-[00:01:52.240 --> 00:01:54.200] had a crazy idea.
-[00:01:54.200 --> 00:01:58.640] She believed she could improve the eating habits of thousands of hospital staff and visitors
-[00:01:58.640 --> 00:02:02.560] without changing their willpower or motivation in the slightest way.
-[00:02:02.560 --> 00:02:06.200] In fact, she didn't plan on talking to them at all.
-[00:02:06.200 --> 00:02:10.560] Thorndyke and her colleagues designed a six month study to alter the choice architecture
-[00:02:10.560 --> 00:02:12.800] of the hospital cafeteria.
-[00:02:12.800 --> 00:02:17.560] Originally, the refrigerators located next to the cash registers in the cafeteria were
-[00:02:17.560 --> 00:02:19.560] filled with only soda.
-[00:02:19.560 --> 00:02:22.840] The researchers added water as an option to each one.
-[00:02:22.840 --> 00:02:27.000] Additionally, they placed baskets of bottle water next to the food stations throughout
-[00:02:27.000 --> 00:02:28.760] the room.
-[00:02:28.760 --> 00:02:32.760] Soda was still in the primary refrigerators, but now water was an option available at
-[00:02:32.760 --> 00:02:35.480] all drink locations.
-[00:02:35.480 --> 00:02:41.000] Over the next three months, the number of soda sales at the hospital dropped by 11.4%.
-[00:02:41.000 --> 00:02:45.640] Meanwhile, sales of bottle water increased by 25.8%.
-[00:02:45.640 --> 00:02:50.320] They made similar adjustments and saw similar results with the food in the cafeteria.
-[00:02:50.320 --> 00:02:53.600] Nobody had said a word to anyone eating there.
-[00:02:53.600 --> 00:02:59.200] To see a graphical representation of the layouts in the cafeteria before and after the changes,
-[00:02:59.200 --> 00:03:03.200] visit AtomicHabits.com slash media.
-[00:03:03.200 --> 00:03:07.360] People often choose products not because of what they are, but because of where they
-[00:03:07.360 --> 00:03:08.360] are.
-[00:03:08.360 --> 00:03:12.320] If I walk into the kitchen and see a plate of cookies on the counter, I'll pick up half
-[00:03:12.320 --> 00:03:16.160] a dozen and start eating, even if I hadn't been thinking about them beforehand and didn't
-[00:03:16.160 --> 00:03:18.360] necessarily feel hungry.
-[00:03:18.360 --> 00:03:22.480] If the communal table at the office is always filled with doughnuts and bagels, it's going
-[00:03:22.480 --> 00:03:25.160] to be hard not to grab one every now and then.
-[00:03:25.160 --> 00:03:30.320] Your habits change depending on the room you are in and the cues in front of you.
-[00:03:30.320 --> 00:03:33.600] Environment is the invisible hand that shapes human behavior.
-[00:03:33.600 --> 00:03:38.040] Despite our unique personalities, certain behaviors tend to arise again and again under
-[00:03:38.040 --> 00:03:40.600] certain environmental conditions.
-[00:03:40.600 --> 00:03:42.840] In church, people tend to talk in whispers.
-[00:03:42.840 --> 00:03:46.120] On a dark street, people act wary and guarded.
-[00:03:46.120 --> 00:03:50.520] In this way, the most common form of change is not internal, but external.
-[00:03:50.520 --> 00:03:53.120] We are changed by the world around us.
-[00:03:53.120 --> 00:03:56.200] Every habit is context dependent.
-[00:03:56.200 --> 00:04:02.440] In 1936, psychologists Kurt Lewin wrote a simple equation that makes a powerful statement.
-[00:04:02.440 --> 00:04:08.360] Behavior is a function of the person in their environment, or B equals FPE.
-[00:04:08.360 --> 00:04:12.000] It didn't take long for Lewin's equation to be tested in business.
-[00:04:12.000 --> 00:04:18.920] In 1952, the economist Hawkins Stern described a phenomenon he called suggestion impulse buying,
-[00:04:18.920 --> 00:04:23.040] which “is triggered when a shopper sees a product for the first time and visualizes the need
-[00:04:23.040 --> 00:04:24.200] for it.
-[00:04:24.200 --> 00:04:28.760] In other words, customers will occasionally buy products not because they want them, but
-[00:04:28.760 --> 00:04:31.680] because of how they are presented to them.
-[00:04:31.680 --> 00:04:36.520] For example, items at eye level tend to be purchased more than those down near the floor.
-[00:04:36.520 --> 00:04:40.320] For this reason, you'll find expensive brand names featured in easy-to-reach locations
-[00:04:40.320 --> 00:04:44.640] on store shelves because they drive the most profit, while cheaper alternatives are tucked
-[00:04:44.640 --> 00:04:46.720] away and harder to reach spots.
-[00:04:46.720 --> 00:04:51.040] The same goes for end caps, which are the units at the end of aisles.
-[00:04:51.040 --> 00:04:55.040] End caps are money-making machines for retailers because they are obvious locations that encounter
-[00:04:55.040 --> 00:04:56.560] a lot of foot traffic.
-[00:04:56.560 --> 00:05:02.960] For example, 45% of Coca-Cola sales come specifically from end of the aisle racks.
-[00:05:02.960 --> 00:05:07.880] The more obviously available a product or service is, the more likely you are to try it.
-[00:05:07.880 --> 00:05:11.640] People drink but Light because it is in every bar and visit Starbucks because it is on
-[00:05:11.640 --> 00:05:12.880] every corner.
-[00:05:12.880 --> 00:05:15.600] We like to think that we are in control.
-[00:05:15.600 --> 00:05:19.680] If we choose water over soda, we assume it is because we wanted to do so.
-[00:05:19.680 --> 00:05:24.120] The truth, however, is that many of the actions we take each day are shaped not by purposeful
-[00:05:24.120 --> 00:05:28.400] drive and choice, but by the most obvious option.
-[00:05:28.400 --> 00:05:32.840] Every living being has its own methods for sensing and understanding the world.
-[00:05:32.840 --> 00:05:35.160] Eagles have remarkable long-distance vision.
-[00:05:35.160 --> 00:05:39.480] Ox can smell by “tasting the air” with their highly sensitive tongues.
-[00:05:39.480 --> 00:05:43.440] Sharks can detect small amounts of electricity and vibrations in the water caused by nearby
-[00:05:43.440 --> 00:05:44.640] fish.
-[00:05:44.640 --> 00:05:49.920] Even bacteria have chemo receptors, tiny sensory cells that allow them to detect toxic chemicals
-[00:05:49.920 --> 00:05:51.640] in their environment.
-[00:05:51.640 --> 00:05:54.880] In humans, perception is directed by the sensory nervous system.
+[00:00:00.000 --> 00:00:05.040] At first glance, this sounds reasonable, but soon I realized that the trigger was unclear.
+[00:00:06.120 --> 00:00:08.980] Would I do my push -ups before I ate lunch, after I ate lunch?
+[00:00:09.400 --> 00:00:10.080] Where would I do them?
+[00:00:10.960 --> 00:00:18.160] After a few inconsistent days, I changed my habit stack to, when I close my laptop for lunch, I would do 10 push -ups next to my desk.
+[00:00:18.720 --> 00:00:19.460] Ambiguity gone.
+[00:00:20.720 --> 00:00:28.320] Habits like read more or eat better are worthy causes, but these goals do not provide instruction on how and when to act.
+[00:00:28.320 --> 00:00:30.000] Next, you need to be specific and clear.
+[00:00:30.360 --> 00:00:35.580] After I close the door, after I brush my teeth, after I sit down at the table, the specificity is important.
+[00:00:36.400 --> 00:00:43.260] The more tightly bound your new habit is to a specific cue, the better the odds are that you will notice when the time comes to act.
+[00:00:44.200 --> 00:00:47.560] Remember, the first law of behavior change is to make it obvious.
+[00:00:48.380 --> 00:00:58.880] Strategies like implementation intentions and habit stacking are among the most practical ways to create obvious cues for your habits and design a clear plan for when and where to take action.
+[00:01:00.780 --> 00:01:05.400] Chapter Summary The first law of behavior change is make it obvious.
+[00:01:06.540 --> 00:01:09.480] The two most common cues are time and location.
+[00:01:10.420 --> 00:01:16.800] Creating an implementation intention is a strategy you can use to pair a new habit with a specific time and location.
+[00:01:17.620 --> 00:01:24.160] The implementation intention formula is I will behavior at time and location.
+[00:01:24.920 --> 00:01:29.560] Habit stacking is a strategy you can use to pair a new habit with a current habit.
+[00:01:30.260 --> 00:01:35.220] The habit stacking formula is after current habit, I will new habit.
+[00:01:39.480 --> 00:01:42.560] Chapter Six Motivation is overrated.
+[00:01:43.060 --> 00:01:44.620] Environment often matters more.
+[00:01:46.980 --> 00:01:52.900] Anne Thorndike, a primary care physician at Massachusetts General Hospital in Boston, had a crazy idea.
+[00:01:53.880 --> 00:02:01.740] She believed she could improve the eating habits of thousands of hospital staff and visitors without changing their willpower or motivation in the slightest way.
+[00:02:02.460 --> 00:02:04.780] In fact, she didn't plan on talking to them at all.
+[00:02:05.840 --> 00:02:11.500] Thorndike and her colleagues designed a six month study to alter the choice architecture of the hospital cafeteria.
+[00:02:12.620 --> 00:02:18.520] Originally, the refrigerators located next to the cash registers in the cafeteria were filled with only soda.
+[00:02:19.440 --> 00:02:22.120] The researchers added water as an option to each one.
+[00:02:22.920 --> 00:02:27.360] Additionally, they placed baskets of bottled water next to the food stations throughout the room.
+[00:02:28.420 --> 00:02:33.780] Soda was still in the primary refrigerators, but now water was an option available at all drink locations.
+[00:02:34.960 --> 00:02:40.000] Over the next three months, the number of soda sales at the hospital dropped by 11 .4%.
+[00:02:40.620 --> 00:02:44.640] Meanwhile, sales of bottled water increased by 25 .8%.
+[00:02:44.640 --> 00:02:49.320] They made similar adjustments and saw similar results with the food in the cafeteria.
+[00:02:50.180 --> 00:02:52.440] Nobody had said a word to anyone eating there.
+[00:02:53.460 --> 00:03:01.600] To see a graphical representation of the layouts in the cafeteria before and after the changes, visit Atomic Habits .com slash media.
+[00:03:02.660 --> 00:03:07.580] People often choose products not because of what they are, but because of where they are.
+[00:03:07.580 --> 00:03:17.340] If I walk into the kitchen and see a plate of cookies on the counter, I'll pick up half a dozen and start eating, even if I hadn't been thinking about them beforehand and didn't necessarily feel hungry.
+[00:03:18.200 --> 00:03:24.260] If the communal table at the office is always filled with donuts and bagels, it's going to be hard not to grab one every now and then.
+[00:03:25.060 --> 00:03:28.780] Your habits change depending on the room you're in and the cues in front of you.
+[00:03:29.720 --> 00:03:32.520] Environment is the invisible hand that shapes human behavior.
+[00:03:32.520 --> 00:03:39.500] Despite our unique personalities, certain behaviors tend to arise again and again under certain environmental conditions.
+[00:03:40.440 --> 00:03:42.200] In church, people tend to talk in whispers.
+[00:03:42.700 --> 00:03:45.180] On a dark street, people act wary and guarded.
+[00:03:45.880 --> 00:03:49.800] In this way, the most common form of change is not internal, but external.
+[00:03:50.380 --> 00:03:52.100] We are changed by the world around us.
+[00:03:52.800 --> 00:03:54.820] Every habit is context -dependent.
+[00:03:55.840 --> 00:04:01.300] In 1936, psychologist Kurt Lewin wrote a simple equation that makes a powerful statement.
+[00:04:01.300 --> 00:04:06.960] Behavior is a function of the person in their environment, or B equals FPE.
+[00:04:08.000 --> 00:04:10.880] It didn't take long for Lewin's equation to be tested in business.
+[00:04:11.640 --> 00:04:23.380] In 1952, the economist Hawkins Stern described a phenomenon he called suggestion impulse buying, which is triggered when a shopper sees a product for the first time and visualizes the need for it.
+[00:04:24.080 --> 00:04:30.660] In other words, customers will occasionally buy products not because they want them, but because of how they are presented to them.
+[00:04:31.540 --> 00:04:35.820] For example, items at eye level tend to be purchased more than those down near the floor.
+[00:04:36.340 --> 00:04:45.960] For this reason, you'll find expensive brand names featured in easy -to -reach locations on store shelves because they drive the most profit, while cheaper alternatives are tucked away and harder to reach spots.
+[00:04:46.660 --> 00:04:49.700] The same goes for end caps, which are the units at the end of aisles.
+[00:04:50.420 --> 00:04:55.880] End caps are money -making machines for retailers because they are obvious locations that encounter a lot of foot traffic.
+[00:04:55.880 --> 00:05:01.700] For example, 45 % of Coca -Cola sales comes specifically from end -of -the -isle racks.
+[00:05:02.520 --> 00:05:07.280] The more obviously available a product or service is, the more likely you are to try it.
+[00:05:07.600 --> 00:05:12.220] People drink by light because it is in every bar and visit Starbucks because it is on every corner.
+[00:05:12.660 --> 00:05:14.580] We like to think that we are in control.
+[00:05:15.400 --> 00:05:18.980] If we choose water over soda, we assume it is because we wanted to do so.
+[00:05:19.460 --> 00:05:27.060] The truth, however, is that many of the actions we take each day are shaped not by purposeful drive and choice, but by the most obvious option.
+[00:05:28.160 --> 00:05:31.920] Every living being has its own methods for sensing and understanding the world.
+[00:05:32.440 --> 00:05:34.420] Eagles have remarkable long -distance vision.
+[00:05:34.940 --> 00:05:38.220] Snakes can smell by tasting the air with their highly sensitive tongues.
+[00:05:39.280 --> 00:05:43.700] Sharks can detect small amounts of electricity and vibrations in the water caused by nearby fish.
+[00:05:44.380 --> 00:05:50.640] Even bacteria have chemoreceptors, tiny sensory cells that allow them to detect toxic chemicals in their environment.
+[00:05:50.640 --> 00:05:54.760] In humans, perception is directed by the sensory nervous system.

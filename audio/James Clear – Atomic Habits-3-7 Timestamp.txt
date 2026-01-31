@@ -1,82 +1,90 @@
-[00:00:00.000 --> 00:00:04.880] Change becomes more appealing because it feels like something people like you already do.
-[00:00:05.540 --> 00:00:09.160] Nothing sustains motivation better than belonging to the tribe.
-[00:00:09.160 --> 00:00:12.300] It transforms a personal quest into a shared one.
-[00:00:12.300 --> 00:00:16.000] Previously, you were on your own. Your identity was singular.
-[00:00:16.000 --> 00:00:20.000] You are a reader. You are a musician. You are an athlete.
-[00:00:20.000 --> 00:00:23.600] But when you join a book club or a band or a cycling group,
-[00:00:23.600 --> 00:00:26.600] your identity becomes linked to those around you.
-[00:00:26.600 --> 00:00:29.400] Growth and change is no longer an individual pursuit.
-[00:00:29.500 --> 00:00:33.200] We are readers. We are musicians. We are cyclists.
-[00:00:33.200 --> 00:00:37.000] The shared identity begins to reinforce your personal identity.
-[00:00:37.000 --> 00:00:42.000] This is why remaining part of a group after achieving a goal is crucial for maintaining your habits.
-[00:00:42.000 --> 00:00:48.000] Its friendship and community that embed a new identity and help behaviors last over the long run.
-[00:00:49.200 --> 00:00:51.700] 2. Imitating the Many
-[00:00:51.700 --> 00:00:59.200] In the 1950s, the psychologist Solomon Ash conducted a series of experiments that are now taught to legions of undergrads each year.
-[00:00:59.300 --> 00:01:04.000] To begin each experiment, the subject entered the room with a group of strangers.
-[00:01:04.000 --> 00:01:12.000] Unbeknownst to the subject, the other participants were actors planted by the researcher and instructed to deliver scripted answers to certain questions.
-[00:01:12.000 --> 00:01:17.100] The group would be shown one card with a line on it and then a second card with a series of lines.
-[00:01:17.100 --> 00:01:23.200] Each person was asked to select the line on the second card that was similar in length to the line on the first card.
-[00:01:23.200 --> 00:01:27.500] It was a very simple task. You were just matching lines of two similar lengths.
-[00:01:27.600 --> 00:01:32.800] To see an example of the cards used in the experiment, visit Atomicabits.com slash media.
-[00:01:33.800 --> 00:01:39.300] The experiment always began the same. First, there would be some easy trials where everyone agreed on the correct line.
-[00:01:39.300 --> 00:01:49.300] Then, after a few rounds, the participants were shown a test that was just as obvious as the previous ones, except the actors in the room would select an intentionally incorrect answer.
-[00:01:49.300 --> 00:01:53.800] Everyone would agree that lines were the same length even though they were clearly different.
-[00:01:53.900 --> 00:01:58.200] The subject, who was unaware of this ruse, would immediately become bewildered.
-[00:01:58.200 --> 00:02:04.200] Their eyes would open wide, they would laugh nervously to themselves, they would double check the reactions of other participants.
-[00:02:04.200 --> 00:02:09.300] Their agitation would grow as one person after another delivered the same incorrect response.
-[00:02:09.300 --> 00:02:16.100] Soon, the subject began to doubt their own eyes. Eventually, they delivered the answer they knew in their heart to be incorrect.
-[00:02:16.200 --> 00:02:19.700] Ash ran this experiment many times and in many different ways.
-[00:02:19.700 --> 00:02:25.000] And what he discovered was that as the number of actors increased, so did the conformity of the subject.
-[00:02:25.000 --> 00:02:31.700] If it was just the subject and one other actor, then there was no effect on the person's choice. They just assumed they were in the room with a dummy.
-[00:02:31.700 --> 00:02:35.200] When there were two actors in the room with the subject, there was still little impact.
-[00:02:35.200 --> 00:02:42.700] But as the number of people increased to three, four, and all the way to eight people, the subject became more likely to second-guess themselves.
-[00:02:43.300 --> 00:02:50.300] By the end of the experiment, nearly 75% of the subjects had agreed with the group answer, even though it was obviously incorrect.
-[00:02:50.300 --> 00:02:54.300] Whenever we are unsure how to act, we look to the group to guide our behavior.
-[00:02:54.300 --> 00:02:58.600] We are constantly scanning our environment and wondering, what is everyone else doing?
-[00:02:58.600 --> 00:03:06.300] We check reviews on Amazon or Yelp or TripAdvisor because we want to imitate the best buying habits or eating habits or travel habits.
-[00:03:06.300 --> 00:03:09.800] And it's usually a smart strategy. There's evidence and numbers.
-[00:03:09.800 --> 00:03:11.700] But there can be a downside.
-[00:03:11.800 --> 00:03:17.300] The normal behavior of the tribe often overpowers the desired behavior of the individual.
-[00:03:17.300 --> 00:03:23.100] For example, one study found that when a chimpanzee learns an effective way to crack nuts open as the member of one group,
-[00:03:23.100 --> 00:03:26.800] and then switches to a new group that uses a less effective strategy,
-[00:03:26.800 --> 00:03:32.600] it will avoid using the superior nutcracking method just to blend in with the rest of the chimps.
-[00:03:32.600 --> 00:03:38.200] Humans are similar. There's a tremendous internal pressure to comply with the norms of the group.
-[00:03:38.300 --> 00:03:45.500] The reward of being accepted is often greater than the reward of winning an argument or looking smart or finding truth.
-[00:03:45.500 --> 00:03:50.400] Most days we'd rather be wrong with the crowd, than be right by ourselves.
-[00:03:50.400 --> 00:03:54.300] The human mind knows how to get along with others. It wants to get along with others.
-[00:03:54.300 --> 00:04:00.500] This is our natural mode. You can override it. You can choose to ignore the group or stop caring what other people think,
-[00:04:00.500 --> 00:04:05.600] but it takes work and running against the grain of your culture requires extra effort.
-[00:04:05.700 --> 00:04:10.200] When changing your habits means challenging the tribe, changes unattractive.
-[00:04:10.200 --> 00:04:15.200] When changing your habits means fitting in with the tribe, changes very attractive.
-[00:04:16.000 --> 00:04:19.000] 3. Imitating the Powerful
-[00:04:19.000 --> 00:04:22.700] Humans everywhere pursue power, prestige, and status.
-[00:04:22.700 --> 00:04:27.600] We want pins and medallions on our jackets. We want president or partner in our titles.
-[00:04:27.600 --> 00:04:30.800] We want to be acknowledged, recognized, and praised.
-[00:04:30.800 --> 00:04:34.900] This tendency can seem dain, but overall it's a smart move.
-[00:04:34.900 --> 00:04:43.500] Historically, a person with greater power and status has access to more resources, where he's less about survival, and proves to be a more attractive mate.
-[00:04:43.500 --> 00:04:48.000] We are drawn to behaviors that earn us respect, approval, admiration, and status.
-[00:04:48.000 --> 00:04:55.300] We want to be the one in the gym who can do muscle-ups or the musician who can play the hardest chord progressions, or the parent with the most accomplished children,
-[00:04:55.300 --> 00:04:58.000] because these things separate us from the crowd.
-[00:04:58.000 --> 00:05:01.500] Once we fit in, we start looking for ways to stand out.
-[00:05:01.600 --> 00:05:05.400] This is one reason we care so much about the habits of highly effective people.
-[00:05:05.400 --> 00:05:10.300] We try to copy the behavior of successful people because we desire success ourselves.
-[00:05:10.300 --> 00:05:13.900] Many of our daily habits are imitations of the people we admire.
-[00:05:13.900 --> 00:05:17.900] You replicate the marketing strategies of the most successful firms in your industry.
-[00:05:17.900 --> 00:05:20.400] You make a recipe from your favorite baker.
-[00:05:20.400 --> 00:05:23.400] You borrow the storytelling strategies of your favorite writer.
-[00:05:23.400 --> 00:05:26.200] You mimic the communication style of your boss.
-[00:05:26.200 --> 00:05:29.300] We imitate the people we envy.
-[00:05:29.400 --> 00:05:33.200] High status people enjoy the approval, respect, and praise of others,
-[00:05:33.200 --> 00:05:38.800] and that means if a behavior can get us approval, respect, and praise, we find it attractive.
-[00:05:38.800 --> 00:05:42.300] We are also motivated to avoid behaviors that would lower our status.
-[00:05:42.300 --> 00:05:46.400] We trim our hedges and mow our lawn because we don't want to be the slob in the neighborhood.
-[00:05:46.400 --> 00:05:50.200] When our mother comes to visit, we clean up the house because we don't want to be judged.
-[00:05:50.200 --> 00:05:56.100] We are continually wondering what will others think of me and altering our behavior based on the answer.
-[00:05:56.200 --> 00:06:00.200] The Polgar sisters, the chess prodgies mentioned at the beginning of this chapter,
-[00:06:00.200 --> 00:06:05.000] our evidence of the powerful and lasting impact social influences can have on our behavior.
-[00:06:05.000 --> 00:06:10.800] The sisters practice chess for many hours each day and continue this remarkable effort for decades.
-[00:06:10.800 --> 00:06:16.700] But these habits and behaviors maintain their attractiveness in part because they were valued by their culture.
-[00:06:16.700 --> 00:06:21.500] From the praise of their parents, the achievement of different status markers like becoming a grandmaster,
-[00:06:21.500 --> 00:06:26.000] they had many reasons to continue their effort.
-[00:06:26.000 --> 00:06:31.900] Chapter Summary. The culture we live in determines which behaviors are attractive to us.
-[00:06:31.900 --> 00:06:38.900] We tend to adopt habits that are praised and approved of by our culture because we have a strong desire to fit in and belong to the tribe.
+[00:00:00.000 --> 00:00:04.480] Change becomes more appealing because it feels like something people like you already do.
+[00:00:05.440 --> 00:00:08.940] Nothing sustains motivation better than belonging to the tribe.
+[00:00:09.420 --> 00:00:12.060] It transforms a personal quest into a shared one.
+[00:00:12.620 --> 00:00:14.220] Previously, you were on your own.
+[00:00:14.460 --> 00:00:15.440] Your identity was singular.
+[00:00:16.340 --> 00:00:17.140] You are a reader.
+[00:00:17.480 --> 00:00:18.280] You are a musician.
+[00:00:18.680 --> 00:00:19.500] You are an athlete.
+[00:00:20.200 --> 00:00:26.140] But when you join a book club or a band or a cycling group, your identity becomes linked to those around you.
+[00:00:26.660 --> 00:00:29.180] Growth and change is no longer an individual pursuit.
+[00:00:29.620 --> 00:00:30.400] We are readers.
+[00:00:30.760 --> 00:00:31.400] We are musicians.
+[00:00:31.800 --> 00:00:32.780] We are cyclists.
+[00:00:33.340 --> 00:00:36.240] The shared identity begins to reinforce your personal identity.
+[00:00:37.100 --> 00:00:41.560] This is why remaining part of a group after achieving a goal is crucial for maintaining your habits.
+[00:00:42.080 --> 00:00:46.980] It's friendship and community that embed a new identity and help behaviors last over the long run.
+[00:00:48.920 --> 00:00:49.480] 2.
+[00:00:50.040 --> 00:00:58.480] Imitating the Many In the 1950s, the psychologist Solomon Ash conducted a series of experiments that are now taught to legions of undergrads each year.
+[00:00:59.280 --> 00:01:02.940] To begin each experiment, the subject entered the room with a group of strangers.
+[00:01:04.080 --> 00:01:11.100] Unbeknownst to the subject, the other participants were actors planted by the researcher and instructed to deliver scripted answers to certain questions.
+[00:01:11.860 --> 00:01:16.300] The group would be shown one card with a line on it and then a second card with a series of lines.
+[00:01:16.300 --> 00:01:22.340] Each person was asked to select the line on the second card that was similar in length to the line on the first card.
+[00:01:22.880 --> 00:01:24.240] It was a very simple task.
+[00:01:24.520 --> 00:01:26.540] You were just matching lines of two similar lengths.
+[00:01:27.480 --> 00:01:32.460] To see an example of the cards used in the experiment, visit Atomic Habits .com media.
+[00:01:33.460 --> 00:01:35.280] The experiment always began the same.
+[00:01:35.680 --> 00:01:38.840] First, there would be some easy trials where everyone agreed on the correct line.
+[00:01:39.320 --> 00:01:48.520] Then after a few rounds, the participants were shown a test that was just as obvious as the previous ones, except the actors in the room would select an intentionally incorrect answer.
+[00:01:49.320 --> 00:01:53.200] Everyone would agree that the lines were the same length even though they were clearly different.
+[00:01:53.980 --> 00:01:58.060] The subject, who was unaware of this ruse, would immediately become bewildered.
+[00:01:58.400 --> 00:02:03.620] Their eyes would open wide, they would laugh nervously to themselves, they would double check the reactions of other participants.
+[00:02:04.380 --> 00:02:08.820] Their agitation would grow as one person after another delivered the same incorrect response.
+[00:02:09.420 --> 00:02:11.900] Soon, the subject began to doubt their own eyes.
+[00:02:12.380 --> 00:02:15.280] Eventually, they delivered the answer they knew in their heart to be incorrect.
+[00:02:16.440 --> 00:02:19.260] Ash ran this experiment many times and in many different ways.
+[00:02:19.960 --> 00:02:24.760] And what he discovered was that as the number of actors increased, so did the conformity of the subject.
+[00:02:25.260 --> 00:02:29.260] If it was just the subject and one other actor, then there was no effect on the person's choice.
+[00:02:29.460 --> 00:02:31.180] They just assumed they were in the room with a dummy.
+[00:02:31.960 --> 00:02:34.900] When there were two actors in the room with the subject, there was still little impact.
+[00:02:35.280 --> 00:02:42.120] But as the number of people increased to three, four, and all the way to eight people, the subject became more likely to second -guess themselves.
+[00:02:43.080 --> 00:02:49.140] By the end of the experiment, nearly 75 % of the subjects had agreed with the group answer, even though it was obviously incorrect.
+[00:02:50.200 --> 00:02:53.880] Whenever we are unsure how to act, we look to the group to guide our behavior.
+[00:02:54.400 --> 00:02:58.160] We are constantly scanning our environment and wondering, what is everyone else doing?
+[00:02:58.620 --> 00:03:05.880] We check reviews on Amazon or Yelp or TripAdvisor because we want to imitate the best buying habits or eating habits or travel habits.
+[00:03:05.880 --> 00:03:07.780] And it's usually a smart strategy.
+[00:03:08.060 --> 00:03:09.160] There's evidence and numbers.
+[00:03:09.600 --> 00:03:10.880] But there can be a downside.
+[00:03:11.800 --> 00:03:16.320] The normal behavior of the tribe often overpowers the desired behavior of the individual.
+[00:03:17.120 --> 00:03:32.060] For example, one study found that when a chimpanzee learns an effective way to crack nuts open as the member of one group, and then switches to a new group that uses a less effective strategy, it will avoid using the superior nut -cracking method just to blend in with the rest of the chimps.
+[00:03:32.620 --> 00:03:33.400] Humans are similar.
+[00:03:34.040 --> 00:03:37.640] There's a tremendous internal pressure to comply with the norms of the group.
+[00:03:38.180 --> 00:03:44.280] The reward of being accepted is often greater than the reward of winning an argument or looking smart or finding truth.
+[00:03:45.340 --> 00:03:49.180] Most days, we'd rather be wrong with the crowd than be right by ourselves.
+[00:03:50.120 --> 00:03:52.380] The human mind knows how to get along with others.
+[00:03:52.660 --> 00:03:54.080] It wants to get along with others.
+[00:03:54.360 --> 00:03:55.600] This is our natural mode.
+[00:03:56.100 --> 00:03:57.060] You can override it.
+[00:03:57.200 --> 00:04:00.100] You can choose to ignore the group or stop caring what other people think.
+[00:04:00.100 --> 00:04:04.700] But it takes work, and running against the grain of your culture requires extra effort.
+[00:04:05.660 --> 00:04:09.740] When changing your habits means challenging the tribe, change is unattractive.
+[00:04:10.200 --> 00:04:13.620] When changing your habits means fitting in with the tribe, change is very attractive.
+[00:04:15.600 --> 00:04:16.180] 3.
+[00:04:16.800 --> 00:04:22.220] Imitating the powerful Humans everywhere pursue power, prestige, and status.
+[00:04:22.680 --> 00:04:24.660] We want pins and medallions on our jackets.
+[00:04:24.660 --> 00:04:27.040] We want president or partner in our titles.
+[00:04:27.480 --> 00:04:29.940] We want to be acknowledged, recognized, and praised.
+[00:04:30.700 --> 00:04:33.960] This tendency can seem vain, but overall it's a smart move.
+[00:04:35.000 --> 00:04:42.420] Historically, a person with greater power and status has access to more resources, worries less about survival, and proves to be a more attractive mate.
+[00:04:43.300 --> 00:04:47.720] We are drawn to behaviors that earn us respect, approval, admiration, and status.
+[00:04:48.060 --> 00:04:57.260] We want to be the one in the gym who can do muscle -ups or the musician who can play the hardest chord progressions or the parent with the most accomplished children, because these things separate us from the crowd.
+[00:04:57.960 --> 00:05:00.460] Once we fit in, we start looking for ways to stand out.
+[00:05:01.220 --> 00:05:04.900] This is one reason we care so much about the habits of highly effective people.
+[00:05:05.380 --> 00:05:09.420] We try to copy the behavior of successful people because we desire success ourselves.
+[00:05:10.280 --> 00:05:13.320] Many of our daily habits are imitations of the people we admire.
+[00:05:13.860 --> 00:05:17.360] You replicate the marketing strategies of the most successful firms in your industry.
+[00:05:17.780 --> 00:05:19.600] You make a recipe from your favorite baker.
+[00:05:20.300 --> 00:05:22.780] You borrow the storytelling strategies of your favorite writer.
+[00:05:23.320 --> 00:05:25.380] You mimic the communication style of your boss.
+[00:05:26.080 --> 00:05:27.740] We imitate the people we envy.
+[00:05:29.280 --> 00:05:37.920] High status people enjoy the approval, respect, and praise of others, and that means if a behavior can get us approval, respect, and praise, we find it attractive.
+[00:05:38.720 --> 00:05:41.920] We are also motivated to avoid behaviors that would lower our status.
+[00:05:42.280 --> 00:05:45.800] We trim our hedges and mow our lawn because we don't want to be the slob in the neighborhood.
+[00:05:45.800 --> 00:05:49.680] When our mother comes to visit, we clean up the house because we don't want to be judged.
+[00:05:50.140 --> 00:05:54.660] We are continually wondering, what will others think of me and altering our behavior based on the answer?
+[00:05:55.900 --> 00:06:04.340] The Polgar Sisters, the chess prodigies mentioned at the beginning of this chapter, are evidence of the powerful and lasting impact social influences can have on our behavior.
+[00:06:04.940 --> 00:06:09.800] The sisters practice chess for many hours each day and continued this remarkable effort for decades.
+[00:06:10.600 --> 00:06:15.880] But these habits and behaviors maintain their attractiveness in part because they were valued by their culture.
+[00:06:16.640 --> 00:06:23.760] From the praise of their parents to the achievement of different status markers like becoming a grandmaster, they had many reasons to continue their effort.
+[00:06:25.720 --> 00:06:30.700] Chapter Summary The culture we live in determines which behaviors are attractive to us.
+[00:06:31.740 --> 00:06:38.400] We tend to adopt habits that are praised and approved of by our culture because we have a strong desire to fit in and belong to the tribe.

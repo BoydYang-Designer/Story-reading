@@ -1,56 +1,77 @@
-[00:00:00.000 --> 00:00:03.000] Cues are meaningless until they are interpreted.
-[00:00:03.000 --> 00:00:09.000] The thoughts, feelings, and emotions of the observer are what transform a queue into a craving.
-[00:00:09.000 --> 00:00:11.000] The third step is the response.
-[00:00:11.000 --> 00:00:17.000] The response is the actual habit you perform, which can take the form of a thought or an action.
-[00:00:17.000 --> 00:00:23.000] Whether a response occurs depends on how motivated you are and how much friction is associated with the behavior.
-[00:00:23.000 --> 00:00:29.000] If a particular action requires more physical or mental effort than you are willing to expend, then you won't do it.
-[00:00:29.000 --> 00:00:35.000] Your response also depends on your ability. It sounds simple, but a habit can only occur if you are capable of doing it.
-[00:00:35.000 --> 00:00:40.000] If you want to dunk a basketball, then you can't jump high enough to reach the hoop. Well, you're out of luck.
-[00:00:40.000 --> 00:00:44.000] Finally, the response delivers a reward.
-[00:00:44.000 --> 00:00:54.000] Rewards are the end goal of every habit. The queue is about noticing the reward. The craving is about wanting the reward. The response is about obtaining the reward.
-[00:00:54.000 --> 00:01:01.000] We chase rewards because they serve two purposes. One, they satisfy us, and two, they teach us.
-[00:01:01.000 --> 00:01:10.000] The first purpose of rewards is to satisfy your craving. Yes, rewards provide benefits on their own, food and water deliver energy you need to survive.
-[00:01:10.000 --> 00:01:16.000] Getting a promotion brings more money and respect. Getting in shape improves your health and your dating prospects.
-[00:01:16.000 --> 00:01:23.000] But the more immediate benefit is that rewards satisfy your craving to eat or to gain status or to win approval.
-[00:01:23.000 --> 00:01:29.000] At least for a moment, rewards deliver contentment and relief from craving.
-[00:01:29.000 --> 00:01:36.000] Second, rewards teach us which actions are worth remembering in the future. Your brain is a reward detector.
-[00:01:36.000 --> 00:01:44.000] As you go about your life, your sensory nervous system is continuously monitoring which actions satisfy your desires and deliver pleasure.
-[00:01:45.000 --> 00:01:52.000] Feelings of pleasure and disappointment are part of the feedback mechanism that helps your brain distinguish useful actions from useless ones.
-[00:01:52.000 --> 00:01:56.000] Rewards close the feedback loop and complete the habit cycle.
-[00:01:56.000 --> 00:02:01.000] If a behavior is insufficient in any of these four stages, it will not become a habit.
-[00:02:01.000 --> 00:02:07.000] Eliminate the queue and your habit will never start. Reduce the craving and you won't experience enough motivation to act.
-[00:02:07.000 --> 00:02:15.000] Make the behavior difficult and you won't be able to do it. And if the reward fails to satisfy your desire, then you'll have no reason to do it again in the future.
-[00:02:15.000 --> 00:02:21.000] Without the first three steps, a behavior will not occur. Without all four, a behavior will not be repeated.
-[00:02:21.000 --> 00:02:31.000] We can refer to this cycle as the habit loop and you can see a graphic image of it as well as a caption describing it in detail at atomichabits.com slash media.
-[00:02:32.000 --> 00:02:43.000] In summary, the queue triggers a craving which motivates a response, which provides a reward, which satisfies that craving and ultimately becomes associated with the queue.
-[00:02:43.000 --> 00:02:55.000] Together, these four steps form a neurological feedback loop, queue craving response reward, queue craving response reward that ultimately allows you to create automatic habits.
-[00:02:55.000 --> 00:02:58.000] This cycle is known as the habit loop.
-[00:02:58.000 --> 00:03:14.000] This four step process is not something that happens occasionally, but rather is an endless feedback loop that is running and active during every moment you are alive. Even now, the brain is continually scanning the environment, predicting what will happen next, trying out different responses and learning from the results.
-[00:03:14.000 --> 00:03:23.000] The entire process is completed in a split second, and we use it again and again without realizing everything that has been packed into the previous moment.
-[00:03:23.000 --> 00:03:29.000] We can split these four steps into two phases, the problem phase and the solution phase.
-[00:03:29.000 --> 00:03:35.000] The problem phase includes the queue and the craving, and it is when you realize that something needs to change.
-[00:03:35.000 --> 00:03:42.000] The solution phase includes the response and the reward, and it is when you take action and achieve the change you desire.
-[00:03:42.000 --> 00:03:46.000] All behaviors driven by the desire to solve a problem.
-[00:03:46.000 --> 00:03:54.000] Sometimes, the problem is that you notice something good and you want to obtain it. Sometimes, the problem is that you are experiencing pain and you want to relieve it.
-[00:03:54.000 --> 00:03:58.000] Either way, the purpose of every habit is to solve the problems you face.
-[00:03:58.000 --> 00:04:06.000] Imagine walking into a dark room and flipping on the light switch. You've performed this simple habit so many times that it occurs without thinking.
-[00:04:06.000 --> 00:04:12.000] You proceed through all four stages in the fraction of a second. The urge to act strikes you without thinking.
-[00:04:12.000 --> 00:04:14.000] Here are some examples.
-[00:04:15.000 --> 00:04:18.000] queue your phone buzzes with a new text message.
-[00:04:18.000 --> 00:04:22.000] craving you want to learn the contents of the message.
-[00:04:22.000 --> 00:04:26.000] response you grab your phone and read the text.
-[00:04:26.000 --> 00:04:33.000] reward you satisfy your craving to read the message and grabbing your phone becomes associated with your phone buzzing.
-[00:04:33.000 --> 00:04:36.000] queue your answering emails.
-[00:04:36.000 --> 00:04:41.000] craving you begin to feel stressed and overwhelmed by work you want to feel in control.
-[00:04:41.000 --> 00:04:43.000] response you bite your nails.
-[00:04:43.000 --> 00:04:50.000] reward you satisfy your craving to reduce stress biting your nails becomes associated with answering email.
-[00:04:50.000 --> 00:04:57.000] queue you wake up craving you want to feel alert response you drink a cup of coffee.
-[00:04:57.000 --> 00:05:03.000] reward you satisfy your craving to feel alert drinking coffee becomes associated with waking up.
-[00:05:03.000 --> 00:05:10.000] And finally, queue you smell a donut shop as you walk down the street near your office craving.
-[00:05:10.000 --> 00:05:15.000] you begin to crave a donut response you buy a donut and eat it.
-[00:05:15.000 --> 00:05:23.000] reward you satisfy your craving to eat a donut buying a donut becomes associated with walking down the street near your office.
-[00:05:23.000 --> 00:05:28.000] By the time we become adults, we rarely notice the habits that are running our lives.
-[00:05:28.000 --> 00:05:38.000] Most of us never give a second thought to the fact that we tie the same shoe first each morning or unplug the toaster after each use or always change into comfortable clothes after getting home from work.
-[00:05:38.000 --> 00:05:45.000] After decades of mental programming, we automatically slip into these patterns of thinking and acting.
-[00:05:45.000 --> 00:05:48.000] The four laws of behavior change.
-[00:05:48.000 --> 00:05:57.000] In the following chapters, we will see time and again how the four stages of queue, craving, response and reward influence nearly everything we do each day.
+[00:00:00.000 --> 00:00:02.440] Queues are meaningless until they are interpreted.
+[00:00:03.160 --> 00:00:07.840] The thoughts, feelings, and emotions of the observer are what transform a cue into a craving.
+[00:00:09.100 --> 00:00:10.500] The third step is the response.
+[00:00:11.240 --> 00:00:15.740] The response is the actual habit you perform, which can take the form of a thought or an action.
+[00:00:17.040 --> 00:00:22.240] Whether a response occurs depends on how motivated you are and how much friction is associated with the behavior.
+[00:00:23.040 --> 00:00:28.360] If a particular action requires more physical or mental effort than you are willing to expend, then you won't do it.
+[00:00:28.360 --> 00:00:30.840] Your response also depends on your ability.
+[00:00:31.440 --> 00:00:34.960] It sounds simple, but a habit can only occur if you are capable of doing it.
+[00:00:35.360 --> 00:00:39.540] If you want to dunk a basketball, but can't jump high enough to reach the hoop, well, you're out of luck.
+[00:00:40.840 --> 00:00:43.100] Finally, the response delivers a reward.
+[00:00:44.080 --> 00:00:45.980] Rewards are the end goal of every habit.
+[00:00:46.500 --> 00:00:53.160] The cue is about noticing the reward, the craving is about wanting the reward, the response is about obtaining the reward.
+[00:00:54.060 --> 00:00:56.600] We chase rewards because they serve two purposes.
+[00:00:57.280 --> 00:01:00.660] One, they satisfy us, and two, they teach us.
+[00:01:01.680 --> 00:01:05.140] The first purpose of rewards is to satisfy your craving.
+[00:01:05.780 --> 00:01:10.340] Yes, rewards provide benefits on their own, food and water deliver energy you need to survive.
+[00:01:10.960 --> 00:01:12.980] Getting a promotion brings more money and respect.
+[00:01:13.660 --> 00:01:16.160] Getting in shape improves your health and your dating prospects.
+[00:01:16.760 --> 00:01:23.260] But the more immediate benefit is that rewards satisfy your craving to eat or to gain status or to win approval.
+[00:01:23.960 --> 00:01:28.280] At least for a moment, rewards deliver contentment and relief from craving.
+[00:01:29.640 --> 00:01:33.640] Second, rewards teach us which actions are worth remembering in the future.
+[00:01:34.660 --> 00:01:36.040] Your brain is a reward detector.
+[00:01:37.120 --> 00:01:44.040] As you go about your life, your sensory nervous system is continuously monitoring which actions satisfy your desires and deliver pleasure.
+[00:01:45.120 --> 00:01:51.040] Feelings of pleasure and disappointment are part of the feedback mechanism that helps your brain distinguish useful actions from useless ones.
+[00:01:51.940 --> 00:01:55.000] Rewards close the feedback loop and complete the habit cycle.
+[00:01:55.980 --> 00:02:00.420] If a behavior is insufficient in any of these four stages, it will not become a habit.
+[00:02:00.880 --> 00:02:03.000] Eliminate the cue and your habit will never start.
+[00:02:03.500 --> 00:02:06.440] Reduce the craving and you won't experience enough motivation to act.
+[00:02:06.900 --> 00:02:09.380] Make the behavior difficult and you won't be able to do it.
+[00:02:09.860 --> 00:02:14.320] And if the reward fails to satisfy your desire, then you'll have no reason to do it again in the future.
+[00:02:15.260 --> 00:02:17.780] Without the first three steps, a behavior will not occur.
+[00:02:18.200 --> 00:02:20.620] Without all four, a behavior will not be repeated.
+[00:02:21.540 --> 00:02:29.440] We can refer to this cycle as the habit loop and you can see a graphic image of it as well as a caption describing it in detail at atomic habits .com.
+[00:02:31.480 --> 00:02:42.260] In summary, the cue triggers a craving, which motivates a response, which provides a reward, which satisfies that craving and ultimately becomes associated with the cue.
+[00:02:42.820 --> 00:02:46.020] Together, these four steps form a neurological feedback loop.
+[00:02:46.020 --> 00:02:53.960] Cue craving response reward cue craving response reward that ultimately allows you to create automatic habits.
+[00:02:54.560 --> 00:02:56.780] This cycle is known as the habit loop.
+[00:02:57.540 --> 00:03:05.520] This four step process is not something that happens occasionally, but rather is an endless feedback loop that is running and active during every moment you are alive.
+[00:03:05.700 --> 00:03:13.620] Even now, the brain is continually scanning the environment, predicting what will happen next, trying out different responses and learning from the results.
+[00:03:14.260 --> 00:03:22.260] The entire process is completed in a split second and we use it again and again without realizing everything that has been packed into the previous moment.
+[00:03:23.020 --> 00:03:28.400] We can split these four steps into two phases, the problem phase and the solution phase.
+[00:03:29.420 --> 00:03:34.880] The problem phase includes the cue and the craving and it is when you realize that something needs to change.
+[00:03:35.560 --> 00:03:41.940] The solution phase includes the response and the reward and it is when you take action and achieve the change you desire.
+[00:03:43.140 --> 00:03:45.980] All behavior is driven by the desire to solve a problem.
+[00:03:46.580 --> 00:03:50.060] Sometimes the problem is that you notice something good and you want to obtain it.
+[00:03:50.760 --> 00:03:54.140] Sometimes the problem is that you are experiencing pain and you want to relieve it.
+[00:03:54.920 --> 00:03:58.100] Either way, the purpose of every habit is to solve the problems you face.
+[00:03:58.860 --> 00:04:01.900] Imagine walking into a dark room and flipping on the light switch.
+[00:04:02.520 --> 00:04:05.680] You have performed this simple habit so many times that it occurs without thinking.
+[00:04:06.300 --> 00:04:08.980] You proceed through all four stages in the fraction of a second.
+[00:04:09.760 --> 00:04:11.720] The urge to act strikes you without thinking.
+[00:04:12.520 --> 00:04:13.640] Here are some examples.
+[00:04:15.040 --> 00:04:17.700] Cue your phone buzzes with a new text message.
+[00:04:18.560 --> 00:04:21.720] Craving, you want to learn the contents of the message.
+[00:04:22.540 --> 00:04:25.480] Response, you grab your phone and read the text.
+[00:04:26.260 --> 00:04:32.480] Reward, you satisfy your craving to read the message and grabbing your phone becomes associated with your phone buzzing.
+[00:04:33.760 --> 00:04:35.520] Cue your answering emails.
+[00:04:36.360 --> 00:04:39.100] Craving, you begin to feel stressed and overwhelmed by work.
+[00:04:39.360 --> 00:04:40.380] You want to feel in control.
+[00:04:40.900 --> 00:04:42.440] Response, you bite your nails.
+[00:04:43.360 --> 00:04:45.820] Reward, you satisfy your craving to reduce stress.
+[00:04:46.360 --> 00:04:48.640] Biting your nails becomes associated with answering email.
+[00:04:50.160 --> 00:04:51.500] Cue, you wake up.
+[00:04:52.360 --> 00:04:53.900] Craving, you want to feel alert.
+[00:04:54.400 --> 00:04:56.240] Response, you drink a cup of coffee.
+[00:04:57.040 --> 00:04:59.560] Reward, you satisfy your craving to feel alert.
+[00:05:00.040 --> 00:05:02.060] Drinking coffee becomes associated with waking up.
+[00:05:03.020 --> 00:05:08.040] And finally, cue, you smell a donut shop as you walk down the street near your office.
+[00:05:08.680 --> 00:05:11.220] Craving, you begin to crave a donut.
+[00:05:11.980 --> 00:05:14.600] Response, you buy a donut and eat it.
+[00:05:15.380 --> 00:05:17.880] Reward, you satisfy your craving to eat a donut.
+[00:05:18.360 --> 00:05:21.480] Buying a donut becomes associated with walking down the street near your office.
+[00:05:22.780 --> 00:05:26.920] By the time we become adults, we rarely notice the habits that are running our lives.
+[00:05:27.660 --> 00:05:37.180] Most of us never give a second thought to the fact that we tie the same shoe first each morning or unplug the toaster after each use or always change into comfortable clothes after getting home from work.
+[00:05:37.880 --> 00:05:42.600] After decades of mental programming, we automatically slip into these patterns of thinking and acting.
+[00:05:44.660 --> 00:05:46.420] The Four Laws of Behavior Change.
+[00:05:47.200 --> 00:05:55.340] In the following chapters, we will see time and again how the four stages of cue, craving, response and reward influence nearly everything we do each day.
