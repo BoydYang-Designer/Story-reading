@@ -112,6 +112,14 @@ let jsonModeUpdateRafId = null;
 let lastHighlightedWords = [];
 let lastActiveSentenceStart = -1; // To track the current sentence
 
+// ===== NEW: 音訊同步鎖定狀態 (IMPROVEMENT) =====
+let audioSyncLock = {
+    isLocked: false,
+    lockedSentenceIndex: -1,
+    lockStartTime: 0,
+    lockDuration: 3000 // 可調整: 2000-5000ms
+};
+
 // Storage Keys
 const LAST_SESSION_KEY = 'readingChallengeLastSession';
 const SAVED_WORDS_KEY = 'readingChallengeSavedWordsV2';
@@ -120,6 +128,7 @@ const SAVED_WORDS_KEY = 'readingChallengeSavedWordsV2';
 
 /**
  * 執行音訊 seek 操作（專為手機瀏覽器優化，特別針對 iOS Safari）
+ * ===== IMPROVED VERSION =====
  * @param {number} targetTime - 目標時間點（秒）
  * @param {boolean} shouldResume - seek 完成後是否繼續播放
  */
@@ -138,20 +147,31 @@ function performMobileSeek(targetTime, shouldResume = false) {
     mobileSeekState.seekStartTime = Date.now();
     mobileSeekState.ignoreTimeupdate = true;
     
+    // ===== IMPROVEMENT: 確保音訊已預載入 =====
+    if (audio.preload !== 'auto') {
+        audio.preload = 'auto';
+        console.log('[Mobile Seek] Setting preload to auto');
+    }
+    
     // ===== iOS CRITICAL FIX: 先暫停再 seek =====
-    // iOS Safari 在播放中 seek 會有問題，必須先暫停
     const wasActuallyPlaying = !audio.paused;
     if (wasActuallyPlaying) {
         console.log('[Mobile Seek] Pausing before seek (iOS requirement)');
         audio.pause();
     }
     
-    // 短暫延遲確保暫停完成（iOS 需要）
+    // ===== IMPROVEMENT: 增加延遲時間給 iOS 更多準備時間 =====
     setTimeout(() => {
         // 執行 seek
         audio.currentTime = targetTime;
         console.log('[Mobile Seek] Seek executed, waiting for seeked event');
-    }, 50); // 50ms 延遲給 iOS 時間處理暫停
+        
+        // === IMPROVEMENT: 預載入目標時間附近的音訊 ===
+        if (audio.buffered.length > 0) {
+            const bufferedEnd = audio.buffered.end(audio.buffered.length - 1);
+            console.log(`[Mobile Seek] Buffered to ${bufferedEnd.toFixed(2)}s`);
+        }
+    }, 100); // IMPROVED: 從 50ms 增加到 100ms (可調整: 50-200ms)
     
     // 設定安全超時（iOS 有時候 seeked 事件會延遲）
     mobileSeekState.pendingSeekTimeout = setTimeout(() => {
@@ -162,6 +182,7 @@ function performMobileSeek(targetTime, shouldResume = false) {
 
 /**
  * Seek 完成時的處理（由 seeked 事件或超時觸發）
+ * ===== IMPROVED VERSION =====
  */
 function onSeekCompleted() {
     console.log('[Mobile Seek] Seek completed');
@@ -179,30 +200,28 @@ function onSeekCompleted() {
     mobileSeekState.ignoreTimeupdate = false;
 
     // === 清除 highlight 鎖定 ===
-    // Seek 已經完成，audio.currentTime 已經到達目標位置，
-    // timestampUpdateLoop 可以安全地回到根據 MP3 位置同步的正常模式
     pendingHighlightIndex = -1;
+    
+    // ===== IMPROVEMENT: 解除同步鎖定 =====
+    unlockSync();
     
     // 如果需要恢復播放
     if (shouldResume) {
         console.log('[Mobile Seek] Resuming playback after seek');
         
         // ===== iOS CRITICAL FIX: 等待 canplay 事件 =====
-        // iOS 需要確保音訊已準備好才能播放
         const attemptPlay = () => {
             const playPromise = audio.play();
             if (playPromise !== undefined) {
                 playPromise
                     .then(() => {
                         console.log('[Mobile Seek] Playback resumed successfully');
-                        // 確保狀態同步
                         isPlaying = true;
                         playPauseBtn.classList.add('is-playing');
                     })
                     .catch(error => {
                         console.error('[Mobile Seek] Failed to resume playback:', error);
                         
-                        // iOS 特殊處理：如果失敗，等待一下再試
                         if (error.name === 'NotAllowedError' || error.name === 'AbortError') {
                             console.log('[Mobile Seek] Waiting for canplay event (iOS)');
                             const canplayHandler = () => {
@@ -212,7 +231,6 @@ function onSeekCompleted() {
                             };
                             audio.addEventListener('canplay', canplayHandler, { once: true });
                             
-                            // 超時保護
                             setTimeout(() => {
                                 audio.removeEventListener('canplay', canplayHandler);
                                 console.warn('[Mobile Seek] canplay timeout, giving up');
@@ -220,7 +238,6 @@ function onSeekCompleted() {
                                 playPauseBtn.classList.remove('is-playing');
                             }, 1000);
                         } else {
-                            // 其他錯誤，更新 UI
                             isPlaying = false;
                             playPauseBtn.classList.remove('is-playing');
                         }
@@ -228,7 +245,6 @@ function onSeekCompleted() {
             }
         };
         
-        // 立即嘗試播放
         attemptPlay();
     }
 }
@@ -247,6 +263,121 @@ function shouldIgnoreEventDueToSeek() {
     }
     return false;
 }
+
+// ===== NEW IMPROVEMENT FUNCTIONS: 音訊同步鎖定機制 =====
+
+/**
+ * 鎖定到特定句子 (防止自動跟隨)
+ * @param {number} sentenceIndex - 要鎖定的句子索引
+ * @param {number} duration - 鎖定持續時間 (毫秒，默認 3000)
+ */
+function lockToSentence(sentenceIndex, duration = 3000) {
+    audioSyncLock.isLocked = true;
+    audioSyncLock.lockedSentenceIndex = sentenceIndex;
+    audioSyncLock.lockStartTime = Date.now();
+    audioSyncLock.lockDuration = duration;
+    
+    console.log(`[Sync Lock] Locked to sentence ${sentenceIndex} for ${duration}ms`);
+}
+
+/**
+ * 檢查同步鎖是否仍然有效
+ * @returns {boolean} - 是否鎖定中
+ */
+function isSyncLocked() {
+    if (!audioSyncLock.isLocked) return false;
+    
+    const elapsed = Date.now() - audioSyncLock.lockStartTime;
+    if (elapsed >= audioSyncLock.lockDuration) {
+        // 鎖定已過期
+        audioSyncLock.isLocked = false;
+        console.log('[Sync Lock] Lock expired, resuming normal sync');
+        return false;
+    }
+    
+    return true;
+}
+
+/**
+ * 解除同步鎖定
+ */
+function unlockSync() {
+    if (audioSyncLock.isLocked) {
+        console.log('[Sync Lock] Manually unlocked');
+    }
+    audioSyncLock.isLocked = false;
+}
+
+/**
+ * 改進的平滑滾動到句子
+ * @param {HTMLElement} sentenceElement - 目標句子元素
+ * @param {boolean} immediate - 是否立即滾動 (不使用動畫)
+ */
+function scrollToSentence(sentenceElement, immediate = false) {
+    if (!sentenceElement) return;
+    
+    const container = textContainer;
+    const elementTop = sentenceElement.offsetTop;
+    const elementHeight = sentenceElement.offsetHeight;
+    const containerHeight = container.clientHeight;
+    
+    // 計算目標滾動位置 - 將句子置於容器中央
+    const targetScroll = elementTop - (containerHeight / 2) + (elementHeight / 2);
+    
+    // 確保不超出邊界
+    const maxScroll = Math.max(0, container.scrollHeight - containerHeight);
+    const finalScroll = Math.max(0, Math.min(targetScroll, maxScroll));
+    
+    if (immediate) {
+        // 立即滾動 (用於 seek 操作)
+        container.scrollTop = finalScroll;
+    } else {
+        // 平滑滾動
+        container.scrollTo({
+            top: finalScroll,
+            behavior: 'smooth'
+        });
+    }
+}
+
+/**
+ * 找到當前時間對應的句子索引 (帶容錯機制)
+ * @param {number} currentTime - 當前播放時間
+ * @param {number} tolerance - 容錯範圍 (秒，默認 0.15)
+ * @returns {number} - 句子索引 (-1 表示未找到)
+ */
+function findCurrentSentenceIndex(currentTime, tolerance = 0.15) {
+    if (!timestampData || timestampData.length === 0) return -1;
+    
+    // 策略 1: 精確匹配 (在時間範圍內)
+    for (let i = 0; i < timestampData.length; i++) {
+        const sentence = timestampData[i];
+        if (currentTime >= sentence.start - tolerance && 
+            currentTime < sentence.end + tolerance) {
+            return i;
+        }
+    }
+    
+    // 策略 2: 找最接近的句子 (當精確匹配失敗時)
+    let closestIndex = -1;
+    let minDistance = Infinity;
+    
+    for (let i = 0; i < timestampData.length; i++) {
+        const sentence = timestampData[i];
+        const midPoint = (sentence.start + sentence.end) / 2;
+        const distance = Math.abs(currentTime - midPoint);
+        
+        if (distance < minDistance) {
+            minDistance = distance;
+            closestIndex = i;
+        }
+    }
+    
+    // 只有當距離在合理範圍內時才返回
+    return minDistance < 2.0 ? closestIndex : -1;
+}
+
+// ===== END OF NEW IMPROVEMENT FUNCTIONS =====
 
 // --- UI Management ---
 
@@ -1300,18 +1431,33 @@ function playWordAudio(word) {
     });
 }
 
+// ===== IMPROVED VERSION: 添加同步鎖定機制 =====
 textContainer.addEventListener('click', (e) => {
     // 忽略使用者用滑鼠選取/反白文字時的點擊
     if (window.getSelection().toString().length > 0) return;
 
     if (isTimestampMode) {
         if (isPlaying) {
-            // 播放中：點擊會跳轉音訊並將整個句子加入暫存區
+            // === 改進: 播放中點擊句子 ===
             const sentenceSpan = e.target.closest('.timestamp-sentence');
             if (sentenceSpan) {
                 const startTime = parseFloat(sentenceSpan.dataset.start);
-                if (!isNaN(startTime)) {
-                    audio.currentTime = startTime; // 跳轉音訊到句子開頭
+                const sentenceIndex = parseInt(sentenceSpan.dataset.tsIndex, 10);
+                
+                if (!isNaN(startTime) && !isNaN(sentenceIndex)) {
+                    console.log(`[Click] Seeking to sentence ${sentenceIndex} at ${startTime.toFixed(3)}s`);
+                    
+                    // ===== IMPROVEMENT: 鎖定高亮 =====
+                    pendingHighlightIndex = sentenceIndex;
+                    
+                    // ===== IMPROVEMENT: 先更新 UI =====
+                    highlightSentenceByIndex(sentenceIndex);
+                    
+                    // ===== IMPROVEMENT: 鎖定同步 (防止自動跟隨) =====
+                    lockToSentence(sentenceIndex, 3000);
+                    
+                    // ===== IMPROVEMENT: 執行 seek =====
+                    performMobileSeek(startTime, true);
                 }
                 
                 // 清空暫存區並加入點擊的句子
@@ -1330,18 +1476,14 @@ textContainer.addEventListener('click', (e) => {
             if (wordSpan) {
                 const cleanedWord = cleanWord(wordSpan.textContent);
                 if (cleanedWord) {
-                    // NEW: If word is saved and player is paused, play its audio
                     if (wordSpan.classList.contains('is-saved-word')) {
-                        // Find the actual saved word form from notes
                         const savedForm = findSavedWordForm(cleanedWord, currentCategoryName, currentStoryTitle);
                         if (savedForm) {
                             playWordAudio(savedForm);
                         } else {
-                            // Fallback to clicked word if not found
                             playWordAudio(cleanedWord);
                         }
                     } else {
-                        // NEW: If word is not saved, use TTS to speak it
                         speakText(cleanedWord);
                     }
                     
@@ -1358,25 +1500,20 @@ textContainer.addEventListener('click', (e) => {
         if (wordSpan) {
             const cleanedWord = cleanWord(wordSpan.textContent);
             if (cleanedWord) {
-                // NEW: If word is saved and player is paused, play its audio
                 if (!isPlaying && wordSpan.classList.contains('is-saved-word')) {
-                    // Find the actual saved word form from notes
                     const savedForm = findSavedWordForm(cleanedWord, currentCategoryName, currentStoryTitle);
                     if (savedForm) {
                         playWordAudio(savedForm);
                     } else {
-                        // Fallback to clicked word if not found
                         playWordAudio(cleanedWord);
                     }
                 } else if (!isPlaying) {
-                    // NEW: If word is not saved and player is paused, use TTS
                     speakText(cleanedWord);
                 }
                 
                 const stagedWordEl = document.createElement('span');
                 stagedWordEl.className = 'staged-word';
                 stagedWordEl.textContent = cleanedWord;
-                stagedWordsContainer.appendChild(stagedWordEl);
                 stagedWordsContainer.appendChild(stagedWordEl);
             }
         }
@@ -1559,6 +1696,7 @@ function stopTimestampUpdateLoop() {
 
 
 // --- NEW: Predictive Smooth Scrolling and Highlight Logic for Timestamp Mode ---
+// ===== IMPROVED VERSION: 優化的同步和滾動 =====
 function timestampUpdateLoop() {
     if (!isPlaying || !isTimestampMode || !isFinite(audio.duration) || audio.duration === 0) {
         timestampUpdateRafId = null;
@@ -1573,52 +1711,66 @@ function timestampUpdateLoop() {
 
     const currentTime = audio.currentTime;
     
-    // 1. Highlight Logic - 找到當前播放的句子索引
+    // ===== IMPROVEMENT: 智能索引查找 =====
     let activeIndex = -1;
 
     if (pendingHighlightIndex >= 0) {
-        // === Seek 期間：鎖定在目標句子，不根據 audio.currentTime 重新計算 ===
-        // 這樣可以避免 seek 尚未完成時 highlight 閃動回舊句子
+        // Seek 期間: 鎖定在目標句子
         activeIndex = pendingHighlightIndex;
+    } else if (isSyncLocked()) {
+        // ===== IMPROVEMENT: 同步鎖定期間: 保持鎖定的句子 =====
+        activeIndex = audioSyncLock.lockedSentenceIndex;
     } else {
-        // === 正常模式：根據 MP3 當前播放位置同步 highlight ===
-        for (let i = 0; i < timestampData.length; i++) {
-            const line = timestampData[i];
-            if (currentTime >= line.start && currentTime < line.end) {
-                activeIndex = i;
-                break;
-            }
-        }
+        // 正常模式: 根據時間查找
+        // ===== IMPROVEMENT: 使用智能匹配函數 =====
+        activeIndex = findCurrentSentenceIndex(currentTime, 0.15);
     }
     
     const sentenceElement = (activeIndex >= 0) ? textContainer.querySelector(`[data-ts-index="${activeIndex}"]`) : null;
     
+    // ===== IMPROVEMENT: 高亮更新 =====
     if (sentenceElement && sentenceElement !== lastHighlightedSentence) {
         if (lastHighlightedSentence) {
             lastHighlightedSentence.classList.remove('is-current');
         }
         sentenceElement.classList.add('is-current');
         lastHighlightedSentence = sentenceElement;
-    }
-
-    // 2. Predictive Smooth Scrolling Logic
-    const progress = currentTime / audio.duration;
-    const baseScrollTop = progress * scrollMax;
-    let targetScrollTop = baseScrollTop;
-
-    if (lastHighlightedSentence) {
-        const containerHeight = textContainer.clientHeight;
-        const sentenceTop = lastHighlightedSentence.offsetTop;
-        const sentenceHeight = lastHighlightedSentence.offsetHeight;
-        const correctiveScrollTop = sentenceTop - (containerHeight / 2) + (sentenceHeight / 2);
         
-        const weight = 0.8;
-        targetScrollTop = (baseScrollTop * (1 - weight)) + (correctiveScrollTop * weight);
+        // ===== IMPROVEMENT: 智能滾動決策 =====
+        // 只有在非鎖定狀態下才自動滾動
+        if (!isSyncLocked() && pendingHighlightIndex < 0) {
+            scrollToSentence(sentenceElement, false);
+        }
     }
-    
-    const currentScrollTop = textContainer.scrollTop;
-    const scrollDifference = targetScrollTop - currentScrollTop;
-    textContainer.scrollTop += scrollDifference * 0.1;
+
+    // ===== IMPROVEMENT: 預測性滾動 (非鎖定狀態) =====
+    if (!isSyncLocked() && pendingHighlightIndex < 0) {
+        const progress = currentTime / audio.duration;
+        const baseScrollTop = progress * scrollMax;
+        let targetScrollTop = baseScrollTop;
+
+        if (lastHighlightedSentence) {
+            const containerHeight = textContainer.clientHeight;
+            const sentenceTop = lastHighlightedSentence.offsetTop;
+            const sentenceHeight = lastHighlightedSentence.offsetHeight;
+            const correctiveScrollTop = sentenceTop - (containerHeight / 2) + (sentenceHeight / 2);
+            
+            // ===== IMPROVEMENT: 動態權重調整 =====
+            // 根據滾動差異自動調整混合比例
+            const scrollDiff = Math.abs(correctiveScrollTop - baseScrollTop);
+            const weight = scrollDiff > 200 ? 0.9 : 0.8; // 可調整: 0.7-0.95
+            
+            targetScrollTop = (baseScrollTop * (1 - weight)) + (correctiveScrollTop * weight);
+        }
+        
+        const currentScrollTop = textContainer.scrollTop;
+        const scrollDifference = targetScrollTop - currentScrollTop;
+        
+        // ===== IMPROVEMENT: 自適應滾動速度 =====
+        // 差異大時滾動快一點，差異小時滾動慢一點
+        const scrollSpeed = Math.abs(scrollDifference) > 100 ? 0.15 : 0.1; // 可調整: 0.08-0.20
+        textContainer.scrollTop += scrollDifference * scrollSpeed;
+    }
 
     timestampUpdateRafId = requestAnimationFrame(timestampUpdateLoop);
 }
@@ -1758,16 +1910,28 @@ async function loadData() {
 }
 
 // --- New Timestamp Data Loading and Parsing ---
+// ===== IMPROVED VERSION: 時間戳精確匹配 =====
+/**
+ * 改進的時間轉換函數 - 精確到毫秒
+ * @param {string} timeStr - 時間字串 (格式: HH:MM:SS.mmm)
+ * @returns {number} - 秒數 (精確到毫秒)
+ */
 function timeToSeconds(timeStr) {
     const parts = timeStr.split(':');
     const hours = parseInt(parts[0], 10);
     const minutes = parseInt(parts[1], 10);
     const secondsParts = parts[2].split('.');
     const seconds = parseInt(secondsParts[0], 10);
-    const milliseconds = parseInt(secondsParts[1], 10);
+    // ===== IMPROVEMENT: 確保毫秒部分正確處理 (3位數) =====
+    const milliseconds = secondsParts[1] ? parseInt(secondsParts[1].padEnd(3, '0'), 10) : 0;
+    
     return (hours * 3600) + (minutes * 60) + seconds + (milliseconds / 1000);
 }
 
+/**
+ * 改進的 Timestamp 解析函數
+ * ===== IMPROVED: 添加中間點計算用於精確匹配 =====
+ */
 function parseTimestampText(text) {
     const lines = text.trim().split('\n');
     const data = [];
@@ -1785,10 +1949,15 @@ function parseTimestampText(text) {
         }
         
         if (match) {
+            const start = timeToSeconds(match[1]);
+            const end = timeToSeconds(match[2]);
+            
             data.push({
-                start: timeToSeconds(match[1]),
-                end: timeToSeconds(match[2]),
-                sentence: match[3].trim()
+                start: start,
+                end: end,
+                sentence: match[3].trim(),
+                // ===== IMPROVEMENT: 預計算中間點，用於更精確的匹配 =====
+                midPoint: (start + end) / 2
             });
         }
     }
@@ -2071,6 +2240,7 @@ function pauseAudio() {
 // --- New Helper Functions for Timestamp Navigation ---
 
 // --- Helper function to immediately highlight a sentence by index ---
+// ===== IMPROVED VERSION: 添加同步鎖定 =====
 function highlightSentenceByIndex(targetIndex) {
     if (!timestampData || targetIndex < 0 || targetIndex >= timestampData.length) return;
     
@@ -2085,34 +2255,29 @@ function highlightSentenceByIndex(targetIndex) {
         targetSentence.classList.add('is-current');
         lastHighlightedSentence = targetSentence;
         
-        // 滾動到視窗中央
-        const containerHeight = textContainer.clientHeight;
-        const sentenceTop = targetSentence.offsetTop;
-        const sentenceHeight = targetSentence.offsetHeight;
-        const targetScrollTop = sentenceTop - (containerHeight / 2) + (sentenceHeight / 2);
+        // ===== IMPROVEMENT: 使用改進的滾動函數 =====
+        scrollToSentence(targetSentence, true);
         
-        textContainer.scrollTop = targetScrollTop;
+        // ===== IMPROVEMENT: 鎖定到這個句子一段時間 =====
+        lockToSentence(targetIndex, 2000); // 可調整: 2000-4000ms
     }
 }
 
 // [REDESIGNED] story.js - skipToNextSentence 
 // 新架構：UI First → 從 DOM 讀取時間 → Audio Seek
+// ===== IMPROVED VERSION: 使用智能查找 =====
 function skipToNextSentence() {
     if (!timestampData || timestampData.length === 0) return;
     
     const currentTime = audio.currentTime;
     const wasPlaying = !audio.paused;
 
-    // 1. 找出目前正在播放的句子索引
-    let currentIndex = -1;
-    for (let i = 0; i < timestampData.length; i++) {
-        if (currentTime >= timestampData[i].start && currentTime < timestampData[i].end) {
-            currentIndex = i;
-            break;
-        }
-    }
+    // ===== IMPROVEMENT: 使用智能查找函數 =====
+    let currentIndex = findCurrentSentenceIndex(currentTime, 0.2);
     
+    // === 改進: 容錯處理 ===
     if (currentIndex === -1) {
+        // 找不到當前句子時，找最接近的
         for (let i = 0; i < timestampData.length; i++) {
             if (timestampData[i].start <= currentTime) {
                 currentIndex = i;
@@ -2139,7 +2304,7 @@ function skipToNextSentence() {
         
         if (highlightedElement && highlightedElement.dataset.start) {
             const targetTime = parseFloat(highlightedElement.dataset.start);
-            console.log(`[Next Sentence] Reading time from DOM: ${targetTime.toFixed(2)}s`);
+            console.log(`[Next Sentence] Reading time from DOM: ${targetTime.toFixed(3)}s`);
             
             // 現在才執行 seek
             performMobileSeek(targetTime, wasPlaying);
@@ -2151,29 +2316,25 @@ function skipToNextSentence() {
         }
         
     } else {
-        // 已經是最後一句，跳到末尾
-        console.log('[Next Sentence] Already at last sentence, seeking to end');
+        // 已經是最後一句
+        console.log('[Next Sentence] Already at last sentence');
         performMobileSeek(audio.duration, false);
     }
 }
 
 // [REDESIGNED] story.js - skipToPrevSentence
 // 新架構：UI First → 從 DOM 讀取時間 → Audio Seek
+// ===== IMPROVED VERSION: 使用智能查找並調整閾值 =====
 function skipToPrevSentence() {
     if (!timestampData || timestampData.length === 0) return;
 
     const currentTime = audio.currentTime;
     const wasPlaying = !audio.paused;
     
-    // 1. 找出目前正在播放的句子索引
-    let currentIndex = -1;
-    for (let i = 0; i < timestampData.length; i++) {
-        if (currentTime >= timestampData[i].start && currentTime < timestampData[i].end) {
-            currentIndex = i;
-            break;
-        }
-    }
+    // ===== IMPROVEMENT: 使用智能查找函數 =====
+    let currentIndex = findCurrentSentenceIndex(currentTime, 0.2);
     
+    // === 改進: 容錯處理 ===
     if (currentIndex === -1) {
         for (let i = 0; i < timestampData.length; i++) {
             if (timestampData[i].start <= currentTime) {
@@ -2194,21 +2355,18 @@ function skipToPrevSentence() {
     const currentSent = timestampData[currentIndex];
     let targetIndex = 0;
 
-    // 2. 判斷邏輯：如果已經播放超過 1.5 秒，重聽當前句；否則跳到前一句
-    if (currentTime > currentSent.start + 1.5) {
+    // ===== IMPROVEMENT: 更智能的判斷邏輯 =====
+    // 如果在句子開頭 1 秒內，跳到前一句；否則重聽當前句
+    const thresholdTime = 1.0; // IMPROVED: 從 1.5 減少到 1.0，更靈敏
+    
+    if (currentTime > currentSent.start + thresholdTime) {
         // 重聽當前句
         targetIndex = currentIndex;
-        console.log(`[Prev Sentence] Replay current sentence ${targetIndex}`);
+        console.log('[Prev Sentence] Restarting current sentence');
     } else {
-        if (currentIndex > 0) {
-            // 跳到前一句
-            targetIndex = currentIndex - 1;
-            console.log(`[Prev Sentence] Go to previous sentence ${targetIndex}`);
-        } else {
-            // 已經是第一句，回到開頭
-            targetIndex = 0;
-            console.log('[Prev Sentence] Already at first sentence, seeking to start');
-        }
+        // 跳到前一句
+        targetIndex = Math.max(0, currentIndex - 1);
+        console.log(`[Prev Sentence] Jumping to previous sentence (${targetIndex})`);
     }
 
     // ===== 鎖定 highlight，防止 seek 期間閃動 =====
@@ -2222,7 +2380,7 @@ function skipToPrevSentence() {
     
     if (highlightedElement && highlightedElement.dataset.start) {
         const targetTime = parseFloat(highlightedElement.dataset.start);
-        console.log(`[Prev Sentence] Reading time from DOM: ${targetTime.toFixed(2)}s`);
+        console.log(`[Prev Sentence] Reading time from DOM: ${targetTime.toFixed(3)}s`);
         
         // 現在才執行 seek
         performMobileSeek(targetTime, wasPlaying);
