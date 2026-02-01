@@ -1935,6 +1935,15 @@ function skipToNextSentence() {
         // 設為 2 是因為某些手機瀏覽器會觸發兩次 pause
         if (isPlaying) isSeekingSkip = 2;
         audio.currentTime = timestampData[currentIndex + 1].start;
+        
+        // 強制更新高亮和滾動(無論播放或暫停狀態)
+        setTimeout(() => {
+            updateTimestampHighlight();
+            const targetSentence = textContainer.querySelector(`[data-ts-index="${currentIndex + 1}"]`);
+            if (targetSentence) {
+                targetSentence.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }, 50);
     } else {
         // 已經是最後一句，跳到末尾
         audio.currentTime = audio.duration;
@@ -1972,11 +1981,35 @@ function skipToPrevSentence() {
     // 如果剛開始播不到 1.5 秒，按「上一句」才是真的跳到「前一句」。
     if (currentTime > currentSent.start + 1.5) {
         audio.currentTime = currentSent.start;
+        
+        // 強制更新高亮和滾動
+        setTimeout(() => {
+            updateTimestampHighlight();
+            const targetSentence = textContainer.querySelector(`[data-ts-index="${currentIndex}"]`);
+            if (targetSentence) {
+                targetSentence.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }, 50);
     } else {
         if (currentIndex > 0) {
             audio.currentTime = timestampData[currentIndex - 1].start;
+            
+            // 強制更新高亮和滾動
+            setTimeout(() => {
+                updateTimestampHighlight();
+                const targetSentence = textContainer.querySelector(`[data-ts-index="${currentIndex - 1}"]`);
+                if (targetSentence) {
+                    targetSentence.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }, 50);
         } else {
             audio.currentTime = 0;
+            
+            // 強制更新高亮和滾動到頂部
+            setTimeout(() => {
+                updateTimestampHighlight();
+                textContainer.scrollTop = 0;
+            }, 50);
         }
     }
 }
