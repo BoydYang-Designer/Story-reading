@@ -1941,13 +1941,15 @@ function highlightSentenceByIndex(targetIndex) {
     }
 }
 
+// [Modified] story.js - skipToNextSentence
 function skipToNextSentence() {
     if (!timestampData || timestampData.length === 0) return;
     
     const currentTime = audio.currentTime;
+    // 檢查原生音訊狀態，確認是否正在播放中
+    const wasPlaying = !audio.paused || isPlaying;
 
     // 1. 找出目前正在播放的句子索引
-    // 優先查找：時間在 start 和 end 之間的句子
     let currentIndex = -1;
     for (let i = 0; i < timestampData.length; i++) {
         if (currentTime >= timestampData[i].start && currentTime < timestampData[i].end) {
@@ -1956,7 +1958,6 @@ function skipToNextSentence() {
         }
     }
     
-    // 如果沒找到（例如在句子間隙），使用最後一個已開始的句子
     if (currentIndex === -1) {
         for (let i = 0; i < timestampData.length; i++) {
             if (timestampData[i].start <= currentTime) {
@@ -1972,28 +1973,42 @@ function skipToNextSentence() {
         const targetIndex = currentIndex + 1;
         const targetTime = timestampData[targetIndex].start;
         
-        // 手機修補：seek 會觸發偽的 pause，先設旗標讓 pause listener 忽略它
-        // 設為 2 是因為某些手機瀏覽器會觸發兩次 pause
-        if (isPlaying) isSeekingSkip = 2;
+        // 手機修補：增加計數器數值，確保能忽略手機跳轉時產生的一連串暫停訊號
+        if (wasPlaying) isSeekingSkip = 5; 
         
-        // 立即更新高亮（在 seek 之前），使用目標索引
+        // 更新 UI 高亮
         highlightSentenceByIndex(targetIndex);
         
-        // 然後才設定音頻位置
+        // 更新音訊時間
         audio.currentTime = targetTime;
+
+        // 【關鍵修正】手機上必須明確再次呼叫 play()，否則會卡住
+        if (wasPlaying) {
+            const playPromise = audio.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    console.log("Auto-resume failed (mobile restriction):", error);
+                    // 如果自動播放失敗，確保 UI 狀態同步為暫停
+                    isPlaying = false;
+                    playPauseBtn.classList.remove('is-playing');
+                });
+            }
+        }
     } else {
         // 已經是最後一句，跳到末尾
         audio.currentTime = audio.duration;
     }
 }
 
+// [Modified] story.js - skipToPrevSentence
 function skipToPrevSentence() {
     if (!timestampData || timestampData.length === 0) return;
 
     const currentTime = audio.currentTime;
+    // 檢查原生音訊狀態
+    const wasPlaying = !audio.paused || isPlaying;
     
     // 1. 找出目前正在播放的句子索引
-    // 優先查找：時間在 start 和 end 之間的句子
     let currentIndex = -1;
     for (let i = 0; i < timestampData.length; i++) {
         if (currentTime >= timestampData[i].start && currentTime < timestampData[i].end) {
@@ -2002,7 +2017,6 @@ function skipToPrevSentence() {
         }
     }
     
-    // 如果沒找到（例如在句子間隙），使用最後一個已開始的句子
     if (currentIndex === -1) {
         for (let i = 0; i < timestampData.length; i++) {
             if (timestampData[i].start <= currentTime) {
@@ -2013,34 +2027,50 @@ function skipToPrevSentence() {
         }
     }
 
-    // 手機修補：所有 seek 路徑前都設旗標（設為 2 來應對連兩個 pause 的情況）
-    if (isPlaying) isSeekingSkip = 2;
+    // 手機修補：設定較高的忽略計數
+    if (wasPlaying) isSeekingSkip = 5;
 
     if (currentIndex === -1) {
         highlightSentenceByIndex(0);
         audio.currentTime = 0;
+        if (wasPlaying) audio.play().catch(e => console.log(e));
         return;
     }
 
     const currentSent = timestampData[currentIndex];
+    let targetTime = 0;
+    let targetIndex = 0;
 
-    // 2. 判斷邏輯：
-    // 如果播放超過該句開頭 1.5 秒，按「上一句」通常是想「重聽這一句」。
-    // 如果剛開始播不到 1.5 秒，按「上一句」才是真的跳到「前一句」。
+    // 2. 判斷邏輯
     if (currentTime > currentSent.start + 1.5) {
         // 重聽當前句
-        highlightSentenceByIndex(currentIndex);
-        audio.currentTime = currentSent.start;
+        targetIndex = currentIndex;
+        targetTime = currentSent.start;
     } else {
         if (currentIndex > 0) {
             // 跳到前一句
-            const targetIndex = currentIndex - 1;
-            highlightSentenceByIndex(targetIndex);
-            audio.currentTime = timestampData[targetIndex].start;
+            targetIndex = currentIndex - 1;
+            targetTime = timestampData[targetIndex].start;
         } else {
             // 已經是第一句，回到開頭
-            highlightSentenceByIndex(0);
-            audio.currentTime = 0;
+            targetIndex = 0;
+            targetTime = 0;
+        }
+    }
+
+    // 更新 UI
+    highlightSentenceByIndex(targetIndex);
+    
+    // 更新音訊
+    audio.currentTime = targetTime;
+
+    // 【關鍵修正】強制恢復播放
+    if (wasPlaying) {
+        const playPromise = audio.play();
+        if (playPromise !== undefined) {
+            playPromise.catch(error => {
+                console.log("Auto-resume failed:", error);
+            });
         }
     }
 }
