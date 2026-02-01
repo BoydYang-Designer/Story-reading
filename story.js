@@ -105,10 +105,7 @@ let timestampData = [];
 let hasTimestampFile = false;
 let lastHighlightedSentence = null;
 let timestampUpdateRafId = null; // For smooth scrolling animation
-let currentSentenceIndex = -1; // ===== INDEX-FIRST 核心變數 =====
-// 這是 Timestamp 模式下「目前哪一句」的唯一真相來源 (Single Source of Truth)。
-// 所有東西都從它出發：highlight 從它決定，audio seek 從它算出時間。
-// -1 表示尚未進入任何句子（通常是播放開始前）。
+let pendingHighlightIndex = -1; // Seek 期間鎖定的目標句子索引，-1 = 正常跟隨 MP3 模式
 
 // --- NEW State Variables for JSON Mode Highlighting ---
 let jsonModeUpdateRafId = null;
@@ -180,6 +177,11 @@ function onSeekCompleted() {
     // 重置 seek 狀態
     mobileSeekState.isSeeking = false;
     mobileSeekState.ignoreTimeupdate = false;
+
+    // === 清除 highlight 鎖定 ===
+    // Seek 已經完成，audio.currentTime 已經到達目標位置，
+    // timestampUpdateLoop 可以安全地回到根據 MP3 位置同步的正常模式
+    pendingHighlightIndex = -1;
     
     // 如果需要恢復播放
     if (shouldResume) {
@@ -1571,31 +1573,32 @@ function timestampUpdateLoop() {
 
     const currentTime = audio.currentTime;
     
-    // 1. Highlight Logic
-    //    ===== INDEX-FIRST: 連續播放時，也從索引出發推進 =====
-    //    不是每幀都掃描整個 timestampData。
-    //    而是檢查「當前句已經結束了吗」→ 如果是，進入下一句。
-    //    這樣 highlight 的唯一推進路徑都經過 highlightSentenceByIndex，
-    //    保證 currentSentenceIndex 始終是真相來源。
+    // 1. Highlight Logic - 找到當前播放的句子索引
+    let activeIndex = -1;
 
-    if (currentSentenceIndex < 0) {
-        // 還沒進入任何句子（播放開始但還沒到第一句的時間點）
-        // 檢查是否已經到達第一句
-        if (timestampData.length > 0 && currentTime >= timestampData[0].start) {
-            highlightSentenceByIndex(0);
-        }
+    if (pendingHighlightIndex >= 0) {
+        // === Seek 期間：鎖定在目標句子，不根據 audio.currentTime 重新計算 ===
+        // 這樣可以避免 seek 尚未完成時 highlight 閃動回舊句子
+        activeIndex = pendingHighlightIndex;
     } else {
-        // 已經在某一句裡。檢查當前句是否已經結束。
-        const currentSent = timestampData[currentSentenceIndex];
-        if (currentTime >= currentSent.end) {
-            // 當前句結束了 → 進入下一句（如果有的話）
-            const nextIndex = currentSentenceIndex + 1;
-            if (nextIndex < timestampData.length) {
-                highlightSentenceByIndex(nextIndex);
+        // === 正常模式：根據 MP3 當前播放位置同步 highlight ===
+        for (let i = 0; i < timestampData.length; i++) {
+            const line = timestampData[i];
+            if (currentTime >= line.start && currentTime < line.end) {
+                activeIndex = i;
+                break;
             }
-            // 如果沒有下一句，highlight 保持在最後一句，等待 ended 事件處理
         }
-        // 還在當前句的時間範圍內 → 什麼都不動
+    }
+    
+    const sentenceElement = (activeIndex >= 0) ? textContainer.querySelector(`[data-ts-index="${activeIndex}"]`) : null;
+    
+    if (sentenceElement && sentenceElement !== lastHighlightedSentence) {
+        if (lastHighlightedSentence) {
+            lastHighlightedSentence.classList.remove('is-current');
+        }
+        sentenceElement.classList.add('is-current');
+        lastHighlightedSentence = sentenceElement;
     }
 
     // 2. Predictive Smooth Scrolling Logic
@@ -1976,7 +1979,6 @@ async function showPlayback(index, startTime = 0, maintainTimestampMode = false)
   timestampData = [];
   hasTimestampFile = false;
   lastHighlightedSentence = null;
-  currentSentenceIndex = -1;
   toggleTimestampBtn.classList.remove('is-active');
   toggleTimestampBtn.style.display = 'none';
   lastHighlightedWords = [];
@@ -2053,7 +2055,6 @@ function stopAudioAndReset() {
   isTimestampMode = false;
   toggleTimestampBtn.classList.remove('is-active');
   lastHighlightedSentence = null;
-  currentSentenceIndex = -1;
   lastHighlightedWords = [];
   lastActiveSentenceStart = -1;
 }
@@ -2070,27 +2071,21 @@ function pauseAudio() {
 // --- New Helper Functions for Timestamp Navigation ---
 
 // --- Helper function to immediately highlight a sentence by index ---
-// ===== INDEX-FIRST: 這是唯一更新 highlight 的入口點 =====
-// 所有想要移動高亮的路徑都必須經過這裡。
-// 它負責：(1) 更新 currentSentenceIndex, (2) 更新 DOM 高亮, (3) 滾動到目標句子
 function highlightSentenceByIndex(targetIndex) {
     if (!timestampData || targetIndex < 0 || targetIndex >= timestampData.length) return;
     
-    // 1. 更新核心狀態變數
-    currentSentenceIndex = targetIndex;
-
-    // 2. 移除舊的高亮
+    // 移除舊的高亮
     if (lastHighlightedSentence) {
         lastHighlightedSentence.classList.remove('is-current');
     }
     
-    // 3. 添加新的高亮
+    // 添加新的高亮（使用 data-ts-index 而不是 data-start，更可靠）
     const targetSentence = textContainer.querySelector(`[data-ts-index="${targetIndex}"]`);
     if (targetSentence) {
         targetSentence.classList.add('is-current');
         lastHighlightedSentence = targetSentence;
         
-        // 4. 滾動到視窗中央
+        // 滾動到視窗中央
         const containerHeight = textContainer.clientHeight;
         const sentenceTop = targetSentence.offsetTop;
         const sentenceHeight = targetSentence.offsetHeight;
@@ -2100,86 +2095,143 @@ function highlightSentenceByIndex(targetIndex) {
     }
 }
 
-// ===== INDEX-FIRST: skipToNextSentence =====
-// 完全從 currentSentenceIndex 出發，不依賴 audio.currentTime 來判斷「現在在哪」。
-// 流程：讀取 currentSentenceIndex → 計算下一個索引 → highlight → 從 timestampData 查時間 → seek
+// [REDESIGNED] story.js - skipToNextSentence 
+// 新架構：UI First → 從 DOM 讀取時間 → Audio Seek
 function skipToNextSentence() {
     if (!timestampData || timestampData.length === 0) return;
     
+    const currentTime = audio.currentTime;
     const wasPlaying = !audio.paused;
 
-    // 1. 從核心狀態變數讀取「現在在哪」
-    //    如果還是 -1（比如剛開始還沒播放），視為從第 0 句開始
-    let baseIndex = currentSentenceIndex;
-    if (baseIndex < 0) baseIndex = -1; // 確保起點合理
+    // 1. 找出目前正在播放的句子索引
+    let currentIndex = -1;
+    for (let i = 0; i < timestampData.length; i++) {
+        if (currentTime >= timestampData[i].start && currentTime < timestampData[i].end) {
+            currentIndex = i;
+            break;
+        }
+    }
+    
+    if (currentIndex === -1) {
+        for (let i = 0; i < timestampData.length; i++) {
+            if (timestampData[i].start <= currentTime) {
+                currentIndex = i;
+            } else {
+                break;
+            }
+        }
+    }
 
-    // 2. 計算目標索引
-    const targetIndex = baseIndex + 1;
+    // 2. 計算目標句子索引
+    if (currentIndex < timestampData.length - 1) {
+        const targetIndex = currentIndex + 1;
+        
+        console.log(`[Next Sentence] Current: ${currentIndex}, Target: ${targetIndex}`);
+        
+        // ===== 鎖定 highlight，防止 seek 期間閃動 =====
+        pendingHighlightIndex = targetIndex;
 
-    if (targetIndex >= timestampData.length) {
+        // ===== 關鍵改變：先更新 UI =====
+        highlightSentenceByIndex(targetIndex);
+        
+        // ===== 從 DOM 讀取時間戳記（確保與 UI 同步）=====
+        const highlightedElement = textContainer.querySelector('.timestamp-sentence.is-current');
+        
+        if (highlightedElement && highlightedElement.dataset.start) {
+            const targetTime = parseFloat(highlightedElement.dataset.start);
+            console.log(`[Next Sentence] Reading time from DOM: ${targetTime.toFixed(2)}s`);
+            
+            // 現在才執行 seek
+            performMobileSeek(targetTime, wasPlaying);
+        } else {
+            // 備用方案：從 timestampData 讀取
+            console.warn('[Next Sentence] Could not read from DOM, using timestampData');
+            const targetTime = timestampData[targetIndex].start;
+            performMobileSeek(targetTime, wasPlaying);
+        }
+        
+    } else {
         // 已經是最後一句，跳到末尾
         console.log('[Next Sentence] Already at last sentence, seeking to end');
         performMobileSeek(audio.duration, false);
-        return;
     }
-
-    console.log(`[Next Sentence] Index: ${baseIndex} → ${targetIndex}`);
-
-    // 3. 先更新 UI（立即視覺回饋）
-    highlightSentenceByIndex(targetIndex); // 這裡已經把 currentSentenceIndex 設為 targetIndex
-
-    // 4. 從 timestampData 直接查時間，不經過 DOM
-    const targetTime = timestampData[targetIndex].start;
-    console.log(`[Next Sentence] Seeking to ${targetTime.toFixed(2)}s`);
-
-    // 5. Seek 音訊
-    performMobileSeek(targetTime, wasPlaying);
 }
 
-
-// ===== INDEX-FIRST: skipToPrevSentence =====
-// 同樣從 currentSentenceIndex 出發。
-// 唯一保留的 audio.currentTime 用途：判斷「播放超過 1.5 秒要不要重聽當前句」。
-// 這個比較不需要掃描，因為 currentSentenceIndex 已經告訴我們當前句的 start 時間了。
+// [REDESIGNED] story.js - skipToPrevSentence
+// 新架構：UI First → 從 DOM 讀取時間 → Audio Seek
 function skipToPrevSentence() {
     if (!timestampData || timestampData.length === 0) return;
 
+    const currentTime = audio.currentTime;
     const wasPlaying = !audio.paused;
+    
+    // 1. 找出目前正在播放的句子索引
+    let currentIndex = -1;
+    for (let i = 0; i < timestampData.length; i++) {
+        if (currentTime >= timestampData[i].start && currentTime < timestampData[i].end) {
+            currentIndex = i;
+            break;
+        }
+    }
+    
+    if (currentIndex === -1) {
+        for (let i = 0; i < timestampData.length; i++) {
+            if (timestampData[i].start <= currentTime) {
+                currentIndex = i;
+            } else {
+                break;
+            }
+        }
+    }
 
-    // 1. 從核心狀態變數讀取「現在在哪」
-    const baseIndex = currentSentenceIndex;
-
-    // 如果還沒進入任何句子，直接跳第一句
-    if (baseIndex <= 0) {
-        console.log('[Prev Sentence] At or before first sentence, seeking to start');
+    if (currentIndex === -1) {
+        console.log('[Prev Sentence] No current sentence, seeking to start');
         highlightSentenceByIndex(0);
-        performMobileSeek(timestampData[0].start, wasPlaying);
+        performMobileSeek(0, wasPlaying);
         return;
     }
 
-    // 2. 判斷邏輯：用當前句的 start 時間做參考，不需要掃描
-    const currentSentStart = timestampData[baseIndex].start;
-    let targetIndex;
+    const currentSent = timestampData[currentIndex];
+    let targetIndex = 0;
 
-    if (audio.currentTime > currentSentStart + 1.5) {
-        // 已經播放超過 1.5 秒 → 重聽當前句
-        targetIndex = baseIndex;
+    // 2. 判斷邏輯：如果已經播放超過 1.5 秒，重聽當前句；否則跳到前一句
+    if (currentTime > currentSent.start + 1.5) {
+        // 重聽當前句
+        targetIndex = currentIndex;
         console.log(`[Prev Sentence] Replay current sentence ${targetIndex}`);
     } else {
-        // 還在開頭附近 → 跳到前一句
-        targetIndex = baseIndex - 1;
-        console.log(`[Prev Sentence] Go to previous sentence ${targetIndex}`);
+        if (currentIndex > 0) {
+            // 跳到前一句
+            targetIndex = currentIndex - 1;
+            console.log(`[Prev Sentence] Go to previous sentence ${targetIndex}`);
+        } else {
+            // 已經是第一句，回到開頭
+            targetIndex = 0;
+            console.log('[Prev Sentence] Already at first sentence, seeking to start');
+        }
     }
 
-    // 3. 先更新 UI
+    // ===== 鎖定 highlight，防止 seek 期間閃動 =====
+    pendingHighlightIndex = targetIndex;
+
+    // ===== 關鍵改變：先更新 UI =====
     highlightSentenceByIndex(targetIndex);
-
-    // 4. 從 timestampData 直接查時間
-    const targetTime = timestampData[targetIndex].start;
-    console.log(`[Prev Sentence] Seeking to ${targetTime.toFixed(2)}s`);
-
-    // 5. Seek 音訊
-    performMobileSeek(targetTime, wasPlaying);
+    
+    // ===== 從 DOM 讀取時間戳記（確保與 UI 同步）=====
+    const highlightedElement = textContainer.querySelector('.timestamp-sentence.is-current');
+    
+    if (highlightedElement && highlightedElement.dataset.start) {
+        const targetTime = parseFloat(highlightedElement.dataset.start);
+        console.log(`[Prev Sentence] Reading time from DOM: ${targetTime.toFixed(2)}s`);
+        
+        // 現在才執行 seek
+        performMobileSeek(targetTime, wasPlaying);
+    } else {
+        // 備用方案：從 timestampData 讀取
+        console.warn('[Prev Sentence] Could not read from DOM, using timestampData');
+        const targetTime = timestampData[targetIndex].start;
+        performMobileSeek(targetTime, wasPlaying);
+    }
 }
 
 // Button listeners
@@ -2267,7 +2319,6 @@ toggleTimestampBtn.addEventListener('click', () => {
         textContainer.innerHTML = '';
         textContainer.appendChild(parafyAndMakeClickable('\n\n' + story['內文'], currentCategoryName, currentStoryTitle));
         lastHighlightedSentence = null;
-        currentSentenceIndex = -1;
         computeScrollMax();
         
         if (isPlaying) jsonModeHighlightLoop();
@@ -2359,7 +2410,6 @@ audio.addEventListener('ended', () => {
             lastHighlightedSentence.classList.remove('is-current');
             lastHighlightedSentence = null;
         }
-        currentSentenceIndex = -1;
     } else {
         lastHighlightedWords.forEach(span => span.classList.remove('is-current-sentence', 'highlight-start', 'highlight-end'));
         lastHighlightedWords = [];
