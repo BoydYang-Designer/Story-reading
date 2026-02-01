@@ -1431,8 +1431,11 @@ function playWordAudio(word) {
     });
 }
 
+
+
+
 // ===== IMPROVED VERSION: 添加同步鎖定機制 =====
-textContainer.addEventListener('click', (e) => {
+function handleTextContainerClick(e) {
     // 忽略使用者用滑鼠選取/反白文字時的點擊
     if (window.getSelection().toString().length > 0) return;
 
@@ -1518,8 +1521,9 @@ textContainer.addEventListener('click', (e) => {
             }
         }
     }
-});
+}
 
+textContainer.addEventListener('click', handleTextContainerClick);
 
 stagedWordsContainer.addEventListener('click', (e) => {
     if (e.target.classList.contains('staged-word')) e.target.remove();
@@ -2089,7 +2093,7 @@ function resumeLastPlayback(title, time) {
     if (!story) {
         alert("Could not find the story from your last session.");
         clearLastPlaybackState();
-        renderCategories();
+        renderMajorCategories();
         return;
     }
     const category = story['分類']?.[0];
@@ -2226,7 +2230,22 @@ function stopAudioAndReset() {
   lastHighlightedSentence = null;
   lastHighlightedWords = [];
   lastActiveSentenceStart = -1;
-}
+
+  // ===== IMPROVEMENT: 完整重置同步和 Seek 狀態 =====
+  pendingHighlightIndex = -1;
+  unlockSync();
+  if (mobileSeekState.pendingSeekTimeout) {
+      clearTimeout(mobileSeekState.pendingSeekTimeout);
+  }
+  mobileSeekState = {
+      isSeeking: false,
+      targetTime: -1,
+      shouldResumePlayback: false,
+      seekStartTime: 0,
+      ignoreTimeupdate: false,
+      pendingSeekTimeout: null
+  };
+  // =============================================
 
 function pauseAudio() {
     audio.pause();
@@ -2503,9 +2522,8 @@ backToStoryFromNoteBtn.addEventListener('click', () => {
             const indexInList = currentStoryList.findIndex(s => s['標題'] === noteViewTitle);
             if (indexInList > -1) {
                 showCategory(category);
-                // This now correctly uses noteViewTitle and playbackPositionBeforeNote
-                // which will be 0 if "Next Note" was clicked.
-                showPlayback(indexInList, playbackPositionBeforeNote);
+                // ===== FIX: 保持離開前的 Timestamp 模式 =====
+                showPlayback(indexInList, playbackPositionBeforeNote, isTimestampMode);
             }
         }
     }
@@ -2550,7 +2568,6 @@ audio.addEventListener('seeked', () => {
 // ===== MODIFIED EVENT LISTENER =====
 audio.addEventListener('ended', () => {
     clearLastPlaybackState();
-    document.getElementById('continue-last-session-btn')?.remove();
 
     // --- 請求 1 & 2 的核心邏輯 ---
 
