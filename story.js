@@ -87,6 +87,10 @@ let timestampCache = {};
 let noteAudioPlayer = new Audio();
 let currentSnippetTimeout = null;
 
+// --- Mobile Seek Guard ---
+// 手機 seek 時會觸發偽的 pause 事件；此旗標用來忽略該事件
+let isSeekingSkip = false;
+
 // --- New Timestamp State Variables ---
 let isTimestampMode = false;
 let timestampData = [];
@@ -1911,6 +1915,7 @@ function pauseAudio() {
 function skipToNextSentence() {
     if (!timestampData || timestampData.length === 0) return;
     
+    const wasPlaying = isPlaying;
     const currentTime = audio.currentTime;
     // 找到第一個 "開始時間" 晚於當前時間的句子 (加 0.2s 緩衝避免卡在同一句)
     const nextSent = timestampData.find(line => line.start > currentTime + 0.2);
@@ -1921,11 +1926,23 @@ function skipToNextSentence() {
         // 如果找不到(已經是最後一句之後)，就跳到結束
         audio.currentTime = audio.duration;
     }
+
+    // --- 手機修補：seek 會觸發 pause 事件並殺死 highlight loop ---
+    // 如果跳之前是在播放，強制保持播放狀態並重啟循環
+    if (wasPlaying) {
+        isSeekingSkip = true; // 忽略接下來 seek 觸發的 pause 事件
+        isPlaying = true;
+        playPauseBtn.classList.add('is-playing');
+        audio.play().catch(e => console.error("Resume after skip failed:", e));
+        stopTimestampUpdateLoop();
+        timestampUpdateLoop();
+    }
 }
 
 function skipToPrevSentence() {
     if (!timestampData || timestampData.length === 0) return;
 
+    const wasPlaying = isPlaying;
     const currentTime = audio.currentTime;
     
     // 1. 找出目前正在播放(或是剛播完)的是哪一句的索引
@@ -1941,22 +1958,32 @@ function skipToPrevSentence() {
 
     if (currentIndex === -1) {
         audio.currentTime = 0;
-        return;
+    } else {
+        const currentSent = timestampData[currentIndex];
+
+        // 2. 判斷邏輯：
+        // 如果播放超過該句開頭 1.5 秒，按「上一句」通常是想「重聽這一句」。
+        // 如果剛開始播不到 1.5 秒，按「上一句」才是真的跳到「前一句」。
+        if (currentTime > currentSent.start + 1.5) {
+            audio.currentTime = currentSent.start;
+        } else {
+            if (currentIndex > 0) {
+                audio.currentTime = timestampData[currentIndex - 1].start;
+            } else {
+                audio.currentTime = 0;
+            }
+        }
     }
 
-    const currentSent = timestampData[currentIndex];
-
-    // 2. 判斷邏輯：
-    // 如果播放超過該句開頭 1.5 秒，按「上一句」通常是想「重聽這一句」。
-    // 如果剛開始播不到 1.5 秒，按「上一句」才是真的跳到「前一句」。
-    if (currentTime > currentSent.start + 1.5) {
-        audio.currentTime = currentSent.start;
-    } else {
-        if (currentIndex > 0) {
-            audio.currentTime = timestampData[currentIndex - 1].start;
-        } else {
-            audio.currentTime = 0;
-        }
+    // --- 手機修補：seek 會觸發 pause 事件並殺死 highlight loop ---
+    // 如果跳之前是在播放，強制保持播放狀態並重啟循環
+    if (wasPlaying) {
+        isSeekingSkip = true; // 忽略接下來 seek 觸發的 pause 事件
+        isPlaying = true;
+        playPauseBtn.classList.add('is-playing');
+        audio.play().catch(e => console.error("Resume after skip failed:", e));
+        stopTimestampUpdateLoop();
+        timestampUpdateLoop();
     }
 }
 
@@ -2091,6 +2118,11 @@ audio.addEventListener('play', () => {
 });
 
 audio.addEventListener('pause', () => { 
+    // --- 手機修補：seek 時觸發的偽 pause 事件，直接忽略 ---
+    if (isSeekingSkip) {
+        isSeekingSkip = false;
+        return;
+    }
     if (isPlaying) {
         pauseAudio();
     }
