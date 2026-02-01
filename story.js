@@ -1946,13 +1946,24 @@ function skipToNextSentence() {
     
     const currentTime = audio.currentTime;
 
-    // 1. 找出目前正在播放的句子索引（與 skipToPrevSentence 同樣的定位邏輯）
+    // 1. 找出目前正在播放的句子索引
+    // 優先查找：時間在 start 和 end 之間的句子
     let currentIndex = -1;
     for (let i = 0; i < timestampData.length; i++) {
-        if (timestampData[i].start <= currentTime + 0.2) {
+        if (currentTime >= timestampData[i].start && currentTime < timestampData[i].end) {
             currentIndex = i;
-        } else {
             break;
+        }
+    }
+    
+    // 如果沒找到（例如在句子間隙），使用最後一個已開始的句子
+    if (currentIndex === -1) {
+        for (let i = 0; i < timestampData.length; i++) {
+            if (timestampData[i].start <= currentTime) {
+                currentIndex = i;
+            } else {
+                break;
+            }
         }
     }
 
@@ -1981,14 +1992,24 @@ function skipToPrevSentence() {
 
     const currentTime = audio.currentTime;
     
-    // 1. 找出目前正在播放(或是剛播完)的是哪一句的索引
+    // 1. 找出目前正在播放的句子索引
+    // 優先查找：時間在 start 和 end 之間的句子
     let currentIndex = -1;
     for (let i = 0; i < timestampData.length; i++) {
-        // 只要句子的開始時間小於當前時間，它就是潛在的"當前句"
-        if (timestampData[i].start <= currentTime + 0.2) {
+        if (currentTime >= timestampData[i].start && currentTime < timestampData[i].end) {
             currentIndex = i;
-        } else {
-            break; // 後面的句子還沒開始，停止搜尋
+            break;
+        }
+    }
+    
+    // 如果沒找到（例如在句子間隙），使用最後一個已開始的句子
+    if (currentIndex === -1) {
+        for (let i = 0; i < timestampData.length; i++) {
+            if (timestampData[i].start <= currentTime) {
+                currentIndex = i;
+            } else {
+                break;
+            }
         }
     }
 
