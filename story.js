@@ -87,10 +87,17 @@ let timestampCache = {};
 let noteAudioPlayer = new Audio();
 let currentSnippetTimeout = null;
 
-// --- Mobile Seek Guard ---
-// 手機 seek 時會觸發偽的 pause 事件；此旗標用來忽略該事件
-// 用 counter 而不是 boolean，因為某些手機瀏覽器會在一次 seek 裡觸發兩個 pause
-let isSeekingSkip = 0;
+// ===== IMPROVED MOBILE SEEK STATE MANAGEMENT =====
+// Comprehensive state object for mobile seek handling
+// 手機瀏覽器在 seek 時會產生複雜的非同步行為，需要完整的狀態管理
+let mobileSeekState = {
+    isSeeking: false,           // 是否正在進行 seek 操作
+    targetTime: -1,             // 目標時間點
+    shouldResumePlayback: false, // seek 完成後是否要繼續播放
+    seekStartTime: 0,           // seek 開始的時間戳記（用於判斷超時）
+    ignoreTimeupdate: false,    // 是否忽略 timeupdate 事件
+    pendingSeekTimeout: null    // 超時清理計時器
+};
 
 // --- New Timestamp State Variables ---
 let isTimestampMode = false;
@@ -107,6 +114,89 @@ let lastActiveSentenceStart = -1; // To track the current sentence
 // Storage Keys
 const LAST_SESSION_KEY = 'readingChallengeLastSession';
 const SAVED_WORDS_KEY = 'readingChallengeSavedWordsV2';
+
+// ===== MOBILE SEEK HELPER FUNCTIONS =====
+
+/**
+ * 執行音訊 seek 操作（專為手機瀏覽器優化）
+ * @param {number} targetTime - 目標時間點（秒）
+ * @param {boolean} shouldResume - seek 完成後是否繼續播放
+ */
+function performMobileSeek(targetTime, shouldResume = false) {
+    console.log(`[Mobile Seek] Starting seek to ${targetTime.toFixed(2)}s, resume=${shouldResume}`);
+    
+    // 清除任何待處理的超時計時器
+    if (mobileSeekState.pendingSeekTimeout) {
+        clearTimeout(mobileSeekState.pendingSeekTimeout);
+    }
+    
+    // 設定 seek 狀態
+    mobileSeekState.isSeeking = true;
+    mobileSeekState.targetTime = targetTime;
+    mobileSeekState.shouldResumePlayback = shouldResume;
+    mobileSeekState.seekStartTime = Date.now();
+    mobileSeekState.ignoreTimeupdate = true;
+    
+    // 執行 seek
+    audio.currentTime = targetTime;
+    
+    // 設定安全超時（防止某些手機瀏覽器的 seeked 事件沒有觸發）
+    mobileSeekState.pendingSeekTimeout = setTimeout(() => {
+        console.warn('[Mobile Seek] Seek timeout - forcing completion');
+        onSeekCompleted();
+    }, 1000); // 1 秒超時
+}
+
+/**
+ * Seek 完成時的處理（由 seeked 事件或超時觸發）
+ */
+function onSeekCompleted() {
+    console.log('[Mobile Seek] Seek completed');
+    
+    // 清除超時計時器
+    if (mobileSeekState.pendingSeekTimeout) {
+        clearTimeout(mobileSeekState.pendingSeekTimeout);
+        mobileSeekState.pendingSeekTimeout = null;
+    }
+    
+    const shouldResume = mobileSeekState.shouldResumePlayback;
+    
+    // 重置 seek 狀態
+    mobileSeekState.isSeeking = false;
+    mobileSeekState.ignoreTimeupdate = false;
+    
+    // 如果需要恢復播放
+    if (shouldResume && !isPlaying) {
+        console.log('[Mobile Seek] Resuming playback after seek');
+        const playPromise = audio.play();
+        if (playPromise !== undefined) {
+            playPromise
+                .then(() => {
+                    console.log('[Mobile Seek] Playback resumed successfully');
+                })
+                .catch(error => {
+                    console.error('[Mobile Seek] Failed to resume playback:', error);
+                    // 更新 UI 以反映實際狀態
+                    isPlaying = false;
+                    playPauseBtn.classList.remove('is-playing');
+                });
+        }
+    }
+}
+
+/**
+ * 檢查是否應該因為 seek 而忽略當前事件
+ */
+function shouldIgnoreEventDueToSeek() {
+    // 如果正在 seek 且時間小於 500ms，忽略事件
+    if (mobileSeekState.isSeeking) {
+        const timeSinceSeekStart = Date.now() - mobileSeekState.seekStartTime;
+        if (timeSinceSeekStart < 500) {
+            return true;
+        }
+    }
+    return false;
+}
 
 // --- UI Management ---
 
@@ -1425,6 +1515,12 @@ function timestampUpdateLoop() {
         return;
     }
 
+    // ===== CRITICAL: Ignore timeupdate during seeks =====
+    if (mobileSeekState.ignoreTimeupdate) {
+        timestampUpdateRafId = requestAnimationFrame(timestampUpdateLoop);
+        return;
+    }
+
     const currentTime = audio.currentTime;
     
     // 1. Highlight Logic - 找到當前播放的句子索引
@@ -1941,13 +2037,13 @@ function highlightSentenceByIndex(targetIndex) {
     }
 }
 
-// [Modified] story.js - skipToNextSentence
+// [FIXED] story.js - skipToNextSentence (Mobile Optimized)
 function skipToNextSentence() {
     if (!timestampData || timestampData.length === 0) return;
     
     const currentTime = audio.currentTime;
-    // 檢查原生音訊狀態，確認是否正在播放中
-    const wasPlaying = !audio.paused || isPlaying;
+    // 使用原生音訊狀態（更可靠）
+    const wasPlaying = !audio.paused;
 
     // 1. 找出目前正在播放的句子索引
     let currentIndex = -1;
@@ -1973,40 +2069,26 @@ function skipToNextSentence() {
         const targetIndex = currentIndex + 1;
         const targetTime = timestampData[targetIndex].start;
         
-        // 手機修補：增加計數器數值，確保能忽略手機跳轉時產生的一連串暫停訊號
-        if (wasPlaying) isSeekingSkip = 5; 
+        console.log(`[Next Sentence] Current: ${currentIndex}, Target: ${targetIndex}, Time: ${targetTime.toFixed(2)}s`);
         
-        // 更新 UI 高亮
+        // ===== CRITICAL FIX: 先更新 UI，再執行 seek =====
         highlightSentenceByIndex(targetIndex);
+        performMobileSeek(targetTime, wasPlaying);
         
-        // 更新音訊時間
-        audio.currentTime = targetTime;
-
-        // 【關鍵修正】手機上必須明確再次呼叫 play()，否則會卡住
-        if (wasPlaying) {
-            const playPromise = audio.play();
-            if (playPromise !== undefined) {
-                playPromise.catch(error => {
-                    console.log("Auto-resume failed (mobile restriction):", error);
-                    // 如果自動播放失敗，確保 UI 狀態同步為暫停
-                    isPlaying = false;
-                    playPauseBtn.classList.remove('is-playing');
-                });
-            }
-        }
     } else {
         // 已經是最後一句，跳到末尾
-        audio.currentTime = audio.duration;
+        console.log('[Next Sentence] Already at last sentence, seeking to end');
+        performMobileSeek(audio.duration, false);
     }
 }
 
-// [Modified] story.js - skipToPrevSentence
+// [FIXED] story.js - skipToPrevSentence (Mobile Optimized)
 function skipToPrevSentence() {
     if (!timestampData || timestampData.length === 0) return;
 
     const currentTime = audio.currentTime;
-    // 檢查原生音訊狀態
-    const wasPlaying = !audio.paused || isPlaying;
+    // 使用原生音訊狀態
+    const wasPlaying = !audio.paused;
     
     // 1. 找出目前正在播放的句子索引
     let currentIndex = -1;
@@ -2027,13 +2109,10 @@ function skipToPrevSentence() {
         }
     }
 
-    // 手機修補：設定較高的忽略計數
-    if (wasPlaying) isSeekingSkip = 5;
-
     if (currentIndex === -1) {
+        console.log('[Prev Sentence] No current sentence, seeking to start');
         highlightSentenceByIndex(0);
-        audio.currentTime = 0;
-        if (wasPlaying) audio.play().catch(e => console.log(e));
+        performMobileSeek(0, wasPlaying);
         return;
     }
 
@@ -2041,38 +2120,29 @@ function skipToPrevSentence() {
     let targetTime = 0;
     let targetIndex = 0;
 
-    // 2. 判斷邏輯
+    // 2. 判斷邏輯：如果已經播放超過 1.5 秒，重聽當前句；否則跳到前一句
     if (currentTime > currentSent.start + 1.5) {
         // 重聽當前句
         targetIndex = currentIndex;
         targetTime = currentSent.start;
+        console.log(`[Prev Sentence] Replay current sentence ${targetIndex}`);
     } else {
         if (currentIndex > 0) {
             // 跳到前一句
             targetIndex = currentIndex - 1;
             targetTime = timestampData[targetIndex].start;
+            console.log(`[Prev Sentence] Go to previous sentence ${targetIndex}`);
         } else {
             // 已經是第一句，回到開頭
             targetIndex = 0;
             targetTime = 0;
+            console.log('[Prev Sentence] Already at first sentence, seeking to start');
         }
     }
 
-    // 更新 UI
+    // ===== CRITICAL FIX: 先更新 UI，再執行 seek =====
     highlightSentenceByIndex(targetIndex);
-    
-    // 更新音訊
-    audio.currentTime = targetTime;
-
-    // 【關鍵修正】強制恢復播放
-    if (wasPlaying) {
-        const playPromise = audio.play();
-        if (playPromise !== undefined) {
-            playPromise.catch(error => {
-                console.log("Auto-resume failed:", error);
-            });
-        }
-    }
+    performMobileSeek(targetTime, wasPlaying);
 }
 
 // Button listeners
@@ -2198,8 +2268,10 @@ audio.addEventListener('play', () => {
     isPlaying = true; 
     playPauseBtn.classList.add('is-playing'); 
     saveLastPlaybackState();
-    // seek 結束後清除任何殘留的 counter，避免吃掉之後真正的 pause
-    isSeekingSkip = 0;
+    // 重置 seek 狀態（當播放正常啟動時，非從 seek 觸發）
+    if (!mobileSeekState.isSeeking) {
+        mobileSeekState.ignoreTimeupdate = false;
+    }
     if (isTimestampMode) {
         timestampUpdateLoop();
     } else {
@@ -2208,15 +2280,24 @@ audio.addEventListener('play', () => {
 });
 
 audio.addEventListener('pause', () => { 
-    // --- 手機修補：seek 時觸發的偽 pause 事件，直接忽略 ---
-    // counter > 0 表示還在 seek 視窗內，每次觸發減一，直到歸零才處理真的 pause
-    if (isSeekingSkip > 0) {
-        isSeekingSkip--;
+    // ===== CRITICAL: 在 seek 期間忽略 pause 事件 =====
+    if (shouldIgnoreEventDueToSeek()) {
+        console.log('[Audio Event] Ignoring pause during seek');
         return;
     }
     if (isPlaying) {
         pauseAudio();
     }
+});
+
+// ===== NEW: Mobile Seek Event Handlers =====
+audio.addEventListener('seeking', () => {
+    console.log('[Audio Event] seeking to', audio.currentTime.toFixed(2));
+});
+
+audio.addEventListener('seeked', () => {
+    console.log('[Audio Event] seeked');
+    onSeekCompleted();
 });
 
 // ===== MODIFIED EVENT LISTENER =====
