@@ -87,6 +87,10 @@ let timestampCache = {};
 let noteAudioPlayer = new Audio();
 let currentSnippetTimeout = null;
 
+// --- Mobile Seek Guard ---
+// 手機 seek 時會觸發偽的 pause 事件；此旗標用來忽略該事件
+let isSeekingSkip = false;
+
 // --- New Timestamp State Variables ---
 let isTimestampMode = false;
 let timestampData = [];
@@ -1926,6 +1930,8 @@ function skipToNextSentence() {
 
     // 2. 跳到下一句
     if (currentIndex < timestampData.length - 1) {
+        // 手機修補：seek 會觸發偽的 pause，先設旗標讓 pause listener 忽略它
+        if (isPlaying) isSeekingSkip = true;
         audio.currentTime = timestampData[currentIndex + 1].start;
     } else {
         // 已經是最後一句，跳到末尾
@@ -1948,6 +1954,9 @@ function skipToPrevSentence() {
             break; // 後面的句子還沒開始，停止搜尋
         }
     }
+
+    // 手機修補：所有 seek 路徑前都設旗標
+    if (isPlaying) isSeekingSkip = true;
 
     if (currentIndex === -1) {
         audio.currentTime = 0;
@@ -2101,6 +2110,11 @@ audio.addEventListener('play', () => {
 });
 
 audio.addEventListener('pause', () => { 
+    // --- 手機修補：seek 時觸發的偽 pause 事件，直接忽略 ---
+    if (isSeekingSkip) {
+        isSeekingSkip = false;
+        return;
+    }
     if (isPlaying) {
         pauseAudio();
     }
