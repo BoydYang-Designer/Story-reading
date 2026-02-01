@@ -89,7 +89,8 @@ let currentSnippetTimeout = null;
 
 // --- Mobile Seek Guard ---
 // 手機 seek 時會觸發偽的 pause 事件；此旗標用來忽略該事件
-let isSeekingSkip = false;
+// 用 counter 而不是 boolean，因為某些手機瀏覽器會在一次 seek 裡觸發兩個 pause
+let isSeekingSkip = 0;
 
 // --- New Timestamp State Variables ---
 let isTimestampMode = false;
@@ -1931,7 +1932,8 @@ function skipToNextSentence() {
     // 2. 跳到下一句
     if (currentIndex < timestampData.length - 1) {
         // 手機修補：seek 會觸發偽的 pause，先設旗標讓 pause listener 忽略它
-        if (isPlaying) isSeekingSkip = true;
+        // 設為 2 是因為某些手機瀏覽器會觸發兩次 pause
+        if (isPlaying) isSeekingSkip = 2;
         audio.currentTime = timestampData[currentIndex + 1].start;
     } else {
         // 已經是最後一句，跳到末尾
@@ -1955,8 +1957,8 @@ function skipToPrevSentence() {
         }
     }
 
-    // 手機修補：所有 seek 路徑前都設旗標
-    if (isPlaying) isSeekingSkip = true;
+    // 手機修補：所有 seek 路徑前都設旗標（設為 2 來應對連兩個 pause 的情況）
+    if (isPlaying) isSeekingSkip = 2;
 
     if (currentIndex === -1) {
         audio.currentTime = 0;
@@ -2101,7 +2103,9 @@ backToStoryFromNoteBtn.addEventListener('click', () => {
 audio.addEventListener('play', () => { 
     isPlaying = true; 
     playPauseBtn.classList.add('is-playing'); 
-    saveLastPlaybackState(); 
+    saveLastPlaybackState();
+    // seek 結束後清除任何殘留的 counter，避免吃掉之後真正的 pause
+    isSeekingSkip = 0;
     if (isTimestampMode) {
         timestampUpdateLoop();
     } else {
@@ -2111,8 +2115,9 @@ audio.addEventListener('play', () => {
 
 audio.addEventListener('pause', () => { 
     // --- 手機修補：seek 時觸發的偽 pause 事件，直接忽略 ---
-    if (isSeekingSkip) {
-        isSeekingSkip = false;
+    // counter > 0 表示還在 seek 視窗內，每次觸發減一，直到歸零才處理真的 pause
+    if (isSeekingSkip > 0) {
+        isSeekingSkip--;
         return;
     }
     if (isPlaying) {
