@@ -2081,12 +2081,12 @@ function highlightSentenceByIndex(targetIndex) {
     }
 }
 
-// [FIXED] story.js - skipToNextSentence (Mobile Optimized)
+// [REDESIGNED] story.js - skipToNextSentence 
+// 新架構：UI First → 從 DOM 讀取時間 → Audio Seek
 function skipToNextSentence() {
     if (!timestampData || timestampData.length === 0) return;
     
     const currentTime = audio.currentTime;
-    // 使用原生音訊狀態（更可靠）
     const wasPlaying = !audio.paused;
 
     // 1. 找出目前正在播放的句子索引
@@ -2108,16 +2108,30 @@ function skipToNextSentence() {
         }
     }
 
-    // 2. 跳到下一句
+    // 2. 計算目標句子索引
     if (currentIndex < timestampData.length - 1) {
         const targetIndex = currentIndex + 1;
-        const targetTime = timestampData[targetIndex].start;
         
-        console.log(`[Next Sentence] Current: ${currentIndex}, Target: ${targetIndex}, Time: ${targetTime.toFixed(2)}s`);
+        console.log(`[Next Sentence] Current: ${currentIndex}, Target: ${targetIndex}`);
         
-        // ===== CRITICAL FIX: 先更新 UI，再執行 seek =====
+        // ===== 關鍵改變：先更新 UI =====
         highlightSentenceByIndex(targetIndex);
-        performMobileSeek(targetTime, wasPlaying);
+        
+        // ===== 從 DOM 讀取時間戳記（確保與 UI 同步）=====
+        const highlightedElement = textContainer.querySelector('.timestamp-sentence.is-current');
+        
+        if (highlightedElement && highlightedElement.dataset.start) {
+            const targetTime = parseFloat(highlightedElement.dataset.start);
+            console.log(`[Next Sentence] Reading time from DOM: ${targetTime.toFixed(2)}s`);
+            
+            // 現在才執行 seek
+            performMobileSeek(targetTime, wasPlaying);
+        } else {
+            // 備用方案：從 timestampData 讀取
+            console.warn('[Next Sentence] Could not read from DOM, using timestampData');
+            const targetTime = timestampData[targetIndex].start;
+            performMobileSeek(targetTime, wasPlaying);
+        }
         
     } else {
         // 已經是最後一句，跳到末尾
@@ -2126,12 +2140,12 @@ function skipToNextSentence() {
     }
 }
 
-// [FIXED] story.js - skipToPrevSentence (Mobile Optimized)
+// [REDESIGNED] story.js - skipToPrevSentence
+// 新架構：UI First → 從 DOM 讀取時間 → Audio Seek
 function skipToPrevSentence() {
     if (!timestampData || timestampData.length === 0) return;
 
     const currentTime = audio.currentTime;
-    // 使用原生音訊狀態
     const wasPlaying = !audio.paused;
     
     // 1. 找出目前正在播放的句子索引
@@ -2161,32 +2175,43 @@ function skipToPrevSentence() {
     }
 
     const currentSent = timestampData[currentIndex];
-    let targetTime = 0;
     let targetIndex = 0;
 
     // 2. 判斷邏輯：如果已經播放超過 1.5 秒，重聽當前句；否則跳到前一句
     if (currentTime > currentSent.start + 1.5) {
         // 重聽當前句
         targetIndex = currentIndex;
-        targetTime = currentSent.start;
         console.log(`[Prev Sentence] Replay current sentence ${targetIndex}`);
     } else {
         if (currentIndex > 0) {
             // 跳到前一句
             targetIndex = currentIndex - 1;
-            targetTime = timestampData[targetIndex].start;
             console.log(`[Prev Sentence] Go to previous sentence ${targetIndex}`);
         } else {
             // 已經是第一句，回到開頭
             targetIndex = 0;
-            targetTime = 0;
             console.log('[Prev Sentence] Already at first sentence, seeking to start');
         }
     }
 
-    // ===== CRITICAL FIX: 先更新 UI，再執行 seek =====
+    // ===== 關鍵改變：先更新 UI =====
     highlightSentenceByIndex(targetIndex);
-    performMobileSeek(targetTime, wasPlaying);
+    
+    // ===== 從 DOM 讀取時間戳記（確保與 UI 同步）=====
+    const highlightedElement = textContainer.querySelector('.timestamp-sentence.is-current');
+    
+    if (highlightedElement && highlightedElement.dataset.start) {
+        const targetTime = parseFloat(highlightedElement.dataset.start);
+        console.log(`[Prev Sentence] Reading time from DOM: ${targetTime.toFixed(2)}s`);
+        
+        // 現在才執行 seek
+        performMobileSeek(targetTime, wasPlaying);
+    } else {
+        // 備用方案：從 timestampData 讀取
+        console.warn('[Prev Sentence] Could not read from DOM, using timestampData');
+        const targetTime = timestampData[targetIndex].start;
+        performMobileSeek(targetTime, wasPlaying);
+    }
 }
 
 // Button listeners
