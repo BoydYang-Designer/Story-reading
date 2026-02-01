@@ -1344,11 +1344,12 @@ function renderTimestampContent() {
     const savedSet = getSavedWordsForCurrentStory(currentCategoryName, currentStoryTitle);
     // -----------------------------
 
-    timestampData.forEach(line => {
+    timestampData.forEach((line, index) => {
         const p = document.createElement('p');
         p.className = 'timestamp-sentence';
         p.dataset.start = line.start;
         p.dataset.end = line.end;
+        p.dataset.tsIndex = index; // 新增：添加索引屬性
 
         line.sentence.split(/(\s+|—|–)/).forEach(part => {
             if (!part) return;
@@ -1426,16 +1427,17 @@ function timestampUpdateLoop() {
 
     const currentTime = audio.currentTime;
     
-    // 1. Highlight Logic
-    let activeSentence = null;
-    for (const line of timestampData) {
+    // 1. Highlight Logic - 找到當前播放的句子索引
+    let activeIndex = -1;
+    for (let i = 0; i < timestampData.length; i++) {
+        const line = timestampData[i];
         if (currentTime >= line.start && currentTime < line.end) {
-            activeSentence = line;
+            activeIndex = i;
             break;
         }
     }
     
-    const sentenceElement = activeSentence ? textContainer.querySelector(`[data-start="${activeSentence.start}"]`) : null;
+    const sentenceElement = (activeIndex >= 0) ? textContainer.querySelector(`[data-ts-index="${activeIndex}"]`) : null;
     
     if (sentenceElement && sentenceElement !== lastHighlightedSentence) {
         if (lastHighlightedSentence) {
@@ -1914,6 +1916,31 @@ function pauseAudio() {
 
 // --- New Helper Functions for Timestamp Navigation ---
 
+// --- Helper function to immediately highlight a sentence by index ---
+function highlightSentenceByIndex(targetIndex) {
+    if (!timestampData || targetIndex < 0 || targetIndex >= timestampData.length) return;
+    
+    // 移除舊的高亮
+    if (lastHighlightedSentence) {
+        lastHighlightedSentence.classList.remove('is-current');
+    }
+    
+    // 添加新的高亮（使用 data-ts-index 而不是 data-start，更可靠）
+    const targetSentence = textContainer.querySelector(`[data-ts-index="${targetIndex}"]`);
+    if (targetSentence) {
+        targetSentence.classList.add('is-current');
+        lastHighlightedSentence = targetSentence;
+        
+        // 滾動到視窗中央
+        const containerHeight = textContainer.clientHeight;
+        const sentenceTop = targetSentence.offsetTop;
+        const sentenceHeight = targetSentence.offsetHeight;
+        const targetScrollTop = sentenceTop - (containerHeight / 2) + (sentenceHeight / 2);
+        
+        textContainer.scrollTop = targetScrollTop;
+    }
+}
+
 function skipToNextSentence() {
     if (!timestampData || timestampData.length === 0) return;
     
@@ -1931,19 +1958,18 @@ function skipToNextSentence() {
 
     // 2. 跳到下一句
     if (currentIndex < timestampData.length - 1) {
+        const targetIndex = currentIndex + 1;
+        const targetTime = timestampData[targetIndex].start;
+        
         // 手機修補：seek 會觸發偽的 pause，先設旗標讓 pause listener 忽略它
         // 設為 2 是因為某些手機瀏覽器會觸發兩次 pause
         if (isPlaying) isSeekingSkip = 2;
-        audio.currentTime = timestampData[currentIndex + 1].start;
         
-        // 強制更新高亮和滾動(無論播放或暫停狀態)
-        setTimeout(() => {
-            updateTimestampHighlight();
-            const targetSentence = textContainer.querySelector(`[data-ts-index="${currentIndex + 1}"]`);
-            if (targetSentence) {
-                targetSentence.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-        }, 50);
+        // 立即更新高亮（在 seek 之前），使用目標索引
+        highlightSentenceByIndex(targetIndex);
+        
+        // 然後才設定音頻位置
+        audio.currentTime = targetTime;
     } else {
         // 已經是最後一句，跳到末尾
         audio.currentTime = audio.duration;
@@ -1970,6 +1996,7 @@ function skipToPrevSentence() {
     if (isPlaying) isSeekingSkip = 2;
 
     if (currentIndex === -1) {
+        highlightSentenceByIndex(0);
         audio.currentTime = 0;
         return;
     }
@@ -1980,36 +2007,19 @@ function skipToPrevSentence() {
     // 如果播放超過該句開頭 1.5 秒，按「上一句」通常是想「重聽這一句」。
     // 如果剛開始播不到 1.5 秒，按「上一句」才是真的跳到「前一句」。
     if (currentTime > currentSent.start + 1.5) {
+        // 重聽當前句
+        highlightSentenceByIndex(currentIndex);
         audio.currentTime = currentSent.start;
-        
-        // 強制更新高亮和滾動
-        setTimeout(() => {
-            updateTimestampHighlight();
-            const targetSentence = textContainer.querySelector(`[data-ts-index="${currentIndex}"]`);
-            if (targetSentence) {
-                targetSentence.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-        }, 50);
     } else {
         if (currentIndex > 0) {
-            audio.currentTime = timestampData[currentIndex - 1].start;
-            
-            // 強制更新高亮和滾動
-            setTimeout(() => {
-                updateTimestampHighlight();
-                const targetSentence = textContainer.querySelector(`[data-ts-index="${currentIndex - 1}"]`);
-                if (targetSentence) {
-                    targetSentence.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
-            }, 50);
+            // 跳到前一句
+            const targetIndex = currentIndex - 1;
+            highlightSentenceByIndex(targetIndex);
+            audio.currentTime = timestampData[targetIndex].start;
         } else {
+            // 已經是第一句，回到開頭
+            highlightSentenceByIndex(0);
             audio.currentTime = 0;
-            
-            // 強制更新高亮和滾動到頂部
-            setTimeout(() => {
-                updateTimestampHighlight();
-                textContainer.scrollTop = 0;
-            }, 50);
         }
     }
 }
