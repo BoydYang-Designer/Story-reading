@@ -105,6 +105,7 @@ let timestampData = [];
 let hasTimestampFile = false;
 let lastHighlightedSentence = null;
 let timestampUpdateRafId = null; // For smooth scrolling animation
+let pendingHighlightIndex = -1; // Seek 期間鎖定的目標句子索引，-1 = 正常跟隨 MP3 模式
 
 // --- NEW State Variables for JSON Mode Highlighting ---
 let jsonModeUpdateRafId = null;
@@ -176,6 +177,11 @@ function onSeekCompleted() {
     // 重置 seek 狀態
     mobileSeekState.isSeeking = false;
     mobileSeekState.ignoreTimeupdate = false;
+
+    // === 清除 highlight 鎖定 ===
+    // Seek 已經完成，audio.currentTime 已經到達目標位置，
+    // timestampUpdateLoop 可以安全地回到根據 MP3 位置同步的正常模式
+    pendingHighlightIndex = -1;
     
     // 如果需要恢復播放
     if (shouldResume) {
@@ -1569,11 +1575,19 @@ function timestampUpdateLoop() {
     
     // 1. Highlight Logic - 找到當前播放的句子索引
     let activeIndex = -1;
-    for (let i = 0; i < timestampData.length; i++) {
-        const line = timestampData[i];
-        if (currentTime >= line.start && currentTime < line.end) {
-            activeIndex = i;
-            break;
+
+    if (pendingHighlightIndex >= 0) {
+        // === Seek 期間：鎖定在目標句子，不根據 audio.currentTime 重新計算 ===
+        // 這樣可以避免 seek 尚未完成時 highlight 閃動回舊句子
+        activeIndex = pendingHighlightIndex;
+    } else {
+        // === 正常模式：根據 MP3 當前播放位置同步 highlight ===
+        for (let i = 0; i < timestampData.length; i++) {
+            const line = timestampData[i];
+            if (currentTime >= line.start && currentTime < line.end) {
+                activeIndex = i;
+                break;
+            }
         }
     }
     
@@ -2114,6 +2128,9 @@ function skipToNextSentence() {
         
         console.log(`[Next Sentence] Current: ${currentIndex}, Target: ${targetIndex}`);
         
+        // ===== 鎖定 highlight，防止 seek 期間閃動 =====
+        pendingHighlightIndex = targetIndex;
+
         // ===== 關鍵改變：先更新 UI =====
         highlightSentenceByIndex(targetIndex);
         
@@ -2193,6 +2210,9 @@ function skipToPrevSentence() {
             console.log('[Prev Sentence] Already at first sentence, seeking to start');
         }
     }
+
+    // ===== 鎖定 highlight，防止 seek 期間閃動 =====
+    pendingHighlightIndex = targetIndex;
 
     // ===== 關鍵改變：先更新 UI =====
     highlightSentenceByIndex(targetIndex);
