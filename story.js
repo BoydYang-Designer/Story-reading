@@ -118,7 +118,7 @@ const SAVED_WORDS_KEY = 'readingChallengeSavedWordsV2';
 // ===== MOBILE SEEK HELPER FUNCTIONS =====
 
 /**
- * 執行音訊 seek 操作（專為手機瀏覽器優化）
+ * 執行音訊 seek 操作（專為手機瀏覽器優化，特別針對 iOS Safari）
  * @param {number} targetTime - 目標時間點（秒）
  * @param {boolean} shouldResume - seek 完成後是否繼續播放
  */
@@ -137,14 +137,26 @@ function performMobileSeek(targetTime, shouldResume = false) {
     mobileSeekState.seekStartTime = Date.now();
     mobileSeekState.ignoreTimeupdate = true;
     
-    // 執行 seek
-    audio.currentTime = targetTime;
+    // ===== iOS CRITICAL FIX: 先暫停再 seek =====
+    // iOS Safari 在播放中 seek 會有問題，必須先暫停
+    const wasActuallyPlaying = !audio.paused;
+    if (wasActuallyPlaying) {
+        console.log('[Mobile Seek] Pausing before seek (iOS requirement)');
+        audio.pause();
+    }
     
-    // 設定安全超時（防止某些手機瀏覽器的 seeked 事件沒有觸發）
+    // 短暫延遲確保暫停完成（iOS 需要）
+    setTimeout(() => {
+        // 執行 seek
+        audio.currentTime = targetTime;
+        console.log('[Mobile Seek] Seek executed, waiting for seeked event');
+    }, 50); // 50ms 延遲給 iOS 時間處理暫停
+    
+    // 設定安全超時（iOS 有時候 seeked 事件會延遲）
     mobileSeekState.pendingSeekTimeout = setTimeout(() => {
         console.warn('[Mobile Seek] Seek timeout - forcing completion');
         onSeekCompleted();
-    }, 1000); // 1 秒超時
+    }, 2000); // iOS 需要更長的超時時間
 }
 
 /**
@@ -166,21 +178,52 @@ function onSeekCompleted() {
     mobileSeekState.ignoreTimeupdate = false;
     
     // 如果需要恢復播放
-    if (shouldResume && !isPlaying) {
+    if (shouldResume) {
         console.log('[Mobile Seek] Resuming playback after seek');
-        const playPromise = audio.play();
-        if (playPromise !== undefined) {
-            playPromise
-                .then(() => {
-                    console.log('[Mobile Seek] Playback resumed successfully');
-                })
-                .catch(error => {
-                    console.error('[Mobile Seek] Failed to resume playback:', error);
-                    // 更新 UI 以反映實際狀態
-                    isPlaying = false;
-                    playPauseBtn.classList.remove('is-playing');
-                });
-        }
+        
+        // ===== iOS CRITICAL FIX: 等待 canplay 事件 =====
+        // iOS 需要確保音訊已準備好才能播放
+        const attemptPlay = () => {
+            const playPromise = audio.play();
+            if (playPromise !== undefined) {
+                playPromise
+                    .then(() => {
+                        console.log('[Mobile Seek] Playback resumed successfully');
+                        // 確保狀態同步
+                        isPlaying = true;
+                        playPauseBtn.classList.add('is-playing');
+                    })
+                    .catch(error => {
+                        console.error('[Mobile Seek] Failed to resume playback:', error);
+                        
+                        // iOS 特殊處理：如果失敗，等待一下再試
+                        if (error.name === 'NotAllowedError' || error.name === 'AbortError') {
+                            console.log('[Mobile Seek] Waiting for canplay event (iOS)');
+                            const canplayHandler = () => {
+                                audio.removeEventListener('canplay', canplayHandler);
+                                console.log('[Mobile Seek] canplay fired, retrying play');
+                                attemptPlay();
+                            };
+                            audio.addEventListener('canplay', canplayHandler, { once: true });
+                            
+                            // 超時保護
+                            setTimeout(() => {
+                                audio.removeEventListener('canplay', canplayHandler);
+                                console.warn('[Mobile Seek] canplay timeout, giving up');
+                                isPlaying = false;
+                                playPauseBtn.classList.remove('is-playing');
+                            }, 1000);
+                        } else {
+                            // 其他錯誤，更新 UI
+                            isPlaying = false;
+                            playPauseBtn.classList.remove('is-playing');
+                        }
+                    });
+            }
+        };
+        
+        // 立即嘗試播放
+        attemptPlay();
     }
 }
 
@@ -188,10 +231,11 @@ function onSeekCompleted() {
  * 檢查是否應該因為 seek 而忽略當前事件
  */
 function shouldIgnoreEventDueToSeek() {
-    // 如果正在 seek 且時間小於 500ms，忽略事件
+    // iOS 的 seek 事件序列比較長，需要更長的容忍時間
     if (mobileSeekState.isSeeking) {
         const timeSinceSeekStart = Date.now() - mobileSeekState.seekStartTime;
-        if (timeSinceSeekStart < 500) {
+        // iOS 需要 1000ms（而非 500ms）
+        if (timeSinceSeekStart < 1000) {
             return true;
         }
     }
