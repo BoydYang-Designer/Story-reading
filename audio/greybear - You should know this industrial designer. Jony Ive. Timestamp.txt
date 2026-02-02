@@ -1,0 +1,16 @@
+[00:00:00.000 --> 00:00:01.560] You should know this industrial designer.
+[00:00:01.800 --> 00:00:05.380] This is Johnny Ive, the designer that made simplicity feel inevitable.
+[00:00:05.620 --> 00:00:08.440] At Apple, Ive's philosophy wasn't about minimalism.
+[00:00:08.580 --> 00:00:13.680] He believed that true simplicity came from understanding complexity, then removing that fraction for the user.
+[00:00:13.880 --> 00:00:17.240] He put it as, true simplicity is more than the absence of clutter.
+[00:00:17.460 --> 00:00:20.280] If a detail didn't serve any purpose, then it was removed.
+[00:00:20.580 --> 00:00:23.320] That discipline shaped products that feel obvious in hindsight.
+[00:00:23.540 --> 00:00:26.660] The original 2007 iPhone is a clear example of that.
+[00:00:26.660 --> 00:00:30.380] At a time that was quite radical, but it made the iPhone instantly intuitive.
+[00:00:30.640 --> 00:00:31.540] You didn't really need instructions.
+[00:00:32.100 --> 00:00:33.200] You were just able to use it.
+[00:00:33.340 --> 00:00:35.280] The iMac G3 applied the same logic.
+[00:00:35.640 --> 00:00:39.880] Translucent colors turned something that was rather intimidating into something that was meant for the home.
+[00:00:40.020 --> 00:00:44.500] Across the iMac, iPhone, and iPod, Ive's clearly showed that clarity meant confidence.
+[00:00:44.940 --> 00:00:46.620] The takeaway isn't just to make it more minimal.
+[00:00:46.880 --> 00:00:51.720] It's to design with empathy, remove distractions, respect the user, and let simplicity do the work.

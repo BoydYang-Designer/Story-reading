@@ -1,0 +1,26 @@
+[00:00:00.000 --> 00:00:01.740] You should add these things to your portfolio.
+[00:00:02.060 --> 00:00:03.420] End -to -end process story.
+[00:00:03.620 --> 00:00:06.200] Pick one project and lay it out in a single line that's scannable.
+[00:00:06.340 --> 00:00:08.760] Problems inside sketches, iterations, and tests.
+[00:00:09.060 --> 00:00:11.660] But also the final solution, the outcome, and the reflection.
+[00:00:12.040 --> 00:00:13.520] Try to use blunt headings for these.
+[00:00:13.840 --> 00:00:15.660] You can also add a short before and after.
+[00:00:15.940 --> 00:00:18.480] Also writing short annotations that explain your decisions helps.
+[00:00:18.780 --> 00:00:22.240] You should do this because you don't want to avoid trying to hide the messy middle of your project.
+[00:00:22.400 --> 00:00:25.340] You want to show what changed, when it changed, and why you changed it.
+[00:00:25.580 --> 00:00:26.480] Quantifiable impacts.
+[00:00:26.480 --> 00:00:30.780] Add a final result box to either your final design or some of the case studies that you looked at.
+[00:00:30.900 --> 00:00:32.560] And make sure to use numbers when you do this.
+[00:00:32.760 --> 00:00:38.260] Try to show time saved, errors removed, assembly steps removed, parts reduced, weight changed, and success rate.
+[00:00:38.400 --> 00:00:41.160] But there's still a lot of other things that you could try adding or showing.
+[00:00:41.380 --> 00:00:44.700] If you don't have lab data, then you can just try and use a very clearly labeled estimate.
+[00:00:44.940 --> 00:00:46.280] Show constraints and trade -offs.
+[00:00:46.520 --> 00:00:52.300] Make the limits visible by showing manufacturing process, cost target, assembly sequence, material, and durability.
+[00:00:52.780 --> 00:00:54.900] Include one rejected option and why it was rejected.
+[00:00:54.900 --> 00:00:57.100] You could also add two to three call -outs.
+[00:00:57.360 --> 00:00:59.480] For alignment tolerances or failure points.
+[00:00:59.760 --> 00:01:01.160] Show research and testing evidence.
+[00:01:01.460 --> 00:01:04.380] Show that real people or real constraints forced iteration.
+[00:01:04.740 --> 00:01:06.740] Try to show this in some sort of observable loop.
+[00:01:06.820 --> 00:01:10.940] Observation, test, failure, design change, retest, and improvement.
+[00:01:11.240 --> 00:01:14.800] It would also be beneficial to show how each iteration fixed a certain issue.
