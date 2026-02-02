@@ -103,6 +103,58 @@ let lastActiveSentenceStart = -1; // To track the current sentence
 const LAST_SESSION_KEY = 'readingChallengeLastSession';
 const SAVED_WORDS_KEY = 'readingChallengeSavedWordsV2';
 
+// ============================================
+// 手機音訊時間定位精度修正 - 新增區塊
+// ============================================
+
+// 偵測是否為手機裝置
+function isMobileDevice() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
+// 改進的音訊時間設定函數 - 加入緩衝和重試機制
+function setAudioTimeAccurate(targetTime, maxRetries = 3) {
+    const isMobile = isMobileDevice();
+    
+    // 手機裝置：提前 0.3 秒以補償定位誤差
+    // PC 裝置：提前 0.1 秒（較精確）
+    const bufferTime = isMobile ? 0.3 : 0.1;
+    const adjustedTime = Math.max(0, targetTime - bufferTime);
+    
+    console.log(`[Time Set] Target: ${targetTime.toFixed(3)}s, Adjusted: ${adjustedTime.toFixed(3)}s (Mobile: ${isMobile})`);
+    
+    // 第一次設定
+    audio.currentTime = adjustedTime;
+    
+    // 驗證機制：檢查是否設定成功
+    let retryCount = 0;
+    const verifyInterval = setInterval(() => {
+        const actualTime = audio.currentTime;
+        const timeDiff = Math.abs(actualTime - adjustedTime);
+        
+        // 如果誤差超過 0.5 秒，重新設定
+        if (timeDiff > 0.5 && retryCount < maxRetries) {
+            console.warn(`[Time Set Retry ${retryCount + 1}] Expected: ${adjustedTime.toFixed(3)}s, Got: ${actualTime.toFixed(3)}s`);
+            audio.currentTime = adjustedTime;
+            retryCount++;
+        } else {
+            clearInterval(verifyInterval);
+            if (timeDiff > 0.5) {
+                console.error(`[Time Set Failed] After ${maxRetries} retries, still off by ${timeDiff.toFixed(3)}s`);
+            } else {
+                console.log(`[Time Set Success] Positioned at ${actualTime.toFixed(3)}s`);
+            }
+        }
+    }, 100); // 每 100ms 檢查一次
+    
+    // 5 秒後清除驗證機制（避免永久運行）
+    setTimeout(() => clearInterval(verifyInterval), 5000);
+}
+
+// ============================================
+// 手機音訊時間定位精度修正 - 結束
+// ============================================
+
 // --- UI Management ---
 
 // NEW: Function to show the login view
@@ -1410,10 +1462,11 @@ function timestampUpdateLoop() {
 
     const currentTime = audio.currentTime;
     
-    // 1. Highlight Logic
+    // 1. Highlight Logic - 增加容錯範圍：±0.3 秒
     let activeSentence = null;
     for (const line of timestampData) {
-        if (currentTime >= line.start && currentTime <= line.end) {
+        // 增加容錯範圍以補償手機音訊定位誤差
+        if (currentTime >= line.start - 0.3 && currentTime <= line.end + 0.3) {
             activeSentence = line;
             break;
         }
@@ -1427,6 +1480,10 @@ function timestampUpdateLoop() {
         }
         sentenceElement.classList.add('is-current');
         lastHighlightedSentence = sentenceElement;
+    } else if (!activeSentence && lastHighlightedSentence) {
+        // 如果沒有匹配項（例如在句子間隙），清除高亮
+        lastHighlightedSentence.classList.remove('is-current');
+        lastHighlightedSentence = null;
     }
 
     // 2. Predictive Smooth Scrolling Logic
@@ -1905,7 +1962,7 @@ function skipToNextSentence() {
     const nextSent = timestampData.find(line => line.start > currentTime + 0.2);
     
     if (nextSent) {
-        audio.currentTime = nextSent.start;
+        setAudioTimeAccurate(nextSent.start); // 使用改進的時間設定函數
     } else {
         // 如果找不到(已經是最後一句之後)，就跳到結束
         audio.currentTime = audio.duration;
@@ -1936,13 +1993,17 @@ function skipToPrevSentence() {
     const currentSent = timestampData[currentIndex];
 
     // 2. 判斷邏輯：
-    // 如果播放超過該句開頭 1.5 秒，按「上一句」通常是想「重聽這一句」。
-    // 如果剛開始播不到 1.5 秒，按「上一句」才是真的跳到「前一句」。
-    if (currentTime > currentSent.start + 1.5) {
-        audio.currentTime = currentSent.start;
+    // 手機裝置：放寬到 2.0 秒（因為觸控操作較慢）
+    // PC 裝置：維持 1.5 秒
+    // 如果播放超過該句開頭一定時間，按「上一句」通常是想「重聽這一句」。
+    // 如果剛開始播放不久，按「上一句」才是真的跳到「前一句」。
+    const threshold = isMobileDevice() ? 2.0 : 1.5;
+    
+    if (currentTime > currentSent.start + threshold) {
+        setAudioTimeAccurate(currentSent.start); // 使用改進的時間設定函數
     } else {
         if (currentIndex > 0) {
-            audio.currentTime = timestampData[currentIndex - 1].start;
+            setAudioTimeAccurate(timestampData[currentIndex - 1].start); // 使用改進的時間設定函數
         } else {
             audio.currentTime = 0;
         }
