@@ -1196,9 +1196,18 @@ function isWordMatchVariation(word1, word2) {
 function playWordAudio(word) {
     const audioSrc = `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(word.trim())}.mp3`;
     const wordAudio = new Audio(audioSrc);
+    
     wordAudio.play().catch((error) => {
-        console.log(`Audio not found for "${word}":`, error);
-        showNotification(`Audio for "${word}" was not found.`, 'error');
+        console.log(`Audio not found for "${word}", using TTS fallback:`, error);
+        // 使用 Web Speech API 作為備用方案
+        if ('speechSynthesis' in window) {
+            const utterance = new SpeechSynthesisUtterance(word.trim());
+            utterance.lang = 'en-US'; // 設定為英文發音
+            utterance.rate = 0.9; // 稍微慢一點，讓發音更清楚
+            window.speechSynthesis.speak(utterance);
+        } else {
+            showNotification(`Audio for "${word}" was not found and TTS is not supported.`, 'error');
+        }
     });
 }
 
@@ -1232,7 +1241,7 @@ textContainer.addEventListener('click', (e) => {
             if (wordSpan) {
                 const cleanedWord = cleanWord(wordSpan.textContent);
                 if (cleanedWord) {
-                    // NEW: If word is saved and player is paused, play its audio
+                    // MODIFIED: Play audio for ANY word when paused
                     if (wordSpan.classList.contains('is-saved-word')) {
                         // Find the actual saved word form from notes
                         const savedForm = findSavedWordForm(cleanedWord, currentCategoryName, currentStoryTitle);
@@ -1242,6 +1251,9 @@ textContainer.addEventListener('click', (e) => {
                             // Fallback to clicked word if not found
                             playWordAudio(cleanedWord);
                         }
+                    } else {
+                        // Play audio even for non-saved words
+                        playWordAudio(cleanedWord);
                     }
                     
                     const stagedWordEl = document.createElement('span');
@@ -1257,14 +1269,19 @@ textContainer.addEventListener('click', (e) => {
         if (wordSpan) {
             const cleanedWord = cleanWord(wordSpan.textContent);
             if (cleanedWord) {
-                // NEW: If word is saved and player is paused, play its audio
-                if (!isPlaying && wordSpan.classList.contains('is-saved-word')) {
-                    // Find the actual saved word form from notes
-                    const savedForm = findSavedWordForm(cleanedWord, currentCategoryName, currentStoryTitle);
-                    if (savedForm) {
-                        playWordAudio(savedForm);
+                // MODIFIED: Play audio for ANY word when paused
+                if (!isPlaying) {
+                    if (wordSpan.classList.contains('is-saved-word')) {
+                        // Find the actual saved word form from notes
+                        const savedForm = findSavedWordForm(cleanedWord, currentCategoryName, currentStoryTitle);
+                        if (savedForm) {
+                            playWordAudio(savedForm);
+                        } else {
+                            // Fallback to clicked word if not found
+                            playWordAudio(cleanedWord);
+                        }
                     } else {
-                        // Fallback to clicked word if not found
+                        // Play audio even for non-saved words
                         playWordAudio(cleanedWord);
                     }
                 }
