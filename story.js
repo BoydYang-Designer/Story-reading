@@ -102,6 +102,7 @@ let lastActiveSentenceStart = -1; // To track the current sentence
 // Storage Keys
 const LAST_SESSION_KEY = 'readingChallengeLastSession';
 const SAVED_WORDS_KEY = 'readingChallengeSavedWordsV2';
+const SUB_CATEGORY_SESSION_KEY = 'readingChallengeSubCategorySessions'; // 儲存所有子分類的進度
 
 // ============================================
 // 手機音訊時間定位精度修正 - 新增區塊
@@ -444,24 +445,60 @@ function persistNotes() {
 // ===== UPDATED FUNCTION: SAVE PLAYBACK STATE TO CLOUD =====
 function saveLastPlaybackState() {
     if (currentStoryIndex > -1 && currentStoryList[currentStoryIndex]) {
-        const state = { title: currentStoryList[currentStoryIndex]['標題'], time: audio.currentTime };
+        const story = currentStoryList[currentStoryIndex];
+        const state = { 
+            title: story['標題'], 
+            time: audio.currentTime,
+            category: story['分類']?.[0],
+            majorCategory: story['大類'] || 'Uncategorized'
+        };
         
-        // 1. Save locally (as backup and for offline use)
+        // 1. Save globally (最新的播放記錄)
         localStorage.setItem(LAST_SESSION_KEY, JSON.stringify(state));
 
-        // 2. === NEW: If logged in, sync to Cloud ===
+        // 2. 儲存到該子分類的專屬記錄
+        try {
+            const subCategorySessions = JSON.parse(localStorage.getItem(SUB_CATEGORY_SESSION_KEY) || '{}');
+            
+            const categoryKey = state.category;
+            if (categoryKey) {
+                subCategorySessions[categoryKey] = {
+                    title: state.title,
+                    time: state.time,
+                    majorCategory: state.majorCategory,
+                    timestamp: Date.now()
+                };
+                localStorage.setItem(SUB_CATEGORY_SESSION_KEY, JSON.stringify(subCategorySessions));
+            }
+        } catch (e) {
+            console.error("Error saving sub-category session:", e);
+        }
+
+        // 3. If logged in, sync to Cloud
         if (currentUser) {
-            // Using merge: true to avoid overwriting the 'savedWords' field
             db.collection('userNotes').doc(currentUser.uid).set({ 
-                lastSession: state 
+                lastSession: state,
+                subCategorySessions: JSON.parse(localStorage.getItem(SUB_CATEGORY_SESSION_KEY) || '{}')
             }, { merge: true }).catch(err => console.error("Error saving session to cloud:", err));
         }
-        // ===========================================
     }
 }
 
+
 function clearLastPlaybackState() {
     localStorage.removeItem(LAST_SESSION_KEY);
+}
+
+function clearSubCategoryPlaybackState(categoryName) {
+    try {
+        const subCategorySessions = JSON.parse(localStorage.getItem(SUB_CATEGORY_SESSION_KEY) || '{}');
+        if (subCategorySessions[categoryName]) {
+            delete subCategorySessions[categoryName];
+            localStorage.setItem(SUB_CATEGORY_SESSION_KEY, JSON.stringify(subCategorySessions));
+        }
+    } catch (e) {
+        console.error("Error clearing sub-category session:", e);
+    }
 }
 
 // story.js - 新增 Helper Functions
@@ -1810,15 +1847,103 @@ function showSubCategories(major) {
   const storiesInMajor = stories.filter(s => (s['大類'] || 'Uncategorized') === major);
   const categories = [...new Set(storiesInMajor.flatMap(item => item['分類'] || []).map(c => c.trim()).filter(Boolean))].sort();
 
+  // 讀取所有子分類的播放記錄
+  let subCategorySessions = {};
+  try {
+      subCategorySessions = JSON.parse(localStorage.getItem(SUB_CATEGORY_SESSION_KEY) || '{}');
+  } catch (e) {
+      console.error("Error loading sub-category sessions:", e);
+  }
+
   categories.forEach(category => {
-    // 修改處：傳入 major 作為第三個參數 (fallback)
-    // 如果找不到 category 的圖，就會去抓 major 的圖
+    // 建立容器包含分類項目和繼續閱讀按鈕
+    const wrapper = document.createElement('div');
+    wrapper.style.marginBottom = '10px';
+    
+    // 原本的分類項目
     const item = createListItemWithImage(category, () => showCategory(category), major);
-    subCategoryList.appendChild(item);
+    wrapper.appendChild(item);
+    
+    // 檢查這個分類是否有播放記錄
+    const categorySession = subCategorySessions[category];
+    if (categorySession && categorySession.time > 5) {
+        const { title, time } = categorySession;
+        
+        // 檢查該文章是否還存在
+        const storyExists = stories.some(s => 
+            s['標題'] === title && 
+            s['分類']?.includes(category)
+        );
+        
+        if (storyExists) {
+            const continueBtn = document.createElement('div');
+            continueBtn.className = 'category-item sub-category-continue-btn';
+            
+            // 設定樣式
+            continueBtn.style.backgroundColor = '#f1f8f4';
+            continueBtn.style.border = '1px solid #81C784';
+            continueBtn.style.color = '#388E3C';
+            continueBtn.style.fontSize = '0.9em';
+            continueBtn.style.padding = '8px 12px';
+            continueBtn.style.marginTop = '5px';
+            continueBtn.style.marginLeft = '10px';
+            continueBtn.style.marginRight = '10px';
+            
+            // 格式化時間
+            const minutes = Math.floor(time / 60);
+            const seconds = Math.floor(time % 60).toString().padStart(2, '0');
+            
+            // 設定按鈕內容
+            const displayTitle = title.length > 30 ? title.substring(0, 30) + '...' : title;
+            continueBtn.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                    <span style="font-size: 0.85em;">↻ Continue: ${displayTitle}</span>
+                    <span style="font-size: 0.8em; opacity: 0.8;">${minutes}:${seconds}</span>
+                </div>
+            `;
+            
+            // 點擊事件
+            continueBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                resumeSubCategoryPlayback(category, title, time);
+            });
+
+            wrapper.appendChild(continueBtn);
+        }
+    }
+    
+    subCategoryList.appendChild(wrapper);
   });
 
   showView(subCategoryView);
 }
+
+function resumeSubCategoryPlayback(category, title, time) {
+    const story = stories.find(s => 
+        s['標題'] === title && 
+        s['分類']?.includes(category)
+    );
+    
+    if (!story) {
+        alert("Could not find the story from this category's last session.");
+        clearSubCategoryPlaybackState(category);
+        showSubCategories(currentMajorCategory);
+        return;
+    }
+    
+    currentStoryList = stories.filter(item => 
+        item['分類']?.map(c => c.trim()).includes(category) &&
+        (item['大類'] || 'Uncategorized') === currentMajorCategory
+    ).sort((a, b) => String(a['標題']).localeCompare(String(b['標題'])));
+    
+    const indexInList = currentStoryList.findIndex(s => s['標題'] === title);
+    
+    if (indexInList > -1) {
+        showCategory(category);
+        showPlayback(indexInList, time);
+    }
+}
+
 
 function resumeLastPlayback(title, time) {
     const story = stories.find(s => s['標題'] === title);
