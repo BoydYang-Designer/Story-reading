@@ -52,6 +52,8 @@ const backToHomeFromNoteBtn = document.getElementById('back-to-home-from-note');
 const noteListWords = document.getElementById('note-list-words');
 const noteListSentences = document.getElementById('note-list-sentences');
 const exportWordsBtn = document.getElementById('export-words-btn');
+const exportCurrentNoteJsonBtn = document.getElementById('export-current-note-json-btn');
+const exportAllNotesJsonBtn = document.getElementById('export-all-notes-json-btn');
 const goToStoryNoteBtn = document.getElementById('go-to-story-note-btn');
 const backToStoryFromNoteBtn = document.getElementById('back-to-story-from-note-btn');
 const addWordForm = document.getElementById('add-word-form');
@@ -70,7 +72,6 @@ const backToHomeFromDataManagerBtn = document.getElementById('back-to-home-from-
 const exportAllDataBtn = document.getElementById('export-all-data-btn');
 const importDataBtn = document.getElementById('import-data-btn');
 const importDataInput = document.getElementById('import-data-input');
-const savedWordsEditor = document.getElementById('saved-words-editor');
 const readingProgressEditor = document.getElementById('reading-progress-editor');
 const lastSessionEditor = document.getElementById('last-session-editor');
 
@@ -812,10 +813,18 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
     addWordForm.style.display = 'none'; // Ensure hidden in Categories/Titles
     backToStoryFromNoteBtn.hidden = true;
     exportWordsBtn.hidden = true;
+    exportCurrentNoteJsonBtn.hidden = true;
+    exportAllNotesJsonBtn.hidden = true;
     prevNoteBtn.hidden = true; 
     prevNoteBtn.onclick = null; 
     nextNoteBtn.hidden = true; 
     nextNoteBtn.onclick = null; 
+    
+    // Hide statistics in categories/titles view
+    const noteStatsContainer = document.getElementById('note-stats-container');
+    if (noteStatsContainer) {
+        noteStatsContainer.style.display = 'none';
+    }
 
     backToStoryFromNoteBtn.classList.remove('is-highlighted');
     backToHomeFromNoteBtn.classList.remove('is-highlighted');
@@ -854,6 +863,10 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
         
         // Show the input form ONLY in this view
         addWordForm.style.display = 'flex'; 
+        
+        // Show export buttons
+        exportCurrentNoteJsonBtn.hidden = false;
+        exportAllNotesJsonBtn.hidden = false;
 
         // Helper function to build each collapsible section's HTML
         const buildSectionHTML = (type, title) => {
@@ -1108,6 +1121,39 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
                 items.forEach(item => createWordItem(item, type, containers[type]));
             }
         });
+        
+        // Update statistics display
+        const noteStatsContainer = document.getElementById('note-stats-container');
+        if (noteStatsContainer) {
+            const wordsCount = noteData.words ? noteData.words.size : 0;
+            const phrasesCount = noteData.phrases ? noteData.phrases.size : 0;
+            const sentencesCount = noteData.sentences ? noteData.sentences.size : 0;
+            const total = wordsCount + phrasesCount + sentencesCount;
+            
+            if (total > 0) {
+                noteStatsContainer.style.display = 'grid';
+                noteStatsContainer.innerHTML = `
+                    <div class="stat-item">
+                        <div class="stat-number">${wordsCount}</div>
+                        <div class="stat-label">Words</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">${phrasesCount}</div>
+                        <div class="stat-label">Phrases</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">${sentencesCount}</div>
+                        <div class="stat-label">Sentences</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">${total}</div>
+                        <div class="stat-label">Total</div>
+                    </div>
+                `;
+            } else {
+                noteStatsContainer.style.display = 'none';
+            }
+        }
         
         backToHomeFromNoteBtn.textContent = 'Back to Titles';
         backToHomeFromNoteBtn.onclick = () => renderNoteView('titles', categoryName);

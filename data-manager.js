@@ -10,150 +10,129 @@ function showDataManager() {
 }
 
 function renderDataManager() {
-    renderSavedWordsEditor();
     renderReadingProgressEditor();
     renderLastSessionEditor();
 }
 
 // ============================================
-// Saved Words Editor
+// Note Export Functions (to be used in note view)
 // ============================================
 
-function renderSavedWordsEditor() {
-    if (!savedWordsEditor) return;
-    
-    savedWordsEditor.innerHTML = '';
-    
-    if (!savedWords || Object.keys(savedWords).length === 0) {
-        savedWordsEditor.innerHTML = '<div class="empty-state">No saved words yet.</div>';
+function exportCurrentNote(categoryKey, storyKey) {
+    if (!savedWords[categoryKey] || !savedWords[categoryKey][storyKey]) {
+        alert('No notes found for this story.');
         return;
     }
     
-    // Calculate statistics
-    let totalWords = 0, totalPhrases = 0, totalSentences = 0;
-    Object.keys(savedWords).forEach(categoryKey => {
-        Object.keys(savedWords[categoryKey]).forEach(storyKey => {
-            const words = savedWords[categoryKey][storyKey];
-            if (words && words.length > 0) {
-                const categorized = categorizeWords(words);
-                totalWords += categorized.words.length;
-                totalPhrases += categorized.phrases.length;
-                totalSentences += categorized.sentences.length;
-            }
-        });
-    });
+    let words = savedWords[categoryKey][storyKey];
     
-    // Display statistics
-    const statsDiv = document.createElement('div');
-    statsDiv.className = 'data-stats';
-    statsDiv.innerHTML = `
-        <div class="stat-item">
-            <div class="stat-number">${totalWords}</div>
-            <div class="stat-label">Words</div>
-        </div>
-        <div class="stat-item">
-            <div class="stat-number">${totalPhrases}</div>
-            <div class="stat-label">Phrases</div>
-        </div>
-        <div class="stat-item">
-            <div class="stat-number">${totalSentences}</div>
-            <div class="stat-label">Sentences</div>
-        </div>
-        <div class="stat-item">
-            <div class="stat-number">${totalWords + totalPhrases + totalSentences}</div>
-            <div class="stat-label">Total</div>
-        </div>
-    `;
-    savedWordsEditor.appendChild(statsDiv);
+    // Convert Firestore object format to array if needed
+    if (words && typeof words === 'object' && !Array.isArray(words)) {
+        words = Object.values(words);
+    }
     
-    // Group by category and story
-    Object.keys(savedWords).forEach(categoryKey => {
-        const categoryGroup = document.createElement('div');
-        categoryGroup.className = 'category-group';
-        
-        const categoryTitle = document.createElement('div');
-        categoryTitle.className = 'category-group-title';
-        categoryTitle.textContent = categoryKey;
-        categoryGroup.appendChild(categoryTitle);
-        
-        Object.keys(savedWords[categoryKey]).forEach(storyKey => {
-            const storyGroup = document.createElement('div');
-            storyGroup.className = 'story-group';
+    if (!Array.isArray(words) || words.length === 0) {
+        alert('No notes found for this story.');
+        return;
+    }
+    
+    const categorized = categorizeWords(words);
+    
+    const data = {
+        version: '1.0',
+        exportDate: new Date().toISOString(),
+        category: categoryKey,
+        story: storyKey,
+        statistics: {
+            totalWords: categorized.words.length,
+            totalPhrases: categorized.phrases.length,
+            totalSentences: categorized.sentences.length,
+            total: words.length
+        },
+        words: categorized.words.map(item => item.word),
+        phrases: categorized.phrases.map(item => item.word),
+        sentences: categorized.sentences.map(item => item.word),
+        allNotes: words
+    };
+    
+    const jsonString = JSON.stringify(data, null, 2);
+    const blob = new Blob([jsonString], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    const fileName = `${categoryKey}-${storyKey}-notes-${new Date().toISOString().slice(0, 10)}.json`;
+    a.download = fileName.replace(/[^a-z0-9.-]/gi, '_');
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    alert('Note exported successfully!');
+}
+
+function exportAllNotes() {
+    // Normalize savedWords to array format
+    const normalizedNotes = {};
+    let totalCount = 0;
+    
+    Object.keys(savedWords).forEach(category => {
+        normalizedNotes[category] = {};
+        Object.keys(savedWords[category]).forEach(story => {
+            let words = savedWords[category][story];
             
-            const storyTitle = document.createElement('div');
-            storyTitle.className = 'story-group-title';
-            storyTitle.textContent = storyKey;
-            storyGroup.appendChild(storyTitle);
-            
-            const words = savedWords[categoryKey][storyKey];
-            if (words && words.length > 0) {
-                // Categorize words by type
-                const categorized = categorizeWords(words);
-                
-                // Display Words
-                if (categorized.words.length > 0) {
-                    const wordsSection = document.createElement('div');
-                    wordsSection.className = 'word-type-section';
-                    
-                    const wordsHeader = document.createElement('div');
-                    wordsHeader.className = 'word-type-header';
-                    wordsHeader.textContent = `Words (${categorized.words.length})`;
-                    wordsSection.appendChild(wordsHeader);
-                    
-                    categorized.words.forEach(item => {
-                        const wordEntry = createWordEntry(item.word, categoryKey, storyKey, item.index);
-                        wordsSection.appendChild(wordEntry);
-                    });
-                    
-                    storyGroup.appendChild(wordsSection);
-                }
-                
-                // Display Phrases
-                if (categorized.phrases.length > 0) {
-                    const phrasesSection = document.createElement('div');
-                    phrasesSection.className = 'word-type-section';
-                    
-                    const phrasesHeader = document.createElement('div');
-                    phrasesHeader.className = 'word-type-header';
-                    phrasesHeader.textContent = `Phrases (${categorized.phrases.length})`;
-                    phrasesSection.appendChild(phrasesHeader);
-                    
-                    categorized.phrases.forEach(item => {
-                        const wordEntry = createWordEntry(item.word, categoryKey, storyKey, item.index);
-                        phrasesSection.appendChild(wordEntry);
-                    });
-                    
-                    storyGroup.appendChild(phrasesSection);
-                }
-                
-                // Display Sentences
-                if (categorized.sentences.length > 0) {
-                    const sentencesSection = document.createElement('div');
-                    sentencesSection.className = 'word-type-section';
-                    
-                    const sentencesHeader = document.createElement('div');
-                    sentencesHeader.className = 'word-type-header';
-                    sentencesHeader.textContent = `Sentences (${categorized.sentences.length})`;
-                    sentencesSection.appendChild(sentencesHeader);
-                    
-                    categorized.sentences.forEach(item => {
-                        const wordEntry = createWordEntry(item.word, categoryKey, storyKey, item.index);
-                        sentencesSection.appendChild(wordEntry);
-                    });
-                    
-                    storyGroup.appendChild(sentencesSection);
-                }
+            // Convert Firestore object format to array if needed
+            if (words && typeof words === 'object' && !Array.isArray(words)) {
+                words = Object.values(words);
             }
             
-            // Add new word button
-            const addWordForm = createAddWordForm(categoryKey, storyKey);
-            storyGroup.appendChild(addWordForm);
-            
-            categoryGroup.appendChild(storyGroup);
+            if (Array.isArray(words) && words.length > 0) {
+                const categorized = categorizeWords(words);
+                normalizedNotes[category][story] = {
+                    statistics: {
+                        totalWords: categorized.words.length,
+                        totalPhrases: categorized.phrases.length,
+                        totalSentences: categorized.sentences.length,
+                        total: words.length
+                    },
+                    words: categorized.words.map(item => item.word),
+                    phrases: categorized.phrases.map(item => item.word),
+                    sentences: categorized.sentences.map(item => item.word),
+                    allNotes: words
+                };
+                totalCount += words.length;
+            }
         });
         
-        savedWordsEditor.appendChild(categoryGroup);
+        // Remove empty categories
+        if (Object.keys(normalizedNotes[category]).length === 0) {
+            delete normalizedNotes[category];
+        }
     });
+    
+    if (totalCount === 0) {
+        alert('No notes to export.');
+        return;
+    }
+    
+    const data = {
+        version: '1.0',
+        exportDate: new Date().toISOString(),
+        totalNotes: totalCount,
+        notes: normalizedNotes
+    };
+    
+    const jsonString = JSON.stringify(data, null, 2);
+    const blob = new Blob([jsonString], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `all-notes-${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    alert(`Exported ${totalCount} notes successfully!`);
 }
 
 // Helper function to categorize words by type (same logic as in note view)
@@ -178,104 +157,6 @@ function categorizeWords(words) {
     });
     
     return categorized;
-}
-
-function createWordEntry(word, categoryKey, storyKey, index) {
-    const entry = document.createElement('div');
-    entry.className = 'word-entry';
-    
-    const text = document.createElement('div');
-    text.className = 'word-entry-text';
-    text.textContent = word;
-    
-    // Add word length indicator
-    const wordCount = word.trim().split(/\s+/).length;
-    if (wordCount > 1) {
-        const badge = document.createElement('span');
-        badge.className = 'word-count-badge';
-        badge.textContent = `${wordCount} words`;
-        text.appendChild(badge);
-    }
-    
-    entry.appendChild(text);
-    
-    const actions = document.createElement('div');
-    actions.className = 'word-entry-actions';
-    
-    const deleteBtn = document.createElement('button');
-    deleteBtn.textContent = 'Delete';
-    deleteBtn.className = 'secondary';
-    deleteBtn.addEventListener('click', () => {
-        deleteWord(categoryKey, storyKey, index);
-    });
-    
-    actions.appendChild(deleteBtn);
-    entry.appendChild(actions);
-    
-    return entry;
-}
-
-function createAddWordForm(categoryKey, storyKey) {
-    const form = document.createElement('div');
-    form.className = 'add-word-inline';
-    
-    const input = document.createElement('input');
-    input.type = 'text';
-    input.placeholder = 'Add new word...';
-    
-    const addBtn = document.createElement('button');
-    addBtn.textContent = 'Add';
-    addBtn.addEventListener('click', () => {
-        const word = input.value.trim();
-        if (word) {
-            addWord(categoryKey, storyKey, word);
-            input.value = '';
-        }
-    });
-    
-    input.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            addBtn.click();
-        }
-    });
-    
-    form.appendChild(input);
-    form.appendChild(addBtn);
-    
-    return form;
-}
-
-function deleteWord(categoryKey, storyKey, index) {
-    if (!savedWords[categoryKey] || !savedWords[categoryKey][storyKey]) return;
-    
-    const word = savedWords[categoryKey][storyKey][index];
-    if (confirm(`Delete "${word}"?`)) {
-        savedWords[categoryKey][storyKey].splice(index, 1);
-        
-        // Clean up empty arrays/objects
-        if (savedWords[categoryKey][storyKey].length === 0) {
-            delete savedWords[categoryKey][storyKey];
-        }
-        if (Object.keys(savedWords[categoryKey]).length === 0) {
-            delete savedWords[categoryKey];
-        }
-        
-        saveWordsToStorage();
-        renderSavedWordsEditor();
-    }
-}
-
-function addWord(categoryKey, storyKey, word) {
-    if (!savedWords[categoryKey]) {
-        savedWords[categoryKey] = {};
-    }
-    if (!savedWords[categoryKey][storyKey]) {
-        savedWords[categoryKey][storyKey] = [];
-    }
-    
-    savedWords[categoryKey][storyKey].push(word);
-    saveWordsToStorage();
-    renderSavedWordsEditor();
 }
 
 // ============================================
@@ -397,10 +278,28 @@ function renderLastSessionEditor() {
 // ============================================
 
 function exportAllData() {
+    // Normalize savedWords to array format
+    const normalizedSavedWords = {};
+    
+    Object.keys(savedWords).forEach(category => {
+        normalizedSavedWords[category] = {};
+        Object.keys(savedWords[category]).forEach(story => {
+            let words = savedWords[category][story];
+            
+            // Convert Firestore object format to array if needed
+            if (words && typeof words === 'object' && !Array.isArray(words)) {
+                words = Object.values(words);
+            }
+            
+            // Ensure it's an array
+            normalizedSavedWords[category][story] = Array.isArray(words) ? words : [];
+        });
+    });
+    
     const data = {
         version: '1.0',
         exportDate: new Date().toISOString(),
-        savedWords: savedWords,
+        savedWords: normalizedSavedWords,
         readingProgress: {},
         lastSession: null
     };
@@ -468,8 +367,24 @@ function importData(file) {
                         if (!savedWords[category][story]) {
                             savedWords[category][story] = [];
                         }
+                        
+                        // Handle both array format (localStorage) and object format (Firestore)
+                        let importedWords = data.savedWords[category][story];
+                        
+                        // If it's a Firestore object format, convert to array
+                        if (importedWords && typeof importedWords === 'object' && !Array.isArray(importedWords)) {
+                            // Firestore format: { "0": "word1", "1": "word2", ... }
+                            importedWords = Object.values(importedWords);
+                        }
+                        
+                        // Make sure it's an array
+                        if (!Array.isArray(importedWords)) {
+                            console.warn(`Skipping invalid data for ${category}/${story}`);
+                            return;
+                        }
+                        
                         // Merge and remove duplicates
-                        const combined = [...savedWords[category][story], ...data.savedWords[category][story]];
+                        const combined = [...savedWords[category][story], ...importedWords];
                         savedWords[category][story] = [...new Set(combined)];
                     });
                 });
@@ -541,5 +456,22 @@ if (importDataInput) {
         }
         // Reset input so same file can be selected again
         e.target.value = '';
+    });
+}
+
+// Note export buttons
+if (exportCurrentNoteJsonBtn) {
+    exportCurrentNoteJsonBtn.addEventListener('click', () => {
+        if (noteViewCategory && noteViewTitle) {
+            exportCurrentNote(noteViewCategory, noteViewTitle);
+        } else {
+            alert('Please open a specific story note first.');
+        }
+    });
+}
+
+if (exportAllNotesJsonBtn) {
+    exportAllNotesJsonBtn.addEventListener('click', () => {
+        exportAllNotes();
     });
 }

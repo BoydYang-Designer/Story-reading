@@ -107,6 +107,10 @@
 
 <div id="note-view" class="is-hidden">
     <h1 id="note-view-title">Word Note</h1>
+    
+    <div id="note-stats-container" class="note-stats" style="display: none;">
+        <!-- Statistics will be inserted here by JavaScript -->
+    </div>
 
     <div class="note-top-actions">
         <button class="secondary" id="prev-note-btn" hidden>Previous Note</button>
@@ -131,6 +135,8 @@
     
     <div class="note-actions">
         <button id="export-words-btn">Copy All Items</button>
+        <button id="export-current-note-json-btn" class="secondary">Export This Note (JSON)</button>
+        <button id="export-all-notes-json-btn" class="secondary">Export All Notes (JSON)</button>
         </div>
 </div>
 
@@ -142,17 +148,15 @@
     </div>
 
     <div class="data-section">
-        <h2>Import / Export Data</h2>
+        <h2>Import / Export All Data</h2>
         <div class="import-export-actions">
             <button id="export-all-data-btn">Export All Data (JSON)</button>
             <input type="file" id="import-data-input" accept=".json" style="display: none;">
             <button id="import-data-btn" class="secondary">Import Data (JSON)</button>
         </div>
-    </div>
-
-    <div class="data-section">
-        <h2>Saved Words & Notes</h2>
-        <div id="saved-words-editor"></div>
+        <p style="font-size: 14px; color: var(--color-text-light); margin-top: 10px;">
+            Export/Import includes: saved words, reading progress, and last session data.
+        </p>
     </div>
 
     <div class="data-section">
