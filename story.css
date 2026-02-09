@@ -506,11 +506,36 @@ button.btn-success-feedback {
   display: flex;
   justify-content: flex-end;
   align-items: center;
+  gap: 8px;
 }
 .user-status-header button {
   margin-left: 12px;
   padding: 4px 12px;
   font-size: 13px;
+}
+
+/* Icon button styles */
+.icon-btn {
+  background: transparent;
+  border: none;
+  color: var(--color-text-light);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  margin-left: 0 !important;
+}
+
+.icon-btn:hover {
+  background-color: var(--color-accent-light);
+  color: var(--color-primary);
+}
+
+.icon-btn svg {
+  display: block;
 }
 
 /* 10. Deleting Item Feedback */
@@ -596,4 +621,168 @@ button.btn-success-feedback {
   
   /* 方案 B (如果你喜歡背景色，可以選這個，但要小心跟播放顏色衝突) */
   /* background-color: rgba(138, 121, 104, 0.15); */
+}
+/* 12. Data Manager Styles
+------------------------------------------ */
+#data-manager-view {
+    padding: 20px;
+    overflow-y: auto;
+    height: 100vh;
+    box-sizing: border-box;
+}
+
+.data-manager-controls {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+.data-section {
+    margin-bottom: 40px;
+    padding: 20px;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    box-shadow: var(--shadow-sm);
+}
+
+.data-section h2 {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0 0 20px 0;
+    color: var(--color-text);
+    border-bottom: 2px solid var(--color-accent);
+    padding-bottom: 10px;
+}
+
+.import-export-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.data-item {
+    background-color: #f9f6f2;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.data-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: var(--color-primary);
+}
+
+.data-item-content {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    padding: 12px;
+    max-height: 200px;
+    overflow-y: auto;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+.data-item-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.data-item-actions button {
+    padding: 6px 12px;
+    font-size: 13px;
+}
+
+.word-entry {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 8px;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+}
+
+.word-entry-text {
+    flex-grow: 1;
+    font-size: 16px;
+}
+
+.word-entry-actions {
+    display: flex;
+    gap: 6px;
+}
+
+.word-entry-actions button {
+    padding: 4px 10px;
+    font-size: 12px;
+}
+
+.category-group {
+    margin-bottom: 20px;
+}
+
+.category-group-title {
+    font-weight: 600;
+    font-size: 18px;
+    color: var(--color-primary);
+    margin-bottom: 10px;
+    padding: 8px 12px;
+    background-color: var(--color-accent-light);
+    border-radius: 6px;
+}
+
+.story-group {
+    margin-left: 20px;
+    margin-bottom: 15px;
+}
+
+.story-group-title {
+    font-weight: 500;
+    font-size: 16px;
+    color: var(--color-text);
+    margin-bottom: 8px;
+    padding: 6px 10px;
+    background-color: #f9f6f2;
+    border-radius: 4px;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 30px;
+    color: var(--color-text-light);
+    font-style: italic;
+}
+
+.add-word-inline {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #f9f6f2;
+    border-radius: 6px;
+}
+
+.add-word-inline input {
+    flex-grow: 1;
+    padding: 6px 10px;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.add-word-inline button {
+    padding: 6px 12px;
+    font-size: 13px;
 }

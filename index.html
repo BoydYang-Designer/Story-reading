@@ -23,6 +23,13 @@
 <div id="user-status" class="user-status-header">
     <span id="user-info">Guest Mode</span>
     
+    <button id="go-to-data-manager" class="icon-btn" title="Data Manager">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+        </svg>
+    </button>
+    
     <button id="sign-in-from-guest-btn" class="secondary is-hidden">Sign In</button>
     
     <button id="sign-out-btn" class="secondary is-hidden">Sign Out</button>
@@ -126,6 +133,38 @@
         <button id="export-words-btn">Copy All Items</button>
         </div>
 </div>
+
+<div id="data-manager-view" class="is-hidden">
+    <h1>Data Manager</h1>
+    
+    <div class="data-manager-controls">
+        <button class="secondary" id="back-to-home-from-data-manager">Back to Home</button>
+    </div>
+
+    <div class="data-section">
+        <h2>Import / Export Data</h2>
+        <div class="import-export-actions">
+            <button id="export-all-data-btn">Export All Data (JSON)</button>
+            <input type="file" id="import-data-input" accept=".json" style="display: none;">
+            <button id="import-data-btn" class="secondary">Import Data (JSON)</button>
+        </div>
+    </div>
+
+    <div class="data-section">
+        <h2>Saved Words & Notes</h2>
+        <div id="saved-words-editor"></div>
+    </div>
+
+    <div class="data-section">
+        <h2>Reading Progress</h2>
+        <div id="reading-progress-editor"></div>
+    </div>
+
+    <div class="data-section">
+        <h2>Last Session</h2>
+        <div id="last-session-editor"></div>
+    </div>
+</div>
   </div> 
 
   <audio id="audio"></audio>
@@ -150,5 +189,6 @@
   </script>
 
   <script src="story.js"></script>
+  <script src="data-manager.js"></script>
 </body>
 </html>

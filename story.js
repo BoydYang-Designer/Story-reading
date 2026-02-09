@@ -63,6 +63,17 @@ const prevNoteBtn = document.getElementById('prev-note-btn');
 const nextNoteBtn = document.getElementById('next-note-btn');
 const noteViewTitleEl = document.getElementById('note-view-title');
 
+// Data Manager elements
+const dataManagerView = document.getElementById('data-manager-view');
+const goToDataManagerBtn = document.getElementById('go-to-data-manager');
+const backToHomeFromDataManagerBtn = document.getElementById('back-to-home-from-data-manager');
+const exportAllDataBtn = document.getElementById('export-all-data-btn');
+const importDataBtn = document.getElementById('import-data-btn');
+const importDataInput = document.getElementById('import-data-input');
+const savedWordsEditor = document.getElementById('saved-words-editor');
+const readingProgressEditor = document.getElementById('reading-progress-editor');
+const lastSessionEditor = document.getElementById('last-session-editor');
+
 // State Variables
 let currentMajorCategory = null; // 記錄目前在哪個大類 (例如 "Books")
 let stories = [];
@@ -257,8 +268,8 @@ function createListItemWithImage(text, onClick, fallbackText = null) {
 }
 
 function showView(view) {
-    // 加入 subCategoryView 到隱藏列表
-    [loginView, appContainer, homeView, subCategoryView, categoryView, playbackView, noteView].forEach(el => {
+    // 加入 subCategoryView 和 dataManagerView 到隱藏列表
+    [loginView, appContainer, homeView, subCategoryView, categoryView, playbackView, noteView, dataManagerView].forEach(el => {
         if(el) el.classList.add('is-hidden');
     });
     
