@@ -1,131 +1,7 @@
 {
   "version": "1.0",
-  "exportDate": "2026-02-09T05:28:57.111Z",
+  "exportDate": "2026-02-09T05:40:11.428Z",
   "savedWords": {
-    "Elicitation": {
-      "Elicitation - Every Daily Habit That Boosts Your Brainpower Explained": {
-        "words": {},
-        "phrases": {},
-        "sentences": {}
-      }
-    },
-    "The Alchemist": {
-      "The Alchemist of Part 1-07": {
-        "words": {},
-        "phrases": {},
-        "sentences": {}
-      },
-      "The Alchemist of Part 1-04": {
-        "words": {},
-        "phrases": {},
-        "sentences": {}
-      },
-      "The Alchemist of Part 1-10": {
-        "words": {},
-        "phrases": {},
-        "sentences": {}
-      },
-      "The Alchemist of Part 2-14": {
-        "words": {},
-        "phrases": {},
-        "sentences": {}
-      },
-      "The Alchemist of Part 2-17": {
-        "words": {},
-        "phrases": {},
-        "sentences": {}
-      },
-      "The Alchemist of Part 1-03": {
-        "words": {},
-        "phrases": {},
-        "sentences": {}
-      },
-      "The Alchemist of Part 1-02": {
-        "words": {},
-        "phrases": {},
-        "sentences": {}
-      },
-      "The Alchemist of 2-Prologue": {
-        "words": {},
-        "phrases": {},
-        "sentences": {}
-      },
-      "The Alchemist of Part 2-15": {
-        "words": {},
-        "phrases": {},
-        "sentences": {}
-      },
-      "The Alchemist of Part 2-10": {
-        "words": {},
-        "phrases": {},
-        "sentences": {}
-      },
-      "The Alchemist of Part 1-01": {
-        "words": {},
-        "phrases": {},
-        "sentences": {}
-      },
-      "The Alchemist of Part 1-12": {
-        "words": {},
-        "phrases": {},
-        "sentences": {}
-      },
-      "The Alchemist of Part 1-08": {
-        "words": {},
-        "phrases": {},
-        "sentences": {}
-      },
-      "The Alchemist of 1 Foreword": {
-        "words": {},
-        "phrases": {},
-        "sentences": {}
-      },
-      "The Alchemist of Part 2-16": {
-        "words": {},
-        "phrases": {},
-        "sentences": {}
-      },
-      "The Alchemist of Part 2-07": {
-        "words": {},
-        "phrases": {},
-        "sentences": {}
-      },
-      "The Alchemist of Part 1-06": {
-        "words": {},
-        "phrases": {},
-        "sentences": {}
-      },
-      "The Alchemist of Part 2-12": {
-        "words": {},
-        "phrases": {},
-        "sentences": {}
-      },
-      "The Alchemist of Part 1-05": {
-        "words": {},
-        "phrases": {},
-        "sentences": {}
-      },
-      "The Alchemist of Part 2-18": {
-        "words": {},
-        "phrases": {},
-        "sentences": {}
-      },
-      "The Alchemist of Part 2-11": {
-        "words": {},
-        "phrases": {},
-        "sentences": {}
-      },
-      "The Alchemist of Part 2-25": {
-        "words": {},
-        "phrases": {},
-        "sentences": {}
-      },
-      "The Alchemist of Part 2-05": {
-        "words": {},
-        "phrases": {},
-        "sentences": {}
-      }
-    },
     "thefutur": {
       "thefutur - Are YOU charging too little": {
         "words": {},
@@ -138,24 +14,124 @@
         "sentences": {}
       }
     },
-    "Alice's adventures in wonderland": {
-      "alices_adventures_01_carroll": {
+    "The Alchemist": {
+      "The Alchemist of 2-Prologue": {
         "words": {},
         "phrases": {},
         "sentences": {}
       },
-      "alices_adventures_03_carroll": {
+      "The Alchemist of Part 2-18": {
+        "words": {},
+        "phrases": {},
+        "sentences": {}
+      },
+      "The Alchemist of Part 1-06": {
+        "words": {},
+        "phrases": {},
+        "sentences": {}
+      },
+      "The Alchemist of Part 1-01": {
+        "words": {},
+        "phrases": {},
+        "sentences": {}
+      },
+      "The Alchemist of Part 1-10": {
+        "words": {},
+        "phrases": {},
+        "sentences": {}
+      },
+      "The Alchemist of Part 1-12": {
+        "words": {},
+        "phrases": {},
+        "sentences": {}
+      },
+      "The Alchemist of 1 Foreword": {
+        "words": {},
+        "phrases": {},
+        "sentences": {}
+      },
+      "The Alchemist of Part 2-14": {
+        "words": {},
+        "phrases": {},
+        "sentences": {}
+      },
+      "The Alchemist of Part 2-07": {
+        "words": {},
+        "phrases": {},
+        "sentences": {}
+      },
+      "The Alchemist of Part 1-08": {
+        "words": {},
+        "phrases": {},
+        "sentences": {}
+      },
+      "The Alchemist of Part 2-05": {
+        "words": {},
+        "phrases": {},
+        "sentences": {}
+      },
+      "The Alchemist of Part 2-15": {
+        "words": {},
+        "phrases": {},
+        "sentences": {}
+      },
+      "The Alchemist of Part 2-12": {
+        "words": {},
+        "phrases": {},
+        "sentences": {}
+      },
+      "The Alchemist of Part 2-16": {
+        "words": {},
+        "phrases": {},
+        "sentences": {}
+      },
+      "The Alchemist of Part 2-11": {
+        "words": {},
+        "phrases": {},
+        "sentences": {}
+      },
+      "The Alchemist of Part 1-02": {
+        "words": {},
+        "phrases": {},
+        "sentences": {}
+      },
+      "The Alchemist of Part 1-03": {
+        "words": {},
+        "phrases": {},
+        "sentences": {}
+      },
+      "The Alchemist of Part 1-05": {
+        "words": {},
+        "phrases": {},
+        "sentences": {}
+      },
+      "The Alchemist of Part 1-04": {
+        "words": {},
+        "phrases": {},
+        "sentences": {}
+      },
+      "The Alchemist of Part 2-10": {
+        "words": {},
+        "phrases": {},
+        "sentences": {}
+      },
+      "The Alchemist of Part 2-17": {
+        "words": {},
+        "phrases": {},
+        "sentences": {}
+      },
+      "The Alchemist of Part 1-07": {
+        "words": {},
+        "phrases": {},
+        "sentences": {}
+      },
+      "The Alchemist of Part 2-25": {
         "words": {},
         "phrases": {},
         "sentences": {}
       }
     },
     "James Clear – Atomic Habits": {
-      "James Clear – Atomic Habits-1-1": {
-        "words": {},
-        "phrases": {},
-        "sentences": {}
-      },
       "James Clear – Atomic Habits-1-03": {
         "words": {},
         "phrases": {},
@@ -170,14 +146,38 @@
         "words": {},
         "phrases": {},
         "sentences": {}
+      },
+      "James Clear – Atomic Habits-1-1": {
+        "words": {},
+        "phrases": {},
+        "sentences": {}
+      }
+    },
+    "Elicitation": {
+      "Elicitation - Every Daily Habit That Boosts Your Brainpower Explained": {
+        "words": {},
+        "phrases": {},
+        "sentences": {}
+      }
+    },
+    "Alice's adventures in wonderland": {
+      "alices_adventures_03_carroll": {
+        "words": {},
+        "phrases": {},
+        "sentences": {}
+      },
+      "alices_adventures_01_carroll": {
+        "words": {},
+        "phrases": {},
+        "sentences": {}
       }
     }
   },
   "readingProgress": {},
   "lastSession": {
-    "category": "AI",
-    "title": "TED-Talk-Human and Robot Traits-A",
     "majorCategory": "個人",
-    "time": 13.187452135642074
+    "time": 13.187452135642074,
+    "category": "AI",
+    "title": "TED-Talk-Human and Robot Traits-A"
   }
 }
