@@ -1,17 +1,8 @@
-[00:00:00.000 --> 00:00:04.800] How do you prioritize between aesthetics, usability and production constraints?
-[00:00:04.800 --> 00:00:10.000] I prioritize by balancing the three factors through a structured approach.
-[00:00:10.000 --> 00:00:16.400] First, I consider usability because products must be safe and intuitive for the end user,
-[00:00:16.400 --> 00:00:20.400] especially in juvenile products where safety is critical.
-[00:00:20.400 --> 00:00:25.400] Next, I evaluate production constraints such as menu factorability,
-[00:00:25.400 --> 00:00:30.200] cost and available materials to ensure the design is feasible.
-[00:00:30.200 --> 00:00:36.200] Finally, I focus on aesthetics, refining the form, finishes, and details
-[00:00:36.200 --> 00:00:41.200] so the product is appealing without compromising safety or functionality.
-[00:00:41.200 --> 00:00:46.200] In practice, I involve engineers and suppliers early in the process to identify
-[00:00:46.200 --> 00:00:51.200] potential challenges, and I iterate on the design until we reach a solution
-[00:00:51.200 --> 00:00:54.200] that satisfies all three priorities.
-[00:00:54.200 --> 00:00:59.200] For example, on one stroller project, I designed a unique main joint shape
-[00:00:59.200 --> 00:01:04.800] to meet the required strength while breaking away from the typical conventional form.
-[00:01:04.800 --> 00:01:08.800] By creating a continuous curve from the rear leg to the main joint,
-[00:01:08.800 --> 00:01:13.000] we maintain the necessary joint size for safety and durability
-[00:01:13.000 --> 00:01:16.400] while giving the product a distinctive and innovative appearance
-[00:01:16.400 --> 00:01:18.400] compared to existing designs.
+[00:00:00.000 --> 00:00:04.340] How do you prioritize between aesthetics, usability, and production constraints?
+[00:00:04.940 --> 00:00:09.300] I prioritize by balancing the three factors through a structured approach.
+[00:00:10.140 --> 00:00:19.720] First, I consider usability because products must be safe and intuitive for the end user, especially in juvenile products where safety is critical.
+[00:00:20.520 --> 00:00:29.720] Next, I evaluate production constraints such as menu factorability, cost, and available materials to ensure the design is feasible.
+[00:00:30.540 --> 00:00:40.540] Finally, I focus on aesthetics, refining the form, finishes, and details so the product is appealing without compromising safety or functionality.
+[00:00:41.400 --> 00:00:53.600] In practice, I involve engineers and suppliers early in the process to identify potential challenges and I iterate on the design until we reach a solution that satisfies all three priorities.
+[00:00:54.160 --> 00:01:04.200] For example, on one Stroller project, I designed a unique main joint shape to meet the required strength while breaking away from the typical conventional form.
+[00:01:04.940 --> 00:01:18.120] By creating a continuous curve from the rear leg to the main joint, we maintain the necessary joint size for safety and durability while giving the product a distinctive and innovative appearance compared to existing designs.

@@ -29,6 +29,43 @@ function renderSavedWordsEditor() {
         return;
     }
     
+    // Calculate statistics
+    let totalWords = 0, totalPhrases = 0, totalSentences = 0;
+    Object.keys(savedWords).forEach(categoryKey => {
+        Object.keys(savedWords[categoryKey]).forEach(storyKey => {
+            const words = savedWords[categoryKey][storyKey];
+            if (words && words.length > 0) {
+                const categorized = categorizeWords(words);
+                totalWords += categorized.words.length;
+                totalPhrases += categorized.phrases.length;
+                totalSentences += categorized.sentences.length;
+            }
+        });
+    });
+    
+    // Display statistics
+    const statsDiv = document.createElement('div');
+    statsDiv.className = 'data-stats';
+    statsDiv.innerHTML = `
+        <div class="stat-item">
+            <div class="stat-number">${totalWords}</div>
+            <div class="stat-label">Words</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">${totalPhrases}</div>
+            <div class="stat-label">Phrases</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">${totalSentences}</div>
+            <div class="stat-label">Sentences</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">${totalWords + totalPhrases + totalSentences}</div>
+            <div class="stat-label">Total</div>
+        </div>
+    `;
+    savedWordsEditor.appendChild(statsDiv);
+    
     // Group by category and story
     Object.keys(savedWords).forEach(categoryKey => {
         const categoryGroup = document.createElement('div');
@@ -50,10 +87,62 @@ function renderSavedWordsEditor() {
             
             const words = savedWords[categoryKey][storyKey];
             if (words && words.length > 0) {
-                words.forEach((word, index) => {
-                    const wordEntry = createWordEntry(word, categoryKey, storyKey, index);
-                    storyGroup.appendChild(wordEntry);
-                });
+                // Categorize words by type
+                const categorized = categorizeWords(words);
+                
+                // Display Words
+                if (categorized.words.length > 0) {
+                    const wordsSection = document.createElement('div');
+                    wordsSection.className = 'word-type-section';
+                    
+                    const wordsHeader = document.createElement('div');
+                    wordsHeader.className = 'word-type-header';
+                    wordsHeader.textContent = `Words (${categorized.words.length})`;
+                    wordsSection.appendChild(wordsHeader);
+                    
+                    categorized.words.forEach(item => {
+                        const wordEntry = createWordEntry(item.word, categoryKey, storyKey, item.index);
+                        wordsSection.appendChild(wordEntry);
+                    });
+                    
+                    storyGroup.appendChild(wordsSection);
+                }
+                
+                // Display Phrases
+                if (categorized.phrases.length > 0) {
+                    const phrasesSection = document.createElement('div');
+                    phrasesSection.className = 'word-type-section';
+                    
+                    const phrasesHeader = document.createElement('div');
+                    phrasesHeader.className = 'word-type-header';
+                    phrasesHeader.textContent = `Phrases (${categorized.phrases.length})`;
+                    phrasesSection.appendChild(phrasesHeader);
+                    
+                    categorized.phrases.forEach(item => {
+                        const wordEntry = createWordEntry(item.word, categoryKey, storyKey, item.index);
+                        phrasesSection.appendChild(wordEntry);
+                    });
+                    
+                    storyGroup.appendChild(phrasesSection);
+                }
+                
+                // Display Sentences
+                if (categorized.sentences.length > 0) {
+                    const sentencesSection = document.createElement('div');
+                    sentencesSection.className = 'word-type-section';
+                    
+                    const sentencesHeader = document.createElement('div');
+                    sentencesHeader.className = 'word-type-header';
+                    sentencesHeader.textContent = `Sentences (${categorized.sentences.length})`;
+                    sentencesSection.appendChild(sentencesHeader);
+                    
+                    categorized.sentences.forEach(item => {
+                        const wordEntry = createWordEntry(item.word, categoryKey, storyKey, item.index);
+                        sentencesSection.appendChild(wordEntry);
+                    });
+                    
+                    storyGroup.appendChild(sentencesSection);
+                }
             }
             
             // Add new word button
@@ -67,6 +156,30 @@ function renderSavedWordsEditor() {
     });
 }
 
+// Helper function to categorize words by type (same logic as in note view)
+function categorizeWords(words) {
+    const categorized = {
+        words: [],
+        phrases: [],
+        sentences: []
+    };
+    
+    words.forEach((word, index) => {
+        const trimmed = word.trim();
+        const wordCount = trimmed.split(/\s+/).length;
+        
+        if (wordCount === 1) {
+            categorized.words.push({ word: trimmed, index });
+        } else if (wordCount >= 2 && wordCount <= 5) {
+            categorized.phrases.push({ word: trimmed, index });
+        } else {
+            categorized.sentences.push({ word: trimmed, index });
+        }
+    });
+    
+    return categorized;
+}
+
 function createWordEntry(word, categoryKey, storyKey, index) {
     const entry = document.createElement('div');
     entry.className = 'word-entry';
@@ -74,6 +187,16 @@ function createWordEntry(word, categoryKey, storyKey, index) {
     const text = document.createElement('div');
     text.className = 'word-entry-text';
     text.textContent = word;
+    
+    // Add word length indicator
+    const wordCount = word.trim().split(/\s+/).length;
+    if (wordCount > 1) {
+        const badge = document.createElement('span');
+        badge.className = 'word-count-badge';
+        badge.textContent = `${wordCount} words`;
+        text.appendChild(badge);
+    }
+    
     entry.appendChild(text);
     
     const actions = document.createElement('div');

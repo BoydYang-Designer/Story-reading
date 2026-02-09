@@ -1,9 +1,8 @@
-[00:00:00.000 --> 00:00:05.840] From my perspective, with the current stage of AI development, AI is not yet capable of replacing
-[00:00:05.840 --> 00:00:11.680] industrial designers. However, it has already proven to be a powerful tool for significantly
-[00:00:11.680 --> 00:00:17.040] improving both design efficiency and quality. This shift is comparable to the transformation
-[00:00:17.040 --> 00:00:23.440] that occurred over twenty years ago, when 3D software replaced 2D CAD and became a fundamental milestone
-[00:00:23.440 --> 00:00:29.920] in industrial design. Today, industrial design can no longer exist without 3D-assisted design tools.
-[00:00:30.640 --> 00:00:35.680] I believe the same will soon be true for AI-assisted design tools. In the near future,
-[00:00:35.680 --> 00:00:40.640] industrial designers who do not adopt AI will gradually lose their competitive edge in terms of
-[00:00:40.640 --> 00:00:47.440] speed, insight, and overall capability. AI will not replace designers — designers who effectively
-[00:00:47.440 --> 00:00:57.440] use AI will replace those who do not.
+[00:00:00.000 --> 00:00:06.840] From my perspective with the current stage of AI development, AI is not yet capable of replacing industrial designers.
+[00:00:07.660 --> 00:00:13.960] However, it has already proven to be a powerful tool for significantly improving both design efficiency and quality.
+[00:00:14.800 --> 00:00:24.540] This shift is comparable to the transformation that occurred over 20 years ago, when 3D software replaced 2D CAD and became a fundamental milestone in industrial design.
+[00:00:25.320 --> 00:00:29.900] Today, industrial design can no longer exist without 3D -assisted design tools.
+[00:00:30.760 --> 00:00:33.900] I believe the same will soon be true for AI -assisted design tools.
+[00:00:34.700 --> 00:00:42.920] In the near future, industrial designers who do not adopt AI will gradually lose their competitive edge in terms of speed, insight and overall capability.
+[00:00:43.680 --> 00:00:45.340] AI will not replace designers.
+[00:00:46.160 --> 00:00:49.360] Designers who effectively use AI will replace those who do not.

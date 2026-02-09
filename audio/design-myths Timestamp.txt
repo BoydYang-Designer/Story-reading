@@ -1,8 +1,8 @@
-[00:00:00.000 --> 00:00:05.200] One common idea I often question is that good design must always be something never before seen.
-[00:00:05.920 --> 00:00:11.680] In reality, originality only matters when it enhances function, evokes emotion,
-[00:00:11.680 --> 00:00:15.920] strength and storytelling, or truly resonates with the user's experience.
-[00:00:16.640 --> 00:00:22.080] Being different for the sake of it isn't enough. Users rely on familiar patterns to navigate
-[00:00:22.080 --> 00:00:28.240] products. If we change too much, we risk confusing or frustrating them. Good design isn't about
-[00:00:28.240 --> 00:00:33.840] constant invention. It's about making the best choices for the user. Great designers know when
-[00:00:33.840 --> 00:00:40.080] to follow conventions and when to break them. They use creativity to enhance usability and experience,
-[00:00:40.080 --> 00:00:42.080] not just to stand out.
+[00:00:00.000 --> 00:00:05.240] One common idea I often question is that good design must always be something never before seen.
+[00:00:06.000 --> 00:00:15.820] In reality, originality only matters when it enhances function, evokes emotion, strengthens storytelling, or truly resonates with the user's experience.
+[00:00:16.740 --> 00:00:18.720] Being different for the sake of it isn't enough.
+[00:00:19.480 --> 00:00:22.540] Users rely on familiar patterns to navigate products.
+[00:00:23.280 --> 00:00:26.320] If we change too much, we risk confusing or frustrating them.
+[00:00:27.000 --> 00:00:31.880] Good design isn't about constant invention, it's about making the best choices for the user.
+[00:00:32.660 --> 00:00:35.920] Great designers know when to follow conventions and when to break them.
+[00:00:36.580 --> 00:00:41.220] They use creativity to enhance usability and experience, not just to stand out.

@@ -1,15 +1,8 @@
-[00:00:00.000 --> 00:00:03.800] The initial idea for this project came from a simple observation:
-[00:00:03.800 --> 00:00:07.140] although there are strollers with one-hand folding mechanisms,
-[00:00:07.140 --> 00:00:09.280] many are not truly convenient.
-[00:00:09.280 --> 00:00:11.600] Some require folding the seat first,
-[00:00:11.600 --> 00:00:14.520] and most leave the handlebar pointing toward the ground,
-[00:00:14.520 --> 00:00:16.720] making operation awkward for users—such
-[00:00:16.720 --> 00:00:19.240] as the Cybex stroller.
-[00:00:19.240 --> 00:00:22.320] Before, we made a stroller that could fold with one button,
-[00:00:22.320 --> 00:00:25.440] letting the seat and frame fold at the same time.
-[00:00:25.440 --> 00:00:28.440] This worked, but it had two problems:
-[00:00:28.440 --> 00:00:29.880] it could fold unintentionally,
-[00:00:29.880 --> 00:00:31.960] and the button was hard to press.
-[00:00:31.960 --> 00:00:35.920] In our new design, one button only unlocks the handle rotation,
-[00:00:35.920 --> 00:00:39.160] and the seat and frame fold by turning the handlebar.
-[00:00:39.160 --> 00:00:41.160] This makes folding safer and easier.
+[00:00:00.000 --> 00:00:02.940] The initial idea for this project came from a simple observation.
+[00:00:03.680 --> 00:00:08.660] Although there are strollers with one hand folding mechanisms, many are not truly convenient.
+[00:00:09.260 --> 00:00:18.140] Some require folding the seat first, and most leave the handlebar pointing toward the ground, making operation awkward for users, such as the Cybex stroller.
+[00:00:19.020 --> 00:00:24.440] Before, we made a stroller that could fold with one button, letting the seat and frame fold at the same time.
+[00:00:25.240 --> 00:00:27.900] This worked, but it had two problems.
+[00:00:27.900 --> 00:00:31.200] It could fold unintentionally, and the button was hard to press.
+[00:00:31.960 --> 00:00:38.520] In our new design, one button only unlocks the handle rotation, and the seat and frame fold by turning the handlebar.
+[00:00:39.120 --> 00:00:40.800] This makes folding safer and easier.

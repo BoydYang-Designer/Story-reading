@@ -1,4 +1,3 @@
-[00:00:00.000 --> 00:00:04.480] “Pushing the handlebar downward is different from rotating the handlebar downward.
-[00:00:05.200 --> 00:00:09.520] When you push the handlebar downward, you hold it upright, facing toward you.
-[00:00:10.240 --> 00:00:15.280] In contrast, rotating the handlebar downward requires bending over to let it rotate almost to
-[00:00:15.280 --> 00:00:24.160] the ground, which is inconvenient and unintuitive.”
+[00:00:00.000 --> 00:00:04.300] Pushing the handlebar downward is different from rotating the handlebar downward.
+[00:00:05.100 --> 00:00:09.600] When you push the handlebar downward, you hold it upright, facing toward you.
+[00:00:10.340 --> 00:00:17.660] In contrast, rotating the handlebar downward requires bending over to let it rotate almost to the ground, which is inconvenient and unintuitive.
