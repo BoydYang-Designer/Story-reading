@@ -23,13 +23,6 @@
 <div id="user-status" class="user-status-header">
     <span id="user-info">Guest Mode</span>
     
-    <button id="go-to-data-manager" class="icon-btn" title="Data Manager">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
-            <circle cx="12" cy="12" r="3"></circle>
-        </svg>
-    </button>
-    
     <button id="sign-in-from-guest-btn" class="secondary is-hidden">Sign In</button>
     
     <button id="sign-out-btn" class="secondary is-hidden">Sign Out</button>
@@ -108,36 +101,139 @@
 <div id="note-view" class="is-hidden">
     <h1 id="note-view-title">Word Note</h1>
     
+    <!-- Enhanced Statistics Section -->
     <div id="note-stats-container" class="note-stats" style="display: none;">
         <!-- Statistics will be inserted here by JavaScript -->
     </div>
 
-    <div class="note-top-actions">
-        <button class="secondary" id="prev-note-btn" hidden>Previous Note</button>
-        <button class="secondary" id="back-to-home-from-note">Back to Home</button>
-        <button class="secondary" id="back-to-story-from-note-btn" hidden>Back to Story</button>
-        <button class="secondary" id="next-note-btn" hidden>Next Note</button>
+    <!-- Action Buttons with Better Visual Hierarchy (Moved to Top) -->
+    <div class="note-actions-enhanced">
+        <div class="note-actions-primary">
+            <button id="export-words-btn" class="btn-primary-action">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                Copy All Items
+            </button>
+        </div>
+        <div class="note-actions-secondary">
+            <button id="export-current-note-json-btn" class="secondary btn-secondary-action">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Export This Note (JSON)
+            </button>
+            <button id="export-all-notes-json-btn" class="secondary btn-secondary-action">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Export All Notes (JSON)
+            </button>
+        </div>
     </div>
 
-    <div id="add-word-form"> 
-        <input type="text" id="new-word-input" placeholder="Enter a new word or sentence...">
-        <button id="add-manual-word-btn">Add</button>
+    <!-- Add Word Section with Clear Label -->
+    <div class="note-add-section">
+        <label for="new-word-input" class="note-add-label">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            Add New Word or Phrase
+        </label>
+        <div id="add-word-form">
+            <input type="text" id="new-word-input" placeholder="Type a word, phrase, or sentence...">
+            <button id="add-manual-word-btn">Add</button>
+        </div>
     </div>
 
+    <!-- Content Sections with Better Organization -->
     <div id="note-content-wrapper">
-        <div class="note-section-header"><h3>Words</h3></div>
-        <div id="note-list-words" class="list"></div>
-        <div class="note-section-header"><h3>Phrases</h3></div>
-        <div id="note-list-phrases" class="list"></div>
-        <div class="note-section-header"><h3>Sentences</h3></div>
-        <div id="note-list-sentences" class="list"></div>
+        <div class="note-section">
+            <div class="note-section-header">
+                <h3>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
+                    </svg>
+                    Words
+                </h3>
+                <span class="section-count" id="words-count">0</span>
+            </div>
+            <div id="note-list-words" class="list note-list-enhanced"></div>
+        </div>
+
+        <div class="note-section">
+            <div class="note-section-header">
+                <h3>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="8" y1="6" x2="21" y2="6"></line>
+                        <line x1="8" y1="12" x2="21" y2="12"></line>
+                        <line x1="8" y1="18" x2="21" y2="18"></line>
+                        <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                        <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                        <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                    </svg>
+                    Phrases
+                </h3>
+                <span class="section-count" id="phrases-count">0</span>
+            </div>
+            <div id="note-list-phrases" class="list note-list-enhanced"></div>
+        </div>
+
+        <div class="note-section">
+            <div class="note-section-header">
+                <h3>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="17" y1="10" x2="3" y2="10"></line>
+                        <line x1="21" y1="6" x2="3" y2="6"></line>
+                        <line x1="21" y1="14" x2="3" y2="14"></line>
+                        <line x1="17" y1="18" x2="3" y2="18"></line>
+                    </svg>
+                    Sentences
+                </h3>
+                <span class="section-count" id="sentences-count">0</span>
+            </div>
+            <div id="note-list-sentences" class="list note-list-enhanced"></div>
+        </div>
     </div>
     
-    <div class="note-actions">
-        <button id="export-words-btn">Copy All Items</button>
-        <button id="export-current-note-json-btn" class="secondary">Export This Note (JSON)</button>
-        <button id="export-all-notes-json-btn" class="secondary">Export All Notes (JSON)</button>
-        </div>
+    <!-- Simplified Navigation Bar (Moved to Bottom) -->
+    <div class="note-navigation-bar">
+        <button class="secondary note-nav-btn" id="prev-note-btn" hidden>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+            Previous
+        </button>
+        
+        <button class="secondary note-nav-btn" id="back-to-home-from-note">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+            Home
+        </button>
+        
+        <button class="secondary note-nav-btn" id="back-to-story-from-note-btn" hidden>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            </svg>
+            Back to Story
+        </button>
+        
+        <button class="secondary note-nav-btn" id="next-note-btn" hidden>
+            Next
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+        </button>
+    </div>
 </div>
 
 <div id="data-manager-view" class="is-hidden">

@@ -119,7 +119,7 @@ h1 { font-size: 25px; font-weight: 600; }
   text-align: left;
   user-select: text;
   color: var(--color-text);
-  padding-bottom: 280px;
+  padding-bottom: 450px; /* 再增加底部padding，確保2-3句的距離 */
 }
 
 
@@ -251,7 +251,7 @@ h1 { font-size: 25px; font-weight: 600; }
 .playback-actions svg {
   width: 24px;
   height: 24px;
-  stroke-width: 1.5; /* 讓線條細一點，更精緻 */
+  stroke-width: 1.5; /* 讓線條細一點,更精緻 */
   fill: currentColor;
   stroke: currentColor;
 }
@@ -302,326 +302,455 @@ button.secondary:hover {
 
 #play-pause { min-width: 80px; text-align: center; }
 
-/* 6. Note View
+/* 6. Enhanced Note View Styles
 ------------------------------------------ */
+#note-view {
+    padding: 20px;
+    padding-bottom: 80px;
+    overflow-y: auto; 
+    max-height: 100vh;
+    box-sizing: border-box;
+}
+
+/* Navigation Bar for Note View */
+.note-navigation-bar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 30px;
+    margin-bottom: 20px;
+    padding: 12px;
+    background-color: var(--color-surface);
+    border-radius: 12px;
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-sm);
+    flex-wrap: wrap;
+}
+
+.note-nav-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px !important;
+    font-size: 14px !important;
+    white-space: nowrap;
+}
+
+.note-nav-btn svg {
+    flex-shrink: 0;
+}
+
+/* Add Word Section */
+.note-add-section {
+    margin-bottom: 25px;
+    padding: 20px;
+    background-color: var(--color-surface);
+    border-radius: 12px;
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-sm);
+}
+
+.note-add-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: 10px;
+}
+
+.note-add-label svg {
+    color: var(--color-primary);
+}
+
 #add-word-form {
-  display: flex;
-  gap: 10px;
-  margin: 10px 0 24px;
+    display: flex;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
 }
+
 #new-word-input {
-  flex-grow: 1;
-  padding: 10px 18px;
-  font-size: 16px;
-  border: 1px solid var(--color-border);
-  border-radius: 9999px;
-  background-color: var(--color-surface);
-  color: var(--color-text);
+    flex-grow: 1;
+    padding: 12px 18px;
+    font-size: 16px;
+    border: 1px solid var(--color-border);
+    border-radius: 9999px;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
+
 #new-word-input:focus {
-  outline: none;
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px var(--color-accent-light);
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px var(--color-accent-light);
 }
+
 #add-manual-word-btn {
-  flex-shrink: 0;
+    flex-shrink: 0;
+    background-color: var(--color-primary);
+    color: var(--color-surface);
+    border-color: var(--color-primary);
+    padding: 12px 24px;
+}
+
+#add-manual-word-btn:hover {
+    background-color: var(--color-primary-dark);
+}
+
+/* Note Content Sections */
+#note-content-wrapper {
+    margin-bottom: 30px;
 }
 
 #note-content-wrapper .list {
     padding-bottom: 0;
 }
 
+.note-section {
+    margin-bottom: 30px;
+}
+
 .note-section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  cursor: pointer;
-  user-select: none;
-  text-align: left;
-  margin: 28px 0 12px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--color-border);
-}
-
-#note-content-wrapper .note-section-header:first-of-type {
-    margin-top: 4px;
-}
-
-.note-section-header h3 {
-    margin: 0;
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--color-text-light);
-}
-
-.toggle-icon {
-  width: 0;
-  height: 0;
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  border-top: 5px solid var(--color-text-light);
-  transition: transform 0.2s ease-in-out;
-}
-
-.note-section-header:not(.is-expanded) .toggle-icon {
-  transform: rotate(-90deg);
-}
-
-#note-list-words .word-item, 
-#note-list-phrases .word-item,
-#note-list-sentences .word-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 18px;
-    background-color: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: 12px;
+    margin-bottom: 15px;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, var(--color-accent-light) 0%, rgba(212, 188, 162, 0.1) 100%);
+    border-radius: 10px;
+    border: 1px solid var(--color-accent);
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.2s ease;
+}
+
+.note-section-header:hover {
+    background: linear-gradient(135deg, var(--color-accent-light) 0%, rgba(212, 188, 162, 0.2) 100%);
+    transform: translateY(-1px);
     box-shadow: var(--shadow-sm);
 }
-.word-text { 
-    font-size: 18px; 
-    font-weight: 500;
-    line-height: 1.5;
-}
-.word-item-actions { display: flex; gap: 8px; align-items: center; }
-.word-item-actions button { padding: 5px 10px; font-size: 14px; }
-.note-actions { margin-top: 30px; display: flex; justify-content: center; gap: 12px; padding-bottom: 100px; }
 
-/* 7. Staging Area
------------------------------------------- */
-#staging-area {
-  margin-top: 5px;
-  padding: 12px 16px;
-  background-color: #f9f6f2;
-  border: 1px solid var(--color-border);
-  border-radius: 12px;
-  min-height: 80px;
-  margin-bottom: 140px;
-}
-.staging-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--color-text-light);
-}
-.staging-header-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.staging-header button { padding: 4px 10px; font-size: 13px; }
-
-#staged-words-container { display: flex; flex-wrap: wrap; gap: 8px; }
-#staged-words-container:empty::before {
-  content: attr(placeholder);
-  color: var(--color-text-light);
-  font-style: italic;
-  font-size: 15px;
-}
-
-.staged-word {
-  background-color: #f3ece3;
-  color: var(--color-primary);
-  border: 1px solid var(--color-accent);
-  border-radius: 16px;
-  padding: 5px 12px;
-  font-size: 16px;
-  font-weight: 500;
-  cursor: pointer;
-  user-select: none;
-  transition: background-color 0.2s ease, transform 0.1s ease;
-}
-.staged-word:hover { background-color: #ede3d7; border-color: #c9b49b; }
-.staged-word:active { transform: translateY(1px); }
-
-/* 8. Mobile Responsive
------------------------------------------- */
-@media (max-width: 600px) {
-  body { padding: 12px; }
-  h1 { font-size: 15px; }
-  h2 { font-size: 18px; }
-  button { padding: 5px 10px; font-size: 15px; }
-
-  #text-container {
-    height: 280px;
-    font-size: 22px;
-    line-height: 1.7;
-    padding-bottom: 300px;
-  }
-}
-
-button.btn-success-feedback {
-    background-color: var(--color-primary) !important;
-    color: var(--color-surface) !important;
-    border-color: var(--color-primary) !important;
-    transition: background-color 0.1s ease-in-out, color 0.1s ease-in-out, border-color 0.1s ease-in-out;
-}
-
-
-/* 9. Login & User Status Styles
------------------------------------------- */
-#login-view {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  padding: 20px;
-}
-
-#login-view h1 {
-  font-size: 25px;
-  margin-bottom: 8px;
-}
-
-.subtitle {
-  font-size: 18px;
-  color: var(--color-text-light);
-  margin-top: 0;
-  margin-bottom: 40px;
-}
-
-.login-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  width: 100%;
-  max-width: 320px;
-}
-
-.login-actions button {
-  padding: 14px 22px;
-  font-size: 17px;
-}
-
-.user-status-header {
-  text-align: right;
-  padding: 0 10px 0px;
-  font-size: 14px;
-  color: var(--color-text-light);
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 8px;
-}
-.user-status-header button {
-  margin-left: 12px;
-  padding: 4px 12px;
-  font-size: 13px;
-}
-
-/* Icon button styles */
-.icon-btn {
-  background: transparent;
-  border: none;
-  color: var(--color-text-light);
-  cursor: pointer;
-  padding: 6px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 0.2s ease, color 0.2s ease;
-  margin-left: 0 !important;
-}
-
-.icon-btn:hover {
-  background-color: var(--color-accent-light);
-  color: var(--color-primary);
-}
-
-.icon-btn svg {
-  display: block;
-}
-
-/* 10. Deleting Item Feedback */
-.word-item.is-deleting {
-    background-color: #fce8e8 !important;
-    border-color: #e57373 !important;
-    transition: background-color 0.1s ease, border-color 0.1s ease;
-}
-
-
-#note-view {
-    padding: 20px;
-    overflow-y: auto; 
-    height: 100vh;
-    box-sizing: border-box;
-}
-
-#add-word-form {
-    position: sticky;
-    top: 0;
-    z-index: 10; 
-    background-color: var(--color-bg); 
-    padding: 10px 0;
-    border-bottom: 1px solid var(--color-border);
-    margin-bottom: 10px;
+.note-section-header h3 {
     display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--color-primary);
+}
+
+.note-section-header h3 svg {
+    flex-shrink: 0;
+}
+
+.section-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 32px;
+    padding: 0 10px;
+    background-color: var(--color-primary);
+    color: var(--color-surface);
+    font-size: 14px;
+    font-weight: 700;
+    border-radius: 16px;
+}
+
+/* Enhanced List Items */
+.note-list-enhanced {
     gap: 10px;
 }
 
-#new-word-input {
-    flex-grow: 1; 
+.word-entry {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 16px;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.2s ease;
 }
 
-/* 11. Note View Highlight */
-/* 用於在 Note 畫面中高亮顯示主要的返回按鈕 */
+.word-entry:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--color-accent);
+}
+
+.word-entry-text {
+    flex-grow: 1;
+    font-size: 16px;
+    line-height: 1.6;
+    word-break: break-word;
+    color: var(--color-text);
+}
+
+.word-count-badge {
+    display: inline-block;
+    margin-left: 10px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--color-primary);
+    background-color: var(--color-accent-light);
+    border-radius: 12px;
+    vertical-align: middle;
+}
+
+.word-entry-actions {
+    display: flex;
+    gap: 6px;
+    margin-left: 12px;
+}
+
+.word-entry-actions button {
+    padding: 6px 12px;
+    font-size: 12px;
+}
+
+/* Enhanced Action Buttons */
+.note-actions-enhanced {
+    padding: 20px;
+    margin-bottom: 25px;
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    border: 1px solid var(--color-border);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.note-actions-primary {
+    margin-bottom: 12px;
+    text-align: center;
+}
+
+.btn-primary-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px 28px !important;
+    font-size: 16px !important;
+    font-weight: 600;
+    background-color: var(--color-primary) !important;
+    color: var(--color-surface) !important;
+    border-color: var(--color-primary) !important;
+}
+
+.btn-primary-action:hover {
+    background-color: var(--color-primary-dark) !important;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.note-actions-secondary {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.btn-secondary-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 18px !important;
+    font-size: 14px !important;
+}
+
+/* Note Statistics */
+.note-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 12px;
+    margin: 0 0 25px 0;
+    padding: 20px;
+    background: linear-gradient(135deg, var(--color-accent-light) 0%, rgba(212, 188, 162, 0.1) 100%);
+    border-radius: 12px;
+    border: 1px solid var(--color-accent);
+    box-shadow: var(--shadow-sm);
+}
+
+.note-stats .stat-item {
+    text-align: center;
+    padding: 15px 10px;
+    background-color: var(--color-surface);
+    border-radius: 8px;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.2s ease;
+}
+
+.note-stats .stat-item:hover {
+    transform: translateY(-2px);
+}
+
+.note-stats .stat-number {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: 5px;
+    display: block;
+}
+
+.note-stats .stat-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--color-text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Legacy Note Styles (for backward compatibility) */
+.note-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 30px;
+    padding: 20px 0;
+}
+
 .note-actions button.is-highlighted {
     background-color: var(--color-primary);
     color: var(--color-surface);
     border-color: var(--color-primary);
 }
-/* 確保滑鼠懸停(hover)時的樣式也正確 */
+
 .note-actions button.is-highlighted:hover {
     background-color: var(--color-primary-dark);
     color: var(--color-surface);
 }
 
-/* Note View Statistics */
-.note-stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+.note-top-actions {
+    display: flex;
+    justify-content: center;
     gap: 10px;
-    margin: 15px 0 20px 0;
-    padding: 15px;
-    background: linear-gradient(135deg, var(--color-accent-light) 0%, rgba(212, 188, 162, 0.1) 100%);
-    border-radius: 10px;
-    border: 1px solid var(--color-accent);
+    margin-bottom: 20px;
+    flex-wrap: wrap;
 }
 
-.note-stats .stat-item {
-    text-align: center;
-    padding: 10px;
-    background-color: var(--color-surface);
-    border-radius: 6px;
-    box-shadow: var(--shadow-sm);
+/* 7. User Status Header
+------------------------------------------ */
+.user-status-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 12px 0;
 }
 
-.note-stats .stat-number {
-    font-size: 24px;
-    font-weight: 700;
-    color: var(--color-primary);
-    margin-bottom: 3px;
+#user-info {
+  font-size: 14px;
+  color: var(--color-text-light);
 }
 
-.note-stats .stat-label {
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--color-text-light);
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
+/* 8. Login View
+------------------------------------------ */
+.subtitle {
+  font-size: 16px;
+  color: var(--color-text-light);
+  margin: 10px 0 30px;
 }
 
-/* 新增的清單項目樣式，讓圖片跟文字橫向排列 */
+.login-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.login-actions button {
+  width: 100%;
+}
+
+/* 9. Staging Area
+------------------------------------------ */
+#staging-area {
+  margin: 20px 0;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.staging-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background-color: #f9f5f0;
+  border-bottom: 1px solid var(--color-border);
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--color-text);
+}
+
+.staging-header-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.staging-header-actions button {
+  padding: 6px 14px;
+  font-size: 13px;
+}
+
+#staged-words-container {
+  min-height: 60px;
+  padding: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: flex-start;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+#staged-words-container:empty::before {
+  content: attr(placeholder);
+  color: var(--color-text-light);
+  font-style: italic;
+  font-size: 14px;
+}
+
+.staged-word {
+  display: inline-block;
+  padding: 6px 12px;
+  background-color: var(--color-accent-light);
+  border: 1px solid var(--color-accent);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.staged-word:hover {
+  background-color: rgba(212, 188, 162, 0.4);
+  transform: translateY(-1px);
+}
+
+.staged-word.is-sentence {
+  background-color: rgba(169, 180, 196, 0.2);
+  border-color: #a9b4c4;
+}
+
+/* 10. Category Images
+------------------------------------------ */
 .list-item-with-image {
     display: flex;
     align-items: center;
-    gap: 15px; /* 圖片跟文字的間距 */
+    gap: 15px;
     padding: 10px;
     cursor: pointer;
     border-bottom: 1px solid #eee;
@@ -632,32 +761,26 @@ button.btn-success-feedback {
     background-color: #f5f5f5;
 }
 
-/* 圖片樣式 */
 .category-thumb {
-    width: 60px;  /* 你可以自己調整圖片大小 */
+    width: 60px;
     height: 60px;
-    object-fit: cover; /* 保持圖片比例，多餘部分裁切 */
-    border-radius: 6px; /* 圓角看起來比較舒服 */
-    background-color: #ddd; /* 圖片載入前的背景色 */
-    flex-shrink: 0; /* 防止圖片被擠壓 */
+    object-fit: cover;
+    border-radius: 6px;
+    background-color: #ddd;
+    flex-shrink: 0;
 }
 
-/* 如果找不到圖片，這個 class 會被用來隱藏 img 標籤 */
 .img-hidden {
     display: none;
 }
 
-
-/* 已儲存單字的樣式 */
+/* Saved word highlighting in text */
 .clickable-word.is-saved-word {
-  /* 方案 A: 底部加上明顯的顏色線條 */
-  border-bottom: 2px solid var(--color-primary); 
-  font-weight: 600; /* 加粗 */
-  
-  /* 方案 B (如果你喜歡背景色，可以選這個，但要小心跟播放顏色衝突) */
-  /* background-color: rgba(138, 121, 104, 0.15); */
+  border-bottom: 2px solid var(--color-primary);
+  font-weight: 600;
 }
-/* 12. Data Manager Styles
+
+/* 11. Data Manager Styles
 ------------------------------------------ */
 #data-manager-view {
     padding: 20px;
@@ -736,46 +859,6 @@ button.btn-success-feedback {
 .data-item-actions button {
     padding: 6px 12px;
     font-size: 13px;
-}
-
-.word-entry {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    margin-bottom: 8px;
-    background-color: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: 6px;
-}
-
-.word-entry-text {
-    flex-grow: 1;
-    font-size: 16px;
-    line-height: 1.6;
-    word-break: break-word;
-}
-
-.word-count-badge {
-    display: inline-block;
-    margin-left: 10px;
-    padding: 2px 8px;
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--color-text-light);
-    background-color: var(--color-accent-light);
-    border-radius: 12px;
-    vertical-align: middle;
-}
-
-.word-entry-actions {
-    display: flex;
-    gap: 6px;
-}
-
-.word-entry-actions button {
-    padding: 4px 10px;
-    font-size: 12px;
 }
 
 .category-group {
