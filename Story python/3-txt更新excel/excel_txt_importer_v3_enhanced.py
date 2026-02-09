@@ -1,7 +1,7 @@
 import os
 import openpyxl
 from openpyxl.styles import Alignment
-from tkinter import Tk, messagebox
+from tkinter import Tk, messagebox, Toplevel, Label, Button, Radiobutton, StringVar, Entry, Listbox, Scrollbar, SINGLE, Frame
 from tkinter.filedialog import askopenfilename, askopenfilenames, askdirectory
 import re
 
@@ -36,6 +36,178 @@ def extract_category_and_title_from_filename(filename):
         category = name_without_ext.strip()
     
     return category, title
+
+def get_existing_categories(sheet):
+    """
+    從 Excel 中獲取所有已存在的大類（A 欄）
+    
+    參數:
+    - sheet: Excel 工作表
+    
+    返回:
+    - 排序後的大類列表（不含重複）
+    """
+    categories = set()
+    
+    # 從第2行開始（第1行是標題）
+    for row in range(2, sheet.max_row + 1):
+        category = sheet.cell(row=row, column=1).value
+        if category and isinstance(category, str) and category.strip():
+            categories.add(category.strip())
+    
+    return sorted(list(categories))
+
+class CategoryDialog:
+    """
+    大類選擇對話框
+    讓使用者選擇：保持空白、自訂輸入、或從現有大類中選擇
+    """
+    def __init__(self, parent, existing_categories):
+        self.result = None
+        self.mode = None  # 'blank', 'custom', 'existing'
+        
+        # 建立對話框視窗
+        self.dialog = Toplevel(parent)
+        self.dialog.title("大類設定")
+        self.dialog.resizable(False, False)
+        
+        # 計算螢幕中心位置並設定
+        self.dialog.update_idletasks()  # 更新視窗資訊
+        screen_width = self.dialog.winfo_screenwidth()
+        screen_height = self.dialog.winfo_screenheight()
+        x = (screen_width - 500) // 2
+        y = (screen_height - 450) // 2
+        self.dialog.geometry(f"500x450+{x}+{y}")
+        
+        # 強制置頂並取得焦點
+        self.dialog.lift()
+        self.dialog.focus_force()
+        self.dialog.grab_set()
+        
+        # 讓對話框顯示在工作列
+        self.dialog.attributes('-topmost', True)
+        self.dialog.update()
+        self.dialog.attributes('-topmost', False)
+        
+        # 說明文字
+        Label(self.dialog, text="設定大類（A 欄）", 
+              font=('微軟正黑體', 12, 'bold')).pack(pady=10)
+        Label(self.dialog, text="請選擇如何處理新增資料的大類：", 
+              font=('微軟正黑體', 10)).pack(pady=5)
+        
+        # 選項變數
+        self.choice = StringVar(value="blank")
+        
+        # 選項 1: 保持空白
+        Radiobutton(self.dialog, text="保持空白", variable=self.choice, 
+                   value="blank", font=('微軟正黑體', 10)).pack(anchor='w', padx=30, pady=5)
+        
+        # 選項 2: 自訂輸入
+        Radiobutton(self.dialog, text="自訂大類（手動輸入）", variable=self.choice, 
+                   value="custom", font=('微軟正黑體', 10)).pack(anchor='w', padx=30, pady=5)
+        
+        # 自訂輸入框
+        self.custom_entry = Entry(self.dialog, font=('微軟正黑體', 10), width=30)
+        self.custom_entry.pack(padx=50, pady=5)
+        self.custom_entry.config(state='disabled')
+        
+        # 選項 3: 從現有大類選擇
+        if existing_categories:
+            Radiobutton(self.dialog, text="從現有大類中選擇", variable=self.choice, 
+                       value="existing", font=('微軟正黑體', 10)).pack(anchor='w', padx=30, pady=5)
+            
+            # 現有大類列表框
+            list_frame = Frame(self.dialog)
+            list_frame.pack(padx=50, pady=5)
+            
+            Label(list_frame, text="現有大類：", font=('微軟正黑體', 9)).pack(anchor='w')
+            
+            # 捲軸
+            scrollbar = Scrollbar(list_frame)
+            scrollbar.pack(side='right', fill='y')
+            
+            # 列表框
+            self.category_listbox = Listbox(list_frame, height=6, width=35, 
+                                           font=('微軟正黑體', 10), 
+                                           yscrollcommand=scrollbar.set,
+                                           selectmode=SINGLE)
+            self.category_listbox.pack(side='left')
+            scrollbar.config(command=self.category_listbox.yview)
+            
+            # 填入現有大類
+            for cat in existing_categories:
+                self.category_listbox.insert('end', cat)
+            
+            # 預設選擇第一個
+            if existing_categories:
+                self.category_listbox.select_set(0)
+            
+            self.category_listbox.config(state='disabled')
+        else:
+            self.category_listbox = None
+        
+        # 監聽選項變化
+        self.choice.trace('w', self.on_choice_change)
+        
+        # 按鈕框架
+        button_frame = Frame(self.dialog)
+        button_frame.pack(pady=20)
+        
+        Button(button_frame, text="確定", command=self.on_ok, 
+               width=10, font=('微軟正黑體', 10)).pack(side='left', padx=10)
+        Button(button_frame, text="取消", command=self.on_cancel, 
+               width=10, font=('微軟正黑體', 10)).pack(side='left', padx=10)
+        
+        # 等待對話框關閉
+        self.dialog.wait_window()
+    
+    def on_choice_change(self, *args):
+        """當選項改變時，啟用/停用對應的輸入控制項"""
+        choice = self.choice.get()
+        
+        # 自訂輸入框
+        if choice == "custom":
+            self.custom_entry.config(state='normal')
+        else:
+            self.custom_entry.config(state='disabled')
+        
+        # 大類列表框
+        if self.category_listbox:
+            if choice == "existing":
+                self.category_listbox.config(state='normal')
+            else:
+                self.category_listbox.config(state='disabled')
+    
+    def on_ok(self):
+        """確定按鈕"""
+        choice = self.choice.get()
+        
+        if choice == "blank":
+            self.result = None
+            self.mode = "blank"
+        elif choice == "custom":
+            custom_text = self.custom_entry.get().strip()
+            if not custom_text:
+                messagebox.showwarning("警告", "請輸入自訂大類，或選擇其他選項")
+                return
+            self.result = custom_text
+            self.mode = "custom"
+        elif choice == "existing":
+            if self.category_listbox:
+                selection = self.category_listbox.curselection()
+                if not selection:
+                    messagebox.showwarning("警告", "請選擇一個現有大類，或選擇其他選項")
+                    return
+                self.result = self.category_listbox.get(selection[0])
+                self.mode = "existing"
+        
+        self.dialog.destroy()
+    
+    def on_cancel(self):
+        """取消按鈕"""
+        self.result = None
+        self.mode = None
+        self.dialog.destroy()
 
 def scan_folder_for_txt(folder_path):
     """
@@ -99,9 +271,14 @@ def check_title_exists(sheet, title):
             return True
     return False
 
-def fill_excel_with_txt(excel_path, txt_files):
+def fill_excel_with_txt(excel_path, txt_files, major_category=None):
     """
     將 txt 檔案內容填入 Excel
+    
+    參數:
+    - excel_path: Excel 檔案路徑
+    - txt_files: txt 檔案列表
+    - major_category: 大類內容（None 表示保持空白）
     """
     try:
         # 載入 Excel 檔案
@@ -145,8 +322,13 @@ def fill_excel_with_txt(excel_path, txt_files):
                 print(f"  填入位置: 第 {target_row} 行")
                 
                 # 填入資料
-                # A 欄（大類）保持空白
-                sheet.cell(row=target_row, column=1).value = None
+                # A 欄（大類）根據使用者選擇填入
+                if major_category:
+                    sheet.cell(row=target_row, column=1).value = major_category
+                    print(f"  大類: {major_category}")
+                else:
+                    sheet.cell(row=target_row, column=1).value = None
+                    print(f"  大類: (保持空白)")
                 
                 # B 欄（分類）填入提取的分類
                 sheet.cell(row=target_row, column=2).value = category
@@ -199,7 +381,7 @@ def main():
     主程式
     """
     print("=" * 60)
-    print("Excel 自動填入工具 v3.0")
+    print("Excel 自動填入工具 v3.1")
     print("=" * 60)
     
     # 初始化 Tkinter
@@ -296,6 +478,38 @@ def main():
         messagebox.showinfo("提示", "沒有可處理的 txt 檔案")
         return
     
+    # 步驟 3: 詢問大類設定（新增功能）
+    print("\n正在讀取 Excel 中的現有大類...")
+    try:
+        wb = openpyxl.load_workbook(excel_path)
+        sheet = wb.active
+        existing_categories = get_existing_categories(sheet)
+        wb.close()
+        
+        if existing_categories:
+            print(f"找到 {len(existing_categories)} 個現有大類: {', '.join(existing_categories)}")
+        else:
+            print("Excel 中尚無現有大類")
+        
+    except Exception as e:
+        print(f"讀取 Excel 失敗: {e}")
+        messagebox.showerror("錯誤", f"無法讀取 Excel 檔案：\n{e}")
+        return
+    
+    # 顯示大類選擇對話框（保持主視窗隱藏）
+    category_dialog = CategoryDialog(root, existing_categories)
+    
+    if category_dialog.mode is None:
+        print("使用者取消大類設定")
+        return
+    
+    major_category = category_dialog.result
+    
+    if major_category:
+        print(f"大類設定: {major_category}")
+    else:
+        print(f"大類設定: (保持空白)")
+    
     # 確認操作
     confirm_message = (
         f"即將處理：\n"
@@ -308,10 +522,10 @@ def main():
     
     confirm_message += (
         f"\n填入規則：\n"
+        f"• 大類（A欄）：{major_category if major_category else '(保持空白)'}\n"
         f"• 分類（B欄）：檔名的第一個單字\n"
         f"• 標題（C欄）：完整檔名\n"
         f"• 內文（D欄）：txt 內容（自動換行）\n"
-        f"• 大類（A欄）：保持空白\n"
         f"• 自動跳過：包含 'Timestamp' 的檔案\n\n"
         f"Excel 檔案將被直接覆蓋更新。\n"
         f"是否繼續？"
@@ -323,13 +537,15 @@ def main():
         print("使用者取消操作")
         return
     
-    # 步驟 3: 處理檔案
+    # 步驟 4: 處理檔案
     try:
         print("\n" + "=" * 60)
         print("開始處理...")
         print("=" * 60)
         
-        success_count, skip_exist_count, skip_timestamp_count = fill_excel_with_txt(excel_path, txt_files)
+        success_count, skip_exist_count, skip_timestamp_count = fill_excel_with_txt(
+            excel_path, txt_files, major_category
+        )
         
         # 顯示結果
         print("\n" + "=" * 60)

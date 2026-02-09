@@ -1,7 +1,7 @@
 import os
 import openpyxl
 from openpyxl.styles import Alignment
-from tkinter import Tk, messagebox, simpledialog, Toplevel, Label, Button, Radiobutton, StringVar, Entry, Listbox, Scrollbar, SINGLE
+from tkinter import Tk, messagebox, Toplevel, Label, Button, Radiobutton, StringVar, Entry, Listbox, Scrollbar, SINGLE, Frame
 from tkinter.filedialog import askopenfilename, askopenfilenames, askdirectory
 import re
 
@@ -74,44 +74,51 @@ class CategoryDialog:
         
         # 置中顯示
         self.dialog.transient(parent)
+        
+        # 計算螢幕中心位置
+        screen_width = self.dialog.winfo_screenwidth()
+        screen_height = self.dialog.winfo_screenheight()
+        x = (screen_width - 500) // 2
+        y = (screen_height - 450) // 2
+        self.dialog.geometry(f"500x450+{x}+{y}")
+        
+        # 強制置頂並取得焦點
+        self.dialog.lift()
+        self.dialog.focus_force()
         self.dialog.grab_set()
         
         # 說明文字
-        Label(self.dialog, text="Excel 中的大類（A 欄）目前為空白", 
-              font=('Arial', 12, 'bold')).pack(pady=10)
+        Label(self.dialog, text="設定大類（A 欄）", 
+              font=('微軟正黑體', 12, 'bold')).pack(pady=10)
         Label(self.dialog, text="請選擇如何處理新增資料的大類：", 
-              font=('Arial', 10)).pack(pady=5)
+              font=('微軟正黑體', 10)).pack(pady=5)
         
         # 選項變數
         self.choice = StringVar(value="blank")
         
-        # 選項框架
-        option_frame = Toplevel(self.dialog)
-        option_frame.pack(pady=10, padx=20, fill='both', expand=True)
-        
         # 選項 1: 保持空白
         Radiobutton(self.dialog, text="保持空白", variable=self.choice, 
-                   value="blank", font=('Arial', 10)).pack(anchor='w', padx=30, pady=5)
+                   value="blank", font=('微軟正黑體', 10)).pack(anchor='w', padx=30, pady=5)
         
         # 選項 2: 自訂輸入
         Radiobutton(self.dialog, text="自訂大類（手動輸入）", variable=self.choice, 
-                   value="custom", font=('Arial', 10)).pack(anchor='w', padx=30, pady=5)
+                   value="custom", font=('微軟正黑體', 10)).pack(anchor='w', padx=30, pady=5)
         
         # 自訂輸入框
-        self.custom_entry = Entry(self.dialog, font=('Arial', 10), width=30)
+        self.custom_entry = Entry(self.dialog, font=('微軟正黑體', 10), width=30)
         self.custom_entry.pack(padx=50, pady=5)
         self.custom_entry.config(state='disabled')
         
         # 選項 3: 從現有大類選擇
         if existing_categories:
             Radiobutton(self.dialog, text="從現有大類中選擇", variable=self.choice, 
-                       value="existing", font=('Arial', 10)).pack(anchor='w', padx=30, pady=5)
+                       value="existing", font=('微軟正黑體', 10)).pack(anchor='w', padx=30, pady=5)
             
             # 現有大類列表框
-            list_frame = Toplevel(self.dialog)
+            list_frame = Frame(self.dialog)
             list_frame.pack(padx=50, pady=5)
             
-            Label(list_frame, text="現有大類：", font=('Arial', 9)).pack(anchor='w')
+            Label(list_frame, text="現有大類：", font=('微軟正黑體', 9)).pack(anchor='w')
             
             # 捲軸
             scrollbar = Scrollbar(list_frame)
@@ -119,7 +126,7 @@ class CategoryDialog:
             
             # 列表框
             self.category_listbox = Listbox(list_frame, height=6, width=35, 
-                                           font=('Arial', 10), 
+                                           font=('微軟正黑體', 10), 
                                            yscrollcommand=scrollbar.set,
                                            selectmode=SINGLE)
             self.category_listbox.pack(side='left')
@@ -141,13 +148,13 @@ class CategoryDialog:
         self.choice.trace('w', self.on_choice_change)
         
         # 按鈕框架
-        button_frame = Toplevel(self.dialog)
+        button_frame = Frame(self.dialog)
         button_frame.pack(pady=20)
         
         Button(button_frame, text="確定", command=self.on_ok, 
-               width=10, font=('Arial', 10)).pack(side='left', padx=10)
+               width=10, font=('微軟正黑體', 10)).pack(side='left', padx=10)
         Button(button_frame, text="取消", command=self.on_cancel, 
-               width=10, font=('Arial', 10)).pack(side='left', padx=10)
+               width=10, font=('微軟正黑體', 10)).pack(side='left', padx=10)
         
         # 等待對話框關閉
         self.dialog.wait_window()
@@ -372,7 +379,7 @@ def main():
     主程式
     """
     print("=" * 60)
-    print("Excel 自動填入工具 v4.0")
+    print("Excel 自動填入工具 v3.1")
     print("=" * 60)
     
     # 初始化 Tkinter
@@ -469,7 +476,7 @@ def main():
         messagebox.showinfo("提示", "沒有可處理的 txt 檔案")
         return
     
-    # 步驟 3: 詢問大類設定
+    # 步驟 3: 詢問大類設定（新增功能）
     print("\n正在讀取 Excel 中的現有大類...")
     try:
         wb = openpyxl.load_workbook(excel_path)
@@ -488,6 +495,11 @@ def main():
         return
     
     # 顯示大類選擇對話框
+    root.deiconify()  # 確保主視窗存在
+    root.lift()  # 提升主視窗
+    root.attributes('-topmost', True)  # 暫時置頂
+    root.attributes('-topmost', False)  # 取消置頂但保持在前
+    
     category_dialog = CategoryDialog(root, existing_categories)
     
     if category_dialog.mode is None:
