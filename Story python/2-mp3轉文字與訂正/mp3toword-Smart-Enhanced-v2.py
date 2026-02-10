@@ -21,21 +21,23 @@ def format_timestamp(seconds: float) -> str:
 
     return f"{hours:02}:{minutes:02}:{seconds_int:02}.{milliseconds_rem:03}"
 
-def format_plain_text_with_paragraphs(text, sentences_per_paragraph=3):
+def format_plain_text_with_paragraphs(text, sentences_per_paragraph=3, max_words_per_paragraph=50):
     """
     將純文字智能分段,提升可讀性
     
     參數:
     - text: 原始文字
     - sentences_per_paragraph: 每段包含的句子數(預設3句)
+    - max_words_per_paragraph: 每段最大詞數(預設50個詞)
     
     返回:
     - 分段後的文字
     """
-    # 定義句子結束標點
+    # 定義句子結束標點和次要分割點
     sentence_endings = r'([.!?。!?]+)'
+    minor_breaks = r'([,;:])'
     
-    # 用正則表達式分割句子,保留標點符號
+    # 首先嘗試按句號分割
     sentences = re.split(sentence_endings, text)
     
     # 重新組合句子和標點
@@ -53,7 +55,38 @@ def format_plain_text_with_paragraphs(text, sentences_per_paragraph=3):
         else:
             i += 1
     
-    # 按照每段句子數分段
+    # 如果沒有明顯的句子分割(只有一個長句),則按詞數和標點分段
+    if len(combined_sentences) <= 1:
+        text = text.strip()
+        words = text.split()
+        paragraphs = []
+        current_paragraph = []
+        word_count = 0
+        
+        for word in words:
+            current_paragraph.append(word)
+            word_count += 1
+            
+            # 檢查是否達到詞數限制且遇到合適的分割點
+            if word_count >= max_words_per_paragraph:
+                # 尋找最近的標點符號作為分割點
+                if any(punct in word for punct in ['.', '!', '?', ',', ';']):
+                    paragraphs.append(' '.join(current_paragraph))
+                    current_paragraph = []
+                    word_count = 0
+            # 或者達到更大的詞數強制分段
+            elif word_count >= max_words_per_paragraph * 1.5:
+                paragraphs.append(' '.join(current_paragraph))
+                current_paragraph = []
+                word_count = 0
+        
+        # 添加最後一段
+        if current_paragraph:
+            paragraphs.append(' '.join(current_paragraph))
+        
+        return '\n\n'.join(paragraphs)
+    
+    # 如果有明顯的句子分割,按照每段句子數分段
     paragraphs = []
     for i in range(0, len(combined_sentences), sentences_per_paragraph):
         paragraph_sentences = combined_sentences[i:i + sentences_per_paragraph]
@@ -298,30 +331,36 @@ def process_audio_file(file_path, model, save_plain, save_timestamp, device):
         )
         print("轉錄完成。")
         
+        # 使用改進的智能斷句 - 更小的間隔和時長參數
+        smart_segments = smart_sentence_split(
+            result["segments"],
+            max_gap=0.6,        # 降低至0.6秒
+            max_duration=5.0,   # 降低至5秒
+            max_words=15        # 最多15個詞
+        )
+        
         # 儲存純文字檔
         if save_plain:
             txt_path = base_path + ".txt"
             try:
-                # 使用智能分段功能處理文字
-                formatted_text = format_plain_text_with_paragraphs(
-                    result["text"],
-                    sentences_per_paragraph=3
-                )
+                # 使用與時間戳記版本相同的分段,但不包含時間戳記
+                plain_lines = []
+                for segment in smart_segments:
+                    text = segment['text'].strip()
+                    if text:
+                        plain_lines.append(text)
+                
+                # 用單換行符號連接各行
+                formatted_text = '\n'.join(plain_lines)
+                
                 with open(txt_path, "w", encoding="utf-8") as f:
                     f.write(formatted_text)
-                print(f"  [成功] 已儲存純文字檔(含自動分段): {os.path.basename(txt_path)}")
+                print(f"  [成功] 已儲存純文字檔(與時間戳記版本相同分段): {os.path.basename(txt_path)}")
             except Exception as e:
                 print(f"  [失敗] 儲存純文字檔失敗: {e}")
 
         # 儲存時間戳記檔
         if save_timestamp:
-            # 使用改進的智能斷句 - 更小的間隔和時長參數
-            smart_segments = smart_sentence_split(
-                result["segments"],
-                max_gap=0.6,        # 降低至0.6秒
-                max_duration=5.0,   # 降低至5秒
-                max_words=15        # 最多15個詞
-            )
             timestamp_txt_path = base_path + " Timestamp.txt"
             
             try:
