@@ -1607,17 +1607,33 @@ function timestampUpdateLoop() {
         // 計算句子相對於 container 頂部的位置
         const sentenceRelativeTop = sentenceRect.top - containerRect.top + currentScrollTop;
         
-        // 目標:將當前句子放在畫面上方 25% 處（更靠近頂部以便看到更多後續內容）
-        const targetScrollTop = sentenceRelativeTop - (containerHeight * 0.25);
+        // 目標:將當前句子放在畫面上方 20% 處（手機螢幕較小，靠上顯示）
+        const targetPosition = containerHeight * 0.20;
+        const targetScrollTop = sentenceRelativeTop - targetPosition;
         
         const scrollDifference = targetScrollTop - currentScrollTop;
         const absDiff = Math.abs(scrollDifference);
         
-        // 只有當差距超過 20px 才滾動,避免微小抖動
-        if (absDiff > 20) {
-            // 使用更緩和的插值係數,手機使用更平滑的值
-            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            const smoothFactor = isMobile ? 0.1 : 0.15;
+        // 偵測裝置類型和螢幕大小
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const isSmallScreen = window.innerWidth <= 768;
+        
+        // 調整滾動閾值和速度：小螢幕需要更積極的滾動
+        const scrollThreshold = isSmallScreen ? 10 : 20;
+        
+        if (absDiff > scrollThreshold) {
+            // 根據差距大小調整滾動速度
+            let smoothFactor;
+            if (absDiff > 100) {
+                // 大距離：快速滾動
+                smoothFactor = isSmallScreen ? 0.25 : 0.30;
+            } else if (absDiff > 50) {
+                // 中距離：中速滾動
+                smoothFactor = isSmallScreen ? 0.18 : 0.20;
+            } else {
+                // 小距離：平滑滾動
+                smoothFactor = isSmallScreen ? 0.12 : 0.15;
+            }
             
             // 漸進式滾動
             const newScrollTop = currentScrollTop + (scrollDifference * smoothFactor);
@@ -1718,17 +1734,33 @@ function jsonModeHighlightLoop() {
         // 計算單字相對於 container 頂部的位置
         const wordRelativeTop = wordRect.top - containerRect.top + currentScrollTop;
         
-        // 目標:將當前句子放在畫面上方 25% 處（更靠近頂部以便看到更多後續內容）
-        const targetScrollTop = wordRelativeTop - (containerHeight * 0.25);
+        // 目標:將當前句子放在畫面上方 20% 處（手機螢幕較小，靠上顯示）
+        const targetPosition = containerHeight * 0.20;
+        const targetScrollTop = wordRelativeTop - targetPosition;
         
         const scrollDifference = targetScrollTop - currentScrollTop;
         const absDiff = Math.abs(scrollDifference);
         
-        // 只有當差距超過 20px 才滾動,避免微小抖動
-        if (absDiff > 20) {
-            // 使用更緩和的插值係數,手機使用更平滑的值
-            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            const smoothFactor = isMobile ? 0.1 : 0.15;
+        // 偵測裝置類型和螢幕大小
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const isSmallScreen = window.innerWidth <= 768;
+        
+        // 調整滾動閾值和速度：小螢幕需要更積極的滾動
+        const scrollThreshold = isSmallScreen ? 10 : 20;
+        
+        if (absDiff > scrollThreshold) {
+            // 根據差距大小調整滾動速度
+            let smoothFactor;
+            if (absDiff > 100) {
+                // 大距離：快速滾動
+                smoothFactor = isSmallScreen ? 0.25 : 0.30;
+            } else if (absDiff > 50) {
+                // 中距離：中速滾動
+                smoothFactor = isSmallScreen ? 0.18 : 0.20;
+            } else {
+                // 小距離：平滑滾動
+                smoothFactor = isSmallScreen ? 0.12 : 0.15;
+            }
             
             // 漸進式滾動
             const newScrollTop = currentScrollTop + (scrollDifference * smoothFactor);

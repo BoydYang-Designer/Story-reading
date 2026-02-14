@@ -140,6 +140,8 @@ h1 { font-size: 25px; font-weight: 600; }
   color: var(--color-text);
   padding-bottom: 20px; /* Reduced from 450px for better space usage */
   scroll-behavior: smooth; /* Smooth scrolling for auto-scroll feature */
+  letter-spacing: -0.005em; /* 輕微縮小字距以節省空間 */
+  word-spacing: -0.02em; /* 輕微縮小單字間距 */
 }
 
 
@@ -1023,10 +1025,16 @@ button.secondary:hover {
     #text-container {
         height: 280px;
         font-size: 16px;
-        line-height: 1.7;
+        line-height: 1.6; /* 從 1.7 減少到 1.6 */
+        letter-spacing: -0.01em; /* 輕微縮小字距 */
+        word-spacing: -0.05em; /* 縮小單字間距 */
         padding: 0.8em;
         border-radius: 12px;
         padding-bottom: 15px;
+    }
+    
+    #text-container p {
+        margin: 0 0 0.9em; /* 從預設 1.2em 減少段落間距 */
     }
     
     /* 3. Staging Area - Compact on mobile */
@@ -1054,15 +1062,17 @@ button.secondary:hover {
     }
     
     #staged-words-container {
-        min-height: 45px;
-        max-height: 90px;
-        padding: 10px;
-        gap: 5px;
+        min-height: 35px; /* 減少到約 2 行高度 */
+        max-height: 70px; /* 最多 2 行，超出滾動 */
+        overflow-y: auto; /* 允許滾動 */
+        padding: 8px; /* 減少 padding */
+        gap: 4px; /* 減少間距 */
         font-size: 14px;
+        line-height: 1.4; /* 更緊湊的行高 */
     }
     
     .staged-word {
-        padding: 5px 10px;
+        padding: 4px 8px; /* 減少 padding */
         font-size: 13px;
         border-radius: 5px;
     }
@@ -1344,8 +1354,9 @@ button.secondary:hover {
     }
     
     #staged-words-container {
-        min-height: 50px;
-        max-height: 100px;
+        min-height: 40px; /* 約 2 行 */
+        max-height: 75px; /* 最多 2 行多一點 */
+        line-height: 1.4;
     }
     
     button {
