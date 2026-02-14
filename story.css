@@ -130,22 +130,24 @@ h1 { font-size: 25px; font-weight: 600; }
   background-color: var(--color-surface);
   padding-left: 1em;
   padding-right: 1em;
-  padding-top: 1em; /* Reduced from 5em since title is now fixed height */
+  padding-top: 1em;
   border: 1px solid var(--color-border);
   border-radius: 16px;
   font-size: 17px;
-  line-height: 1.8;
+  line-height: 1.65; /* 平衡：不太緊也不太鬆 */
   text-align: left;
   user-select: text;
   color: var(--color-text);
-  padding-bottom: 20px; /* Reduced from 450px for better space usage */
-  scroll-behavior: smooth; /* Smooth scrolling for auto-scroll feature */
-  letter-spacing: -0.005em; /* 輕微縮小字距以節省空間 */
-  word-spacing: -0.02em; /* 輕微縮小單字間距 */
+  padding-bottom: 20px;
+  scroll-behavior: smooth;
+  letter-spacing: -0.008em; /* 平衡的字距 */
+  word-spacing: -0.05em; /* 平衡的單字間距 */
 }
 
 
-#text-container p { margin: 0 0 1.2em; }
+#text-container p { 
+  margin: 0 0 1.0em; /* 適中的段落間距 */
+}
 #text-container p:last-child { margin-bottom: 0; }
 
 #text-container .clickable-word {
@@ -1025,16 +1027,16 @@ button.secondary:hover {
     #text-container {
         height: 280px;
         font-size: 16px;
-        line-height: 1.6; /* 從 1.7 減少到 1.6 */
-        letter-spacing: -0.01em; /* 輕微縮小字距 */
-        word-spacing: -0.05em; /* 縮小單字間距 */
+        line-height: 1.55; /* 平衡的行高 */
+        letter-spacing: -0.01em; /* 平衡的字距 */
+        word-spacing: -0.06em; /* 平衡的單字間距 */
         padding: 0.8em;
         border-radius: 12px;
         padding-bottom: 15px;
     }
     
     #text-container p {
-        margin: 0 0 0.9em; /* 從預設 1.2em 減少段落間距 */
+        margin: 0 0 0.85em; /* 適中的段落間距 */
     }
     
     /* 3. Staging Area - Compact on mobile */
@@ -1345,7 +1347,14 @@ button.secondary:hover {
     
     #text-container {
         height: 320px;
-        font-size: 17px;
+        font-size: 16.5px; /* 稍微縮小以顯示更多內容 */
+        line-height: 1.6; /* 平衡的行高 */
+        letter-spacing: -0.009em; /* 平衡的字距 */
+        word-spacing: -0.055em; /* 平衡的單字間距 */
+    }
+    
+    #text-container p {
+        margin: 0 0 0.9em; /* 適中的段落間距 */
     }
     
     .staging-header-actions button {
@@ -1354,8 +1363,8 @@ button.secondary:hover {
     }
     
     #staged-words-container {
-        min-height: 40px; /* 約 2 行 */
-        max-height: 75px; /* 最多 2 行多一點 */
+        min-height: 40px;
+        max-height: 75px;
         line-height: 1.4;
     }
     

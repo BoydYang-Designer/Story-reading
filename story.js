@@ -1597,7 +1597,7 @@ function timestampUpdateLoop() {
         lastHighlightedSentence = null;
     }
 
-    // 2. 改善的平滑滾動邏輯
+    // 2. 改善的平滑滾動邏輯 - 保持高亮句子在首行
     if (lastHighlightedSentence) {
         const containerRect = textContainer.getBoundingClientRect();
         const sentenceRect = lastHighlightedSentence.getBoundingClientRect();
@@ -1607,8 +1607,8 @@ function timestampUpdateLoop() {
         // 計算句子相對於 container 頂部的位置
         const sentenceRelativeTop = sentenceRect.top - containerRect.top + currentScrollTop;
         
-        // 目標:將當前句子放在畫面上方 20% 處（手機螢幕較小，靠上顯示）
-        const targetPosition = containerHeight * 0.20;
+        // 目標：將當前句子放在畫面頂部 5-10% 處（幾乎在最上方）
+        const targetPosition = containerHeight * 0.08; // 8% 位置，接近頂部
         const targetScrollTop = sentenceRelativeTop - targetPosition;
         
         const scrollDifference = targetScrollTop - currentScrollTop;
@@ -1618,21 +1618,24 @@ function timestampUpdateLoop() {
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         const isSmallScreen = window.innerWidth <= 768;
         
-        // 調整滾動閾值和速度：小螢幕需要更積極的滾動
-        const scrollThreshold = isSmallScreen ? 10 : 20;
+        // 降低滾動閾值，讓反應更靈敏
+        const scrollThreshold = isSmallScreen ? 5 : 10;
         
         if (absDiff > scrollThreshold) {
             // 根據差距大小調整滾動速度
             let smoothFactor;
-            if (absDiff > 100) {
-                // 大距離：快速滾動
-                smoothFactor = isSmallScreen ? 0.25 : 0.30;
-            } else if (absDiff > 50) {
+            if (absDiff > 150) {
+                // 超大距離：快速滾動
+                smoothFactor = isSmallScreen ? 0.35 : 0.40;
+            } else if (absDiff > 80) {
+                // 大距離：較快滾動
+                smoothFactor = isSmallScreen ? 0.28 : 0.32;
+            } else if (absDiff > 40) {
                 // 中距離：中速滾動
-                smoothFactor = isSmallScreen ? 0.18 : 0.20;
+                smoothFactor = isSmallScreen ? 0.22 : 0.25;
             } else {
                 // 小距離：平滑滾動
-                smoothFactor = isSmallScreen ? 0.12 : 0.15;
+                smoothFactor = isSmallScreen ? 0.18 : 0.20;
             }
             
             // 漸進式滾動
@@ -1723,7 +1726,7 @@ function jsonModeHighlightLoop() {
         }
     }
 
-    // --- 改善的平滑滾動邏輯 ---
+    // --- 改善的平滑滾動邏輯 - 保持高亮句子在首行 ---
     if (lastHighlightedWords.length > 0) {
         const firstWord = lastHighlightedWords[0];
         const containerRect = textContainer.getBoundingClientRect();
@@ -1734,8 +1737,8 @@ function jsonModeHighlightLoop() {
         // 計算單字相對於 container 頂部的位置
         const wordRelativeTop = wordRect.top - containerRect.top + currentScrollTop;
         
-        // 目標:將當前句子放在畫面上方 20% 處（手機螢幕較小，靠上顯示）
-        const targetPosition = containerHeight * 0.20;
+        // 目標：將當前句子放在畫面頂部 5-10% 處（幾乎在最上方）
+        const targetPosition = containerHeight * 0.08; // 8% 位置，接近頂部
         const targetScrollTop = wordRelativeTop - targetPosition;
         
         const scrollDifference = targetScrollTop - currentScrollTop;
@@ -1745,21 +1748,24 @@ function jsonModeHighlightLoop() {
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         const isSmallScreen = window.innerWidth <= 768;
         
-        // 調整滾動閾值和速度：小螢幕需要更積極的滾動
-        const scrollThreshold = isSmallScreen ? 10 : 20;
+        // 降低滾動閾值，讓反應更靈敏
+        const scrollThreshold = isSmallScreen ? 5 : 10;
         
         if (absDiff > scrollThreshold) {
             // 根據差距大小調整滾動速度
             let smoothFactor;
-            if (absDiff > 100) {
-                // 大距離：快速滾動
-                smoothFactor = isSmallScreen ? 0.25 : 0.30;
-            } else if (absDiff > 50) {
+            if (absDiff > 150) {
+                // 超大距離：快速滾動
+                smoothFactor = isSmallScreen ? 0.35 : 0.40;
+            } else if (absDiff > 80) {
+                // 大距離：較快滾動
+                smoothFactor = isSmallScreen ? 0.28 : 0.32;
+            } else if (absDiff > 40) {
                 // 中距離：中速滾動
-                smoothFactor = isSmallScreen ? 0.18 : 0.20;
+                smoothFactor = isSmallScreen ? 0.22 : 0.25;
             } else {
                 // 小距離：平滑滾動
-                smoothFactor = isSmallScreen ? 0.12 : 0.15;
+                smoothFactor = isSmallScreen ? 0.18 : 0.20;
             }
             
             // 漸進式滾動
