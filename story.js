@@ -1599,21 +1599,25 @@ function timestampUpdateLoop() {
 
     // 2. 改善的平滑滾動邏輯
     if (lastHighlightedSentence) {
+        const containerRect = textContainer.getBoundingClientRect();
+        const sentenceRect = lastHighlightedSentence.getBoundingClientRect();
         const containerHeight = textContainer.clientHeight;
-        const sentenceTop = lastHighlightedSentence.offsetTop;
         const currentScrollTop = textContainer.scrollTop;
         
-        // 目標:將當前句子放在畫面上方 30% 處
-        const targetScrollTop = sentenceTop - (containerHeight * 0.3);
+        // 計算句子相對於 container 頂部的位置
+        const sentenceRelativeTop = sentenceRect.top - containerRect.top + currentScrollTop;
+        
+        // 目標:將當前句子放在畫面上方 25% 處（更靠近頂部以便看到更多後續內容）
+        const targetScrollTop = sentenceRelativeTop - (containerHeight * 0.25);
         
         const scrollDifference = targetScrollTop - currentScrollTop;
         const absDiff = Math.abs(scrollDifference);
         
-        // 只有當差距超過 10px 才滾動,避免微小抖動
-        if (absDiff > 10) {
+        // 只有當差距超過 20px 才滾動,避免微小抖動
+        if (absDiff > 20) {
             // 使用更緩和的插值係數,手機使用更平滑的值
             const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            const smoothFactor = isMobile ? 0.08 : 0.12;
+            const smoothFactor = isMobile ? 0.1 : 0.15;
             
             // 漸進式滾動
             const newScrollTop = currentScrollTop + (scrollDifference * smoothFactor);
@@ -1706,21 +1710,25 @@ function jsonModeHighlightLoop() {
     // --- 改善的平滑滾動邏輯 ---
     if (lastHighlightedWords.length > 0) {
         const firstWord = lastHighlightedWords[0];
+        const containerRect = textContainer.getBoundingClientRect();
+        const wordRect = firstWord.getBoundingClientRect();
         const containerHeight = textContainer.clientHeight;
-        const wordTop = firstWord.offsetTop;
         const currentScrollTop = textContainer.scrollTop;
         
-        // 目標:將當前句子放在畫面上方 30% 處 (而非正中央,避免上下跳動)
-        const targetScrollTop = wordTop - (containerHeight * 0.3);
+        // 計算單字相對於 container 頂部的位置
+        const wordRelativeTop = wordRect.top - containerRect.top + currentScrollTop;
+        
+        // 目標:將當前句子放在畫面上方 25% 處（更靠近頂部以便看到更多後續內容）
+        const targetScrollTop = wordRelativeTop - (containerHeight * 0.25);
         
         const scrollDifference = targetScrollTop - currentScrollTop;
         const absDiff = Math.abs(scrollDifference);
         
-        // 只有當差距超過 10px 才滾動,避免微小抖動
-        if (absDiff > 10) {
+        // 只有當差距超過 20px 才滾動,避免微小抖動
+        if (absDiff > 20) {
             // 使用更緩和的插值係數,手機使用更平滑的值
             const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            const smoothFactor = isMobile ? 0.08 : 0.12;
+            const smoothFactor = isMobile ? 0.1 : 0.15;
             
             // 漸進式滾動
             const newScrollTop = currentScrollTop + (scrollDifference * smoothFactor);
