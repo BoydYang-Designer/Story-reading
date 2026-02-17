@@ -736,6 +736,13 @@ async function playSentenceSnippet(sentenceText, storyTitle) {
         clearTimeout(currentSnippetTimeout);
         currentSnippetTimeout = null;
     }
+    
+    // Remove any existing timeupdate listener
+    if (noteAudioPlayer._snippetTimeUpdateHandler) {
+        noteAudioPlayer.removeEventListener('timeupdate', noteAudioPlayer._snippetTimeUpdateHandler);
+        noteAudioPlayer._snippetTimeUpdateHandler = null;
+    }
+    
     noteAudioPlayer.pause();
 
     // Also pause the main player if it's running
@@ -750,7 +757,7 @@ async function playSentenceSnippet(sentenceText, storyTitle) {
     }
 
     // Normalize sentence for better matching by removing punctuation and making it lowercase
-    const normalize = (text) => text.trim().replace(/[.,?!'"`“”‘’]/g, '').toLowerCase();
+    const normalize = (text) => text.trim().replace(/[.,?!'"`""'']/g, '').toLowerCase();
     const normalizedSentence = normalize(sentenceText);
 
     const match = timestampData.find(line => normalize(line.sentence) === normalizedSentence);
@@ -770,27 +777,45 @@ async function playSentenceSnippet(sentenceText, storyTitle) {
         return;
     }
     
-    // 修改前
-    // return ['audio/' + encodeURIComponent(title.trim()) + '.mp3'];
-    // 這裡您也已經有寫 trim() 了，所以音檔應該是可以播放的，主要是 Timestamp 讀取的部分漏了 trim()。
-    
-    // 正確設定音源
+    // Set audio source
     const audioSrc = `audio/${encodeURIComponent(storyTitle.trim())}.mp3`;
 
     noteAudioPlayer.src = audioSrc;
     noteAudioPlayer.currentTime = start;
     
+    // Use timeupdate event for more precise playback control
+    const timeUpdateHandler = function() {
+        // Add a small buffer (0.05 seconds) to ensure we don't cut off early
+        if (noteAudioPlayer.currentTime >= end - 0.05) {
+            noteAudioPlayer.pause();
+            noteAudioPlayer.removeEventListener('timeupdate', timeUpdateHandler);
+            noteAudioPlayer._snippetTimeUpdateHandler = null;
+        }
+    };
+    
+    noteAudioPlayer._snippetTimeUpdateHandler = timeUpdateHandler;
+    noteAudioPlayer.addEventListener('timeupdate', timeUpdateHandler);
+    
     noteAudioPlayer.play().catch(e => {
         console.error("Snippet play failed:", e);
         showNotification('Could not play audio for this sentence.', 'error');
+        noteAudioPlayer.removeEventListener('timeupdate', timeUpdateHandler);
+        noteAudioPlayer._snippetTimeUpdateHandler = null;
     });
 
-    // Set a timeout to stop playback precisely at the end time
+    // Set a backup timeout in case timeupdate doesn't fire
     currentSnippetTimeout = setTimeout(() => {
-        noteAudioPlayer.pause();
+        if (!noteAudioPlayer.paused) {
+            noteAudioPlayer.pause();
+        }
+        if (noteAudioPlayer._snippetTimeUpdateHandler) {
+            noteAudioPlayer.removeEventListener('timeupdate', noteAudioPlayer._snippetTimeUpdateHandler);
+            noteAudioPlayer._snippetTimeUpdateHandler = null;
+        }
         currentSnippetTimeout = null;
-    }, duration);
+    }, duration + 200); // Add 200ms buffer for the backup timeout
 }
+
 
 // NEW helper function to get the current expansion state of note sections
 function getExpansionStates() {
