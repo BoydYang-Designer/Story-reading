@@ -286,8 +286,9 @@ function createListItemWithImage(text, onClick, fallbackText = null) {
 }
 
 function showView(view) {
+    const customArticlesView = document.getElementById('custom-articles-view');
     // 加入 subCategoryView 和 dataManagerView 到隱藏列表
-    [loginView, appContainer, homeView, subCategoryView, categoryView, playbackView, noteView, dataManagerView].forEach(el => {
+    [loginView, appContainer, homeView, subCategoryView, categoryView, playbackView, noteView, dataManagerView, customArticlesView].forEach(el => {
         if(el) el.classList.add('is-hidden');
     });
     
@@ -1462,6 +1463,15 @@ addToNoteBtn.addEventListener('click', () => {
 // --- 新增 Back to Titles 邏輯 ---
 if (backToCategoryBtn) {
     backToCategoryBtn.addEventListener('click', () => {
+        // Custom article mode: return to custom articles view
+        if (backToCategoryBtn._customArticleMode) {
+            restoreAudioControls();
+            const customView = document.getElementById('custom-articles-view');
+            renderCustomArticlesList();
+            showView(customView);
+            return;
+        }
+
         // 1. 先暫存當前的分類名稱 (例如 "生活")，因為 stopAudioAndReset 會把它清空
         const targetCategory = currentCategoryName;
         
@@ -1654,44 +1664,17 @@ function computeScrollTarget(element) {
     return elemRect.top - containerRect.top + textContainer.scrollTop - targetPosition;
 }
 
-// --- Smooth eased scroll (replaces CSS scroll-behavior for finer control) ---
-let _scrollAnimId = null;
-let _scrollFrom = 0;
-let _scrollTo = 0;
-let _scrollStart = 0;
-const SCROLL_DURATION = 420; // ms — 稍長讓眼睛跟得上
-
-function _easeOutCubic(t) {
-    return 1 - Math.pow(1 - t, 3);
-}
-
-function _scrollStep(timestamp) {
-    if (_scrollStart === 0) _scrollStart = timestamp;
-    const elapsed = timestamp - _scrollStart;
-    const progress = Math.min(elapsed / SCROLL_DURATION, 1);
-    const eased = _easeOutCubic(progress);
-    textContainer.scrollTop = _scrollFrom + (_scrollTo - _scrollFrom) * eased;
-    if (progress < 1) {
-        _scrollAnimId = requestAnimationFrame(_scrollStep);
-    } else {
-        _scrollAnimId = null;
-    }
-}
-
 function smoothScrollTo(target, instant = false) {
     const clamped = Math.max(0, Math.min(target, scrollMax));
     if (instant) {
-        if (_scrollAnimId) { cancelAnimationFrame(_scrollAnimId); _scrollAnimId = null; }
+        textContainer.style.scrollBehavior = 'auto';
         textContainer.scrollTop = clamped;
-        return;
+        // restore smooth after one frame
+        requestAnimationFrame(() => { textContainer.style.scrollBehavior = ''; });
+    } else {
+        textContainer.style.scrollBehavior = 'smooth';
+        textContainer.scrollTop = clamped;
     }
-    // 如果距離很小（< 4px），直接跳過，避免微幅抖動
-    if (Math.abs(clamped - textContainer.scrollTop) < 4) return;
-    if (_scrollAnimId) cancelAnimationFrame(_scrollAnimId);
-    _scrollFrom = textContainer.scrollTop;
-    _scrollTo = clamped;
-    _scrollStart = 0;
-    _scrollAnimId = requestAnimationFrame(_scrollStep);
 }
 
 function timestampUpdateLoop() {
@@ -2484,7 +2467,8 @@ progressBar.addEventListener('input', () => {
         audio.currentTime = (progressBar.value / 100) * audio.duration;
         // Cancel any in-progress smooth scroll so it snaps to new position immediately
         cachedScrollTarget = -1;
-        if (_scrollAnimId) { cancelAnimationFrame(_scrollAnimId); _scrollAnimId = null; }
+        textContainer.style.scrollBehavior = 'auto';
+        requestAnimationFrame(() => { textContainer.style.scrollBehavior = ''; });
     }
 });
 
@@ -2496,6 +2480,499 @@ document.addEventListener('keydown', (event) => {
     if (event.code === 'ArrowRight') { event.preventDefault(); forwardBtn.click(); }
   }
 });
+
+
+// ============================================================
+//  CUSTOM ARTICLES FEATURE
+// ============================================================
+
+const CUSTOM_ARTICLES_KEY = 'readingChallengeCustomArticles';
+
+// --- Storage helpers ---
+function loadCustomArticles() {
+    try {
+        const raw = localStorage.getItem(CUSTOM_ARTICLES_KEY);
+        return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+        console.error('Failed to load custom articles', e);
+        return [];
+    }
+}
+
+function saveCustomArticles(articles) {
+    localStorage.setItem(CUSTOM_ARTICLES_KEY, JSON.stringify(articles));
+    if (currentUser) {
+        db.collection('userNotes').doc(currentUser.uid)
+          .set({ customArticles: articles }, { merge: true })
+          .catch(err => console.error('Firestore custom articles save error:', err));
+    }
+    updateCustomArticlesBadge();
+}
+
+async function loadCustomArticlesFromFirestore() {
+    if (!currentUser) return;
+    try {
+        const doc = await db.collection('userNotes').doc(currentUser.uid).get();
+        if (doc.exists && doc.data().customArticles) {
+            localStorage.setItem(CUSTOM_ARTICLES_KEY, JSON.stringify(doc.data().customArticles));
+        }
+    } catch (e) {
+        console.error('Firestore custom articles load error:', e);
+    }
+}
+
+// --- Slug generator ---
+function generateSlug(title) {
+    return title.trim()
+        .toLowerCase()
+        .replace(/[\s_]+/g, '-')
+        .replace(/[^\w\u4e00-\u9fff-]/g, '')
+        .replace(/^-+|-+$/g, '')
+        || 'article-' + Date.now();
+}
+
+function escapeHtml(str) {
+    return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+}
+
+// --- Badge on home screen ---
+function updateCustomArticlesBadge() {
+    const articles = loadCustomArticles();
+    const badge = document.getElementById('custom-articles-count-badge');
+    if (!badge) return;
+    if (articles.length > 0) {
+        badge.textContent = articles.length;
+        badge.style.display = 'inline-block';
+    } else {
+        badge.style.display = 'none';
+    }
+}
+
+// --- Inline editor panel state ---
+let editingArticleIdx = -1;
+let editingCardEl = null; // reference to the card being edited
+
+function openEditorPanel(idx = -1) {
+    editingArticleIdx = idx;
+
+    const panel = document.getElementById('custom-editor-panel');
+    const heading = document.getElementById('editor-panel-heading');
+    const titleInput = document.getElementById('editor-article-title');
+    const majorInput = document.getElementById('editor-article-major');
+    const categoryInput = document.getElementById('editor-article-category');
+    const contentInput = document.getElementById('editor-article-content');
+    const slugPreview = document.getElementById('editor-slug-preview');
+
+    // Clear any previously highlighted card
+    if (editingCardEl) {
+        editingCardEl.classList.remove('is-editing');
+        editingCardEl = null;
+    }
+
+    if (idx === -1) {
+        heading.textContent = '新增文章';
+        titleInput.value = '';
+        majorInput.value = '';
+        categoryInput.value = '';
+        contentInput.value = '';
+        slugPreview.textContent = '—';
+    } else {
+        const arts = loadCustomArticles();
+        const art = arts[idx];
+        heading.textContent = '編輯文章';
+        titleInput.value = art.title || '';
+        majorInput.value = art.major || '';
+        categoryInput.value = art.category || '';
+        contentInput.value = art.content || '';
+        slugPreview.textContent = art.slug || '—';
+
+        // Highlight the card being edited
+        const cards = document.querySelectorAll('.custom-article-card');
+        if (cards[idx]) {
+            editingCardEl = cards[idx];
+            editingCardEl.classList.add('is-editing');
+        }
+    }
+
+    panel.classList.remove('is-hidden');
+
+    // Scroll panel into view smoothly
+    panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    titleInput.focus();
+}
+
+function closeEditorPanel() {
+    const panel = document.getElementById('custom-editor-panel');
+    panel.classList.add('is-hidden');
+    if (editingCardEl) {
+        editingCardEl.classList.remove('is-editing');
+        editingCardEl = null;
+    }
+    editingArticleIdx = -1;
+}
+
+function saveFromEditorPanel() {
+    const title = document.getElementById('editor-article-title').value.trim();
+    const major = document.getElementById('editor-article-major').value.trim();
+    const category = document.getElementById('editor-article-category').value.trim();
+    const content = document.getElementById('editor-article-content').value.trim();
+
+    if (!title) { showNotification('請填入標題', 'error'); return; }
+    if (!content) { showNotification('請填入內文', 'error'); return; }
+
+    const arts = loadCustomArticles();
+    const slug = generateSlug(title);
+
+    if (editingArticleIdx === -1) {
+        arts.push({
+            id: 'custom-' + Date.now(),
+            title, major, category, content, slug,
+            merged: false,
+            createdAt: new Date().toISOString()
+        });
+        showNotification('文章已新增', 'success');
+    } else {
+        const existing = arts[editingArticleIdx];
+        arts[editingArticleIdx] = {
+            ...existing,
+            title, major, category, content,
+            slug: title === existing.title ? existing.slug : slug,
+            updatedAt: new Date().toISOString()
+        };
+        showNotification('文章已更新', 'success');
+    }
+
+    saveCustomArticles(arts);
+    closeEditorPanel();
+    renderCustomArticlesList();
+}
+
+// --- Render custom articles list ---
+function renderCustomArticlesList() {
+    const articles = loadCustomArticles();
+    const container = document.getElementById('custom-articles-list');
+    if (!container) return;
+    container.innerHTML = '';
+
+    if (articles.length === 0) {
+        container.innerHTML = '<p style="color:var(--color-text-light);text-align:center;padding:30px 0;">還沒有自訂文章。點擊「新增文章」開始。</p>';
+        return;
+    }
+
+    articles.forEach((art, idx) => {
+        const card = document.createElement('div');
+        card.className = 'custom-article-card' + (art.merged ? ' is-merged' : '');
+
+        const preview = (art.content || '').replace(/\n/g, ' ').trim();
+
+        card.innerHTML = `
+          <div class="custom-article-card-header">
+            <div class="custom-article-card-meta">
+              <div class="custom-article-card-title">${escapeHtml(art.title)}</div>
+              <div class="custom-article-card-tags">
+                ${art.major ? `<span class="custom-tag">${escapeHtml(art.major)}</span>` : ''}
+                ${art.category ? `<span class="custom-tag">${escapeHtml(art.category)}</span>` : ''}
+              </div>
+              <div class="custom-article-card-slug">${escapeHtml(art.slug)}</div>
+            </div>
+            ${art.merged ? '<span class="merged-badge">已彙整</span>' : ''}
+          </div>
+          <div class="custom-article-card-preview">${escapeHtml(preview)}</div>
+          <div class="custom-article-card-actions">
+            <button class="btn-read-custom secondary" data-idx="${idx}">閱讀</button>
+            <button class="btn-edit-custom secondary" data-idx="${idx}">編輯</button>
+            <button class="btn-delete-custom secondary" data-idx="${idx}">刪除</button>
+            ${art.merged ? `<button class="btn-unmark-merged secondary" data-idx="${idx}">取消已彙整</button>` : ''}
+          </div>
+        `;
+        container.appendChild(card);
+    });
+
+    container.querySelectorAll('.btn-read-custom').forEach(btn => {
+        btn.addEventListener('click', () => openCustomArticlePlayback(parseInt(btn.dataset.idx)));
+    });
+    container.querySelectorAll('.btn-edit-custom').forEach(btn => {
+        btn.addEventListener('click', () => openEditorPanel(parseInt(btn.dataset.idx)));
+    });
+    container.querySelectorAll('.btn-delete-custom').forEach(btn => {
+        btn.addEventListener('click', () => deleteCustomArticle(parseInt(btn.dataset.idx)));
+    });
+    container.querySelectorAll('.btn-unmark-merged').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const arts = loadCustomArticles();
+            arts[parseInt(btn.dataset.idx)].merged = false;
+            saveCustomArticles(arts);
+            renderCustomArticlesList();
+        });
+    });
+}
+
+// --- Delete article ---
+function deleteCustomArticle(idx) {
+    if (!confirm('確定要刪除這篇文章嗎？')) return;
+    // If currently editing this article, close panel first
+    if (editingArticleIdx === idx) closeEditorPanel();
+    const arts = loadCustomArticles();
+    arts.splice(idx, 1);
+    saveCustomArticles(arts);
+    renderCustomArticlesList();
+    showNotification('文章已刪除');
+}
+
+// --- Placeholder for legacy save (not used in inline mode) ---
+function saveCustomArticleFromModal() { saveFromEditorPanel(); }
+function closeCustomArticleModal() { closeEditorPanel(); }
+function openCustomArticleModal(idx = -1) { openEditorPanel(idx); }
+
+// --- Read custom article (opens playback view in text-only mode) ---
+function openCustomArticlePlayback(idx) {
+    const arts = loadCustomArticles();
+    const art = arts[idx];
+    if (!art) return;
+
+    // Stop any existing audio
+    stopAudioAndReset();
+
+    // Set up minimal state so notes work
+    currentCategoryName = art.category || '自訂文章';
+    currentStoryTitle = art.title;
+    currentStoryList = [];      // No prev/next in custom mode
+    currentStoryIndex = -1;
+
+    playbackTitle.textContent = art.title;
+    textContainer.innerHTML = '';
+    textContainer.scrollTop = 0;
+    progressBar.value = 0;
+
+    // Hide audio controls — no mp3 yet
+    const fixedControls = document.getElementById('fixed-controls-container');
+    if (fixedControls) fixedControls.dataset.customMode = '1';
+
+    // Render text only
+    textContainer.appendChild(parafyAndMakeClickable('\n\n' + art.content, currentCategoryName, art.title));
+    computeScrollMax();
+
+    // Hide audio buttons, show text-only notice
+    playPauseBtn.style.opacity = '0.3';
+    playPauseBtn.style.pointerEvents = 'none';
+    rewindBtn.style.opacity = '0.3';
+    rewindBtn.style.pointerEvents = 'none';
+    forwardBtn.style.opacity = '0.3';
+    forwardBtn.style.pointerEvents = 'none';
+
+    prevStoryBtn.hidden = true;
+    nextStoryBtn.hidden = true;
+    toggleTimestampBtn.style.display = 'none';
+
+    // Back button returns to custom articles view
+    const backBtn = document.getElementById('back-to-category');
+    backBtn._customArticleMode = true;
+
+    showView(playbackView);
+}
+
+// Restore audio controls when leaving playback
+function restoreAudioControls() {
+    playPauseBtn.style.opacity = '';
+    playPauseBtn.style.pointerEvents = '';
+    rewindBtn.style.opacity = '';
+    rewindBtn.style.pointerEvents = '';
+    forwardBtn.style.opacity = '';
+    forwardBtn.style.pointerEvents = '';
+    const fixedControls = document.getElementById('fixed-controls-container');
+    if (fixedControls) delete fixedControls.dataset.customMode;
+    const backBtn = document.getElementById('back-to-category');
+    if (backBtn) backBtn._customArticleMode = false;
+}
+
+// --- Export JSON ---
+function exportCustomArticles() {
+    const arts = loadCustomArticles();
+    if (arts.length === 0) { alert('沒有自訂文章可以匯出。'); return; }
+
+    // Export format: mapped to Excel columns
+    const exportData = arts.map(a => ({
+        '大類': a.major || '',
+        '分類': a.category || '',
+        '標題': a.title || '',
+        '內文': a.content || '',
+        'slug': a.slug || ''
+    }));
+
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `custom-articles-${new Date().toISOString().slice(0,10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+// --- Import JSON ---
+function importCustomArticles(file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        try {
+            const data = JSON.parse(e.target.result);
+            if (!Array.isArray(data)) throw new Error('JSON 必須是陣列');
+
+            const existing = loadCustomArticles();
+            const existingSlugs = new Set(existing.map(a => a.slug));
+            let added = 0;
+
+            data.forEach(item => {
+                // Accept both "export format" and "internal format"
+                const title = item['標題'] || item.title || '';
+                const content = item['內文'] || item.content || '';
+                const major = item['大類'] || item.major || '';
+                const category = item['分類'] || item.category || '';
+                const slug = item['slug'] || item.slug || generateSlug(title);
+
+                if (!title || !content) return;
+                if (existingSlugs.has(slug)) return; // Skip duplicates
+
+                existing.push({
+                    id: 'custom-' + Date.now() + '-' + added,
+                    title, major, category, content, slug,
+                    merged: false,
+                    createdAt: new Date().toISOString()
+                });
+                existingSlugs.add(slug);
+                added++;
+            });
+
+            saveCustomArticles(existing);
+            renderCustomArticlesList();
+            alert(`成功匯入 ${added} 篇文章。`);
+        } catch (err) {
+            alert('匯入失敗：' + err.message);
+        }
+    };
+    reader.readAsText(file);
+}
+
+// --- Merged detection (inline panel) ---
+function checkMergedArticles() {
+    const arts = loadCustomArticles();
+    if (arts.length === 0) { showNotification('沒有自訂文章', 'error'); return; }
+
+    const officialSlugs = new Set(stories.map(s => s['標題']?.trim().toLowerCase()));
+
+    const updatedArts = arts.map(a => {
+        const isNowMerged = officialSlugs.has(a.slug.toLowerCase()) ||
+                            officialSlugs.has(a.title?.trim().toLowerCase());
+        return { ...a, merged: isNowMerged || a.merged };
+    });
+
+    saveCustomArticles(updatedArts);
+
+    const panel = document.getElementById('merged-results-panel');
+    const list = document.getElementById('merged-results-list');
+    const mergedItems = updatedArts.filter(a => a.merged);
+
+    list.innerHTML = '';
+
+    if (mergedItems.length === 0) {
+        list.innerHTML = '<p class="no-merged-msg">目前沒有偵測到已彙整的文章。</p>';
+    } else {
+        mergedItems.forEach(art => {
+            const item = document.createElement('div');
+            item.className = 'merged-modal-item';
+            item.innerHTML = `
+              <div class="merged-modal-item-info">
+                <div class="merged-modal-item-title">${escapeHtml(art.title)}</div>
+                <div class="merged-modal-item-slug">${escapeHtml(art.slug)}</div>
+              </div>
+              <div class="merged-modal-item-actions">
+                <button class="btn-delete-merged secondary" data-id="${art.id}">刪除</button>
+                <button class="btn-keep-merged secondary" data-id="${art.id}">保留</button>
+              </div>
+            `;
+            list.appendChild(item);
+        });
+
+        list.querySelectorAll('.btn-delete-merged').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const latest = loadCustomArticles();
+                saveCustomArticles(latest.filter(a => a.id !== btn.dataset.id));
+                renderCustomArticlesList();
+                btn.closest('.merged-modal-item').remove();
+                if (list.children.length === 0) {
+                    list.innerHTML = '<p class="no-merged-msg">已全部處理完畢。</p>';
+                }
+            });
+        });
+
+        list.querySelectorAll('.btn-keep-merged').forEach(btn => {
+            btn.addEventListener('click', () => {
+                btn.closest('.merged-modal-item').remove();
+                if (list.children.length === 0) {
+                    list.innerHTML = '<p class="no-merged-msg">已全部處理完畢。</p>';
+                }
+            });
+        });
+    }
+
+    panel.classList.remove('is-hidden');
+    panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    renderCustomArticlesList();
+}
+
+// --- Event listeners ---
+function initCustomArticles() {
+    const customView = document.getElementById('custom-articles-view');
+
+    document.getElementById('go-to-custom-articles')?.addEventListener('click', () => {
+        closeEditorPanel();
+        document.getElementById('merged-results-panel')?.classList.add('is-hidden');
+        renderCustomArticlesList();
+        showView(customView);
+    });
+
+    document.getElementById('back-to-home-from-custom')?.addEventListener('click', () => {
+        closeEditorPanel();
+        showView(homeView);
+    });
+
+    document.getElementById('add-custom-article-btn')?.addEventListener('click', () => {
+        openEditorPanel(-1);
+    });
+
+    document.getElementById('export-custom-articles-btn')?.addEventListener('click', exportCustomArticles);
+
+    document.getElementById('import-custom-articles-input')?.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) { importCustomArticles(file); e.target.value = ''; }
+    });
+
+    document.getElementById('check-merged-btn')?.addEventListener('click', checkMergedArticles);
+
+    // Inline editor: slug live preview
+    document.getElementById('editor-article-title')?.addEventListener('input', (e) => {
+        const slug = generateSlug(e.target.value);
+        document.getElementById('editor-slug-preview').textContent = slug || '—';
+    });
+
+    // Inline editor: save / cancel / close
+    document.getElementById('editor-save-btn')?.addEventListener('click', saveFromEditorPanel);
+    document.getElementById('editor-cancel-btn')?.addEventListener('click', closeEditorPanel);
+    document.getElementById('editor-close-btn')?.addEventListener('click', closeEditorPanel);
+
+    // Merged results panel close
+    document.getElementById('merged-results-close-btn')?.addEventListener('click', () => {
+        document.getElementById('merged-results-panel')?.classList.add('is-hidden');
+    });
+
+    updateCustomArticlesBadge();
+}
+
+// ============================================================
+//  END CUSTOM ARTICLES FEATURE
+// ============================================================
 
 function init() {
   const noteWrapper = document.getElementById('note-content-wrapper');
@@ -2518,6 +2995,7 @@ function init() {
   if (signInFromGuestBtn) signInFromGuestBtn.addEventListener('click', signIn);
  
   window.addEventListener('resize', computeScrollMax, { passive: true });
+  initCustomArticles();
 }
 
 firebase.auth().onAuthStateChanged(async (user) => {
@@ -2526,6 +3004,7 @@ firebase.auth().onAuthStateChanged(async (user) => {
         try {
             const guestNotesRaw = localStorage.getItem(SAVED_WORDS_KEY);
             await loadWordsFromFirestore();
+            await loadCustomArticlesFromFirestore();
             if (guestNotesRaw) {
                 console.log("Found guest notes in local storage. Merging...");
                 const guestNotesParsed = JSON.parse(guestNotesRaw);
