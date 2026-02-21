@@ -1403,17 +1403,6 @@ textContainer.addEventListener('click', (e) => {
                     stagedWordEl.className = 'staged-word';
                     stagedWordEl.textContent = cleanedWord;
                     stagedWordsContainer.appendChild(stagedWordEl);
-                    
-                    // Also play the parent sentence snippet for context
-                    const parentSentence = wordSpan.closest('.timestamp-sentence');
-                    if (parentSentence) {
-                        const startTime = parseFloat(parentSentence.dataset.start);
-                        const endTime = parseFloat(parentSentence.dataset.end);
-                        if (!isNaN(startTime) && !isNaN(endTime)) {
-                            // slight delay so word audio plays first
-                            setTimeout(() => playAudioSnippet(startTime, endTime), 800);
-                        }
-                    }
                 }
             }
         }
@@ -1653,6 +1642,31 @@ function stopTimestampUpdateLoop() {
 
 
 // --- NEW: Predictive Smooth Scrolling and Highlight Logic for Timestamp Mode ---
+
+// Cache target scroll position, only recompute when sentence changes
+let cachedScrollTarget = -1;
+let lastHighlightedSentenceIndex = -1;
+
+function computeScrollTarget(element) {
+    const containerRect = textContainer.getBoundingClientRect();
+    const elemRect = element.getBoundingClientRect();
+    const targetPosition = textContainer.clientHeight * 0.08;
+    return elemRect.top - containerRect.top + textContainer.scrollTop - targetPosition;
+}
+
+function smoothScrollTo(target, instant = false) {
+    const clamped = Math.max(0, Math.min(target, scrollMax));
+    if (instant) {
+        textContainer.style.scrollBehavior = 'auto';
+        textContainer.scrollTop = clamped;
+        // restore smooth after one frame
+        requestAnimationFrame(() => { textContainer.style.scrollBehavior = ''; });
+    } else {
+        textContainer.style.scrollBehavior = 'smooth';
+        textContainer.scrollTop = clamped;
+    }
+}
+
 function timestampUpdateLoop() {
     if (!isPlaying || !isTimestampMode || !isFinite(audio.duration) || audio.duration === 0) {
         timestampUpdateRafId = null;
@@ -1661,69 +1675,26 @@ function timestampUpdateLoop() {
 
     const currentTime = audio.currentTime;
     
-    // 1. Highlight Logic - binary search with ±0.15s tolerance
+    // Binary search highlight
     const idx = findActiveSentenceIndex(currentTime);
     const activeSentence = idx !== -1 ? timestampData[idx] : null;
-    
-    const sentenceElement = activeSentence ? textContainer.querySelector(`[data-start="${activeSentence.start}"]`) : null;
+    const sentenceElement = activeSentence
+        ? textContainer.querySelector(`[data-start="${activeSentence.start}"]`)
+        : null;
     
     if (sentenceElement && sentenceElement !== lastHighlightedSentence) {
-        if (lastHighlightedSentence) {
-            lastHighlightedSentence.classList.remove('is-current');
-        }
+        if (lastHighlightedSentence) lastHighlightedSentence.classList.remove('is-current');
         sentenceElement.classList.add('is-current');
         lastHighlightedSentence = sentenceElement;
+
+        // Recompute scroll target only when sentence changes
+        cachedScrollTarget = computeScrollTarget(sentenceElement);
+        smoothScrollTo(cachedScrollTarget);
+
     } else if (!activeSentence && lastHighlightedSentence) {
-        // 如果沒有匹配項（例如在句子間隙），清除高亮
         lastHighlightedSentence.classList.remove('is-current');
         lastHighlightedSentence = null;
-    }
-
-    // 2. 改善的平滑滾動邏輯 - 保持高亮句子在首行
-    if (lastHighlightedSentence) {
-        const containerRect = textContainer.getBoundingClientRect();
-        const sentenceRect = lastHighlightedSentence.getBoundingClientRect();
-        const containerHeight = textContainer.clientHeight;
-        const currentScrollTop = textContainer.scrollTop;
-        
-        // 計算句子相對於 container 頂部的位置
-        const sentenceRelativeTop = sentenceRect.top - containerRect.top + currentScrollTop;
-        
-        // 目標：將當前句子放在畫面頂部 5-10% 處（幾乎在最上方）
-        const targetPosition = containerHeight * 0.08; // 8% 位置，接近頂部
-        const targetScrollTop = sentenceRelativeTop - targetPosition;
-        
-        const scrollDifference = targetScrollTop - currentScrollTop;
-        const absDiff = Math.abs(scrollDifference);
-        
-        // 偵測裝置類型和螢幕大小
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        const isSmallScreen = window.innerWidth <= 768;
-        
-        // 降低滾動閾值，讓反應更靈敏
-        const scrollThreshold = isSmallScreen ? 5 : 10;
-        
-        if (absDiff > scrollThreshold) {
-            // 根據差距大小調整滾動速度
-            let smoothFactor;
-            if (absDiff > 150) {
-                // 超大距離：快速滾動
-                smoothFactor = isSmallScreen ? 0.35 : 0.40;
-            } else if (absDiff > 80) {
-                // 大距離：較快滾動
-                smoothFactor = isSmallScreen ? 0.28 : 0.32;
-            } else if (absDiff > 40) {
-                // 中距離：中速滾動
-                smoothFactor = isSmallScreen ? 0.22 : 0.25;
-            } else {
-                // 小距離：平滑滾動
-                smoothFactor = isSmallScreen ? 0.18 : 0.20;
-            }
-            
-            // 漸進式滾動
-            const newScrollTop = currentScrollTop + (scrollDifference * smoothFactor);
-            textContainer.scrollTop = Math.max(0, Math.min(newScrollTop, scrollMax));
-        }
+        cachedScrollTarget = -1;
     }
 
     timestampUpdateRafId = requestAnimationFrame(timestampUpdateLoop);
@@ -1793,6 +1764,10 @@ function jsonModeHighlightLoop() {
                     if (index === 0) span.classList.add('highlight-start');
                     if (index === lastHighlightedWords.length - 1) span.classList.add('highlight-end');
                 });
+
+                // Scroll: compute target only once per sentence change
+                cachedScrollTarget = computeScrollTarget(lastHighlightedWords[0]);
+                smoothScrollTo(cachedScrollTarget);
             }
         }
     } else {
@@ -1801,54 +1776,6 @@ function jsonModeHighlightLoop() {
             lastHighlightedWords.forEach(span => span.classList.remove('is-current-sentence', 'highlight-start', 'highlight-end'));
             lastHighlightedWords = [];
             lastActiveSentenceStart = -1;
-        }
-    }
-
-    // --- 改善的平滑滾動邏輯 - 保持高亮句子在首行 ---
-    if (lastHighlightedWords.length > 0) {
-        const firstWord = lastHighlightedWords[0];
-        const containerRect = textContainer.getBoundingClientRect();
-        const wordRect = firstWord.getBoundingClientRect();
-        const containerHeight = textContainer.clientHeight;
-        const currentScrollTop = textContainer.scrollTop;
-        
-        // 計算單字相對於 container 頂部的位置
-        const wordRelativeTop = wordRect.top - containerRect.top + currentScrollTop;
-        
-        // 目標：將當前句子放在畫面頂部 5-10% 處（幾乎在最上方）
-        const targetPosition = containerHeight * 0.08; // 8% 位置，接近頂部
-        const targetScrollTop = wordRelativeTop - targetPosition;
-        
-        const scrollDifference = targetScrollTop - currentScrollTop;
-        const absDiff = Math.abs(scrollDifference);
-        
-        // 偵測裝置類型和螢幕大小
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        const isSmallScreen = window.innerWidth <= 768;
-        
-        // 降低滾動閾值，讓反應更靈敏
-        const scrollThreshold = isSmallScreen ? 5 : 10;
-        
-        if (absDiff > scrollThreshold) {
-            // 根據差距大小調整滾動速度
-            let smoothFactor;
-            if (absDiff > 150) {
-                // 超大距離：快速滾動
-                smoothFactor = isSmallScreen ? 0.35 : 0.40;
-            } else if (absDiff > 80) {
-                // 大距離：較快滾動
-                smoothFactor = isSmallScreen ? 0.28 : 0.32;
-            } else if (absDiff > 40) {
-                // 中距離：中速滾動
-                smoothFactor = isSmallScreen ? 0.22 : 0.25;
-            } else {
-                // 小距離：平滑滾動
-                smoothFactor = isSmallScreen ? 0.18 : 0.20;
-            }
-            
-            // 漸進式滾動
-            const newScrollTop = currentScrollTop + (scrollDifference * smoothFactor);
-            textContainer.scrollTop = Math.max(0, Math.min(newScrollTop, scrollMax));
         }
     }
 
@@ -2190,6 +2117,7 @@ async function showPlayback(index, startTime = 0, maintainTimestampMode = false)
   timestampData = [];
   hasTimestampFile = false;
   lastHighlightedSentence = null;
+  cachedScrollTarget = -1;
   toggleTimestampBtn.classList.remove('is-active');
   toggleTimestampBtn.style.display = 'none';
   lastHighlightedWords = [];
@@ -2524,7 +2452,15 @@ audio.addEventListener('ended', () => {
 audio.addEventListener('timeupdate', () => { 
     if (isFinite(audio.duration)) progressBar.value = (audio.currentTime / audio.duration) * 100;
 });
-progressBar.addEventListener('input', () => { if (isFinite(audio.duration)) audio.currentTime = (progressBar.value / 100) * audio.duration; });
+progressBar.addEventListener('input', () => {
+    if (isFinite(audio.duration)) {
+        audio.currentTime = (progressBar.value / 100) * audio.duration;
+        // Cancel any in-progress smooth scroll so it snaps to new position immediately
+        cachedScrollTarget = -1;
+        textContainer.style.scrollBehavior = 'auto';
+        requestAnimationFrame(() => { textContainer.style.scrollBehavior = ''; });
+    }
+});
 
 document.addEventListener('keydown', (event) => {
   if (!playbackView.classList.contains('is-hidden')) {
