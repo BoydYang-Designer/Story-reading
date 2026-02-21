@@ -1654,17 +1654,44 @@ function computeScrollTarget(element) {
     return elemRect.top - containerRect.top + textContainer.scrollTop - targetPosition;
 }
 
+// --- Smooth eased scroll (replaces CSS scroll-behavior for finer control) ---
+let _scrollAnimId = null;
+let _scrollFrom = 0;
+let _scrollTo = 0;
+let _scrollStart = 0;
+const SCROLL_DURATION = 420; // ms — 稍長讓眼睛跟得上
+
+function _easeOutCubic(t) {
+    return 1 - Math.pow(1 - t, 3);
+}
+
+function _scrollStep(timestamp) {
+    if (_scrollStart === 0) _scrollStart = timestamp;
+    const elapsed = timestamp - _scrollStart;
+    const progress = Math.min(elapsed / SCROLL_DURATION, 1);
+    const eased = _easeOutCubic(progress);
+    textContainer.scrollTop = _scrollFrom + (_scrollTo - _scrollFrom) * eased;
+    if (progress < 1) {
+        _scrollAnimId = requestAnimationFrame(_scrollStep);
+    } else {
+        _scrollAnimId = null;
+    }
+}
+
 function smoothScrollTo(target, instant = false) {
     const clamped = Math.max(0, Math.min(target, scrollMax));
     if (instant) {
-        textContainer.style.scrollBehavior = 'auto';
+        if (_scrollAnimId) { cancelAnimationFrame(_scrollAnimId); _scrollAnimId = null; }
         textContainer.scrollTop = clamped;
-        // restore smooth after one frame
-        requestAnimationFrame(() => { textContainer.style.scrollBehavior = ''; });
-    } else {
-        textContainer.style.scrollBehavior = 'smooth';
-        textContainer.scrollTop = clamped;
+        return;
     }
+    // 如果距離很小（< 4px），直接跳過，避免微幅抖動
+    if (Math.abs(clamped - textContainer.scrollTop) < 4) return;
+    if (_scrollAnimId) cancelAnimationFrame(_scrollAnimId);
+    _scrollFrom = textContainer.scrollTop;
+    _scrollTo = clamped;
+    _scrollStart = 0;
+    _scrollAnimId = requestAnimationFrame(_scrollStep);
 }
 
 function timestampUpdateLoop() {
@@ -2457,8 +2484,7 @@ progressBar.addEventListener('input', () => {
         audio.currentTime = (progressBar.value / 100) * audio.duration;
         // Cancel any in-progress smooth scroll so it snaps to new position immediately
         cachedScrollTarget = -1;
-        textContainer.style.scrollBehavior = 'auto';
-        requestAnimationFrame(() => { textContainer.style.scrollBehavior = ''; });
+        if (_scrollAnimId) { cancelAnimationFrame(_scrollAnimId); _scrollAnimId = null; }
     }
 });
 

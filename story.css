@@ -149,7 +149,7 @@ h1 { font-size: 25px; font-weight: 600; }
   user-select: text;
   color: var(--color-text);
   padding-bottom: 20px;
-  scroll-behavior: smooth;
+  /* scroll-behavior 改由 JS 的 eased rAF 接管，這裡不需要設定 */
   letter-spacing: -0.008em; /* 平衡的字距 */
   word-spacing: -0.05em; /* 平衡的單字間距 */
 }
@@ -174,9 +174,11 @@ h1 { font-size: 25px; font-weight: 600; }
   display: block;
   padding: 4px 8px;
   margin-bottom: 8px;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  /* 用 box-shadow 做「光暈」效果，比純 background 更立體 */
+  transition: background-color 0.35s ease, box-shadow 0.35s ease, color 0.35s ease;
+  position: relative;
 }
 
 #text-container .timestamp-sentence:hover {
@@ -184,27 +186,50 @@ h1 { font-size: 25px; font-weight: 600; }
 }
 
 #text-container .timestamp-sentence.is-current {
-  background-color: var(--color-accent-light);
+  background-color: rgba(212, 188, 162, 0.32);
+  /* 加上柔和內發光，讓 highlight 感覺有「深度」 */
+  box-shadow: inset 0 0 0 1.5px rgba(212, 188, 162, 0.55),
+              0 2px 10px rgba(212, 188, 162, 0.25);
+  color: var(--color-text); /* 確保文字顏色不跑掉 */
 }
 
 /* --- NEW: Continuous Highlight Styles for JSON Mode --- */
+
+/* 每個 span 本身都加上平滑過渡 */
+#text-container p > span {
+  transition: background-color 0.35s ease,
+              padding 0.35s ease,
+              border-radius 0.35s ease;
+  border-radius: 0;
+  /* will-change 讓瀏覽器提前分配合成層，避免 highlight 時重繪整個容器 */
+  will-change: background-color;
+}
+
 #text-container span.is-current-sentence {
-  background-color: var(--color-accent-light);
-  transition: background-color 0.3s ease;
+  background-color: rgba(212, 188, 162, 0.32);
   padding-top: 2px;
   padding-bottom: 2px;
 }
 
 #text-container span.is-current-sentence.highlight-start {
-  border-top-left-radius: 6px;
-  border-bottom-left-radius: 6px;
-  padding-left: 4px;
+  border-top-left-radius: 7px;
+  border-bottom-left-radius: 7px;
+  padding-left: 5px;
 }
 
 #text-container span.is-current-sentence.highlight-end {
-  border-top-right-radius: 6px;
-  border-bottom-right-radius: 6px;
-  padding-right: 4px;
+  border-top-right-radius: 7px;
+  border-bottom-right-radius: 7px;
+  padding-right: 5px;
+}
+
+/* 讓 highlight 整體有一道細邊 — 用 outline 不影響 layout */
+#text-container span.is-current-sentence.highlight-start {
+  /* 細緻的左側光帶 */
+  box-shadow: -2px 0 0 0 rgba(212, 188, 162, 0.7);
+}
+#text-container span.is-current-sentence.highlight-end {
+  box-shadow: 2px 0 0 0 rgba(212, 188, 162, 0.7);
 }
 
 
