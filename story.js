@@ -106,6 +106,23 @@ let hasTimestampFile = false;
 let lastHighlightedSentence = null;
 let timestampUpdateRafId = null; // For smooth scrolling animation
 
+// Binary search: find the active sentence index for a given currentTime
+function findActiveSentenceIndex(time) {
+    let lo = 0, hi = timestampData.length - 1;
+    while (lo <= hi) {
+        const mid = (lo + hi) >> 1;
+        const line = timestampData[mid];
+        if (time < line.start) {
+            hi = mid - 1;
+        } else if (time > line.end) {
+            lo = mid + 1;
+        } else {
+            return mid; // found
+        }
+    }
+    return -1;
+}
+
 // --- NEW State Variables for JSON Mode Highlighting ---
 let jsonModeUpdateRafId = null;
 let lastHighlightedWords = [];
@@ -1355,23 +1372,30 @@ textContainer.addEventListener('click', (e) => {
                 }
             }
         } else {
-            // 暫停時：點擊會將單字加入暫存區，不影響音訊
+            // 暫停時：點擊句子 -> 播放該片段；點擊單字 -> 加入暫存並播單字發音
+            const sentenceSpan = e.target.closest('.timestamp-sentence');
+            if (sentenceSpan && e.target === sentenceSpan) {
+                // 點到句子背景本體（非單字）-> 播放音訊片段
+                const startTime = parseFloat(sentenceSpan.dataset.start);
+                const endTime = parseFloat(sentenceSpan.dataset.end);
+                if (!isNaN(startTime) && !isNaN(endTime)) {
+                    playAudioSnippet(startTime, endTime);
+                }
+                return;
+            }
+            
             const wordSpan = e.target.closest('.clickable-word');
             if (wordSpan) {
                 const cleanedWord = cleanWord(wordSpan.textContent);
                 if (cleanedWord) {
-                    // MODIFIED: Play audio for ANY word when paused
                     if (wordSpan.classList.contains('is-saved-word')) {
-                        // Find the actual saved word form from notes
                         const savedForm = findSavedWordForm(cleanedWord, currentCategoryName, currentStoryTitle);
                         if (savedForm) {
                             playWordAudio(savedForm);
                         } else {
-                            // Fallback to clicked word if not found
                             playWordAudio(cleanedWord);
                         }
                     } else {
-                        // Play audio even for non-saved words
                         playWordAudio(cleanedWord);
                     }
                     
@@ -1379,6 +1403,17 @@ textContainer.addEventListener('click', (e) => {
                     stagedWordEl.className = 'staged-word';
                     stagedWordEl.textContent = cleanedWord;
                     stagedWordsContainer.appendChild(stagedWordEl);
+                    
+                    // Also play the parent sentence snippet for context
+                    const parentSentence = wordSpan.closest('.timestamp-sentence');
+                    if (parentSentence) {
+                        const startTime = parseFloat(parentSentence.dataset.start);
+                        const endTime = parseFloat(parentSentence.dataset.end);
+                        if (!isNaN(startTime) && !isNaN(endTime)) {
+                            // slight delay so word audio plays first
+                            setTimeout(() => playAudioSnippet(startTime, endTime), 800);
+                        }
+                    }
                 }
             }
         }
@@ -1466,7 +1501,35 @@ copyStagedBtn.addEventListener('click', () => {
     }
 });
 
-// Playback content functions
+// NEW: Play a sentence snippet from the main audio (startTime to endTime)
+let snippetStopTimeout = null;
+
+function playAudioSnippet(startTime, endTime) {
+    // Clear any existing snippet stop timer
+    if (snippetStopTimeout) {
+        clearTimeout(snippetStopTimeout);
+        snippetStopTimeout = null;
+    }
+    
+    // Only works if main audio is loaded and not currently playing the full story
+    if (!isFinite(audio.duration) || isPlaying) return;
+    
+    const duration = endTime - startTime;
+    if (duration <= 0) return;
+    
+    audio.currentTime = startTime;
+    audio.play().then(() => {
+        // Stop after the snippet duration
+        snippetStopTimeout = setTimeout(() => {
+            audio.pause();
+            audio.currentTime = startTime; // reset to snippet start
+            snippetStopTimeout = null;
+        }, duration * 1000 + 100); // small buffer for smoothness
+    }).catch(e => {
+        console.warn('Snippet playback failed:', e);
+    });
+}
+
 
 function parafyAndMakeClickable(text, categoryName = null, titleName = null) {
     const cleaned = String(text).replace(/[“”]/g, '"').replace(/[‘’]/g, "'").trim();
@@ -1598,15 +1661,9 @@ function timestampUpdateLoop() {
 
     const currentTime = audio.currentTime;
     
-    // 1. Highlight Logic - 增加容錯範圍：±0.3 秒
-    let activeSentence = null;
-    for (const line of timestampData) {
-        // 增加容錯範圍以補償手機音訊定位誤差
-        if (currentTime >= line.start - 0.3 && currentTime <= line.end + 0.3) {
-            activeSentence = line;
-            break;
-        }
-    }
+    // 1. Highlight Logic - binary search with ±0.15s tolerance
+    const idx = findActiveSentenceIndex(currentTime);
+    const activeSentence = idx !== -1 ? timestampData[idx] : null;
     
     const sentenceElement = activeSentence ? textContainer.querySelector(`[data-start="${activeSentence.start}"]`) : null;
     
@@ -1682,13 +1739,9 @@ function jsonModeHighlightLoop() {
 
     const currentTime = audio.currentTime;
 
-    let activeSentenceData = null;
-    for (const line of timestampData) {
-        if (currentTime >= line.start && currentTime <= line.end) {
-            activeSentenceData = line;
-            break;
-        }
-    }
+    // Binary search for active sentence
+    const idx = findActiveSentenceIndex(currentTime);
+    const activeSentenceData = idx !== -1 ? timestampData[idx] : null;
 
     if (activeSentenceData) {
         // 當句子切換時，才需要重新尋找並設定高亮單字
@@ -2406,7 +2459,12 @@ backToStoryFromNoteBtn.addEventListener('click', () => {
 audio.addEventListener('play', () => { 
     isPlaying = true; 
     playPauseBtn.classList.add('is-playing'); 
-    saveLastPlaybackState(); 
+    saveLastPlaybackState();
+    // Clear any pending snippet stop timer when full playback starts
+    if (snippetStopTimeout) {
+        clearTimeout(snippetStopTimeout);
+        snippetStopTimeout = null;
+    }
     if (isTimestampMode) {
         timestampUpdateLoop();
     } else {

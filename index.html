@@ -40,35 +40,36 @@
 
     <div id="sub-category-view" class="is-hidden">
       <h1 id="sub-category-header"></h1>
-      <div id="sub-category-list" class="list"></div>
-      <div class="controls">
-          <button class="secondary" id="back-to-major-view">Back to Main Menu</button>
+      <div class="view-top-nav">
+        <button class="secondary btn-back-top" id="back-to-major-view">← Back</button>
       </div>
+      <div id="sub-category-list" class="list"></div>
     </div>
 
     <div id="category-view" class="is-hidden">
       <h1 id="category-title"></h1>
-      <div id="title-list" class="list"></div>
-      <div id="fixed-controls-container">
-        <div class="controls">
-            <button class="secondary" id="back-to-sub-category">Back to Categories</button>
-        </div>
+      <div class="view-top-nav">
+        <button class="secondary btn-back-top" id="back-to-sub-category">← Back</button>
       </div>
+      <div id="title-list" class="list"></div>
     </div>
 
     <div id="playback-view" class="is-hidden">
       <h1 id="playback-title"></h1>
+      <div class="view-top-nav">
+        <button class="secondary btn-back-top" id="back-to-category">← Back</button>
+      </div>
       <div id="text-container"></div>
       <div id="staging-area">
         <div class="staging-header">
-          <span>Staging Area</span>
+          <span class="staging-label">Staging</span>
+          <div id="staged-words-container" placeholder="Click words to stage..."></div>
           <div class="staging-header-actions">
-            <button id="add-to-note-btn">Add to Note</button>
+            <button id="add-to-note-btn">Add</button>
             <button id="clear-staging-btn" class="secondary">Clear</button>
             <button id="copy-staged-btn" class="secondary">Copy</button>
           </div>
         </div>
-        <div id="staged-words-container" placeholder="Click words from the text above to add them here..."></div>
       </div>
       <div id="fixed-controls-container">
         <div class="controls">
@@ -90,7 +91,6 @@
           </div>
           <div class="navigation-actions">
             <button id="prev-story" class="secondary" hidden>上一則</button>
-            <button class="secondary" id="back-to-category">Back to Titles</button>
             <button id="go-to-story-note-btn" class="secondary">Note</button>
             <button id="next-story" class="secondary" hidden>下一則</button>
           </div>
