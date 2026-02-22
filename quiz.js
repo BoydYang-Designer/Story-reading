@@ -30,6 +30,64 @@ let quizState = {
 
 let quizAudioPlayer = new Audio();
 
+// ── Unified snippet player ────────────────────────────────────
+// Plays a time-bounded segment of quizAudioPlayer.
+// Uses setTimeout as primary stop mechanism (more reliable than timeupdate).
+// onStart / onEnd are optional callbacks to update UI.
+let _snippetStopTimer = null;
+let _snippetTimeUpdateHandler = null;
+
+function playSnippet({ start, end, onStart, onEnd }) {
+    // Cancel any running snippet
+    if (_snippetStopTimer) {
+        clearTimeout(_snippetStopTimer);
+        _snippetStopTimer = null;
+    }
+    if (_snippetTimeUpdateHandler) {
+        quizAudioPlayer.removeEventListener('timeupdate', _snippetTimeUpdateHandler);
+        _snippetTimeUpdateHandler = null;
+    }
+    quizAudioPlayer.pause();
+
+    const isMobile = isMobileDevice();
+    const bufStart = isMobile ? 0.25 : 0.1;
+    const bufEnd   = isMobile ? 1.0  : 0.8;   // timeupdate backup threshold
+    const trailMs  = isMobile ? 1000 : 800;    // setTimeout primary stop
+
+    const seekTo  = Math.max(0, start - bufStart);
+    const playMs  = (end - start) * 1000 + trailMs;
+
+    const stopAll = () => {
+        if (_snippetStopTimer) { clearTimeout(_snippetStopTimer); _snippetStopTimer = null; }
+        if (_snippetTimeUpdateHandler) {
+            quizAudioPlayer.removeEventListener('timeupdate', _snippetTimeUpdateHandler);
+            _snippetTimeUpdateHandler = null;
+        }
+        quizAudioPlayer.pause();
+        if (onEnd) onEnd();
+    };
+
+    if (onStart) onStart();
+
+    // Backup: timeupdate — catches cases where seek lands slightly off
+    _snippetTimeUpdateHandler = () => {
+        if (quizAudioPlayer.currentTime >= end + bufEnd) stopAll();
+    };
+    quizAudioPlayer.addEventListener('timeupdate', _snippetTimeUpdateHandler);
+
+    quizAudioPlayer.currentTime = seekTo;
+    quizAudioPlayer.play().then(() => {
+        // Primary: setTimeout based on calculated duration
+        _snippetStopTimer = setTimeout(stopAll, playMs);
+    }).catch(() => {
+        if (_snippetTimeUpdateHandler) {
+            quizAudioPlayer.removeEventListener('timeupdate', _snippetTimeUpdateHandler);
+            _snippetTimeUpdateHandler = null;
+        }
+        if (onEnd) onEnd();
+    });
+}
+
 // ── DOM refs ─────────────────────────────────────────────────
 const quizView          = document.getElementById('quiz-view');
 const quizMenu          = document.getElementById('quiz-menu');
@@ -608,9 +666,6 @@ function showQuizResult(mode, correct, total, wrongItems) {
                     const start = parseFloat(btn.dataset.start);
                     const end   = parseFloat(btn.dataset.end);
                     const title = btn.dataset.title;
-                    const isMobile = isMobileDevice();
-                    const bufStart = isMobile ? 0.3 : 0.1;
-                    const bufEnd   = isMobile ? 0.4 : 0.05;
 
                     // Make sure audio src matches
                     const targetSrc = `audio/${encodeURIComponent(title.trim())}.mp3`;
@@ -619,27 +674,11 @@ function showQuizResult(mode, correct, total, wrongItems) {
                         quizAudioPlayer.load();
                     }
 
-                    btn.textContent = '⏸';
-                    quizAudioPlayer.currentTime = Math.max(0, start - bufStart);
-
-                    const stopHandler = function() {
-                        if (quizAudioPlayer.currentTime >= end + bufEnd) {
-                            quizAudioPlayer.pause();
-                            quizAudioPlayer.removeEventListener('timeupdate', stopHandler);
-                            btn.textContent = '▶ Listen again';
-                        }
-                    };
-                    quizAudioPlayer.addEventListener('timeupdate', stopHandler);
-                    quizAudioPlayer.play().catch(() => {
-                        quizAudioPlayer.removeEventListener('timeupdate', stopHandler);
-                        btn.textContent = '▶ Listen again';
+                    playSnippet({
+                        start, end,
+                        onStart: () => { btn.textContent = '⏸'; },
+                        onEnd:   () => { btn.textContent = '▶ Listen again'; }
                     });
-
-                    setTimeout(() => {
-                        quizAudioPlayer.removeEventListener('timeupdate', stopHandler);
-                        if (!quizAudioPlayer.paused) quizAudioPlayer.pause();
-                        btn.textContent = '▶ Listen again';
-                    }, (end - start + bufEnd) * 1000 + 300);
                 }
             });
         });
@@ -1027,7 +1066,7 @@ async function startDictation() {
     showDictationQuestion();
 }
 
-let dictationStopTimeout = null;
+// (removed — using playSnippet)
 
 function showDictationQuestion() {
     // Clear any pending stop
@@ -1078,41 +1117,12 @@ function showDictationQuestion() {
 
 function playDictationAudio(q) {
     if (!q.start) return;
-
     const playBtn = document.getElementById('dictation-play-btn');
-    playBtn.classList.add('is-playing-voice');
-
-    const isMobile = isMobileDevice();
-    const bufferStart = isMobile ? 0.3 : 0.1;
-    const bufferEnd   = isMobile ? 0.4 : 0.05;
-
-    quizAudioPlayer.currentTime = Math.max(0, q.start - bufferStart);
-
-    const stopHandler = function () {
-        if (quizAudioPlayer.currentTime >= q.end + bufferEnd) {
-            quizAudioPlayer.pause();
-            quizAudioPlayer.removeEventListener('timeupdate', stopHandler);
-            playBtn.classList.remove('is-playing-voice');
-        }
-    };
-    quizAudioPlayer.addEventListener('timeupdate', stopHandler);
-
-    quizAudioPlayer.play().catch(e => {
-        console.error('Dictation play failed:', e);
-        playBtn.classList.remove('is-playing-voice');
-        quizAudioPlayer.removeEventListener('timeupdate', stopHandler);
+    playSnippet({
+        start: q.start, end: q.end,
+        onStart: () => playBtn.classList.add('is-playing-voice'),
+        onEnd:   () => playBtn.classList.remove('is-playing-voice')
     });
-
-    // Backup timeout
-    const duration = (q.end - q.start + bufferEnd) * 1000;
-    dictationStopTimeout = setTimeout(() => {
-        if (!quizAudioPlayer.paused) {
-            quizAudioPlayer.pause();
-        }
-        quizAudioPlayer.removeEventListener('timeupdate', stopHandler);
-        playBtn.classList.remove('is-playing-voice');
-        dictationStopTimeout = null;
-    }, duration + 300);
 }
 
 function handleDictationAnswer(selected, correct, btn) {
@@ -1289,47 +1299,20 @@ async function getTimestampForStoryWithCache(title) {
     return data;
 }
 
-let articleStopTimeout = null;
+// (removed — using playSnippet)
 
 function playArticleAudio(q, btn) {
-    if (articleStopTimeout) {
-        clearTimeout(articleStopTimeout);
-        articleStopTimeout = null;
-    }
-
-    btn.classList.add('is-playing-voice');
-    btn.querySelector('span').textContent = '⏸ Playing...';
-
-    const isMobile = isMobileDevice();
-    const bufStart = isMobile ? 0.3 : 0.1;
-    const bufEnd   = isMobile ? 0.4 : 0.05;
-
-    quizAudioPlayer.currentTime = Math.max(0, q.start - bufStart);
-
-    const stopHandler = function() {
-        if (quizAudioPlayer.currentTime >= q.end + bufEnd) {
-            quizAudioPlayer.pause();
-            quizAudioPlayer.removeEventListener('timeupdate', stopHandler);
+    playSnippet({
+        start: q.start, end: q.end,
+        onStart: () => {
+            btn.classList.add('is-playing-voice');
+            btn.querySelector('span').textContent = '⏸ Playing...';
+        },
+        onEnd: () => {
             btn.classList.remove('is-playing-voice');
             btn.querySelector('span').textContent = '▶ Play Again';
         }
-    };
-    quizAudioPlayer.addEventListener('timeupdate', stopHandler);
-
-    quizAudioPlayer.play().catch(() => {
-        quizAudioPlayer.removeEventListener('timeupdate', stopHandler);
-        btn.classList.remove('is-playing-voice');
-        btn.querySelector('span').textContent = '▶ Play Sentence';
     });
-
-    const duration = (q.end - q.start + bufEnd) * 1000;
-    articleStopTimeout = setTimeout(() => {
-        quizAudioPlayer.removeEventListener('timeupdate', stopHandler);
-        if (!quizAudioPlayer.paused) quizAudioPlayer.pause();
-        btn.classList.remove('is-playing-voice');
-        btn.querySelector('span').textContent = '▶ Play Again';
-        articleStopTimeout = null;
-    }, duration + 300);
 }
 
 function handleArticleListenAnswer(selected, q, btn) {
@@ -1738,49 +1721,21 @@ function showReorderQuestion() {
     }
 }
 
-let reorderStopTimeout = null;
+// (removed — using playSnippet)
 
 function playReorderAudio(q) {
     const playBtn = document.getElementById('reorder-play-btn');
-    const isMobile = isMobileDevice();
-    const bufStart = isMobile ? 0.3 : 0.1;
-    const bufEnd   = isMobile ? 0.4 : 0.05;
-
-    // Stop any previous
-    if (reorderStopTimeout) { clearTimeout(reorderStopTimeout); reorderStopTimeout = null; }
-    quizAudioPlayer.removeEventListener('timeupdate', quizAudioPlayer._reorderStopHandler);
-
-    playBtn.classList.add('is-playing-voice');
-    playBtn.querySelector('span:last-child').textContent = 'Playing…';
-
-    quizAudioPlayer.currentTime = Math.max(0, q.start - bufStart);
-
-    const stopHandler = function () {
-        if (quizAudioPlayer.currentTime >= q.end + bufEnd) {
-            quizAudioPlayer.pause();
-            quizAudioPlayer.removeEventListener('timeupdate', stopHandler);
+    playSnippet({
+        start: q.start, end: q.end,
+        onStart: () => {
+            playBtn.classList.add('is-playing-voice');
+            playBtn.querySelector('span:last-child').textContent = 'Playing…';
+        },
+        onEnd: () => {
             playBtn.classList.remove('is-playing-voice');
             playBtn.querySelector('span:last-child').textContent = 'Play Sentence';
-            reorderStopTimeout = null;
         }
-    };
-    quizAudioPlayer._reorderStopHandler = stopHandler;
-    quizAudioPlayer.addEventListener('timeupdate', stopHandler);
-
-    quizAudioPlayer.play().catch(() => {
-        quizAudioPlayer.removeEventListener('timeupdate', stopHandler);
-        playBtn.classList.remove('is-playing-voice');
-        playBtn.querySelector('span:last-child').textContent = 'Play Sentence';
     });
-
-    const duration = (q.end - q.start + bufEnd) * 1000;
-    reorderStopTimeout = setTimeout(() => {
-        if (!quizAudioPlayer.paused) quizAudioPlayer.pause();
-        quizAudioPlayer.removeEventListener('timeupdate', stopHandler);
-        playBtn.classList.remove('is-playing-voice');
-        playBtn.querySelector('span:last-child').textContent = 'Play Sentence';
-        reorderStopTimeout = null;
-    }, duration + 300);
 }
 
 function renderReorderPool() {
