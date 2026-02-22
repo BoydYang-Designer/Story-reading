@@ -297,8 +297,6 @@ function pickerApplySelection() {
         quizState.titleName    = title;
         quizState.categoryName = category;
         quizState.scope        = 'this';
-        document.getElementById('quiz-scope-this').classList.add('is-active');
-        document.getElementById('quiz-scope-all').classList.remove('is-active');
     } else {
         quizState.titleName = null;
     }
@@ -356,10 +354,6 @@ function openQuiz(categoryName, titleName) {
 
     renderQuizStatsBar(categoryName, titleName);
 
-    // Reset scope buttons
-    document.getElementById('quiz-scope-this').classList.add('is-active');
-    document.getElementById('quiz-scope-all').classList.remove('is-active');
-
     // Always init major dropdown
     pickerInitMajors();
 
@@ -403,17 +397,7 @@ document.getElementById('back-to-note-from-quiz').addEventListener('click', () =
     }
 });
 
-document.getElementById('quiz-scope-this').addEventListener('click', () => {
-    quizState.scope = 'this';
-    document.getElementById('quiz-scope-this').classList.add('is-active');
-    document.getElementById('quiz-scope-all').classList.remove('is-active');
-});
 
-document.getElementById('quiz-scope-all').addEventListener('click', () => {
-    quizState.scope = 'all';
-    document.getElementById('quiz-scope-all').classList.add('is-active');
-    document.getElementById('quiz-scope-this').classList.remove('is-active');
-});
 
 // ── Mode Card + Subpanel Logic ────────────────────────────────
 
@@ -1652,6 +1636,8 @@ async function startReorder(source) {
 let reorderAnswer  = [];   // word tokens in answer area (in order)
 let reorderPool    = [];   // all shuffled tokens for current question
 let reorderChecked = false;
+let reorderFirstWord = '';  // 第一個單字
+let reorderLastWord = '';   // 最後一個單字
 
 function tokenize(sentence) {
     // Split keeping punctuation attached to words (e.g. "Hello," stays together)
@@ -1683,6 +1669,17 @@ function showReorderQuestion() {
     do { shuffled = shuffle([...tokens]); }
     while (tokens.length > 1 && shuffled.join(' ') === tokens.join(' '));
     reorderPool = shuffled;
+    
+    // 記錄第一個和最後一個單字
+    reorderFirstWord = tokens[0];
+    reorderLastWord = tokens[tokens.length - 1];
+    
+    // 顯示提示
+    const hintEl = document.getElementById('reorder-hint');
+    if (hintEl && tokens.length > 0) {
+        hintEl.textContent = `Hint: Start with "${reorderFirstWord}" and end with "${reorderLastWord}"`;
+        hintEl.style.display = 'block';
+    }
 
     // Play button: always visible, disabled if no timestamp
     const playBtn = document.getElementById('reorder-play-btn');
@@ -1741,9 +1738,42 @@ function playReorderAudio(q) {
 function renderReorderPool() {
     const wordPool = document.getElementById('reorder-word-pool');
     wordPool.innerHTML = '';
+    
+    // 計算還有多少單字未被選擇
+    const availableWords = reorderPool.filter((word, idx) => 
+        !reorderAnswer.some(a => a.idx === idx)
+    );
+    
+    // 如果沒有可選單字，顯示提示
+    if (availableWords.length === 0) {
+        wordPool.innerHTML = '<div style="padding: 12px; color: var(--color-text-light); text-align: center; font-size: 0.9em;">All words selected ✓</div>';
+        wordPool.style.minHeight = '40px';
+        return;
+    }
+    
+    // 根據剩餘單字數量動態調整容器
+    wordPool.style.minHeight = 'auto';
+    
     reorderPool.forEach((word, idx) => {
+        const isUsed = reorderAnswer.some(a => a.idx === idx);
+        
         const btn = document.createElement('button');
-        btn.className = 'reorder-word' + (reorderAnswer.some(a => a.idx === idx) ? ' is-used' : '');
+        btn.className = 'reorder-word';
+        
+        // 如果已被選擇，添加 is-used 類別（會被隱藏）
+        if (isUsed) {
+            btn.classList.add('is-used');
+        }
+        
+        // 標示第一個和最後一個單字（綠框）
+        const normalizedWord = word.toLowerCase().replace(/[.,?!'"`""'']/g, '');
+        const normalizedFirst = reorderFirstWord.toLowerCase().replace(/[.,?!'"`""'']/g, '');
+        const normalizedLast = reorderLastWord.toLowerCase().replace(/[.,?!'"`""'']/g, '');
+        
+        if (normalizedWord === normalizedFirst || normalizedWord === normalizedLast) {
+            btn.classList.add('is-hint-word');
+        }
+        
         btn.textContent = word;
         btn.dataset.idx = idx;
         btn.addEventListener('click', () => {
@@ -1817,6 +1847,43 @@ document.getElementById('reorder-check-btn').addEventListener('click', () => {
         quizState.correct++;
     } else {
         answerArea.classList.add('is-wrong');
+
+        // LCS diff — find which user words are NOT part of the longest common subsequence
+        // so only truly wrong/misplaced words get highlighted red
+        const userTokens    = reorderAnswer.map(a => normalizeForCheck([a.word]));
+        const correctTokens = tokens.map(t => normalizeForCheck([t]));
+
+        // Build LCS table
+        const m = userTokens.length, n = correctTokens.length;
+        const dp = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));
+        for (let i = 1; i <= m; i++) {
+            for (let j = 1; j <= n; j++) {
+                dp[i][j] = userTokens[i - 1] === correctTokens[j - 1]
+                    ? dp[i - 1][j - 1] + 1
+                    : Math.max(dp[i - 1][j], dp[i][j - 1]);
+            }
+        }
+
+        // Backtrack to find which user positions are in the LCS (= correct)
+        const inLCS = new Array(m).fill(false);
+        let i = m, j = n;
+        while (i > 0 && j > 0) {
+            if (userTokens[i - 1] === correctTokens[j - 1]) {
+                inLCS[i - 1] = true;
+                i--; j--;
+            } else if (dp[i - 1][j] >= dp[i][j - 1]) {
+                i--;
+            } else {
+                j--;
+            }
+        }
+
+        // Apply red highlight only to words NOT in LCS
+        const answerButtons = answerArea.querySelectorAll('.reorder-word');
+        answerButtons.forEach((btn, idx) => {
+            if (!inLCS[idx]) btn.classList.add('is-incorrect');
+        });
+
         feedback.innerHTML = `✗ Correct order: <em>${q.sentence}</em>`;
         feedback.className = 'quiz-feedback wrong';
         quizState.wrong++;
@@ -1837,6 +1904,31 @@ document.getElementById('reorder-check-btn').addEventListener('click', () => {
 document.getElementById('reorder-next').addEventListener('click', () => {
     quizState.currentIndex++;
     showReorderQuestion();
+});
+
+// ── Reorder Keyboard Shortcuts ────────────────────────────────
+// Space = Play audio, Enter = Check (if not checked) / Next (if checked)
+document.addEventListener('keydown', (e) => {
+    const reorderArea = document.getElementById('quiz-reorder-area');
+    if (!reorderArea || reorderArea.classList.contains('is-hidden')) return;
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+    if (e.code === 'Space') {
+        e.preventDefault();
+        const playBtn = document.getElementById('reorder-play-btn');
+        if (playBtn && !playBtn.disabled && !playBtn.classList.contains('is-hidden')) {
+            playBtn.click();
+        }
+    } else if (e.code === 'Enter') {
+        e.preventDefault();
+        const nextBtn  = document.getElementById('reorder-next');
+        const checkBtn = document.getElementById('reorder-check-btn');
+        if (nextBtn && !nextBtn.classList.contains('is-hidden')) {
+            nextBtn.click();
+        } else if (checkBtn && !checkBtn.disabled) {
+            checkBtn.click();
+        }
+    }
 });
 
 console.log('✅ Quiz system loaded.');

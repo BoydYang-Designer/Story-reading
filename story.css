@@ -1465,6 +1465,26 @@ button.secondary:hover {
   border-color: #b0c0e8;
 }
 
+.quiz-entry {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(135deg, #c9a96e 0%, #b8935d 100%);
+  border-color: #c9a96e;
+  color: #1a1611;
+  font-weight: 600;
+}
+
+.quiz-entry svg {
+  flex-shrink: 0;
+}
+
+.quiz-entry:hover {
+  background: linear-gradient(135deg, #d4b47f 0%, #c9a96e 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(201, 169, 110, 0.3);
+}
+
 .custom-count-badge {
   font-size: 13px;
   font-weight: 600;
@@ -2888,8 +2908,31 @@ button.secondary:hover {
 }
 
 .reorder-word.is-used {
-    opacity: 0.2;
+    opacity: 0;
     pointer-events: none;
+    display: none;  /* 完全隱藏 */
+}
+
+/* 第一個和最後一個單字的綠框提示 */
+.reorder-word.is-hint-word {
+    border: 2px solid #50b86c !important;
+    background-color: rgba(80, 184, 108, 0.1) !important;
+    box-shadow: 0 0 0 2px rgba(80, 184, 108, 0.2);
+}
+
+/* 錯誤單字的紅框樣式 */
+.reorder-word.is-incorrect {
+    border: 2px solid #e74c3c !important;
+    background-color: #ffe5e5 !important;
+    color: #c0392b !important;
+    box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.2);
+    animation: shake 0.3s ease;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
 }
 
 .reorder-actions {

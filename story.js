@@ -818,7 +818,8 @@ async function playSentenceSnippet(sentenceText, storyTitle) {
     const bufferTime = isMobile ? 0.3 : 0.1;
     const adjustedStart = Math.max(0, start - bufferTime);
     // 結束點：手機 timeupdate 頻率低（~500ms），需要延後停止避免截斷句尾
-    const stopBuffer = isMobile ? 0.4 : 0.05;
+    // 增加更多緩衝以確保完整播放
+    const stopBuffer = isMobile ? 0.6 : 0.2;
     noteAudioPlayer.currentTime = adjustedStart;
     
     // Use timeupdate event for more precise playback control
@@ -1263,6 +1264,14 @@ goToNoteBtn.addEventListener('click', () => {
     renderNoteView('categories');
     showView(noteView);
 });
+
+// Quiz home button listener
+const goToQuizHomeBtn = document.getElementById('go-to-quiz-home');
+if (goToQuizHomeBtn) {
+    goToQuizHomeBtn.addEventListener('click', () => {
+        openQuiz(null, null);
+    });
+}
 
 addManualWordBtn.addEventListener('click', () => {
     const newWord = newWordInput.value.trim();
