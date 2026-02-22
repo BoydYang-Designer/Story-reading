@@ -229,6 +229,11 @@ async function showAppView(user) {
     renderMajorCategories(); // 原本可能是 renderCategories()，請改為 renderMajorCategories()
     // ==================
 
+    // Show review badge if there are articles due for review
+    setTimeout(() => {
+        if (typeof renderHomeReviewBadge === 'function') renderHomeReviewBadge();
+    }, 300);
+
     showView(homeView); // Default to home view
 }
 

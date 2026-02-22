@@ -576,11 +576,11 @@
     </div>
     <h1>📊 Quiz Scores</h1>
 
-    <!-- Summary Strip -->
-    <div id="scores-summary-strip" class="scores-summary-strip">
+    <!-- Summary Strip: row 1 -->
+    <div class="scores-summary-strip" id="scores-summary-strip">
         <div class="scores-summary-item">
-            <div class="scores-summary-value" id="summary-total-articles">0</div>
-            <div class="scores-summary-label">Articles</div>
+            <div class="scores-summary-value" id="summary-coverage">—</div>
+            <div class="scores-summary-label">Coverage</div>
         </div>
         <div class="scores-summary-item">
             <div class="scores-summary-value" id="summary-total-attempts">0</div>
@@ -596,17 +596,25 @@
         </div>
     </div>
 
-    <!-- Mode Legend -->
-    <div class="scores-mode-legend">
-        <span title="Flashcard">🃏 Flashcard</span>
-        <span title="Fill in Blank">✏️ Fill in Blank</span>
-        <span title="Dictation">🎧 Dictation</span>
-        <span title="Reorder">🔀 Reorder</span>
-        <span title="Article Listen">👂 Article Listen</span>
-        <span title="Article Cloze">📝 Article Cloze</span>
+    <!-- Blind-spot + Review alert row -->
+    <div class="scores-alert-row" id="scores-alert-row"></div>
+
+    <!-- Filter + Legend toolbar -->
+    <div class="scores-toolbar">
+        <div class="scores-filter-btns">
+            <button class="scores-filter-btn is-active" data-filter="all" id="filter-all-btn">全部</button>
+            <button class="scores-filter-btn" data-filter="practiced" id="filter-practiced-btn">已練習</button>
+            <button class="scores-filter-btn scores-filter-review" data-filter="review" id="filter-review-btn">🔔 待複習</button>
+        </div>
+        <div class="scores-legend-mini">
+            <span class="scores-legend-dot score-green"></span>≥90%
+            <span class="scores-legend-dot score-yellow"></span>60–89%
+            <span class="scores-legend-dot score-red"></span>&lt;60%
+            <span class="scores-legend-dot scores-cell-empty-dot"></span>未練習
+        </div>
     </div>
 
-    <!-- Dashboard Table -->
+    <!-- Dashboard Table (rendered by JS) -->
     <div id="scores-dashboard-table" class="scores-dashboard-table"></div>
 
     <!-- Clear All -->

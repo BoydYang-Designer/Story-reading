@@ -1934,20 +1934,29 @@ document.addEventListener('keydown', (e) => {
 console.log('✅ Quiz system loaded.');
 
 // ══════════════════════════════════════════════════════════════
-//  SCORE DASHBOARD
+//  SCORE DASHBOARD — Enhanced
 // ══════════════════════════════════════════════════════════════
 
 const SCORE_MODE_META = {
-    flashcard:       { icon: '🃏', label: 'Flashcard' },
-    cloze:           { icon: '✏️', label: 'Fill in Blank' },
-    dictation:       { icon: '🎧', label: 'Dictation' },
-    reorder:         { icon: '🔀', label: 'Reorder' },
-    'article-listen':{ icon: '👂', label: 'Article Listen' },
-    'article-cloze': { icon: '📝', label: 'Article Cloze' },
+    flashcard:        { icon: '🃏', label: 'Flashcard' },
+    cloze:            { icon: '✏️', label: 'Fill in Blank' },
+    dictation:        { icon: '🎧', label: 'Dictation' },
+    reorder:          { icon: '🔀', label: 'Reorder' },
+    'article-listen': { icon: '👂', label: 'Article Listen' },
+    'article-cloze':  { icon: '📝', label: 'Article Cloze' },
 };
 const SCORE_MODES = Object.keys(SCORE_MODE_META);
+const REVIEW_DAYS = 7; // 超過幾天算「待複習」
+
+// Dashboard state
+let _dashFilter  = 'all';   // 'all' | 'practiced' | 'review'
+let _dashSortMode = null;   // null | mode key
+let _dashSortDir  = 'desc'; // 'desc' | 'asc'
 
 function openScoresDashboard() {
+    _dashFilter   = 'all';
+    _dashSortMode = null;
+    _dashSortDir  = 'desc';
     renderScoresDashboard();
     showView(document.getElementById('scores-dashboard-view'));
 }
@@ -1958,116 +1967,256 @@ function getScoreColor(pct) {
     return 'score-red';
 }
 
+function daysSince(dateStr) {
+    if (!dateStr) return Infinity;
+    const d = new Date(dateStr);
+    if (isNaN(d)) return Infinity;
+    return Math.floor((Date.now() - d.getTime()) / 86400000);
+}
+
+// Build flat list of all article rows with computed data
+function buildDashboardRows(scores) {
+    const storyList = typeof stories !== 'undefined' ? stories : [];
+
+    // Build map: title → major
+    const titleMajor = {};
+    for (const s of storyList) {
+        titleMajor[s['標題']] = s['大類'] || 'Uncategorized';
+    }
+
+    // Collect all titles: from stories + any scored keys not in stories
+    const allTitles = new Set(storyList.map(s => s['標題']));
+    for (const key of Object.keys(scores)) {
+        const title = key.split('||')[1];
+        if (title) allTitles.add(title);
+    }
+
+    const rows = [];
+    for (const title of allTitles) {
+        const major = titleMajor[title] || 'Other';
+        const key   = Object.keys(scores).find(k => k.endsWith('||' + title));
+        const entry = key ? scores[key] : {};
+
+        // Per-mode data
+        const modeData = {};
+        for (const mode of SCORE_MODES) {
+            const d = entry[mode];
+            if (d) {
+                const pct     = d.total > 0 ? d.best / d.total : 0;
+                const firstPct = d.total > 0 && d.first != null ? d.first / d.total : null;
+                const trend   = firstPct != null ? pct - firstPct : null;
+                const days    = daysSince(d.lastDate);
+                modeData[mode] = { ...d, pct, firstPct, trend, days };
+            }
+        }
+
+        const hasPractice  = Object.keys(modeData).length > 0;
+        const needsReview  = hasPractice && Object.values(modeData).some(d => d.days >= REVIEW_DAYS);
+
+        rows.push({ title, major, entry, modeData, hasPractice, needsReview });
+    }
+    return rows;
+}
+
 function renderScoresDashboard() {
-    const scores = loadQuizScores();
+    const scores  = loadQuizScores();
     const tableEl = document.getElementById('scores-dashboard-table');
     if (!tableEl) return;
 
-    // --- Summary Strip ---
-    let totalArticles = 0;
+    const allRows = buildDashboardRows(scores);
+
+    // ── Summary Strip ──────────────────────────────────────────
     let totalAttempts = 0;
     let perfectCount  = 0;
     let bestPctSum    = 0;
     let bestPctCount  = 0;
+    let practicedSet  = new Set();
+    const modeUsage   = {};
 
-    for (const key of Object.keys(scores)) {
-        const entry = scores[key];
-        let hasPractice = false;
+    const totalArticles = allRows.length;
+
+    for (const row of allRows) {
+        if (row.hasPractice) practicedSet.add(row.title);
         for (const mode of SCORE_MODES) {
-            if (entry[mode]) {
-                hasPractice = true;
-                totalAttempts += entry[mode].count || 0;
-                const pct = entry[mode].total > 0 ? entry[mode].best / entry[mode].total : 0;
-                bestPctSum += pct;
-                bestPctCount++;
-                if (entry[mode].best === entry[mode].total && entry[mode].total > 0) perfectCount++;
-            }
+            const d = row.modeData[mode];
+            if (!d) continue;
+            totalAttempts += d.count || 0;
+            bestPctSum    += d.pct;
+            bestPctCount++;
+            if (d.best === d.total && d.total > 0) perfectCount++;
+            modeUsage[mode] = (modeUsage[mode] || 0) + (d.count || 0);
         }
-        if (hasPractice) totalArticles++;
     }
 
-    document.getElementById('summary-total-articles').textContent = totalArticles;
+    const coveragePct = totalArticles > 0
+        ? Math.round(practicedSet.size / totalArticles * 100) + '%'
+        : '—';
+
+    document.getElementById('summary-coverage').textContent      = coveragePct;
     document.getElementById('summary-total-attempts').textContent = totalAttempts;
-    document.getElementById('summary-avg-best').textContent = bestPctCount > 0
+    document.getElementById('summary-avg-best').textContent       = bestPctCount > 0
         ? Math.round(bestPctSum / bestPctCount * 100) + '%' : '—';
-    document.getElementById('summary-perfect-count').textContent = perfectCount;
+    document.getElementById('summary-perfect-count').textContent  = perfectCount;
 
-    // --- Build table grouped by major ---
-    // Group stories by major
-    const majorGroups = {};
-    for (const s of (typeof stories !== 'undefined' ? stories : [])) {
-        const major = s['大類'] || 'Uncategorized';
-        const title = s['標題'];
-        if (!majorGroups[major]) majorGroups[major] = [];
-        if (!majorGroups[major].includes(title)) majorGroups[major].push(title);
+    // ── Alert Row: blind-spot + review count ──────────────────
+    const alertRow = document.getElementById('scores-alert-row');
+    let alertHtml  = '';
+
+    // Blind-spot: least practiced mode (with any data)
+    if (Object.keys(modeUsage).length > 0) {
+        const leastMode = Object.keys(modeUsage).sort((a, b) => modeUsage[a] - modeUsage[b])[0];
+        const meta = SCORE_MODE_META[leastMode];
+        alertHtml += `<div class="scores-alert scores-alert-blind">
+            💡 最少練習的模式：<strong>${meta.icon} ${meta.label}</strong>（${modeUsage[leastMode]} 次）
+        </div>`;
     }
 
-    // Also include any score keys that might not be in stories (custom articles, etc.)
-    for (const key of Object.keys(scores)) {
-        const [cat, title] = key.split('||');
-        const major = 'Other';
-        // Try to find major from stories
-        const found = (typeof stories !== 'undefined') && stories.find(s => s['標題'] === title);
-        if (!found) {
-            if (!majorGroups[major]) majorGroups[major] = [];
-            if (!majorGroups[major].includes(title)) majorGroups[major].push(title);
-        }
+    // Review alert
+    const reviewCount = allRows.filter(r => r.needsReview).length;
+    if (reviewCount > 0) {
+        alertHtml += `<div class="scores-alert scores-alert-review">
+            🔔 有 <strong>${reviewCount}</strong> 篇文章超過 ${REVIEW_DAYS} 天未練習，建議複習
+        </div>`;
+    }
+    alertRow.innerHTML = alertHtml;
+
+    // ── Filter buttons state ───────────────────────────────────
+    document.querySelectorAll('.scores-filter-btn').forEach(btn => {
+        btn.classList.toggle('is-active', btn.dataset.filter === _dashFilter);
+    });
+
+    // ── Apply filter ───────────────────────────────────────────
+    let visibleRows = allRows;
+    if (_dashFilter === 'practiced') visibleRows = allRows.filter(r => r.hasPractice);
+    if (_dashFilter === 'review')    visibleRows = allRows.filter(r => r.needsReview);
+
+    // ── Apply sort ─────────────────────────────────────────────
+    if (_dashSortMode) {
+        visibleRows = [...visibleRows].sort((a, b) => {
+            const pctA = a.modeData[_dashSortMode]?.pct ?? -1;
+            const pctB = b.modeData[_dashSortMode]?.pct ?? -1;
+            return _dashSortDir === 'desc' ? pctB - pctA : pctA - pctB;
+        });
     }
 
-    let html = '';
-
-    // Header row
-    html += `<div class="scores-table-header">
+    // ── Build table HTML ───────────────────────────────────────
+    // Header
+    let html = `<div class="scores-table-header">
         <div class="scores-col-article">Article</div>
-        ${SCORE_MODES.map(m => `<div class="scores-col-mode" title="${SCORE_MODE_META[m].label}">${SCORE_MODE_META[m].icon}</div>`).join('')}
+        ${SCORE_MODES.map(m => {
+            const isSorted = _dashSortMode === m;
+            const arrow = isSorted ? (_dashSortDir === 'desc' ? ' ↓' : ' ↑') : '';
+            return `<div class="scores-col-mode scores-col-sortable${isSorted ? ' is-sorted' : ''}"
+                        data-sort-mode="${m}"
+                        title="按 ${SCORE_MODE_META[m].label} 排序">
+                        ${SCORE_MODE_META[m].icon}${arrow}
+                    </div>`;
+        }).join('')}
     </div>`;
 
-    for (const major of Object.keys(majorGroups).sort()) {
-        const titles = majorGroups[major];
-        // Only show if major has any scored articles
-        const hasAny = titles.some(t => {
-            return Object.keys(scores).some(k => k.endsWith('||' + t));
-        });
-
-        html += `<div class="scores-major-group">
-            <div class="scores-major-label">${major}</div>`;
-
-        for (const title of titles.sort()) {
-            // Find the score key for this title
-            const key = Object.keys(scores).find(k => k.endsWith('||' + title)) || `||${title}`;
-            const entry = scores[key] || {};
-
-            html += `<div class="scores-row">
-                <div class="scores-col-article" title="${title}">${title}</div>
-                ${SCORE_MODES.map(mode => {
-                    const d = entry[mode];
-                    if (!d) return `<div class="scores-col-mode scores-cell-empty" title="Not practiced"></div>`;
-                    const pct = d.total > 0 ? d.best / d.total : 0;
-                    const pctText = Math.round(pct * 100) + '%';
-                    const colorClass = getScoreColor(pct);
-                    const tooltip = `${SCORE_MODE_META[mode].label}\nBest: ${d.best}/${d.total} (${pctText})\nAttempts: ${d.count}\nLast: ${d.lastDate || '—'}`;
-                    return `<div class="scores-col-mode scores-cell ${colorClass}" title="${tooltip}">
-                        <span class="scores-cell-score">${d.best}/${d.total}</span>
-                        <span class="scores-cell-pct">${pctText}</span>
-                    </div>`;
-                }).join('')}
-            </div>`;
-        }
-        html += `</div>`;
+    if (visibleRows.length === 0) {
+        html += `<div class="scores-empty-state">
+            ${_dashFilter === 'review' ? '🎉 沒有待複習的文章！' : 'No quiz scores yet. Start practicing!'}
+        </div>`;
+        tableEl.innerHTML = html;
+        bindSortHeaders(tableEl);
+        return;
     }
 
-    if (!html.includes('scores-row')) {
-        html += `<div class="scores-empty-state">No quiz scores yet. Start practicing!</div>`;
+    // Group by major (unless sort is active — then flat list)
+    if (_dashSortMode) {
+        // Flat list when sorting
+        html += `<div class="scores-major-group">
+            <div class="scores-major-label">排序結果</div>
+            ${visibleRows.map(row => buildRowHtml(row)).join('')}
+        </div>`;
+    } else {
+        // Group by major
+        const majors = [...new Set(visibleRows.map(r => r.major))].sort();
+        for (const major of majors) {
+            const group = visibleRows.filter(r => r.major === major).sort((a, b) => a.title.localeCompare(b.title));
+            html += `<div class="scores-major-group">
+                <div class="scores-major-label">${major}</div>
+                ${group.map(row => buildRowHtml(row)).join('')}
+            </div>`;
+        }
     }
 
     tableEl.innerHTML = html;
+    bindSortHeaders(tableEl);
 }
+
+function buildRowHtml(row) {
+    const reviewFlag = row.needsReview ? '<span class="scores-review-flag" title="超過 7 天未練習">🔔</span>' : '';
+    return `<div class="scores-row${row.needsReview ? ' scores-row-review' : ''}">
+        <div class="scores-col-article" title="${row.title}">${reviewFlag}${row.title}</div>
+        ${SCORE_MODES.map(mode => {
+            const d = row.modeData[mode];
+            if (!d) return `<div class="scores-col-mode scores-cell-empty" title="尚未練習"></div>`;
+
+            const pctText    = Math.round(d.pct * 100) + '%';
+            const colorClass = getScoreColor(d.pct);
+            const daysAgo    = d.days === Infinity ? '—' : d.days === 0 ? '今天' : `${d.days}天前`;
+
+            // Trend arrow
+            let trendHtml = '';
+            if (d.trend !== null) {
+                if (d.trend > 0.05)       trendHtml = `<span class="scores-trend up">↑</span>`;
+                else if (d.trend < -0.05) trendHtml = `<span class="scores-trend down">↓</span>`;
+                else                      trendHtml = `<span class="scores-trend flat">→</span>`;
+            }
+
+            // Review badge on cell
+            const cellReview = d.days >= REVIEW_DAYS ? ' scores-cell-overdue' : '';
+
+            const firstInfo = d.firstPct != null
+                ? `首次: ${Math.round(d.firstPct * 100)}% → 最佳: ${pctText}`
+                : `最佳: ${pctText}`;
+
+            const tooltip = [
+                SCORE_MODE_META[mode].label,
+                firstInfo,
+                `練習次數: ${d.count}`,
+                `上次: ${daysAgo}`,
+                d.days >= REVIEW_DAYS ? '⚠️ 建議複習！' : ''
+            ].filter(Boolean).join('\n');
+
+            return `<div class="scores-col-mode scores-cell ${colorClass}${cellReview}" title="${tooltip}">
+                <span class="scores-cell-score">${d.best}/${d.total}</span>
+                <span class="scores-cell-pct">${pctText}${trendHtml}</span>
+            </div>`;
+        }).join('')}
+    </div>`;
+}
+
+function bindSortHeaders(tableEl) {
+    tableEl.querySelectorAll('.scores-col-sortable').forEach(col => {
+        col.addEventListener('click', () => {
+            const mode = col.dataset.sortMode;
+            if (_dashSortMode === mode) {
+                if (_dashSortDir === 'desc') _dashSortDir = 'asc';
+                else { _dashSortMode = null; _dashSortDir = 'desc'; } // 3rd click → reset
+            } else {
+                _dashSortMode = mode;
+                _dashSortDir  = 'desc';
+            }
+            renderScoresDashboard();
+        });
+    });
+}
+
+// Filter buttons
+document.querySelectorAll('.scores-filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        _dashFilter = btn.dataset.filter;
+        renderScoresDashboard();
+    });
+});
 
 // Clear All button
 document.getElementById('scores-clear-all-btn')?.addEventListener('click', () => {
     if (!confirm('Clear all quiz score records? This cannot be undone.')) return;
     localStorage.removeItem(QUIZ_SCORES_KEY);
-    // Sync clear to Firestore
     if (typeof currentUser !== 'undefined' && currentUser) {
         db.collection('userNotes').doc(currentUser.uid)
           .set({ quizScores: {} }, { merge: true })
@@ -2075,3 +2224,66 @@ document.getElementById('scores-clear-all-btn')?.addEventListener('click', () =>
     }
     renderScoresDashboard();
 });
+
+// ── Home page: "Today's Review" badge ──────────────────────────
+function renderHomeReviewBadge() {
+    const existing = document.getElementById('home-review-banner');
+    if (existing) existing.remove();
+
+    const scores  = loadQuizScores();
+    const storyList = typeof stories !== 'undefined' ? stories : [];
+    const titleMajor = {};
+    for (const s of storyList) titleMajor[s['標題']] = true;
+
+    let reviewCount = 0;
+    for (const key of Object.keys(scores)) {
+        const entry = scores[key];
+        const hasPractice = SCORE_MODES.some(m => entry[m]);
+        if (!hasPractice) continue;
+        const needsReview = SCORE_MODES.some(m => entry[m] && daysSince(entry[m].lastDate) >= REVIEW_DAYS);
+        if (needsReview) reviewCount++;
+    }
+
+    if (reviewCount === 0) return;
+
+    const banner = document.createElement('div');
+    banner.id = 'home-review-banner';
+    banner.className = 'home-review-banner';
+    banner.innerHTML = `🔔 <strong>${reviewCount}</strong> 篇文章待複習
+        <button id="home-review-goto-btn" class="home-review-btn">查看 →</button>`;
+    banner.querySelector('#home-review-goto-btn').addEventListener('click', () => {
+        _dashFilter = 'review';
+        openScoresDashboard();
+    });
+
+    // Insert after quiz button
+    const quizBtn = document.getElementById('go-to-scores');
+    if (quizBtn) quizBtn.insertAdjacentElement('afterend', banner);
+}
+
+// Also patch saveQuizScore to record first score
+const _origSaveQuizScore = saveQuizScore;
+// Override to track first attempt
+function saveQuizScore(categoryName, titleName, mode, score, total) {
+    const scores = loadQuizScores();
+    const key = `${categoryName}||${titleName}`;
+    if (!scores[key]) scores[key] = {};
+    if (!scores[key][mode]) scores[key][mode] = { best: 0, last: 0, count: 0 };
+
+    const entry = scores[key][mode];
+    // Track first score
+    if (entry.count === 0) entry.first = score;
+    entry.last  = score;
+    entry.best  = Math.max(entry.best, score);
+    entry.total = total;
+    entry.count++;
+    entry.lastDate = new Date().toLocaleDateString();
+
+    localStorage.setItem(QUIZ_SCORES_KEY, JSON.stringify(scores));
+
+    if (typeof currentUser !== 'undefined' && currentUser) {
+        db.collection('userNotes').doc(currentUser.uid)
+          .set({ quizScores: scores }, { merge: true })
+          .catch(err => console.error('Quiz score save error:', err));
+    }
+}
