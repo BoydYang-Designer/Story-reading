@@ -895,14 +895,47 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
             if (categories.length === 0) {
                 tempListContainer.innerHTML = '<p>No notes saved yet.</p>';
             } else {
-                categories.forEach(category => createListItem(category, () => renderNoteView('titles', category), tempListContainer));
+                categories.forEach(category => {
+                    // 計算該分類下所有標題的總筆數
+                    const titles = Object.keys(savedWords[category] || {});
+                    let totalItems = 0;
+                    titles.forEach(title => {
+                        const data = savedWords[category][title];
+                        totalItems += (data.words?.size || 0) + (data.phrases?.size || 0) + (data.sentences?.size || 0);
+                    });
+
+                    const item = document.createElement('div');
+                    item.className = 'category-item note-category-item';
+                    item.innerHTML = `
+                        <span>${category}</span>
+                        <span class="note-badge">${totalItems}</span>
+                    `;
+                    item.addEventListener('click', () => renderNoteView('titles', category));
+                    tempListContainer.appendChild(item);
+                });
             }
-            backToHomeFromNoteBtn.textContent = 'Back to Home';
             backToHomeFromNoteBtn.onclick = () => showView(homeView);
         } else { // level === 'titles'
             const titles = Object.keys(savedWords[categoryName] || {}).sort((a, b) => a.localeCompare(b));
-            titles.forEach(title => createListItem(title, () => renderNoteView('words', categoryName, title), tempListContainer));
-            backToHomeFromNoteBtn.textContent = 'Back to Categories';
+            titles.forEach(title => {
+                const data = savedWords[categoryName][title];
+                const w = data.words?.size || 0;
+                const p = data.phrases?.size || 0;
+                const s = data.sentences?.size || 0;
+
+                const item = document.createElement('div');
+                item.className = 'category-item note-category-item';
+                item.innerHTML = `
+                    <span class="note-title-text">${title}</span>
+                    <span class="note-title-badges">
+                        ${w > 0 ? `<span class="note-badge-small note-badge-w">W ${w}</span>` : ''}
+                        ${p > 0 ? `<span class="note-badge-small note-badge-p">P ${p}</span>` : ''}
+                        ${s > 0 ? `<span class="note-badge-small note-badge-s">S ${s}</span>` : ''}
+                    </span>
+                `;
+                item.addEventListener('click', () => renderNoteView('words', categoryName, title));
+                tempListContainer.appendChild(item);
+            });
             backToHomeFromNoteBtn.onclick = () => renderNoteView('categories');
         }
     } else if (level === 'words' && categoryName && titleName) {
@@ -917,22 +950,25 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
         exportAllNotesJsonBtn.hidden = false;
 
         // Helper function to build each collapsible section's HTML
-        const buildSectionHTML = (type, title) => {
+        const buildSectionHTML = (type, title, count) => {
             const listId = `note-list-${type}`;
             const isExpanded = expansionStates ? expansionStates[listId] === true : false;
             const headerClass = isExpanded ? 'note-section-header is-expanded' : 'note-section-header';
             const listStyle = isExpanded ? '' : 'style="display: none;"';
+            const countBadge = count > 0 ? `<span class="note-section-count">(${count})</span>` : '';
 
             return `
-                <div class="${headerClass}" data-target="${listId}"><h3>${title}</h3><span class="toggle-icon"></span></div>
+                <div class="${headerClass}" data-target="${listId}"><h3>${title} ${countBadge}</h3><span class="toggle-icon"></span></div>
                 <div id="${listId}" class="list" ${listStyle}></div>
             `;
         };
+
+        const noteDataPreview = savedWords[categoryName]?.[titleName] || { words: new Set(), phrases: new Set(), sentences: new Set() };
         
         noteContentWrapper.innerHTML = `
-            ${buildSectionHTML('words', 'Words')}
-            ${buildSectionHTML('phrases', 'Phrases')}
-            ${buildSectionHTML('sentences', 'Sentences')}
+            ${buildSectionHTML('words', 'Words', noteDataPreview.words?.size || 0)}
+            ${buildSectionHTML('phrases', 'Phrases', noteDataPreview.phrases?.size || 0)}
+            ${buildSectionHTML('sentences', 'Sentences', noteDataPreview.sentences?.size || 0)}
         `;
         
         noteViewCategory = categoryName;
@@ -1203,7 +1239,6 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
             }
         }
         
-        backToHomeFromNoteBtn.textContent = 'Back to Titles';
         backToHomeFromNoteBtn.onclick = () => renderNoteView('titles', categoryName);
     }
 }
@@ -1906,7 +1941,7 @@ function renderMajorCategories() {
     
     // 確保有紀錄、且容器存在
     if (lastSession && continueReadingContainer) {
-        const { title, time } = JSON.parse(lastSession);
+        const { title, time, majorCategory } = JSON.parse(lastSession);
         
         // 檢查該文章是否還存在於目前的資料庫中 (避免舊資料錯誤)
         const storyExists = stories.some(s => s['標題'] === title);
@@ -1932,8 +1967,11 @@ function renderMajorCategories() {
             // 設定按鈕內容
             continueBtn.innerHTML = `
                 <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-                    <span>Continue: ${title}</span>
-                    <span style="font-size: 0.9em; opacity: 0.8;">${minutes}:${seconds}</span>
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                        ${majorCategory ? `<span style="font-size: 0.75em; font-weight: 600; opacity: 0.7; text-transform: uppercase; letter-spacing: 0.05em;">${majorCategory}</span>` : ''}
+                        <span>Continue: ${title}</span>
+                    </div>
+                    <span style="font-size: 0.9em; opacity: 0.8; flex-shrink: 0; margin-left: 10px;">${minutes}:${seconds}</span>
                 </div>
             `;
             
@@ -2078,6 +2116,9 @@ function resumeLastPlayback(title, time) {
     }
     const category = story['分類']?.[0];
     if (!category) return;
+
+    // 確保 currentMajorCategory 正確設定，避免從首頁直接點擊時過濾失敗
+    currentMajorCategory = story['大類'] || 'Uncategorized';
     
     currentStoryList = stories.filter(item => item['分類']?.map(c => c.trim()).includes(category))
                             .sort((a, b) => String(a['標題']).localeCompare(String(b['標題'])));
