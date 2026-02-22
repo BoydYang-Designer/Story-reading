@@ -800,10 +800,16 @@ async function playSentenceSnippet(sentenceText, storyTitle) {
         return;
     }
     
-    // Set audio source
+    // Set audio source — 只有在 src 不同時才重新載入，避免每次點擊都重新請求 MP3
     const audioSrc = `audio/${encodeURIComponent(storyTitle.trim())}.mp3`;
+    const currentSrcFilename = decodeURIComponent(noteAudioPlayer.src.split('/').pop() || '');
+    const targetFilename = `${storyTitle.trim()}.mp3`;
 
-    noteAudioPlayer.src = audioSrc;
+    if (currentSrcFilename !== targetFilename) {
+        console.log(`[Note] src changed, reloading: ${targetFilename}`);
+        noteAudioPlayer.src = audioSrc;
+        noteAudioPlayer.load();
+    }
 
     // 使用 setAudioTimeAccurate 補償手機定位誤差（手機 -0.3s，PC -0.1s）
     const isMobile = isMobileDevice();
@@ -972,6 +978,17 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
         
         noteViewCategory = categoryName;
         noteViewTitle = titleName;
+
+        // 預載對應文章的 MP3，讓句子播放時直接跳轉，不需等待網路
+        const preloadSrc = `audio/${encodeURIComponent(titleName.trim())}.mp3`;
+        if (!noteAudioPlayer.src.endsWith(encodeURIComponent(titleName.trim()) + '.mp3')) {
+            noteAudioPlayer.pause();
+            noteAudioPlayer.src = preloadSrc;
+            noteAudioPlayer.preload = 'auto';
+            noteAudioPlayer.load();
+            console.log(`[Note] Preloading audio for: ${titleName}`);
+        }
+
         backToStoryFromNoteBtn.hidden = false;
         exportWordsBtn.hidden = false;
 
