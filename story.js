@@ -337,10 +337,12 @@ function parseFirestoreData(parsed) {
         newSavedWords[category] = {};
         for (const title in parsed[category]) {
             const entry = parsed[category][title];
+            // Guard: ensure each field is an array before wrapping in Set
+            const toArray = v => Array.isArray(v) ? v : (v ? [] : []);
             newSavedWords[category][title] = {
-                words: new Set(entry.words || []),
-                phrases: new Set(entry.phrases || []),
-                sentences: new Set(entry.sentences || [])
+                words:     new Set(toArray(entry.words)),
+                phrases:   new Set(toArray(entry.phrases)),
+                sentences: new Set(toArray(entry.sentences))
             };
         }
     }

@@ -234,54 +234,91 @@
         <h1 id="quiz-title">Quiz</h1>
         <p id="quiz-subtitle" class="quiz-subtitle"></p>
 
+        <!-- ── Story Picker ── -->
+        <div id="quiz-story-picker" class="quiz-story-picker">
+            <div class="quiz-picker-row">
+                <label class="quiz-picker-label" for="quiz-select-major">Major</label>
+                <select id="quiz-select-major" class="quiz-select">
+                    <option value="">— Select —</option>
+                </select>
+            </div>
+            <div class="quiz-picker-row" id="quiz-picker-row-category" style="display:none">
+                <label class="quiz-picker-label" for="quiz-select-category">Category</label>
+                <select id="quiz-select-category" class="quiz-select">
+                    <option value="">— Select —</option>
+                </select>
+            </div>
+            <div class="quiz-picker-row" id="quiz-picker-row-article" style="display:none">
+                <label class="quiz-picker-label" for="quiz-select-article">Article</label>
+                <select id="quiz-select-article" class="quiz-select">
+                    <option value="">— Select —</option>
+                </select>
+            </div>
+        </div>
+
         <!-- Stats -->
         <div id="quiz-stats-bar" class="quiz-stats-bar"></div>
 
         <!-- Mode Selection -->
         <div class="quiz-mode-grid">
+
+            <!-- Flashcard -->
             <div class="quiz-mode-card" id="quiz-mode-flashcard">
                 <div class="quiz-mode-icon">🃏</div>
                 <div class="quiz-mode-name">Flashcard</div>
                 <div class="quiz-mode-desc">Words & Phrases</div>
             </div>
+
+            <!-- Fill in Blank -->
             <div class="quiz-mode-card" id="quiz-mode-cloze">
                 <div class="quiz-mode-icon">✏️</div>
                 <div class="quiz-mode-name">Fill in Blank</div>
-                <div class="quiz-mode-desc">From article context</div>
+                <div class="quiz-mode-desc">From note or article</div>
             </div>
+
+            <!-- Dictation -->
             <div class="quiz-mode-card" id="quiz-mode-dictation">
                 <div class="quiz-mode-icon">🎧</div>
                 <div class="quiz-mode-name">Dictation</div>
-                <div class="quiz-mode-desc">Listen & choose</div>
+                <div class="quiz-mode-desc">From note or article</div>
             </div>
-            <div class="quiz-mode-card quiz-mode-card-wide" id="quiz-mode-article">
-                <div class="quiz-mode-icon">📖</div>
-                <div class="quiz-mode-name">Article Quiz</div>
-                <div class="quiz-mode-desc">No note needed · from Timestamp</div>
+
+            <!-- Reorder -->
+            <div class="quiz-mode-card" id="quiz-mode-reorder">
+                <div class="quiz-mode-icon">🔀</div>
+                <div class="quiz-mode-name">Reorder</div>
+                <div class="quiz-mode-desc">Rearrange the sentence</div>
             </div>
+
         </div>
 
-        <!-- Article Quiz Sub-menu -->
-        <div id="article-quiz-submenu" class="is-hidden">
-            <div class="article-quiz-submenu-title">Article Quiz</div>
+        <!-- Expandable sub-panels (one per mode that supports source selection) -->
 
-            <!-- Sub-mode -->
-            <div class="article-quiz-row-label">Mode</div>
-            <div class="article-quiz-btn-row">
-                <button class="article-quiz-opt-btn is-active" data-submode="listen">🎧 Listen & Choose</button>
-                <button class="article-quiz-opt-btn" data-submode="cloze">✏️ Fill in Blank</button>
+        <!-- Fill in Blank sub-panel -->
+        <div class="quiz-subpanel is-hidden" id="subpanel-cloze">
+            <div class="quiz-subpanel-source-row">
+                <button class="quiz-source-btn is-active" data-source="note" data-mode="cloze">📝 From Note</button>
+                <button class="quiz-source-btn" data-source="article" data-mode="cloze">📖 From Article</button>
             </div>
+            <button class="quiz-next-btn" id="start-cloze-btn">Start →</button>
+        </div>
 
-            <!-- Difficulty -->
-            <div class="article-quiz-row-label">Difficulty</div>
-            <div class="article-quiz-btn-row">
-                <button class="article-quiz-opt-btn is-active" data-diff="mix">🎲 Mix</button>
-                <button class="article-quiz-opt-btn" data-diff="easy">🟢 Easy</button>
-                <button class="article-quiz-opt-btn" data-diff="medium">🟡 Medium</button>
-                <button class="article-quiz-opt-btn" data-diff="hard">🔴 Hard</button>
+        <!-- Dictation sub-panel -->
+        <div class="quiz-subpanel is-hidden" id="subpanel-dictation">
+            <div class="quiz-subpanel-source-row">
+                <button class="quiz-source-btn is-active" data-source="note" data-mode="dictation">📝 From Note</button>
+                <button class="quiz-source-btn" data-source="article" data-mode="dictation">📖 From Article</button>
             </div>
+            <button class="quiz-next-btn" id="start-dictation-btn">Start →</button>
+        </div>
 
-            <button class="quiz-next-btn" id="article-quiz-start-btn">Start →</button>
+        <!-- Reorder sub-panel -->
+        <div class="quiz-subpanel is-hidden" id="subpanel-reorder">
+            <div class="quiz-subpanel-source-row">
+                <button class="quiz-source-btn is-active" data-source="note" data-mode="reorder">📝 From Note</button>
+                <button class="quiz-source-btn" data-source="article" data-mode="reorder">📖 From Article</button>
+            </div>
+            <button class="quiz-next-btn" id="start-reorder-btn">Start →</button>
         </div>
 
         <!-- Scope Selection -->
@@ -373,6 +410,25 @@
             <div class="quiz-options" id="article-cloze-options"></div>
             <div class="quiz-feedback" id="article-cloze-feedback"></div>
             <button class="quiz-next-btn is-hidden" id="article-cloze-next">Next →</button>
+        </div>
+
+        <!-- Reorder Mode -->
+        <div id="quiz-reorder-area" class="is-hidden">
+            <div class="quiz-card">
+                <button class="dictation-play-btn is-hidden" id="reorder-play-btn">
+                    <span class="reorder-play-icon">▶</span>
+                    <span>Play Sentence</span>
+                </button>
+                <div class="reorder-hint">Arrange the words in the correct order</div>
+                <div class="reorder-answer-area" id="reorder-answer-area"></div>
+            </div>
+            <div class="reorder-word-pool" id="reorder-word-pool"></div>
+            <div class="reorder-actions">
+                <button class="quiz-btn quiz-btn-wrong" id="reorder-clear-btn">↺ Clear</button>
+                <button class="quiz-btn quiz-btn-correct" id="reorder-check-btn">Check ✓</button>
+            </div>
+            <div class="quiz-feedback" id="reorder-feedback"></div>
+            <button class="quiz-next-btn is-hidden" id="reorder-next">Next →</button>
         </div>
     </div>
 

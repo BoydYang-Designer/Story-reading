@@ -151,6 +151,140 @@ function renderQuizStatsBar(categoryName, titleName) {
     quizStatsBar.innerHTML = html;
 }
 
+// ── Story Picker (Select Dropdowns) ──────────────────────────
+
+const selMajor    = document.getElementById('quiz-select-major');
+const selCategory = document.getElementById('quiz-select-category');
+const selArticle  = document.getElementById('quiz-select-article');
+
+// Populate Major dropdown once
+function pickerInitMajors() {
+    selMajor.innerHTML = '<option value="">— Select Major —</option>';
+    const majors = [...new Set(stories.map(s => s['大類'] || 'Uncategorized'))].sort();
+    majors.forEach(m => {
+        const opt = document.createElement('option');
+        opt.value = m;
+        opt.textContent = m;
+        selMajor.appendChild(opt);
+    });
+}
+
+// Populate Category dropdown based on selected Major
+function pickerPopulateCategories(major) {
+    selCategory.innerHTML = '<option value="">— Select Category —</option>';
+    if (!major) { document.getElementById('quiz-picker-row-category').style.display = 'none'; return; }
+
+    const cats = [...new Set(
+        stories
+            .filter(s => (s['大類'] || 'Uncategorized') === major)
+            .map(s => s['分類']?.[0] || 'Uncategorized')
+    )].sort();
+
+    cats.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c;
+        opt.textContent = c;
+        selCategory.appendChild(opt);
+    });
+    document.getElementById('quiz-picker-row-category').style.display = '';
+    document.getElementById('quiz-picker-row-article').style.display = 'none';
+    selArticle.innerHTML = '<option value="">— Select Article —</option>';
+}
+
+// Populate Article dropdown based on selected Category — async (checks timestamps)
+async function pickerPopulateArticles(major, category) {
+    selArticle.innerHTML = '<option value="">Loading…</option>';
+    selArticle.disabled = true;
+    document.getElementById('quiz-picker-row-article').style.display = '';
+
+    const articlesInCat = stories.filter(s =>
+        (s['大類'] || 'Uncategorized') === major &&
+        (s['分類']?.[0] || 'Uncategorized') === category
+    );
+
+    const tsChecks = await Promise.all(
+        articlesInCat.map(async s => {
+            const ts = await getTimestampForStory(s['標題']);
+            return { title: s['標題'], hasTs: !!(ts && ts.length > 0) };
+        })
+    );
+
+    selArticle.innerHTML = '<option value="">— Select Article —</option>';
+    tsChecks.forEach(({ title, hasTs }) => {
+        const opt = document.createElement('option');
+        opt.value = title;
+        opt.textContent = hasTs ? title : `${title} ⛔`;
+        if (!hasTs) opt.dataset.noTs = 'true';
+        selArticle.appendChild(opt);
+    });
+    selArticle.disabled = false;
+}
+
+// Apply current select values to quizState
+function pickerApplySelection() {
+    const title    = selArticle.value;
+    const category = selCategory.value;
+
+    if (title) {
+        // Check if selected article has no timestamp
+        const selectedOpt = selArticle.options[selArticle.selectedIndex];
+        if (selectedOpt?.dataset.noTs === 'true') {
+            showNotification('No timestamp file for this article. Article Quiz unavailable.', 'warning');
+            selArticle.value = '';
+            quizState.titleName = null;
+            quizSubtitleEl.textContent = '';
+            quizStatsBar.innerHTML = '';
+            return;
+        }
+        quizState.titleName    = title;
+        quizState.categoryName = category;
+        quizState.scope        = 'this';
+        document.getElementById('quiz-scope-this').classList.add('is-active');
+        document.getElementById('quiz-scope-all').classList.remove('is-active');
+    } else {
+        quizState.titleName = null;
+    }
+
+    quizSubtitleEl.textContent = quizState.titleName || '';
+
+    if (quizState.categoryName && quizState.titleName) {
+        renderQuizStatsBar(quizState.categoryName, quizState.titleName);
+    } else {
+        quizStatsBar.innerHTML = '';
+    }
+}
+
+// Event listeners for the three selects
+selMajor.addEventListener('change', () => {
+    pickerPopulateCategories(selMajor.value);
+    quizState.titleName = null;
+    quizSubtitleEl.textContent = '';
+    quizStatsBar.innerHTML = '';
+});
+
+selCategory.addEventListener('change', () => {
+    if (selMajor.value && selCategory.value) {
+        pickerPopulateArticles(selMajor.value, selCategory.value);
+    }
+    quizState.titleName = null;
+});
+
+selArticle.addEventListener('change', () => {
+    pickerApplySelection();
+});
+
+// Pre-select all three levels (called from openQuiz when coming from Story)
+async function pickerPreselect(majorName, categoryName, titleName) {
+    // Ensure majors are populated
+    if (selMajor.options.length <= 1) pickerInitMajors();
+
+    selMajor.value = majorName;
+    pickerPopulateCategories(majorName);
+    selCategory.value = categoryName;
+    await pickerPopulateArticles(majorName, categoryName);
+    selArticle.value = titleName;
+}
+
 // ── Entry Point ───────────────────────────────────────────────
 
 function openQuiz(categoryName, titleName) {
@@ -160,7 +294,7 @@ function openQuiz(categoryName, titleName) {
     quizState.mode         = null;
 
     quizTitleEl.textContent    = 'Quiz';
-    quizSubtitleEl.textContent = titleName;
+    quizSubtitleEl.textContent = titleName || '';
 
     renderQuizStatsBar(categoryName, titleName);
 
@@ -168,12 +302,22 @@ function openQuiz(categoryName, titleName) {
     document.getElementById('quiz-scope-this').classList.add('is-active');
     document.getElementById('quiz-scope-all').classList.remove('is-active');
 
-    // Show/hide dictation based on timestamp availability
-    const dictCard = document.getElementById('quiz-mode-dictation');
-    if (dictCard) {
-        const items = getAllNoteItems('this', categoryName, titleName);
-        dictCard.style.opacity = items.sentences.length > 0 ? '1' : '0.4';
-        dictCard.dataset.disabled = items.sentences.length > 0 ? '' : 'true';
+    // Always init major dropdown
+    pickerInitMajors();
+
+    if (titleName) {
+        // Coming from Story: pre-select all three levels
+        const storyObj = stories.find(s => s['標題'] === titleName);
+        const major = storyObj?.['大類'] || 'Uncategorized';
+        const cat   = storyObj?.['分類']?.[0] || categoryName || 'Uncategorized';
+        pickerPreselect(major, cat, titleName);
+    } else {
+        // Coming from home/note: reset selects
+        selMajor.value = '';
+        selCategory.innerHTML = '<option value="">— Select Category —</option>';
+        selArticle.innerHTML  = '<option value="">— Select Article —</option>';
+        document.getElementById('quiz-picker-row-category').style.display = 'none';
+        document.getElementById('quiz-picker-row-article').style.display  = 'none';
     }
 
     quizMenu.classList.remove('is-hidden');
@@ -213,51 +357,100 @@ document.getElementById('quiz-scope-all').addEventListener('click', () => {
     document.getElementById('quiz-scope-this').classList.remove('is-active');
 });
 
+// ── Mode Card + Subpanel Logic ────────────────────────────────
+
+// Track which subpanel source is selected per mode
+const subpanelSource = { cloze: 'note', dictation: 'note', reorder: 'note' };
+
+// Helper: close all subpanels and un-expand all cards
+function closeAllSubpanels() {
+    document.querySelectorAll('.quiz-subpanel').forEach(p => p.classList.add('is-hidden'));
+    document.querySelectorAll('.quiz-mode-card').forEach(c => c.classList.remove('is-expanded'));
+}
+
+// Flashcard: no subpanel, start directly
 document.getElementById('quiz-mode-flashcard').addEventListener('click', () => {
+    closeAllSubpanels();
     startFlashcard();
 });
 
+// Fill in Blank: toggle subpanel
 document.getElementById('quiz-mode-cloze').addEventListener('click', () => {
-    startCloze();
-});
-
-document.getElementById('quiz-mode-dictation').addEventListener('click', () => {
-    if (document.getElementById('quiz-mode-dictation').dataset.disabled === 'true') {
-        showNotification('No sentences saved for this article yet.', 'warning');
-        return;
+    const panel = document.getElementById('subpanel-cloze');
+    const card  = document.getElementById('quiz-mode-cloze');
+    const isOpen = !panel.classList.contains('is-hidden');
+    closeAllSubpanels();
+    if (!isOpen) {
+        panel.classList.remove('is-hidden');
+        card.classList.add('is-expanded');
     }
-    startDictation();
 });
 
-// Article Quiz mode card
-document.getElementById('quiz-mode-article').addEventListener('click', () => {
-    const submenu = document.getElementById('article-quiz-submenu');
-    const isHidden = submenu.classList.contains('is-hidden');
-    submenu.classList.toggle('is-hidden', !isHidden);
-    document.getElementById('quiz-mode-article').classList.toggle('is-active-mode', isHidden);
+// Dictation: toggle subpanel
+document.getElementById('quiz-mode-dictation').addEventListener('click', () => {
+    const panel = document.getElementById('subpanel-dictation');
+    const card  = document.getElementById('quiz-mode-dictation');
+    const isOpen = !panel.classList.contains('is-hidden');
+    closeAllSubpanels();
+    if (!isOpen) {
+        panel.classList.remove('is-hidden');
+        card.classList.add('is-expanded');
+    }
 });
 
-// Sub-mode buttons (Listen / Cloze)
-document.querySelectorAll('[data-submode]').forEach(btn => {
-    btn.addEventListener('click', () => {
-        document.querySelectorAll('[data-submode]').forEach(b => b.classList.remove('is-active'));
+// Source buttons inside subpanels
+document.querySelectorAll('.quiz-source-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const mode   = btn.dataset.mode;
+        const source = btn.dataset.source;
+        // Highlight active source button within this subpanel
+        document.querySelectorAll(`.quiz-source-btn[data-mode="${mode}"]`)
+            .forEach(b => b.classList.remove('is-active'));
         btn.classList.add('is-active');
-        quizState.articleSubMode = btn.dataset.submode;
+        subpanelSource[mode] = source;
     });
 });
 
-// Difficulty buttons
-document.querySelectorAll('[data-diff]').forEach(btn => {
-    btn.addEventListener('click', () => {
-        document.querySelectorAll('[data-diff]').forEach(b => b.classList.remove('is-active'));
-        btn.classList.add('is-active');
-        quizState.articleDifficulty = btn.dataset.diff;
-    });
+// Start buttons inside subpanels
+document.getElementById('start-cloze-btn').addEventListener('click', () => {
+    if (subpanelSource.cloze === 'article') {
+        quizState.articleSubMode = 'cloze';
+        startArticleQuiz();
+    } else {
+        startCloze();
+    }
 });
 
-// Start Article Quiz
-document.getElementById('article-quiz-start-btn').addEventListener('click', () => {
-    startArticleQuiz();
+// Reorder: toggle subpanel
+document.getElementById('quiz-mode-reorder').addEventListener('click', () => {
+    const panel = document.getElementById('subpanel-reorder');
+    const card  = document.getElementById('quiz-mode-reorder');
+    const isOpen = !panel.classList.contains('is-hidden');
+    closeAllSubpanels();
+    if (!isOpen) {
+        panel.classList.remove('is-hidden');
+        card.classList.add('is-expanded');
+    }
+});
+
+document.getElementById('start-reorder-btn').addEventListener('click', () => {
+    startReorder(subpanelSource.reorder || 'note');
+});
+
+document.getElementById('start-dictation-btn').addEventListener('click', () => {
+    if (subpanelSource.dictation === 'article') {
+        quizState.articleSubMode = 'listen';
+        startArticleQuiz();
+    } else {
+        // From Note: check sentences exist
+        const items = getAllNoteItems(quizState.scope, quizState.categoryName, quizState.titleName);
+        if ((items.sentences?.length ?? 0) === 0) {
+            showNotification('No sentences saved for this article yet.', 'warning');
+            return;
+        }
+        startDictation();
+    }
 });
 
 document.getElementById('quiz-exit-btn').addEventListener('click', () => {
@@ -296,12 +489,14 @@ function showQuizSession(mode) {
     dictationArea.classList.add('is-hidden');
     document.getElementById('quiz-article-listen-area').classList.add('is-hidden');
     document.getElementById('quiz-article-cloze-area').classList.add('is-hidden');
+    document.getElementById('quiz-reorder-area').classList.add('is-hidden');
 
     if (mode === 'flashcard')       flashcardArea.classList.remove('is-hidden');
     if (mode === 'cloze')           clozeArea.classList.remove('is-hidden');
     if (mode === 'dictation')       dictationArea.classList.remove('is-hidden');
     if (mode === 'article-listen')  document.getElementById('quiz-article-listen-area').classList.remove('is-hidden');
     if (mode === 'article-cloze')   document.getElementById('quiz-article-cloze-area').classList.remove('is-hidden');
+    if (mode === 'reorder')         document.getElementById('quiz-reorder-area').classList.remove('is-hidden');
 }
 
 // ── Show Result ───────────────────────────────────────────────
@@ -478,6 +673,7 @@ document.getElementById('quiz-retry-btn').addEventListener('click', () => {
     if (mode === 'flashcard')        startFlashcard();
     else if (mode === 'cloze')       startCloze();
     else if (mode === 'dictation')   startDictation();
+    else if (mode === 'reorder')     startReorder(subpanelSource.reorder || 'note');
     else if (mode === 'article-listen' || mode === 'article-cloze') startArticleQuiz();
 });
 
@@ -486,6 +682,7 @@ document.getElementById('quiz-retry-wrong-btn').addEventListener('click', () => 
     const mode = quizState.mode;
     if (mode === 'cloze')                startClozeRetryWrong();
     else if (mode === 'dictation')       startDictationRetryWrong();
+    else if (mode === 'reorder')         startReorderRetryWrong();
     else if (mode === 'article-listen')  startArticleRetryWrong();
     else if (mode === 'article-cloze')   startArticleRetryWrong();
     else {
@@ -528,7 +725,11 @@ function startFlashcard() {
     ];
 
     if (allItems.length === 0) {
-        showNotification('No words or phrases saved yet.', 'warning');
+        if (!quizState.titleName && quizState.scope === 'this') {
+            showNotification('Select an article first, or switch to "All Notes".', 'warning');
+        } else {
+            showNotification('No words or phrases saved yet.', 'warning');
+        }
         return;
     }
 
@@ -972,7 +1173,7 @@ function getDifficultyLabel(wordCount) {
 async function startArticleQuiz() {
     const title = quizState.titleName;
     if (!title) {
-        showNotification('No article selected.', 'error');
+        showNotification('Please select an article using the dropdowns above.', 'warning');
         return;
     }
 
@@ -982,21 +1183,11 @@ async function startArticleQuiz() {
         return;
     }
 
-    // Filter by difficulty
-    const diff = quizState.articleDifficulty;
-    let pool = tsData.filter(l => l.sentence && l.sentence.trim().length > 3);
-
-    if (diff !== 'mix') {
-        pool = pool.filter(l => {
-            const wc = l.sentence.trim().split(/\s+/).length;
-            if (diff === 'easy')   return wc < 8;
-            if (diff === 'medium') return wc >= 8 && wc <= 15;
-            if (diff === 'hard')   return wc > 15;
-        });
-    }
+    // All sentences, no difficulty filter
+    const pool = tsData.filter(l => l.sentence && l.sentence.trim().length > 3);
 
     if (pool.length < 2) {
-        showNotification(`Not enough ${diff} sentences in this article. Try Mix or another difficulty.`, 'warning');
+        showNotification('Not enough sentences in this article.', 'warning');
         return;
     }
 
@@ -1024,9 +1215,8 @@ async function startArticleQuiz() {
     quizAudioPlayer.preload = 'auto';
     quizAudioPlayer.load();
 
-    // Hide article submenu
-    document.getElementById('article-quiz-submenu').classList.add('is-hidden');
-    document.getElementById('quiz-mode-article').classList.remove('is-active-mode');
+    // Close subpanels
+    closeAllSubpanels();
 
     showQuizSession(quizState.mode);
 
@@ -1353,6 +1543,21 @@ function startDictationRetryWrong() {
     showDictationQuestion();
 }
 
+function startReorderRetryWrong() {
+    const wrongQs = quizState.answeredQuestions.filter(q => !q.isCorrect);
+    if (wrongQs.length === 0) return;
+
+    quizState.questions        = shuffle(wrongQs.map(q => ({ sentence: q.correct })));
+    quizState.currentIndex     = 0;
+    quizState.correct          = 0;
+    quizState.wrong            = 0;
+    quizState.wrongItems       = [];
+    quizState.answeredQuestions = [];
+
+    showQuizSession('reorder');
+    showReorderQuestion();
+}
+
 async function loadQuizScoresFromFirestore() {
     if (typeof currentUser === 'undefined' || !currentUser) return;
     try {
@@ -1369,5 +1574,314 @@ async function loadQuizScoresFromFirestore() {
 const _origOnAuthStateChanged = firebase.auth().onAuthStateChanged.bind(firebase.auth());
 // We patch loadQuizScoresFromFirestore into showAppView instead
 // by calling it after login in story.js's onAuthStateChanged
+
+// ══════════════════════════════════════════════════════════════
+//  REORDER QUIZ
+// ══════════════════════════════════════════════════════════════
+
+async function startReorder(source) {
+    let sentences = [];
+
+    if (source === 'article') {
+        const title = quizState.titleName;
+        if (!title) {
+            showNotification('Please select an article using the dropdowns above.', 'warning');
+            return;
+        }
+        const tsData = await getTimestampForStory(title);
+        if (!tsData || tsData.length === 0) {
+            showNotification('Timestamp file not found for this article.', 'error');
+            return;
+        }
+        const pool = shuffle(
+            tsData.filter(l => l.sentence && l.sentence.trim().split(/\s+/).length >= 4)
+        ).slice(0, 10);
+        sentences = pool.map(l => ({
+            sentence: l.sentence.trim(),
+            start: l.start,
+            end: l.end,
+            title
+        }));
+
+        // Preload audio
+        quizAudioPlayer.src = `audio/${encodeURIComponent(title.trim())}.mp3`;
+        quizAudioPlayer.preload = 'auto';
+        quizAudioPlayer.load();
+    } else {
+        // From Note — 用 titleName 抓 timestamp，比對句子找 start/end
+        const title = quizState.titleName;
+        const items = getAllNoteItems(quizState.scope, quizState.categoryName, title);
+        const raw = shuffle(
+            Array.from(items.sentences || [])
+                .filter(s => s.trim().split(/\s+/).length >= 4)
+        ).slice(0, 10);
+
+        if (raw.length === 0) {
+            showNotification('No sentences saved yet. Add sentences to your note first.', 'warning');
+            return;
+        }
+
+        // Try to match each note sentence against timestamp data
+        let tsData = null;
+        if (title) {
+            tsData = await getTimestampForStory(title);
+        }
+
+        sentences = raw.map(s => {
+            const trimmed = s.trim();
+            let start = null, end = null, matchTitle = null;
+            if (tsData) {
+                const match = tsData.find(l =>
+                    l.sentence && l.sentence.trim().toLowerCase() === trimmed.toLowerCase()
+                );
+                if (match) { start = match.start; end = match.end; matchTitle = title; }
+            }
+            return { sentence: trimmed, start, end, title: matchTitle };
+        });
+
+        // Preload audio if we have a title
+        if (title) {
+            quizAudioPlayer.src = `audio/${encodeURIComponent(title.trim())}.mp3`;
+            quizAudioPlayer.preload = 'auto';
+            quizAudioPlayer.load();
+        }
+    }
+
+    if (sentences.length === 0) {
+        showNotification('Not enough sentences to start Reorder quiz.', 'warning');
+        return;
+    }
+
+    quizState.mode             = 'reorder';
+    quizState.questions        = sentences;
+    quizState.currentIndex     = 0;
+    quizState.correct          = 0;
+    quizState.wrong            = 0;
+    quizState.wrongItems       = [];
+    quizState.answeredQuestions = [];
+
+    closeAllSubpanels();
+    showQuizSession('reorder');
+    showReorderQuestion();
+}
+
+// ── Reorder state ─────────────────────────────────────────────
+let reorderAnswer  = [];   // word tokens in answer area (in order)
+let reorderPool    = [];   // all shuffled tokens for current question
+let reorderChecked = false;
+
+function tokenize(sentence) {
+    // Split keeping punctuation attached to words (e.g. "Hello," stays together)
+    return sentence.match(/\S+/g) || [];
+}
+
+function normalizeForCheck(tokens) {
+    return tokens.map(t =>
+        t.toLowerCase().replace(/^[^a-z0-9]+|[^a-z0-9]+$/gi, '')
+    ).join(' ');
+}
+
+function showReorderQuestion() {
+    if (quizState.currentIndex >= quizState.questions.length) {
+        showQuizResult('reorder', quizState.correct,
+            quizState.questions.length, quizState.wrongItems);
+        return;
+    }
+
+    const q = quizState.questions[quizState.currentIndex];
+    updateProgress(quizState.currentIndex + 1, quizState.questions.length);
+
+    reorderAnswer  = [];
+    reorderChecked = false;
+
+    // Tokenize and shuffle — ensure it's actually shuffled
+    const tokens = tokenize(q.sentence);
+    let shuffled;
+    do { shuffled = shuffle([...tokens]); }
+    while (tokens.length > 1 && shuffled.join(' ') === tokens.join(' '));
+    reorderPool = shuffled;
+
+    // Play button: always visible, disabled if no timestamp
+    const playBtn = document.getElementById('reorder-play-btn');
+    playBtn.classList.remove('is-hidden');
+    playBtn.classList.remove('is-playing-voice');
+    playBtn.querySelector('span:last-child').textContent = 'Play Sentence';
+
+    if (q.start != null) {
+        playBtn.disabled = false;
+        playBtn.style.opacity = '';
+        playBtn.onclick = () => playReorderAudio(q);
+    } else {
+        playBtn.disabled = true;
+        playBtn.style.opacity = '0.35';
+        playBtn.onclick = null;
+    }
+
+    // Reset UI
+    const answerArea = document.getElementById('reorder-answer-area');
+    const feedback   = document.getElementById('reorder-feedback');
+    const nextBtn    = document.getElementById('reorder-next');
+
+    answerArea.className = 'reorder-answer-area';
+    feedback.textContent = '';
+    feedback.className   = 'quiz-feedback';
+    nextBtn.classList.add('is-hidden');
+    document.getElementById('reorder-check-btn').disabled = false;
+    document.getElementById('reorder-clear-btn').disabled = false;
+
+    renderReorderPool();
+    renderReorderAnswer();
+
+    // Auto-play if timestamp available
+    if (q.start != null) {
+        setTimeout(() => playReorderAudio(q), 150);
+    }
+}
+
+let reorderStopTimeout = null;
+
+function playReorderAudio(q) {
+    const playBtn = document.getElementById('reorder-play-btn');
+    const isMobile = isMobileDevice();
+    const bufStart = isMobile ? 0.3 : 0.1;
+    const bufEnd   = isMobile ? 0.4 : 0.05;
+
+    // Stop any previous
+    if (reorderStopTimeout) { clearTimeout(reorderStopTimeout); reorderStopTimeout = null; }
+    quizAudioPlayer.removeEventListener('timeupdate', quizAudioPlayer._reorderStopHandler);
+
+    playBtn.classList.add('is-playing-voice');
+    playBtn.querySelector('span:last-child').textContent = 'Playing…';
+
+    quizAudioPlayer.currentTime = Math.max(0, q.start - bufStart);
+
+    const stopHandler = function () {
+        if (quizAudioPlayer.currentTime >= q.end + bufEnd) {
+            quizAudioPlayer.pause();
+            quizAudioPlayer.removeEventListener('timeupdate', stopHandler);
+            playBtn.classList.remove('is-playing-voice');
+            playBtn.querySelector('span:last-child').textContent = 'Play Sentence';
+            reorderStopTimeout = null;
+        }
+    };
+    quizAudioPlayer._reorderStopHandler = stopHandler;
+    quizAudioPlayer.addEventListener('timeupdate', stopHandler);
+
+    quizAudioPlayer.play().catch(() => {
+        quizAudioPlayer.removeEventListener('timeupdate', stopHandler);
+        playBtn.classList.remove('is-playing-voice');
+        playBtn.querySelector('span:last-child').textContent = 'Play Sentence';
+    });
+
+    const duration = (q.end - q.start + bufEnd) * 1000;
+    reorderStopTimeout = setTimeout(() => {
+        if (!quizAudioPlayer.paused) quizAudioPlayer.pause();
+        quizAudioPlayer.removeEventListener('timeupdate', stopHandler);
+        playBtn.classList.remove('is-playing-voice');
+        playBtn.querySelector('span:last-child').textContent = 'Play Sentence';
+        reorderStopTimeout = null;
+    }, duration + 300);
+}
+
+function renderReorderPool() {
+    const wordPool = document.getElementById('reorder-word-pool');
+    wordPool.innerHTML = '';
+    reorderPool.forEach((word, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'reorder-word' + (reorderAnswer.some(a => a.idx === idx) ? ' is-used' : '');
+        btn.textContent = word;
+        btn.dataset.idx = idx;
+        btn.addEventListener('click', () => {
+            if (reorderChecked) return;
+            if (reorderAnswer.some(a => a.idx === idx)) return;
+            reorderAnswer.push({ word, idx });
+            renderReorderPool();
+            renderReorderAnswer();
+        });
+        wordPool.appendChild(btn);
+    });
+}
+
+function renderReorderAnswer() {
+    const answerArea = document.getElementById('reorder-answer-area');
+    answerArea.innerHTML = '';
+
+    if (reorderAnswer.length === 0) {
+        answerArea.innerHTML = '<span class="reorder-placeholder" style="color:var(--color-text-light);font-size:0.85em;padding:4px 6px">Tap words below to build the sentence…</span>';
+        return;
+    }
+
+    reorderAnswer.forEach((item, pos) => {
+        const btn = document.createElement('button');
+        btn.className = 'reorder-word in-answer';
+        btn.textContent = item.word;
+        btn.addEventListener('click', () => {
+            if (reorderChecked) return;
+            reorderAnswer.splice(pos, 1);
+            renderReorderPool();
+            renderReorderAnswer();
+        });
+        answerArea.appendChild(btn);
+    });
+}
+
+document.getElementById('reorder-clear-btn').addEventListener('click', () => {
+    if (reorderChecked) return;
+    reorderAnswer = [];
+    renderReorderPool();
+    renderReorderAnswer();
+});
+
+document.getElementById('reorder-check-btn').addEventListener('click', () => {
+    if (reorderChecked) return;
+
+    const q = quizState.questions[quizState.currentIndex];
+    const tokens = tokenize(q.sentence);
+
+    if (reorderAnswer.length < tokens.length) {
+        showNotification('Place all words before checking!', 'warning');
+        return;
+    }
+
+    reorderChecked = true;
+    document.getElementById('reorder-check-btn').disabled = true;
+    document.getElementById('reorder-clear-btn').disabled  = true;
+
+    const userStr    = normalizeForCheck(reorderAnswer.map(a => a.word));
+    const correctStr = normalizeForCheck(tokens);
+    const isCorrect  = userStr === correctStr;
+
+    const answerArea = document.getElementById('reorder-answer-area');
+    const feedback   = document.getElementById('reorder-feedback');
+    const nextBtn    = document.getElementById('reorder-next');
+
+    if (isCorrect) {
+        answerArea.classList.add('is-correct');
+        feedback.textContent = '✓ Correct!';
+        feedback.className   = 'quiz-feedback correct';
+        quizState.correct++;
+    } else {
+        answerArea.classList.add('is-wrong');
+        feedback.innerHTML = `✗ Correct order: <em>${q.sentence}</em>`;
+        feedback.className = 'quiz-feedback wrong';
+        quizState.wrong++;
+        quizState.wrongItems.push(q.sentence);
+    }
+
+    quizState.answeredQuestions.push({
+        type: 'sentence',
+        question: q.sentence,
+        selected: reorderAnswer.map(a => a.word).join(' '),
+        correct: q.sentence,
+        isCorrect
+    });
+
+    nextBtn.classList.remove('is-hidden');
+});
+
+document.getElementById('reorder-next').addEventListener('click', () => {
+    quizState.currentIndex++;
+    showReorderQuestion();
+});
 
 console.log('✅ Quiz system loaded.');
