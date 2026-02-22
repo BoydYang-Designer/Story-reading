@@ -413,6 +413,11 @@ async function loadWordsFromFirestore() {
                 localStorage.setItem(LAST_SESSION_KEY, JSON.stringify(data.lastSession));
                 console.log("Last session synced from Cloud:", data.lastSession);
             }
+            // 3. === Sync Sub Category Sessions ===
+            if (data.subCategorySessions) {
+                localStorage.setItem(SUB_CATEGORY_SESSION_KEY, JSON.stringify(data.subCategorySessions));
+                console.log("Sub category sessions synced from Cloud:", data.subCategorySessions);
+            }
             // ===========================================
 
             console.log("Notes and session loaded from Firestore.");
@@ -868,12 +873,6 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
     nextNoteBtn.hidden = true; 
     nextNoteBtn.onclick = null; 
     
-    // Hide statistics in categories/titles view
-    const noteStatsContainer = document.getElementById('note-stats-container');
-    if (noteStatsContainer) {
-        noteStatsContainer.style.display = 'none';
-    }
-
     backToStoryFromNoteBtn.classList.remove('is-highlighted');
     backToHomeFromNoteBtn.classList.remove('is-highlighted');
 
@@ -1205,39 +1204,6 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
                 items.forEach(item => createWordItem(item, type, containers[type]));
             }
         });
-        
-        // Update statistics display
-        const noteStatsContainer = document.getElementById('note-stats-container');
-        if (noteStatsContainer) {
-            const wordsCount = noteData.words ? noteData.words.size : 0;
-            const phrasesCount = noteData.phrases ? noteData.phrases.size : 0;
-            const sentencesCount = noteData.sentences ? noteData.sentences.size : 0;
-            const total = wordsCount + phrasesCount + sentencesCount;
-            
-            if (total > 0) {
-                noteStatsContainer.style.display = 'grid';
-                noteStatsContainer.innerHTML = `
-                    <div class="stat-item">
-                        <div class="stat-number">${wordsCount}</div>
-                        <div class="stat-label">Words</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-number">${phrasesCount}</div>
-                        <div class="stat-label">Phrases</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-number">${sentencesCount}</div>
-                        <div class="stat-label">Sentences</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-number">${total}</div>
-                        <div class="stat-label">Total</div>
-                    </div>
-                `;
-            } else {
-                noteStatsContainer.style.display = 'none';
-            }
-        }
         
         backToHomeFromNoteBtn.onclick = () => renderNoteView('titles', categoryName);
     }
