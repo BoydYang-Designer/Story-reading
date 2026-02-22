@@ -2,33 +2,42 @@
   display: none !important;
 }
 
-:root {
-  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans", Arial, "PingFang TC", "Microsoft JhengHei", sans-serif;
-  
-  --color-bg: #fdfaf6; /* 溫暖的米白背景 */
-  --color-surface: #ffffff; /* 卡片/容器背景 */
-  --color-primary: #8a7968; /* 穩重的暖棕褐色 (主色) */
-  --color-primary-dark: #746555; /* 主色加深 (用於 hover) */
-  --color-accent: #d4bca2; /* 柔和沙金色 (輔色/高亮) */
-  --color-accent-light: rgba(212, 188, 162, 0.25); /* 輔色變淡 (用於文字 hover) */
-  
-  --color-text: #4a443e; /* 深灰褐色文字 */
-  --color-text-light: #9a9187; /* 淺灰褐色文字 */
-  --color-border: #e9e4dd; /* 邊框顏色 */
+@import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;600&display=swap');
 
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.04);
-  --shadow-md: 0 4px 10px rgba(0, 0, 0, 0.06);
+:root {
+  --font-sans: "Noto Sans TC", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Microsoft JhengHei", sans-serif;
+  --font-display: "Lora", Georgia, serif;
+  
+  --color-bg: #faf7f3;
+  --color-surface: #ffffff;
+  --color-primary: #7a6b5a;
+  --color-primary-dark: #63574a;
+  --color-accent: #c9a97a;
+  --color-accent-light: rgba(201, 169, 122, 0.18);
+  --color-accent-subtle: rgba(201, 169, 122, 0.08);
+  
+  --color-text: #3d3830;
+  --color-text-light: #9a9187;
+  --color-border: #ece6de;
+  --color-border-strong: #d9d0c5;
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0,0,0,0.03);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0,0,0,0.04);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.08), 0 4px 8px rgba(0,0,0,0.04);
+  
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
 }
 
-/* --- New: Note View Color Theme --- */
+/* --- Note View Color Theme --- */
 body.note-view-active {
-  /* A cooler, calmer palette for the note-taking environment */
-  --color-bg: #f5f7f9; /* 淡雅的冷灰藍背景 */
-  --color-primary: #6c7a8d; /* 沉靜的石板藍 (主色) */
-  --color-primary-dark: #5a677a; /* 主色加深 (用於 hover) */
-  --color-accent: #a9b4c4; /* 柔和的霧藍色 (輔色/高亮) */
-  --color-accent-light: rgba(169, 180, 196, 0.25); /* 輔色變淡 (用於文字 hover) */
-  --color-border: #e6e8eb; /* 邊框顏色 */
+  --color-bg: #f4f6f9;
+  --color-primary: #5c6f84;
+  --color-primary-dark: #4a5b6e;
+  --color-accent: #8fa3b8;
+  --color-accent-light: rgba(143, 163, 184, 0.2);
+  --color-border: #e2e6eb;
 }
 
 
@@ -38,11 +47,12 @@ html, body { height: 100%; overflow-x: hidden; }
 body {
   font-family: var(--font-sans);
   margin: 0;
-  padding: 15px 20px 20px 20px; /* Reduced top padding from 20px to 15px */
+  padding: 15px 20px 20px 20px;
   background-color: var(--color-bg);
   color: var(--color-text);
   touch-action: manipulation;
-  transition: background-color 0.3s ease-in-out; /* 為背景顏色變化增加平滑過渡效果 */
+  transition: background-color 0.4s ease;
+  -webkit-font-smoothing: antialiased;
 }
 
 .container {
@@ -56,7 +66,13 @@ body {
   padding-top: 10px; /* Reduced padding to save space */
 }
 
-h1 { font-size: 25px; font-weight: 600; }
+h1 { 
+  font-size: 26px; 
+  font-weight: 600; 
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+}
 
 /* Playback title specific styles - single line with ellipsis */
 #playback-title, #category-title {
@@ -139,30 +155,39 @@ h1 { font-size: 25px; font-weight: 600; }
   margin-left: 4px;
 }
 
+#home-view h1 {
+  font-size: 28px;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
 .list {
   display: grid;
-  gap: 16px;
+  gap: 14px;
   padding-bottom: 100px;
 }
 
 /* 2. Cards & List Items
 ------------------------------------------ */
 .category-item, .title-item {
-  font-size: 18px;
+  font-size: 17px;
   background-color: var(--color-surface);
-  padding: 18px 22px;
+  padding: 16px 20px;
   border: 1px solid var(--color-border);
-  border-radius: 12px;
+  border-left: 3px solid transparent;
+  border-radius: var(--radius-md);
   cursor: pointer;
   text-align: left;
   user-select: none;
   box-shadow: var(--shadow-sm);
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background-color 0.15s ease;
 }
 .category-item:hover, .title-item:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
-  border-color: var(--color-accent);
+  border-color: var(--color-border);
+  border-left-color: var(--color-accent);
+  background-color: #fdfcfb;
 }
 .category-item:active, .title-item:active {
   transform: translateY(0px);
@@ -171,9 +196,11 @@ h1 { font-size: 25px; font-weight: 600; }
 
 /* Special button styles on home screen */
 #go-to-note, #continue-last-session-btn {
-    background-color: #f9f5f0;
+    background-color: var(--color-accent-subtle);
     border-color: var(--color-accent);
+    border-left-color: var(--color-accent);
     font-weight: 500;
+    color: var(--color-primary-dark);
 }
 
 /* --- Style for new Continue button icon --- */
@@ -192,23 +219,22 @@ h1 { font-size: 25px; font-weight: 600; }
 /* 3. Playback View & Text
 ------------------------------------------ */
 #text-container {
-  height: 380px; /* Optimized for 414x896 screen */
+  height: 380px;
   overflow-y: auto;
   background-color: var(--color-surface);
-  padding-left: 1em;
-  padding-right: 1em;
-  padding-top: 1em;
+  padding: 1.2em 1.4em;
   border: 1px solid var(--color-border);
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   font-size: 17px;
-  line-height: 1.65; /* 平衡：不太緊也不太鬆 */
+  line-height: 1.75;
   text-align: left;
   user-select: text;
   color: var(--color-text);
   padding-bottom: 20px;
   scroll-behavior: smooth;
-  letter-spacing: -0.008em; /* 平衡的字距 */
-  word-spacing: -0.05em; /* 平衡的單字間距 */
+  letter-spacing: -0.005em;
+  word-spacing: -0.02em;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.03);
 }
 
 
@@ -370,26 +396,34 @@ h1 { font-size: 25px; font-weight: 600; }
 ------------------------------------------ */
 button {
   padding: 10px 22px;
-  font-size: 16px;
+  font-size: 15px;
   cursor: pointer;
-  background: transparent;
-  color: var(--color-primary);
-  border: 1px solid var(--color-primary);
-  border-radius: 9999px; /* Pill shape */
+  background-color: var(--color-primary);
+  color: #fff;
+  border: 1.5px solid var(--color-primary);
+  border-radius: 9999px;
   font-weight: 500;
-  transition: background-color .2s ease, transform .1s ease, color .2s ease, border-color .2s ease;
+  font-family: var(--font-sans);
+  letter-spacing: 0.01em;
+  transition: background-color .2s ease, transform .1s ease, color .2s ease, border-color .2s ease, box-shadow .2s ease;
 }
-button:hover { background-color: var(--color-primary-dark); }
+button:hover { 
+  background-color: var(--color-primary-dark);
+  border-color: var(--color-primary-dark);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
 button:active { transform: translateY(1px); }
 
 button.secondary {
   background: transparent;
   color: var(--color-primary);
-  border-color: var(--color-accent);
+  border-color: var(--color-border-strong);
 }
 button.secondary:hover { 
   background: var(--color-accent-light);
   border-color: var(--color-accent);
+  color: var(--color-primary-dark);
+  box-shadow: none;
 }
 
 #add-to-note-btn {
@@ -743,8 +777,13 @@ button.secondary:hover {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
-  padding: 12px 0;
+  margin-bottom: 18px;
+  padding: 8px 14px;
+  background: rgba(255,255,255,0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
   gap: 8px;
 }
 
@@ -784,22 +823,58 @@ button.secondary:hover {
 
 /* 8. Login View
 ------------------------------------------ */
+#login-view h1 {
+  font-size: 32px;
+  letter-spacing: -0.03em;
+  margin-bottom: 6px;
+}
+
+#login-view h1::after {
+  content: '';
+  display: block;
+  width: 36px;
+  height: 2px;
+  background: var(--color-accent);
+  margin: 10px auto 0;
+  border-radius: 2px;
+}
+
 .subtitle {
-  font-size: 16px;
+  font-size: 15px;
   color: var(--color-text-light);
-  margin: 10px 0 30px;
+  margin: 12px 0 32px;
 }
 
 .login-actions {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  max-width: 300px;
+  gap: 10px;
+  max-width: 260px;
   margin: 0 auto;
 }
 
 .login-actions button {
   width: 100%;
+  padding: 13px 22px;
+  font-size: 15px;
+}
+
+#google-signin-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+#google-signin-btn::before {
+  content: '';
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath fill='%23FFC107' d='M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z'/%3E%3Cpath fill='%23FF3D00' d='M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z'/%3E%3Cpath fill='%234CAF50' d='M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z'/%3E%3Cpath fill='%231976D2' d='M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z'/%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  flex-shrink: 0;
 }
 
 /* 9. Staging Area - single row layout
@@ -1461,28 +1536,32 @@ button.secondary:hover {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: #f0f4ff;
-  border-color: #b0c0e8;
+  background-color: #f2f4fb;
+  border-color: #c2cce8;
+  border-left-color: #8fa3d0;
 }
 
 .quiz-entry {
   display: flex;
   align-items: center;
   gap: 12px;
-  background: linear-gradient(135deg, #c9a96e 0%, #b8935d 100%);
+  background: linear-gradient(135deg, #c9a96e 0%, #b88d55 100%);
   border-color: #c9a96e;
-  color: #1a1611;
+  border-left-color: transparent;
+  color: #2a1f0f;
   font-weight: 600;
+  letter-spacing: 0.01em;
 }
 
 .quiz-entry svg {
   flex-shrink: 0;
+  opacity: 0.8;
 }
 
 .quiz-entry:hover {
   background: linear-gradient(135deg, #d4b47f 0%, #c9a96e 100%);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(201, 169, 110, 0.3);
+  box-shadow: 0 6px 16px rgba(180, 130, 70, 0.25);
 }
 
 .custom-count-badge {
@@ -2950,20 +3029,23 @@ button.secondary:hover {
   display: flex;
   align-items: center;
   gap: 12px;
-  background: linear-gradient(135deg, #6e9ecf 0%, #5282aa 100%);
-  border-color: #6e9ecf;
+  background: linear-gradient(135deg, #6891bd 0%, #4e71a0 100%);
+  border-color: #6891bd;
+  border-left-color: transparent;
   color: #fff;
   font-weight: 600;
+  letter-spacing: 0.01em;
 }
 
 .scores-entry svg {
   flex-shrink: 0;
+  opacity: 0.85;
 }
 
 .scores-entry:hover {
-  background: linear-gradient(135deg, #7fb3e0 0%, #6e9ecf 100%);
+  background: linear-gradient(135deg, #7aa0cc 0%, #6891bd 100%);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(110, 158, 207, 0.35);
+  box-shadow: 0 6px 16px rgba(78, 113, 160, 0.28);
 }
 
 /* ── Home Review Banner ──────────────────────────────────────── */
@@ -3302,4 +3384,107 @@ button.secondary:hover {
 .reorder-play-bottom {
     font-size: 0.9rem;
     padding: 10px 20px;
+}
+
+/* ══════════════════════════════════════════════
+   DESIGN REFINEMENTS — Scrollbars & Polish
+   ══════════════════════════════════════════════ */
+
+/* Refined scrollbars */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { 
+  background: var(--color-border-strong); 
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--color-accent); }
+
+/* Smooth focus ring for accessibility */
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* Container center padding for login view */
+#login-view {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  padding-top: 20px;
+}
+
+/* Refined note section header */
+.note-section-header {
+  background: linear-gradient(135deg, var(--color-accent-light) 0%, rgba(201,169,122,0.06) 100%);
+}
+
+/* Btn-back-top refinement */
+.btn-back-top {
+  padding: 5px 14px !important;
+  font-size: 13px !important;
+  border-radius: 9999px;
+  color: var(--color-text-light);
+  border-color: var(--color-border);
+  background: rgba(255,255,255,0.6);
+}
+.btn-back-top:hover {
+  color: var(--color-primary);
+  background: rgba(255,255,255,0.9) !important;
+}
+
+/* Category and sub-category view h1 */
+#sub-category-view h1,
+#category-view h1 {
+  font-family: var(--font-display);
+  font-size: 22px;
+  letter-spacing: -0.02em;
+  text-align: left;
+  margin-bottom: 4px;
+}
+
+/* View top nav refinement */
+.view-top-nav {
+  margin-bottom: 12px;
+}
+
+/* Progress bar refinement */
+#progress-bar {
+  appearance: none;
+  -webkit-appearance: none;
+  height: 3px;
+  border-radius: 99px;
+  background: var(--color-border);
+  cursor: pointer;
+}
+#progress-bar::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+
+/* Fixed controls backdrop improvement */
+#fixed-controls-container {
+  background-color: rgba(250, 247, 243, 0.9);
+  border-top: 1px solid var(--color-border);
+}
+
+/* Subtle entrance animation for views */
+#home-view,
+#sub-category-view,
+#category-view,
+#playback-view {
+  animation: fadeSlideIn 0.25s ease;
+}
+
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
