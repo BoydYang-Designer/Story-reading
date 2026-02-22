@@ -1042,15 +1042,35 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
 
             // 1. Voice Button
             const voiceBtn = document.createElement('button');
-            voiceBtn.textContent = 'Voice';
+            voiceBtn.textContent = '▶';
+            voiceBtn.title = 'Play';
             voiceBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
+
+                // Highlight button to show it's playing
+                voiceBtn.classList.add('is-playing-voice');
+
                 if (type === 'sentences') {
                     playSentenceSnippet(itemText, noteViewTitle);
+
+                    // Listen for playback end to restore button
+                    const restoreOnEnd = () => {
+                        voiceBtn.classList.remove('is-playing-voice');
+                        noteAudioPlayer.removeEventListener('pause', restoreOnEnd);
+                        noteAudioPlayer.removeEventListener('ended', restoreOnEnd);
+                    };
+                    noteAudioPlayer.addEventListener('pause', restoreOnEnd, { once: true });
+                    noteAudioPlayer.addEventListener('ended', restoreOnEnd, { once: true });
                 } else {
                     const audioSrc = `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(itemText.trim())}.mp3`;
                     const wordAudio = new Audio(audioSrc);
-                    wordAudio.play().catch(() => showNotification(`Audio for "${itemText}" was not found.`, 'error'));
+                    wordAudio.play().catch(() => {
+                        voiceBtn.classList.remove('is-playing-voice');
+                        showNotification(`Audio for "${itemText}" was not found.`, 'error');
+                    });
+                    wordAudio.addEventListener('ended', () => {
+                        voiceBtn.classList.remove('is-playing-voice');
+                    }, { once: true });
                 }
             });
             actions.appendChild(voiceBtn);

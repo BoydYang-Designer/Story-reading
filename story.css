@@ -326,6 +326,14 @@ h1 { font-size: 25px; font-weight: 600; }
     background-color: var(--color-primary);
 }
 
+/* Voice button playing state */
+.is-playing-voice {
+    background-color: var(--color-primary) !important;
+    color: white !important;
+    opacity: 0.85;
+    pointer-events: none;
+}
+
 /* 主要的播放/暫停按鈕 */
 #play-pause {
   width: 54px;
