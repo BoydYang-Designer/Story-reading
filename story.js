@@ -51,12 +51,11 @@ const goToNoteBtn = document.getElementById('go-to-note');
 const backToHomeFromNoteBtn = document.getElementById('back-to-home-from-note');
 const noteListWords = document.getElementById('note-list-words');
 const noteListSentences = document.getElementById('note-list-sentences');
-const exportWordsBtn = document.getElementById('export-words-btn');
 const exportCurrentNoteJsonBtn = document.getElementById('export-current-note-json-btn');
 const exportAllNotesJsonBtn = document.getElementById('export-all-notes-json-btn');
+const addWordForm = document.getElementById('add-word-form');
 const goToStoryNoteBtn = document.getElementById('go-to-story-note-btn');
 const backToStoryFromNoteBtn = document.getElementById('back-to-story-from-note-btn');
-const addWordForm = document.getElementById('add-word-form');
 const newWordInput = document.getElementById('new-word-input');
 const addManualWordBtn = document.getElementById('add-manual-word-btn');
 // --- NEWLY ADDED ELEMENTS ---
@@ -869,11 +868,11 @@ function getExpansionStates() {
 // ===== MODIFIED FUNCTION =====
 function renderNoteView(level = 'categories', categoryName = null, titleName = null, expansionStates = null) {
     const noteContentWrapper = document.getElementById('note-content-wrapper');
+    const noteAddSection = document.querySelector('.note-add-section');
     
     // Explicitly hide form and buttons by default
-    addWordForm.style.display = 'none'; // Ensure hidden in Categories/Titles
+    if (noteAddSection) noteAddSection.style.display = 'none';
     backToStoryFromNoteBtn.hidden = true;
-    exportWordsBtn.hidden = true;
     exportCurrentNoteJsonBtn.hidden = true;
     exportAllNotesJsonBtn.hidden = true;
     prevNoteBtn.hidden = true; 
@@ -950,7 +949,7 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
         noteViewTitleEl.textContent = `Note: ${titleName}`; 
         
         // Show the input form ONLY in this view
-        addWordForm.style.display = 'flex'; 
+        if (noteAddSection) noteAddSection.style.display = 'block';
         
         // Show export buttons
         exportCurrentNoteJsonBtn.hidden = false;
@@ -992,7 +991,6 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
         }
 
         backToStoryFromNoteBtn.hidden = false;
-        exportWordsBtn.hidden = false;
 
         if (currentNoteOrigin === 'story') {
             backToStoryFromNoteBtn.classList.add('is-highlighted');
@@ -1238,28 +1236,6 @@ goToNoteBtn.addEventListener('click', () => {
     currentNoteOrigin = 'menu'; // Set origin to menu
     renderNoteView('categories');
     showView(noteView);
-});
-
-exportWordsBtn.addEventListener('click', () => {
-    let allItems = [];
-    for (const category in savedWords) {
-        for (const title in savedWords[category]) {
-            allItems = allItems.concat(
-                Array.from(savedWords[category][title].words),
-                Array.from(savedWords[category][title].phrases),
-                Array.from(savedWords[category][title].sentences)
-            );
-        }
-    }
-    const uniqueItems = [...new Set(allItems)];
-    if (uniqueItems.length === 0) {
-        alert("No items to copy.");
-        return;
-    }
-    const textToCopy = uniqueItems.sort((a, b) => a.localeCompare(b)).join('\n');
-    navigator.clipboard.writeText(textToCopy).then(() => {
-        alert(`${uniqueItems.length} total items copied to clipboard.`);
-    }).catch(err => alert('Could not copy items.'));
 });
 
 addManualWordBtn.addEventListener('click', () => {

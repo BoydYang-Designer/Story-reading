@@ -72,8 +72,14 @@ h1 { font-size: 25px; font-weight: 600; }
 .view-top-nav {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   margin-bottom: 10px;
   padding: 0 10px;
+}
+
+.note-top-actions {
+  display: flex;
+  gap: 6px;
 }
 
 .btn-back-top {
