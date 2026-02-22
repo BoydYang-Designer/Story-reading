@@ -2944,3 +2944,220 @@ button.secondary:hover {
 .reorder-actions .quiz-btn {
     flex: 1;
 }
+
+/* ── Scores Entry Button ─────────────────────────────────────── */
+.scores-entry {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(135deg, #6e9ecf 0%, #5282aa 100%);
+  border-color: #6e9ecf;
+  color: #fff;
+  font-weight: 600;
+}
+
+.scores-entry svg {
+  flex-shrink: 0;
+}
+
+.scores-entry:hover {
+  background: linear-gradient(135deg, #7fb3e0 0%, #6e9ecf 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(110, 158, 207, 0.35);
+}
+
+/* ── Score Dashboard ─────────────────────────────────────────── */
+#scores-dashboard-view {
+    padding-bottom: 40px;
+}
+
+.scores-summary-strip {
+    display: flex;
+    gap: 10px;
+    margin: 16px 0 20px;
+    flex-wrap: wrap;
+}
+
+.scores-summary-item {
+    flex: 1;
+    min-width: 80px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    padding: 12px 10px 10px;
+    text-align: center;
+}
+
+.scores-summary-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-text);
+    line-height: 1.1;
+}
+
+.scores-summary-label {
+    font-size: 0.72rem;
+    color: var(--color-text-light);
+    margin-top: 4px;
+}
+
+.scores-mode-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 14px;
+    font-size: 0.78rem;
+    color: var(--color-text-light);
+    margin-bottom: 14px;
+}
+
+.scores-dashboard-table {
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    overflow: hidden;
+    font-size: 0.8rem;
+}
+
+.scores-table-header {
+    display: grid;
+    grid-template-columns: 1fr repeat(6, 44px);
+    background: var(--color-border);
+    padding: 8px 10px;
+    font-weight: 700;
+    font-size: 0.78rem;
+    color: var(--color-text-light);
+}
+
+.scores-major-group {}
+
+.scores-major-label {
+    background: var(--color-surface);
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+    padding: 6px 12px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--color-text-light);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.scores-row {
+    display: grid;
+    grid-template-columns: 1fr repeat(6, 44px);
+    align-items: center;
+    padding: 0 10px;
+    border-bottom: 1px solid var(--color-border);
+    min-height: 44px;
+}
+
+.scores-row:last-child {
+    border-bottom: none;
+}
+
+.scores-row:hover {
+    background: var(--color-surface);
+}
+
+.scores-col-article {
+    padding: 6px 4px 6px 0;
+    font-size: 0.78rem;
+    color: var(--color-text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: default;
+}
+
+.scores-table-header .scores-col-article {
+    font-weight: 700;
+}
+
+.scores-col-mode {
+    width: 44px;
+    height: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    cursor: default;
+}
+
+.scores-table-header .scores-col-mode {
+    font-size: 1.1rem;
+    justify-content: center;
+    align-items: center;
+}
+
+.scores-cell-empty {
+    border-left: 2px dashed var(--color-border);
+    margin: 4px 3px;
+    border-radius: 4px;
+}
+
+.scores-cell {
+    border-radius: 5px;
+    margin: 3px;
+    padding: 2px 0;
+    flex-direction: column;
+    cursor: default;
+    position: relative;
+}
+
+.scores-cell-score {
+    font-size: 0.65rem;
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+.scores-cell-pct {
+    font-size: 0.6rem;
+    opacity: 0.85;
+}
+
+.score-green {
+    background: rgba(80, 184, 108, 0.2);
+    color: #2d8a50;
+    border: 1px solid rgba(80, 184, 108, 0.4);
+}
+
+.score-yellow {
+    background: rgba(220, 180, 60, 0.2);
+    color: #8a6d10;
+    border: 1px solid rgba(220, 180, 60, 0.4);
+}
+
+.score-red {
+    background: rgba(224, 92, 92, 0.2);
+    color: #a83030;
+    border: 1px solid rgba(224, 92, 92, 0.4);
+}
+
+[data-theme="dark"] .score-green { color: #7ce89e; }
+[data-theme="dark"] .score-yellow { color: #f5d06a; }
+[data-theme="dark"] .score-red { color: #f08080; }
+
+.scores-empty-state {
+    padding: 30px;
+    text-align: center;
+    color: var(--color-text-light);
+    font-size: 0.95rem;
+}
+
+.scores-clear-row {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+/* ── Reorder Play Button at Bottom ───────────────────────────── */
+.reorder-play-row {
+    display: flex;
+    justify-content: center;
+    margin-top: 14px;
+}
+
+.reorder-play-bottom {
+    font-size: 0.9rem;
+    padding: 10px 20px;
+}

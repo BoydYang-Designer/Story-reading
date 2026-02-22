@@ -287,8 +287,9 @@ function createListItemWithImage(text, onClick, fallbackText = null) {
 function showView(view) {
     const customArticlesView = document.getElementById('custom-articles-view');
     const quizView = document.getElementById('quiz-view');
+    const scoresDashboardView = document.getElementById('scores-dashboard-view');
     // 加入 subCategoryView 和 dataManagerView 到隱藏列表
-    [loginView, appContainer, homeView, subCategoryView, categoryView, playbackView, noteView, dataManagerView, customArticlesView, quizView].forEach(el => {
+    [loginView, appContainer, homeView, subCategoryView, categoryView, playbackView, noteView, dataManagerView, customArticlesView, quizView, scoresDashboardView].forEach(el => {
         if(el) el.classList.add('is-hidden');
     });
     
@@ -1271,6 +1272,18 @@ if (goToQuizHomeBtn) {
     goToQuizHomeBtn.addEventListener('click', () => {
         openQuiz(null, null);
     });
+}
+
+// Scores Dashboard navigation
+const goToScoresBtn = document.getElementById('go-to-scores');
+if (goToScoresBtn) {
+    goToScoresBtn.addEventListener('click', () => {
+        if (typeof openScoresDashboard === 'function') openScoresDashboard();
+    });
+}
+const backToHomeFromScoresBtn = document.getElementById('back-to-home-from-scores');
+if (backToHomeFromScoresBtn) {
+    backToHomeFromScoresBtn.addEventListener('click', () => showView(homeView));
 }
 
 addManualWordBtn.addEventListener('click', () => {

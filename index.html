@@ -57,6 +57,16 @@
     </svg>
     <span>Quiz</span>
   </div>
+
+  <!-- Scores Dashboard 按鈕 - 在 Quiz 下方 -->
+  <div id="go-to-scores" class="category-item scores-entry">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="18" y1="20" x2="18" y2="10"></line>
+      <line x1="12" y1="20" x2="12" y2="4"></line>
+      <line x1="6" y1="20" x2="6" y2="14"></line>
+    </svg>
+    <span>📊 Scores</span>
+  </div>
 </div>
 
     <div id="sub-category-view" class="is-hidden">
@@ -420,10 +430,6 @@
         <!-- Reorder Mode -->
         <div id="quiz-reorder-area" class="is-hidden">
             <div class="quiz-card">
-                <button class="dictation-play-btn is-hidden" id="reorder-play-btn">
-                    <span class="reorder-play-icon">▶</span>
-                    <span>Play Sentence</span>
-                </button>
                 <div class="reorder-hint">Arrange the words in the correct order</div>
                 <div class="reorder-answer-area" id="reorder-answer-area"></div>
             </div>
@@ -434,6 +440,12 @@
             </div>
             <div class="quiz-feedback" id="reorder-feedback"></div>
             <button class="quiz-next-btn is-hidden" id="reorder-next">Next →</button>
+            <div class="reorder-play-row">
+                <button class="dictation-play-btn is-hidden reorder-play-bottom" id="reorder-play-btn">
+                    <span class="reorder-play-icon">▶</span>
+                    <span>Play Sentence</span>
+                </button>
+            </div>
         </div>
     </div>
 
@@ -556,6 +568,51 @@
       <button id="merged-modal-close-btn" class="secondary">關閉</button>
     </div>
   </div>
+</div>
+
+<div id="scores-dashboard-view" class="is-hidden">
+    <div class="view-top-nav">
+        <button class="secondary btn-back-top" id="back-to-home-from-scores">← Back</button>
+    </div>
+    <h1>📊 Quiz Scores</h1>
+
+    <!-- Summary Strip -->
+    <div id="scores-summary-strip" class="scores-summary-strip">
+        <div class="scores-summary-item">
+            <div class="scores-summary-value" id="summary-total-articles">0</div>
+            <div class="scores-summary-label">Articles</div>
+        </div>
+        <div class="scores-summary-item">
+            <div class="scores-summary-value" id="summary-total-attempts">0</div>
+            <div class="scores-summary-label">Attempts</div>
+        </div>
+        <div class="scores-summary-item">
+            <div class="scores-summary-value" id="summary-avg-best">—</div>
+            <div class="scores-summary-label">Avg Best</div>
+        </div>
+        <div class="scores-summary-item">
+            <div class="scores-summary-value" id="summary-perfect-count">0</div>
+            <div class="scores-summary-label">Perfect 🏆</div>
+        </div>
+    </div>
+
+    <!-- Mode Legend -->
+    <div class="scores-mode-legend">
+        <span title="Flashcard">🃏 Flashcard</span>
+        <span title="Fill in Blank">✏️ Fill in Blank</span>
+        <span title="Dictation">🎧 Dictation</span>
+        <span title="Reorder">🔀 Reorder</span>
+        <span title="Article Listen">👂 Article Listen</span>
+        <span title="Article Cloze">📝 Article Cloze</span>
+    </div>
+
+    <!-- Dashboard Table -->
+    <div id="scores-dashboard-table" class="scores-dashboard-table"></div>
+
+    <!-- Clear All -->
+    <div class="scores-clear-row">
+        <button class="secondary" id="scores-clear-all-btn">🗑 Clear All Records</button>
+    </div>
 </div>
 
 <div id="data-manager-view" class="is-hidden">

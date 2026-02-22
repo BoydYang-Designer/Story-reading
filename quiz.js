@@ -1932,3 +1932,146 @@ document.addEventListener('keydown', (e) => {
 });
 
 console.log('✅ Quiz system loaded.');
+
+// ══════════════════════════════════════════════════════════════
+//  SCORE DASHBOARD
+// ══════════════════════════════════════════════════════════════
+
+const SCORE_MODE_META = {
+    flashcard:       { icon: '🃏', label: 'Flashcard' },
+    cloze:           { icon: '✏️', label: 'Fill in Blank' },
+    dictation:       { icon: '🎧', label: 'Dictation' },
+    reorder:         { icon: '🔀', label: 'Reorder' },
+    'article-listen':{ icon: '👂', label: 'Article Listen' },
+    'article-cloze': { icon: '📝', label: 'Article Cloze' },
+};
+const SCORE_MODES = Object.keys(SCORE_MODE_META);
+
+function openScoresDashboard() {
+    renderScoresDashboard();
+    showView(document.getElementById('scores-dashboard-view'));
+}
+
+function getScoreColor(pct) {
+    if (pct >= 0.9) return 'score-green';
+    if (pct >= 0.6) return 'score-yellow';
+    return 'score-red';
+}
+
+function renderScoresDashboard() {
+    const scores = loadQuizScores();
+    const tableEl = document.getElementById('scores-dashboard-table');
+    if (!tableEl) return;
+
+    // --- Summary Strip ---
+    let totalArticles = 0;
+    let totalAttempts = 0;
+    let perfectCount  = 0;
+    let bestPctSum    = 0;
+    let bestPctCount  = 0;
+
+    for (const key of Object.keys(scores)) {
+        const entry = scores[key];
+        let hasPractice = false;
+        for (const mode of SCORE_MODES) {
+            if (entry[mode]) {
+                hasPractice = true;
+                totalAttempts += entry[mode].count || 0;
+                const pct = entry[mode].total > 0 ? entry[mode].best / entry[mode].total : 0;
+                bestPctSum += pct;
+                bestPctCount++;
+                if (entry[mode].best === entry[mode].total && entry[mode].total > 0) perfectCount++;
+            }
+        }
+        if (hasPractice) totalArticles++;
+    }
+
+    document.getElementById('summary-total-articles').textContent = totalArticles;
+    document.getElementById('summary-total-attempts').textContent = totalAttempts;
+    document.getElementById('summary-avg-best').textContent = bestPctCount > 0
+        ? Math.round(bestPctSum / bestPctCount * 100) + '%' : '—';
+    document.getElementById('summary-perfect-count').textContent = perfectCount;
+
+    // --- Build table grouped by major ---
+    // Group stories by major
+    const majorGroups = {};
+    for (const s of (typeof stories !== 'undefined' ? stories : [])) {
+        const major = s['大類'] || 'Uncategorized';
+        const title = s['標題'];
+        if (!majorGroups[major]) majorGroups[major] = [];
+        if (!majorGroups[major].includes(title)) majorGroups[major].push(title);
+    }
+
+    // Also include any score keys that might not be in stories (custom articles, etc.)
+    for (const key of Object.keys(scores)) {
+        const [cat, title] = key.split('||');
+        const major = 'Other';
+        // Try to find major from stories
+        const found = (typeof stories !== 'undefined') && stories.find(s => s['標題'] === title);
+        if (!found) {
+            if (!majorGroups[major]) majorGroups[major] = [];
+            if (!majorGroups[major].includes(title)) majorGroups[major].push(title);
+        }
+    }
+
+    let html = '';
+
+    // Header row
+    html += `<div class="scores-table-header">
+        <div class="scores-col-article">Article</div>
+        ${SCORE_MODES.map(m => `<div class="scores-col-mode" title="${SCORE_MODE_META[m].label}">${SCORE_MODE_META[m].icon}</div>`).join('')}
+    </div>`;
+
+    for (const major of Object.keys(majorGroups).sort()) {
+        const titles = majorGroups[major];
+        // Only show if major has any scored articles
+        const hasAny = titles.some(t => {
+            return Object.keys(scores).some(k => k.endsWith('||' + t));
+        });
+
+        html += `<div class="scores-major-group">
+            <div class="scores-major-label">${major}</div>`;
+
+        for (const title of titles.sort()) {
+            // Find the score key for this title
+            const key = Object.keys(scores).find(k => k.endsWith('||' + title)) || `||${title}`;
+            const entry = scores[key] || {};
+
+            html += `<div class="scores-row">
+                <div class="scores-col-article" title="${title}">${title}</div>
+                ${SCORE_MODES.map(mode => {
+                    const d = entry[mode];
+                    if (!d) return `<div class="scores-col-mode scores-cell-empty" title="Not practiced"></div>`;
+                    const pct = d.total > 0 ? d.best / d.total : 0;
+                    const pctText = Math.round(pct * 100) + '%';
+                    const colorClass = getScoreColor(pct);
+                    const tooltip = `${SCORE_MODE_META[mode].label}\nBest: ${d.best}/${d.total} (${pctText})\nAttempts: ${d.count}\nLast: ${d.lastDate || '—'}`;
+                    return `<div class="scores-col-mode scores-cell ${colorClass}" title="${tooltip}">
+                        <span class="scores-cell-score">${d.best}/${d.total}</span>
+                        <span class="scores-cell-pct">${pctText}</span>
+                    </div>`;
+                }).join('')}
+            </div>`;
+        }
+        html += `</div>`;
+    }
+
+    if (!html.includes('scores-row')) {
+        html += `<div class="scores-empty-state">No quiz scores yet. Start practicing!</div>`;
+    }
+
+    tableEl.innerHTML = html;
+}
+
+// Clear All button
+document.getElementById('scores-clear-all-btn')?.addEventListener('click', () => {
+    if (!confirm('Clear all quiz score records? This cannot be undone.')) return;
+    localStorage.removeItem(QUIZ_SCORES_KEY);
+    // Sync clear to Firestore
+    if (typeof currentUser !== 'undefined' && currentUser) {
+        db.collection('userNotes').doc(currentUser.uid)
+          .set({ quizScores: {} }, { merge: true })
+          .catch(err => console.error('Score clear error:', err));
+    }
+    renderScoresDashboard();
+});
