@@ -8,7 +8,7 @@ const QUIZ_SCORES_KEY = 'readingChallengeQuizScores';
 
 // ── State ────────────────────────────────────────────────────
 let quizState = {
-    mode: null,          // 'flashcard' | 'cloze' | 'dictation'
+    mode: null,          // 'flashcard' | 'cloze' | 'dictation' | 'article-listen' | 'article-cloze'
     scope: 'this',       // 'this' | 'all'
     categoryName: null,
     titleName: null,
@@ -17,10 +17,15 @@ let quizState = {
     correct: 0,
     wrong: 0,
     wrongItems: [],
+    answeredQuestions: [],
+    retryWrongOnly: false,
     // flashcard specific
     deck: [],
     deckIndex: 0,
     againQueue: [],
+    // article quiz specific
+    articleSubMode: 'listen',  // 'listen' | 'cloze'
+    articleDifficulty: 'mix',  // 'easy' | 'medium' | 'hard' | 'mix'
 };
 
 let quizAudioPlayer = new Audio();
@@ -224,6 +229,37 @@ document.getElementById('quiz-mode-dictation').addEventListener('click', () => {
     startDictation();
 });
 
+// Article Quiz mode card
+document.getElementById('quiz-mode-article').addEventListener('click', () => {
+    const submenu = document.getElementById('article-quiz-submenu');
+    const isHidden = submenu.classList.contains('is-hidden');
+    submenu.classList.toggle('is-hidden', !isHidden);
+    document.getElementById('quiz-mode-article').classList.toggle('is-active-mode', isHidden);
+});
+
+// Sub-mode buttons (Listen / Cloze)
+document.querySelectorAll('[data-submode]').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('[data-submode]').forEach(b => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        quizState.articleSubMode = btn.dataset.submode;
+    });
+});
+
+// Difficulty buttons
+document.querySelectorAll('[data-diff]').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('[data-diff]').forEach(b => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        quizState.articleDifficulty = btn.dataset.diff;
+    });
+});
+
+// Start Article Quiz
+document.getElementById('article-quiz-start-btn').addEventListener('click', () => {
+    startArticleQuiz();
+});
+
 document.getElementById('quiz-exit-btn').addEventListener('click', () => {
     quizAudioPlayer.pause();
     quizMenu.classList.remove('is-hidden');
@@ -258,10 +294,14 @@ function showQuizSession(mode) {
     flashcardArea.classList.add('is-hidden');
     clozeArea.classList.add('is-hidden');
     dictationArea.classList.add('is-hidden');
+    document.getElementById('quiz-article-listen-area').classList.add('is-hidden');
+    document.getElementById('quiz-article-cloze-area').classList.add('is-hidden');
 
-    if (mode === 'flashcard')  flashcardArea.classList.remove('is-hidden');
-    if (mode === 'cloze')      clozeArea.classList.remove('is-hidden');
-    if (mode === 'dictation')  dictationArea.classList.remove('is-hidden');
+    if (mode === 'flashcard')       flashcardArea.classList.remove('is-hidden');
+    if (mode === 'cloze')           clozeArea.classList.remove('is-hidden');
+    if (mode === 'dictation')       dictationArea.classList.remove('is-hidden');
+    if (mode === 'article-listen')  document.getElementById('quiz-article-listen-area').classList.remove('is-hidden');
+    if (mode === 'article-cloze')   document.getElementById('quiz-article-cloze-area').classList.remove('is-hidden');
 }
 
 // ── Show Result ───────────────────────────────────────────────
@@ -270,32 +310,210 @@ function showQuizResult(mode, correct, total, wrongItems) {
     quizSession.classList.add('is-hidden');
     quizResult.classList.remove('is-hidden');
 
+    // Get last score before saving
+    const scores = loadQuizScores();
+    const key = `${quizState.categoryName}||${quizState.titleName}`;
+    const lastScore = scores[key]?.[mode]?.last ?? null;
+    const bestScore = scores[key]?.[mode]?.best ?? 0;
+
     saveQuizScore(quizState.categoryName, quizState.titleName, mode, correct, total);
 
+    // Emoji & score
     const pct = total > 0 ? correct / total : 0;
     const emoji = pct >= 0.9 ? '🎉' : pct >= 0.7 ? '😊' : pct >= 0.5 ? '🤔' : '💪';
     document.getElementById('quiz-result-emoji').textContent = emoji;
     document.getElementById('quiz-result-number').textContent = `${correct} / ${total}`;
 
-    const reviewEl = document.getElementById('quiz-result-review');
-    if (wrongItems.length > 0) {
-        reviewEl.innerHTML = `<div class="quiz-review-title">Review these:</div>` +
-            wrongItems.map(w => `<div class="quiz-review-item">${w}</div>`).join('');
+    // Progress bar
+    document.getElementById('quiz-result-progress-fill').style.width = (pct * 100) + '%';
+
+    // Compare with last
+    const compareEl = document.getElementById('quiz-result-compare');
+    if (lastScore !== null && lastScore !== undefined) {
+        const diff = correct - lastScore;
+        const arrow = diff > 0 ? `↑ +${diff}` : diff < 0 ? `↓ ${diff}` : '→ same';
+        const color = diff > 0 ? '#50b86c' : diff < 0 ? '#e05c5c' : '#9a9187';
+        compareEl.innerHTML = `<span style="color:${color};font-weight:700;">${arrow}</span> vs last &nbsp;|&nbsp; Best: ${Math.max(bestScore, correct)}/${total}`;
     } else {
-        reviewEl.innerHTML = `<div class="quiz-review-title">Perfect! 🎊</div>`;
+        compareEl.innerHTML = `Best: ${correct}/${total}`;
+    }
+
+    // Build review list
+    const reviewEl = document.getElementById('quiz-result-review');
+    reviewEl.innerHTML = '';
+
+    if (quizState.answeredQuestions.length === 0) {
+        // Flashcard mode — just show wrong items
+        if (wrongItems.length === 0) {
+            reviewEl.innerHTML = `<div class="quiz-review-title">Perfect! 🎊</div>`;
+        } else {
+            reviewEl.innerHTML = `<div class="quiz-review-title">Review these:</div>` +
+                wrongItems.map(w => `<div class="quiz-review-item quiz-review-wrong">✗ ${w}</div>`).join('');
+        }
+    } else {
+        // Cloze / Dictation — show full per-question review
+        quizState.answeredQuestions.forEach((item, idx) => {
+            const div = document.createElement('div');
+            div.className = `quiz-review-card ${item.isCorrect ? 'is-correct' : 'is-wrong'}`;
+
+            const icon = item.isCorrect ? '✓' : '✗';
+
+            // Collapsible: wrong = expanded, correct = collapsed
+            const isExpanded = !item.isCorrect;
+
+            div.innerHTML = `
+                <div class="quiz-review-card-header" data-idx="${idx}">
+                    <span class="quiz-review-icon">${icon}</span>
+                    <span class="quiz-review-preview">${item.correct.substring(0, 50)}${item.correct.length > 50 ? '…' : ''}</span>
+                    <span class="quiz-review-toggle">${isExpanded ? '▲' : '▼'}</span>
+                </div>
+                <div class="quiz-review-card-body" style="${isExpanded ? '' : 'display:none;'}">
+                    ${!item.isCorrect ? `
+                        <div class="quiz-review-your-ans">Your answer: <em>${item.selected}</em></div>
+                    ` : ''}
+                    <div class="quiz-review-correct-ans">${item.correct}</div>
+                    ${(item.start != null) ? `
+                        <button class="quiz-review-play-btn" data-start="${item.start}" data-end="${item.end}" data-title="${item.title}">▶ Listen again</button>
+                    ` : (mode !== 'cloze' ? '' : `
+                        <button class="quiz-review-play-btn quiz-review-play-word" data-word="${item.correct}">▶ Pronounce</button>
+                    `)}
+                </div>
+            `;
+            reviewEl.appendChild(div);
+        });
+
+        // Toggle expand/collapse
+        reviewEl.querySelectorAll('.quiz-review-card-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const body = header.nextElementSibling;
+                const toggle = header.querySelector('.quiz-review-toggle');
+                const hidden = body.style.display === 'none';
+                body.style.display = hidden ? '' : 'none';
+                toggle.textContent = hidden ? '▲' : '▼';
+            });
+        });
+
+        // Play buttons in review
+        reviewEl.querySelectorAll('.quiz-review-play-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (btn.dataset.word) {
+                    // Word pronunciation
+                    const src = `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(btn.dataset.word.trim())}.mp3`;
+                    quizAudioPlayer.src = src;
+                    quizAudioPlayer.play().catch(() => {
+                        if ('speechSynthesis' in window) {
+                            const u = new SpeechSynthesisUtterance(btn.dataset.word);
+                            u.lang = 'en-US';
+                            window.speechSynthesis.speak(u);
+                        }
+                    });
+                } else {
+                    // Sentence snippet
+                    const start = parseFloat(btn.dataset.start);
+                    const end   = parseFloat(btn.dataset.end);
+                    const title = btn.dataset.title;
+                    const isMobile = isMobileDevice();
+                    const bufStart = isMobile ? 0.3 : 0.1;
+                    const bufEnd   = isMobile ? 0.4 : 0.05;
+
+                    // Make sure audio src matches
+                    const targetSrc = `audio/${encodeURIComponent(title.trim())}.mp3`;
+                    if (!quizAudioPlayer.src.endsWith(encodeURIComponent(title.trim()) + '.mp3')) {
+                        quizAudioPlayer.src = targetSrc;
+                        quizAudioPlayer.load();
+                    }
+
+                    btn.textContent = '⏸';
+                    quizAudioPlayer.currentTime = Math.max(0, start - bufStart);
+
+                    const stopHandler = function() {
+                        if (quizAudioPlayer.currentTime >= end + bufEnd) {
+                            quizAudioPlayer.pause();
+                            quizAudioPlayer.removeEventListener('timeupdate', stopHandler);
+                            btn.textContent = '▶ Listen again';
+                        }
+                    };
+                    quizAudioPlayer.addEventListener('timeupdate', stopHandler);
+                    quizAudioPlayer.play().catch(() => {
+                        quizAudioPlayer.removeEventListener('timeupdate', stopHandler);
+                        btn.textContent = '▶ Listen again';
+                    });
+
+                    setTimeout(() => {
+                        quizAudioPlayer.removeEventListener('timeupdate', stopHandler);
+                        if (!quizAudioPlayer.paused) quizAudioPlayer.pause();
+                        btn.textContent = '▶ Listen again';
+                    }, (end - start + bufEnd) * 1000 + 300);
+                }
+            });
+        });
+    }
+
+    // Add wrong sentences to Note button
+    const addToNoteBar = document.getElementById('quiz-add-to-note-bar');
+    const wrongSentences = quizState.answeredQuestions.filter(q => !q.isCorrect && q.type === 'sentence');
+    const wrongWords = quizState.answeredQuestions.filter(q => !q.isCorrect && q.type !== 'sentence');
+
+    if (wrongSentences.length > 0 || wrongWords.length > 0) {
+        const totalWrong = wrongSentences.length + wrongWords.length;
+        document.getElementById('quiz-wrong-count-label').textContent = `${totalWrong} wrong item${totalWrong > 1 ? 's' : ''}`;
+        addToNoteBar.classList.remove('is-hidden');
+    } else {
+        addToNoteBar.classList.add('is-hidden');
+    }
+
+    // Retry wrong only button visibility
+    const retryWrongBtn = document.getElementById('quiz-retry-wrong-btn');
+    if (wrongItems.length > 0) {
+        retryWrongBtn.style.display = '';
+    } else {
+        retryWrongBtn.style.display = 'none';
     }
 }
 
 document.getElementById('quiz-retry-btn').addEventListener('click', () => {
+    quizState.retryWrongOnly = false;
     const mode = quizState.mode;
-    if (mode === 'flashcard')  startFlashcard();
-    else if (mode === 'cloze') startCloze();
-    else if (mode === 'dictation') startDictation();
+    if (mode === 'flashcard')        startFlashcard();
+    else if (mode === 'cloze')       startCloze();
+    else if (mode === 'dictation')   startDictation();
+    else if (mode === 'article-listen' || mode === 'article-cloze') startArticleQuiz();
+});
+
+document.getElementById('quiz-retry-wrong-btn').addEventListener('click', () => {
+    quizState.retryWrongOnly = true;
+    const mode = quizState.mode;
+    if (mode === 'cloze')                startClozeRetryWrong();
+    else if (mode === 'dictation')       startDictationRetryWrong();
+    else if (mode === 'article-listen')  startArticleRetryWrong();
+    else if (mode === 'article-cloze')   startArticleRetryWrong();
+    else {
+        quizState.retryWrongOnly = false;
+        startFlashcard();
+    }
 });
 
 document.getElementById('quiz-back-btn').addEventListener('click', () => {
     quizAudioPlayer.pause();
-    showView(document.getElementById('note-view'));
+    quizResult.classList.add('is-hidden');
+    quizMenu.classList.remove('is-hidden');
+    renderQuizStatsBar(quizState.categoryName, quizState.titleName);
+});
+
+document.getElementById('quiz-add-wrong-to-note-btn').addEventListener('click', () => {
+    const cat = quizState.categoryName;
+    const title = quizState.titleName;
+    if (!cat || !title) return;
+
+    let added = 0;
+    quizState.answeredQuestions.filter(q => !q.isCorrect).forEach(q => {
+        addWordToNote(q.correct, cat, title);
+        added++;
+    });
+
+    showNotification(`${added} item${added > 1 ? 's' : ''} added to Note.`, 'success');
+    document.getElementById('quiz-add-to-note-bar').classList.add('is-hidden');
 });
 
 // ══════════════════════════════════════════════════════════════
@@ -452,6 +670,7 @@ function startCloze() {
     quizState.correct     = 0;
     quizState.wrong       = 0;
     quizState.wrongItems  = [];
+    quizState.answeredQuestions = [];
 
     showQuizSession('cloze');
     showClozeQuestion();
@@ -509,8 +728,9 @@ function handleClozeAnswer(selected, correct, btn) {
     });
 
     const feedbackEl = document.getElementById('cloze-feedback');
+    const isCorrect = selected === correct;
 
-    if (selected === correct) {
+    if (isCorrect) {
         btn.classList.add('is-correct');
         feedbackEl.textContent = '✓ Correct!';
         feedbackEl.className = 'quiz-feedback correct';
@@ -522,6 +742,18 @@ function handleClozeAnswer(selected, correct, btn) {
         quizState.wrong++;
         quizState.wrongItems.push(correct);
     }
+
+    // Record for review
+    quizState.answeredQuestions.push({
+        type: 'word',
+        question: quizState.questions[quizState.currentIndex]?.sentence || '',
+        selected: selected.replace(/-/g, ' '),
+        correct: correct.replace(/-/g, ' '),
+        isCorrect,
+        start: null,
+        end: null,
+        title: null
+    });
 
     document.getElementById('cloze-next').classList.remove('is-hidden');
 }
@@ -581,6 +813,7 @@ async function startDictation() {
     quizState.correct     = 0;
     quizState.wrong       = 0;
     quizState.wrongItems  = [];
+    quizState.answeredQuestions = [];
 
     // Preload audio
     if (title) {
@@ -688,8 +921,10 @@ function handleDictationAnswer(selected, correct, btn) {
     });
 
     const feedbackEl = document.getElementById('dictation-feedback');
+    const isCorrect = selected === correct;
+    const q = quizState.questions[quizState.currentIndex];
 
-    if (selected === correct) {
+    if (isCorrect) {
         btn.classList.add('is-correct');
         feedbackEl.textContent = '✓ Correct!';
         feedbackEl.className = 'quiz-feedback correct';
@@ -702,6 +937,18 @@ function handleDictationAnswer(selected, correct, btn) {
         quizState.wrongItems.push(correct);
     }
 
+    // Record for review
+    quizState.answeredQuestions.push({
+        type: 'sentence',
+        question: correct,
+        selected,
+        correct,
+        isCorrect,
+        start: q.start,
+        end: q.end,
+        title: q.title
+    });
+
     document.getElementById('dictation-next').classList.remove('is-hidden');
 }
 
@@ -711,6 +958,401 @@ document.getElementById('dictation-next').addEventListener('click', () => {
 });
 
 // ── Load quiz scores from Firestore on login ─────────────────
+// ══════════════════════════════════════════════════════════════
+//  ARTICLE QUIZ — Listen & Choose + Fill in Blank
+//  No note needed, directly from Timestamp
+// ══════════════════════════════════════════════════════════════
+
+function getDifficultyLabel(wordCount) {
+    if (wordCount < 8)  return { label: 'Easy',   color: '#50b86c', diff: 'easy' };
+    if (wordCount <= 15) return { label: 'Medium', color: '#f5a623', diff: 'medium' };
+    return                     { label: 'Hard',   color: '#e05c5c', diff: 'hard' };
+}
+
+async function startArticleQuiz() {
+    const title = quizState.titleName;
+    if (!title) {
+        showNotification('No article selected.', 'error');
+        return;
+    }
+
+    const tsData = await getTimestampForStory(title);
+    if (!tsData || tsData.length === 0) {
+        showNotification('Timestamp file not found for this article.', 'error');
+        return;
+    }
+
+    // Filter by difficulty
+    const diff = quizState.articleDifficulty;
+    let pool = tsData.filter(l => l.sentence && l.sentence.trim().length > 3);
+
+    if (diff !== 'mix') {
+        pool = pool.filter(l => {
+            const wc = l.sentence.trim().split(/\s+/).length;
+            if (diff === 'easy')   return wc < 8;
+            if (diff === 'medium') return wc >= 8 && wc <= 15;
+            if (diff === 'hard')   return wc > 15;
+        });
+    }
+
+    if (pool.length < 2) {
+        showNotification(`Not enough ${diff} sentences in this article. Try Mix or another difficulty.`, 'warning');
+        return;
+    }
+
+    // Pick up to 10 questions
+    const selected = shuffle(pool).slice(0, 10);
+    const questions = selected.map(l => ({
+        sentence: l.sentence.trim(),
+        start: l.start,
+        end: l.end,
+        title,
+        wordCount: l.sentence.trim().split(/\s+/).length,
+    }));
+
+    const subMode = quizState.articleSubMode;
+    quizState.mode           = subMode === 'listen' ? 'article-listen' : 'article-cloze';
+    quizState.questions      = questions;
+    quizState.currentIndex   = 0;
+    quizState.correct        = 0;
+    quizState.wrong          = 0;
+    quizState.wrongItems     = [];
+    quizState.answeredQuestions = [];
+
+    // Preload audio
+    quizAudioPlayer.src = `audio/${encodeURIComponent(title.trim())}.mp3`;
+    quizAudioPlayer.preload = 'auto';
+    quizAudioPlayer.load();
+
+    // Hide article submenu
+    document.getElementById('article-quiz-submenu').classList.add('is-hidden');
+    document.getElementById('quiz-mode-article').classList.remove('is-active-mode');
+
+    showQuizSession(quizState.mode);
+
+    if (subMode === 'listen') showArticleListenQuestion();
+    else showArticleClozeQuestion();
+}
+
+// ── Article Listen & Choose ───────────────────────────────────
+
+function showArticleListenQuestion() {
+    if (quizState.currentIndex >= quizState.questions.length) {
+        showQuizResult(quizState.mode, quizState.correct,
+            quizState.questions.length, quizState.wrongItems);
+        return;
+    }
+
+    const q = quizState.questions[quizState.currentIndex];
+    updateProgress(quizState.currentIndex + 1, quizState.questions.length);
+
+    // Difficulty badge
+    const diffInfo = getDifficultyLabel(q.wordCount);
+    const badge = document.getElementById('article-diff-badge');
+    badge.textContent = diffInfo.label;
+    badge.style.background = diffInfo.color;
+
+    // Word count hint
+    document.getElementById('article-listen-hint').textContent =
+        `${q.wordCount} words`;
+
+    // Play button
+    const playBtn = document.getElementById('article-play-btn');
+    playBtn.classList.remove('is-playing-voice');
+    playBtn.onclick = () => playArticleAudio(q, playBtn);
+
+    // Auto-play first time
+    setTimeout(() => playArticleAudio(q, playBtn), 300);
+
+    // Build options: correct + 3 distractors from same pool
+    const allSentences = quizState.questions.map(q => q.sentence);
+    const extras = tsDataCache[q.title] || [];
+    const distPool = shuffle([
+        ...allSentences.filter(s => s !== q.sentence),
+        ...extras.filter(l => l.sentence && l.sentence.trim() !== q.sentence)
+                 .map(l => l.sentence.trim())
+    ]);
+    const distractors = distPool.slice(0, 3);
+    const options = shuffle([q.sentence, ...distractors]);
+
+    const optEl = document.getElementById('article-listen-options');
+    optEl.innerHTML = '';
+    document.getElementById('article-listen-feedback').textContent = '';
+    document.getElementById('article-listen-next').classList.add('is-hidden');
+
+    options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-option-btn quiz-option-sentence';
+        btn.textContent = opt;
+        btn.addEventListener('click', () => handleArticleListenAnswer(opt, q, btn));
+        optEl.appendChild(btn);
+    });
+}
+
+// Cache for timestamp data to avoid re-fetching
+const tsDataCache = {};
+
+async function getTimestampForStoryWithCache(title) {
+    if (tsDataCache[title]) return tsDataCache[title];
+    const data = await getTimestampForStory(title);
+    if (data) tsDataCache[title] = data;
+    return data;
+}
+
+let articleStopTimeout = null;
+
+function playArticleAudio(q, btn) {
+    if (articleStopTimeout) {
+        clearTimeout(articleStopTimeout);
+        articleStopTimeout = null;
+    }
+
+    btn.classList.add('is-playing-voice');
+    btn.querySelector('span').textContent = '⏸ Playing...';
+
+    const isMobile = isMobileDevice();
+    const bufStart = isMobile ? 0.3 : 0.1;
+    const bufEnd   = isMobile ? 0.4 : 0.05;
+
+    quizAudioPlayer.currentTime = Math.max(0, q.start - bufStart);
+
+    const stopHandler = function() {
+        if (quizAudioPlayer.currentTime >= q.end + bufEnd) {
+            quizAudioPlayer.pause();
+            quizAudioPlayer.removeEventListener('timeupdate', stopHandler);
+            btn.classList.remove('is-playing-voice');
+            btn.querySelector('span').textContent = '▶ Play Again';
+        }
+    };
+    quizAudioPlayer.addEventListener('timeupdate', stopHandler);
+
+    quizAudioPlayer.play().catch(() => {
+        quizAudioPlayer.removeEventListener('timeupdate', stopHandler);
+        btn.classList.remove('is-playing-voice');
+        btn.querySelector('span').textContent = '▶ Play Sentence';
+    });
+
+    const duration = (q.end - q.start + bufEnd) * 1000;
+    articleStopTimeout = setTimeout(() => {
+        quizAudioPlayer.removeEventListener('timeupdate', stopHandler);
+        if (!quizAudioPlayer.paused) quizAudioPlayer.pause();
+        btn.classList.remove('is-playing-voice');
+        btn.querySelector('span').textContent = '▶ Play Again';
+        articleStopTimeout = null;
+    }, duration + 300);
+}
+
+function handleArticleListenAnswer(selected, q, btn) {
+    document.querySelectorAll('#article-listen-options .quiz-option-btn').forEach(b => {
+        b.disabled = true;
+        if (b.textContent === q.sentence) b.classList.add('is-correct');
+    });
+
+    const isCorrect = selected === q.sentence;
+    const feedbackEl = document.getElementById('article-listen-feedback');
+
+    if (isCorrect) {
+        btn.classList.add('is-correct');
+        feedbackEl.textContent = '✓ Correct!';
+        feedbackEl.className = 'quiz-feedback correct';
+        quizState.correct++;
+    } else {
+        btn.classList.add('is-wrong');
+        feedbackEl.textContent = '✗ Wrong';
+        feedbackEl.className = 'quiz-feedback wrong';
+        quizState.wrong++;
+        quizState.wrongItems.push(q.sentence);
+    }
+
+    quizState.answeredQuestions.push({
+        type: 'sentence',
+        question: q.sentence,
+        selected,
+        correct: q.sentence,
+        isCorrect,
+        start: q.start,
+        end: q.end,
+        title: q.title
+    });
+
+    document.getElementById('article-listen-next').classList.remove('is-hidden');
+}
+
+document.getElementById('article-listen-next').addEventListener('click', () => {
+    quizState.currentIndex++;
+    showArticleListenQuestion();
+});
+
+// ── Article Fill in Blank ─────────────────────────────────────
+
+function showArticleClozeQuestion() {
+    if (quizState.currentIndex >= quizState.questions.length) {
+        showQuizResult(quizState.mode, quizState.correct,
+            quizState.questions.length, quizState.wrongItems);
+        return;
+    }
+
+    const q = quizState.questions[quizState.currentIndex];
+    updateProgress(quizState.currentIndex + 1, quizState.questions.length);
+
+    // Difficulty badge
+    const diffInfo = getDifficultyLabel(q.wordCount);
+    const badge = document.getElementById('article-cloze-diff-badge');
+    badge.textContent = diffInfo.label;
+    badge.style.background = diffInfo.color;
+
+    // Play button
+    const clozePlayBtn = document.getElementById('article-cloze-play-btn');
+    clozePlayBtn.classList.remove('is-playing-voice');
+    clozePlayBtn.querySelector('span').textContent = '▶ Listen to Sentence';
+    clozePlayBtn.onclick = () => playArticleAudio(q, clozePlayBtn);
+
+    // Pick a word to blank out from the sentence
+    // Prefer longer words (more meaningful)
+    const words = q.sentence.match(/\b[a-zA-Z]{4,}\b/g) || q.sentence.split(/\s+/);
+    const targetWord = words[Math.floor(Math.random() * words.length)];
+
+    // Build blanked sentence
+    const blanked = q.sentence.replace(
+        new RegExp(`\\b(${targetWord.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})\\b`, 'i'),
+        '<span class="cloze-blank">_____</span>'
+    );
+    document.getElementById('article-cloze-sentence').innerHTML = blanked;
+
+    // Distractors: other words from the pool
+    const allWords = quizState.questions
+        .flatMap(qi => (qi.sentence.match(/\b[a-zA-Z]{4,}\b/g) || []))
+        .filter(w => w.toLowerCase() !== targetWord.toLowerCase());
+    const distractors = shuffle([...new Set(allWords)]).slice(0, 3);
+    const options = shuffle([targetWord, ...distractors]);
+
+    const optEl = document.getElementById('article-cloze-options');
+    optEl.innerHTML = '';
+    document.getElementById('article-cloze-feedback').textContent = '';
+    document.getElementById('article-cloze-next').classList.add('is-hidden');
+
+    options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-option-btn';
+        btn.textContent = opt;
+        btn.addEventListener('click', () =>
+            handleArticleClozeAnswer(opt, targetWord, q, btn)
+        );
+        optEl.appendChild(btn);
+    });
+}
+
+function handleArticleClozeAnswer(selected, correct, q, btn) {
+    document.querySelectorAll('#article-cloze-options .quiz-option-btn').forEach(b => {
+        b.disabled = true;
+        if (b.textContent.toLowerCase() === correct.toLowerCase())
+            b.classList.add('is-correct');
+    });
+
+    const isCorrect = selected.toLowerCase() === correct.toLowerCase();
+    const feedbackEl = document.getElementById('article-cloze-feedback');
+
+    if (isCorrect) {
+        btn.classList.add('is-correct');
+        feedbackEl.textContent = '✓ Correct!';
+        feedbackEl.className = 'quiz-feedback correct';
+        quizState.correct++;
+    } else {
+        btn.classList.add('is-wrong');
+        feedbackEl.textContent = `✗ Answer: ${correct}`;
+        feedbackEl.className = 'quiz-feedback wrong';
+        quizState.wrong++;
+        quizState.wrongItems.push(correct);
+    }
+
+    quizState.answeredQuestions.push({
+        type: 'sentence',
+        question: q.sentence,
+        selected,
+        correct,
+        isCorrect,
+        start: q.start,
+        end: q.end,
+        title: q.title
+    });
+
+    document.getElementById('article-cloze-next').classList.remove('is-hidden');
+}
+
+document.getElementById('article-cloze-next').addEventListener('click', () => {
+    quizState.currentIndex++;
+    showArticleClozeQuestion();
+});
+
+// ── Article Retry Wrong ───────────────────────────────────────
+
+function startArticleRetryWrong() {
+    const wrongQs = quizState.answeredQuestions.filter(q => !q.isCorrect);
+    if (wrongQs.length === 0) return;
+
+    quizState.questions = shuffle(wrongQs.map(q => ({
+        sentence: q.correct,
+        start: q.start,
+        end: q.end,
+        title: q.title,
+        wordCount: q.correct.split(/\s+/).length,
+    })));
+    quizState.currentIndex   = 0;
+    quizState.correct        = 0;
+    quizState.wrong          = 0;
+    quizState.wrongItems     = [];
+    quizState.answeredQuestions = [];
+
+    showQuizSession(quizState.mode);
+    if (quizState.mode === 'article-listen') showArticleListenQuestion();
+    else showArticleClozeQuestion();
+}
+
+// ── Retry Wrong Only ──────────────────────────────────────────
+
+function startClozeRetryWrong() {
+    const wrongQs = quizState.answeredQuestions.filter(q => !q.isCorrect);
+    if (wrongQs.length === 0) return;
+
+    // Rebuild questions from wrong answers
+    const questions = wrongQs.map(q => ({
+        word: q.correct,
+        sentence: q.question
+    }));
+
+    quizState.questions   = shuffle(questions);
+    quizState.currentIndex = 0;
+    quizState.correct     = 0;
+    quizState.wrong       = 0;
+    quizState.wrongItems  = [];
+    quizState.answeredQuestions = [];
+
+    showQuizSession('cloze');
+    showClozeQuestion();
+}
+
+function startDictationRetryWrong() {
+    const wrongQs = quizState.answeredQuestions.filter(q => !q.isCorrect);
+    if (wrongQs.length === 0) return;
+
+    const questions = wrongQs.map(q => ({
+        sentence: q.correct,
+        start: q.start,
+        end: q.end,
+        title: q.title
+    }));
+
+    quizState.questions   = shuffle(questions);
+    quizState.currentIndex = 0;
+    quizState.correct     = 0;
+    quizState.wrong       = 0;
+    quizState.wrongItems  = [];
+    quizState.answeredQuestions = [];
+
+    showQuizSession('dictation');
+    showDictationQuestion();
+}
+
 async function loadQuizScoresFromFirestore() {
     if (typeof currentUser === 'undefined' || !currentUser) return;
     try {

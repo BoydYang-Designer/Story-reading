@@ -254,6 +254,34 @@
                 <div class="quiz-mode-name">Dictation</div>
                 <div class="quiz-mode-desc">Listen & choose</div>
             </div>
+            <div class="quiz-mode-card quiz-mode-card-wide" id="quiz-mode-article">
+                <div class="quiz-mode-icon">📖</div>
+                <div class="quiz-mode-name">Article Quiz</div>
+                <div class="quiz-mode-desc">No note needed · from Timestamp</div>
+            </div>
+        </div>
+
+        <!-- Article Quiz Sub-menu -->
+        <div id="article-quiz-submenu" class="is-hidden">
+            <div class="article-quiz-submenu-title">Article Quiz</div>
+
+            <!-- Sub-mode -->
+            <div class="article-quiz-row-label">Mode</div>
+            <div class="article-quiz-btn-row">
+                <button class="article-quiz-opt-btn is-active" data-submode="listen">🎧 Listen & Choose</button>
+                <button class="article-quiz-opt-btn" data-submode="cloze">✏️ Fill in Blank</button>
+            </div>
+
+            <!-- Difficulty -->
+            <div class="article-quiz-row-label">Difficulty</div>
+            <div class="article-quiz-btn-row">
+                <button class="article-quiz-opt-btn is-active" data-diff="mix">🎲 Mix</button>
+                <button class="article-quiz-opt-btn" data-diff="easy">🟢 Easy</button>
+                <button class="article-quiz-opt-btn" data-diff="medium">🟡 Medium</button>
+                <button class="article-quiz-opt-btn" data-diff="hard">🔴 Hard</button>
+            </div>
+
+            <button class="quiz-next-btn" id="article-quiz-start-btn">Start →</button>
         </div>
 
         <!-- Scope Selection -->
@@ -318,6 +346,34 @@
             <div class="quiz-feedback" id="dictation-feedback"></div>
             <button class="quiz-next-btn is-hidden" id="dictation-next">Next →</button>
         </div>
+
+        <!-- Article Quiz: Listen & Choose -->
+        <div id="quiz-article-listen-area" class="is-hidden">
+            <div class="quiz-card">
+                <div class="article-quiz-diff-badge" id="article-diff-badge"></div>
+                <button class="dictation-play-btn" id="article-play-btn">
+                    <span>▶ Play Sentence</span>
+                </button>
+                <div class="dictation-hint" id="article-listen-hint"></div>
+            </div>
+            <div class="quiz-options" id="article-listen-options"></div>
+            <div class="quiz-feedback" id="article-listen-feedback"></div>
+            <button class="quiz-next-btn is-hidden" id="article-listen-next">Next →</button>
+        </div>
+
+        <!-- Article Quiz: Fill in Blank -->
+        <div id="quiz-article-cloze-area" class="is-hidden">
+            <div class="quiz-card">
+                <div class="article-quiz-diff-badge" id="article-cloze-diff-badge"></div>
+                <div class="quiz-sentence" id="article-cloze-sentence"></div>
+                <button class="dictation-play-btn article-cloze-play-btn" id="article-cloze-play-btn">
+                    <span>▶ Listen to Sentence</span>
+                </button>
+            </div>
+            <div class="quiz-options" id="article-cloze-options"></div>
+            <div class="quiz-feedback" id="article-cloze-feedback"></div>
+            <button class="quiz-next-btn is-hidden" id="article-cloze-next">Next →</button>
+        </div>
     </div>
 
     <!-- Quiz Result -->
@@ -326,11 +382,26 @@
             <div class="quiz-result-emoji" id="quiz-result-emoji">🎉</div>
             <div class="quiz-result-number" id="quiz-result-number"></div>
             <div class="quiz-result-label">correct</div>
+            <div class="quiz-result-progress-wrap">
+                <div class="quiz-result-progress-fill" id="quiz-result-progress-fill"></div>
+            </div>
+            <div class="quiz-result-compare" id="quiz-result-compare"></div>
         </div>
+
+        <!-- Review List -->
         <div id="quiz-result-review" class="quiz-result-review"></div>
+
+        <!-- Add wrong to Note -->
+        <div id="quiz-add-to-note-bar" class="quiz-add-to-note-bar is-hidden">
+            <span id="quiz-wrong-count-label"></span>
+            <button class="quiz-add-note-btn" id="quiz-add-wrong-to-note-btn">+ Add to Note</button>
+        </div>
+
+        <!-- Actions -->
         <div class="quiz-result-actions">
             <button class="quiz-btn quiz-btn-correct" id="quiz-retry-btn">Try Again</button>
-            <button class="secondary quiz-btn" id="quiz-back-btn">Back to Note</button>
+            <button class="quiz-btn quiz-btn-wrong" id="quiz-retry-wrong-btn">✗ Retry Wrong</button>
+            <button class="secondary quiz-btn" id="quiz-back-btn">← Menu</button>
         </div>
     </div>
 </div>
