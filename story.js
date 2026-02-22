@@ -799,7 +799,12 @@ async function playSentenceSnippet(sentenceText, storyTitle) {
     const audioSrc = `audio/${encodeURIComponent(storyTitle.trim())}.mp3`;
 
     noteAudioPlayer.src = audioSrc;
-    noteAudioPlayer.currentTime = start;
+
+    // 使用 setAudioTimeAccurate 補償手機定位誤差（手機 -0.3s，PC -0.1s）
+    const isMobile = isMobileDevice();
+    const bufferTime = isMobile ? 0.3 : 0.1;
+    const adjustedStart = Math.max(0, start - bufferTime);
+    noteAudioPlayer.currentTime = adjustedStart;
     
     // Use timeupdate event for more precise playback control
     const timeUpdateHandler = function() {
