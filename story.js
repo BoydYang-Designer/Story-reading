@@ -815,12 +815,13 @@ async function playSentenceSnippet(sentenceText, storyTitle) {
     const isMobile = isMobileDevice();
     const bufferTime = isMobile ? 0.3 : 0.1;
     const adjustedStart = Math.max(0, start - bufferTime);
+    // 結束點：手機 timeupdate 頻率低（~500ms），需要延後停止避免截斷句尾
+    const stopBuffer = isMobile ? 0.4 : 0.05;
     noteAudioPlayer.currentTime = adjustedStart;
     
     // Use timeupdate event for more precise playback control
     const timeUpdateHandler = function() {
-        // Add a small buffer (0.05 seconds) to ensure we don't cut off early
-        if (noteAudioPlayer.currentTime >= end - 0.05) {
+        if (noteAudioPlayer.currentTime >= end + stopBuffer) {
             noteAudioPlayer.pause();
             noteAudioPlayer.removeEventListener('timeupdate', timeUpdateHandler);
             noteAudioPlayer._snippetTimeUpdateHandler = null;
@@ -837,7 +838,8 @@ async function playSentenceSnippet(sentenceText, storyTitle) {
         noteAudioPlayer._snippetTimeUpdateHandler = null;
     });
 
-    // Set a backup timeout in case timeupdate doesn't fire
+    // backup timeout：以實際結束點 + stopBuffer 為基準計算
+    const actualDuration = (end + stopBuffer - adjustedStart) * 1000;
     currentSnippetTimeout = setTimeout(() => {
         if (!noteAudioPlayer.paused) {
             noteAudioPlayer.pause();
@@ -847,7 +849,7 @@ async function playSentenceSnippet(sentenceText, storyTitle) {
             noteAudioPlayer._snippetTimeUpdateHandler = null;
         }
         currentSnippetTimeout = null;
-    }, duration + 200); // Add 200ms buffer for the backup timeout
+    }, actualDuration + 300);
 }
 
 
