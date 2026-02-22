@@ -286,8 +286,9 @@ function createListItemWithImage(text, onClick, fallbackText = null) {
 
 function showView(view) {
     const customArticlesView = document.getElementById('custom-articles-view');
+    const quizView = document.getElementById('quiz-view');
     // 加入 subCategoryView 和 dataManagerView 到隱藏列表
-    [loginView, appContainer, homeView, subCategoryView, categoryView, playbackView, noteView, dataManagerView, customArticlesView].forEach(el => {
+    [loginView, appContainer, homeView, subCategoryView, categoryView, playbackView, noteView, dataManagerView, customArticlesView, quizView].forEach(el => {
         if(el) el.classList.add('is-hidden');
     });
     
@@ -878,7 +879,9 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
     prevNoteBtn.hidden = true; 
     prevNoteBtn.onclick = null; 
     nextNoteBtn.hidden = true; 
-    nextNoteBtn.onclick = null; 
+    nextNoteBtn.onclick = null;
+    const goToQuizBtn = document.getElementById('go-to-quiz-btn');
+    if (goToQuizBtn) goToQuizBtn.hidden = true;
     
     backToStoryFromNoteBtn.classList.remove('is-highlighted');
     backToHomeFromNoteBtn.classList.remove('is-highlighted');
@@ -991,6 +994,7 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
         }
 
         backToStoryFromNoteBtn.hidden = false;
+        if (goToQuizBtn) goToQuizBtn.hidden = false;
 
         if (currentNoteOrigin === 'story') {
             backToStoryFromNoteBtn.classList.add('is-highlighted');

@@ -197,6 +197,15 @@
             Previous
         </button>
         
+        <button class="secondary note-nav-btn" id="go-to-quiz-btn" hidden>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            Quiz
+        </button>
+
         <button class="secondary note-nav-btn" id="back-to-story-from-note-btn" hidden>
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
@@ -211,6 +220,118 @@
                 <polyline points="9 18 15 12 9 6"></polyline>
             </svg>
         </button>
+    </div>
+</div>
+
+<!-- ===== QUIZ VIEW ===== -->
+<div id="quiz-view" class="is-hidden">
+    <div class="view-top-nav">
+        <button class="secondary btn-back-top" id="back-to-note-from-quiz">← Back</button>
+    </div>
+
+    <!-- Quiz Menu -->
+    <div id="quiz-menu">
+        <h1 id="quiz-title">Quiz</h1>
+        <p id="quiz-subtitle" class="quiz-subtitle"></p>
+
+        <!-- Stats -->
+        <div id="quiz-stats-bar" class="quiz-stats-bar"></div>
+
+        <!-- Mode Selection -->
+        <div class="quiz-mode-grid">
+            <div class="quiz-mode-card" id="quiz-mode-flashcard">
+                <div class="quiz-mode-icon">🃏</div>
+                <div class="quiz-mode-name">Flashcard</div>
+                <div class="quiz-mode-desc">Words & Phrases</div>
+            </div>
+            <div class="quiz-mode-card" id="quiz-mode-cloze">
+                <div class="quiz-mode-icon">✏️</div>
+                <div class="quiz-mode-name">Fill in Blank</div>
+                <div class="quiz-mode-desc">From article context</div>
+            </div>
+            <div class="quiz-mode-card" id="quiz-mode-dictation">
+                <div class="quiz-mode-icon">🎧</div>
+                <div class="quiz-mode-name">Dictation</div>
+                <div class="quiz-mode-desc">Listen & choose</div>
+            </div>
+        </div>
+
+        <!-- Scope Selection -->
+        <div class="quiz-scope-row">
+            <button class="quiz-scope-btn is-active" id="quiz-scope-this">This Article</button>
+            <button class="quiz-scope-btn" id="quiz-scope-all">All Notes</button>
+        </div>
+    </div>
+
+    <!-- Quiz Session -->
+    <div id="quiz-session" class="is-hidden">
+
+        <!-- Progress -->
+        <div class="quiz-progress-row">
+            <span id="quiz-progress-text">1 / 10</span>
+            <div class="quiz-progress-bar-wrap">
+                <div class="quiz-progress-bar-fill" id="quiz-progress-fill"></div>
+            </div>
+            <button class="secondary btn-back-top" id="quiz-exit-btn">Exit</button>
+        </div>
+
+        <!-- Flashcard Mode -->
+        <div id="quiz-flashcard-area" class="is-hidden">
+            <div class="flashcard-wrap">
+                <div class="flashcard" id="flashcard">
+                    <div class="flashcard-front">
+                        <div class="flashcard-word" id="flashcard-word"></div>
+                        <button class="flashcard-audio-btn" id="flashcard-audio-btn">▶</button>
+                        <div class="flashcard-hint">Tap card to flip</div>
+                    </div>
+                    <div class="flashcard-back">
+                        <div class="flashcard-context" id="flashcard-context"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="flashcard-actions">
+                <button class="quiz-btn quiz-btn-wrong" id="flashcard-wrong">✗ Again</button>
+                <button class="quiz-btn quiz-btn-correct" id="flashcard-correct">✓ Got it</button>
+            </div>
+        </div>
+
+        <!-- Cloze Mode -->
+        <div id="quiz-cloze-area" class="is-hidden">
+            <div class="quiz-card">
+                <div class="quiz-sentence" id="cloze-sentence"></div>
+            </div>
+            <div class="quiz-options" id="cloze-options"></div>
+            <div class="quiz-feedback" id="cloze-feedback"></div>
+            <button class="quiz-next-btn is-hidden" id="cloze-next">Next →</button>
+        </div>
+
+        <!-- Dictation Mode -->
+        <div id="quiz-dictation-area" class="is-hidden">
+            <div class="quiz-card">
+                <button class="dictation-play-btn" id="dictation-play-btn">
+                    <span class="dictation-play-icon">▶</span>
+                    <span>Play Sentence</span>
+                </button>
+                <div class="dictation-hint" id="dictation-hint"></div>
+            </div>
+            <div class="quiz-options" id="dictation-options"></div>
+            <div class="quiz-feedback" id="dictation-feedback"></div>
+            <button class="quiz-next-btn is-hidden" id="dictation-next">Next →</button>
+        </div>
+    </div>
+
+    <!-- Quiz Result -->
+    <div id="quiz-result" class="is-hidden">
+        <div class="quiz-result-score">
+            <div class="quiz-result-emoji" id="quiz-result-emoji">🎉</div>
+            <div class="quiz-result-number" id="quiz-result-number"></div>
+            <div class="quiz-result-label">correct</div>
+        </div>
+        <div id="quiz-result-review" class="quiz-result-review"></div>
+        <div class="quiz-result-actions">
+            <button class="quiz-btn quiz-btn-correct" id="quiz-retry-btn">Try Again</button>
+            <button class="secondary quiz-btn" id="quiz-back-btn">Back to Note</button>
+        </div>
     </div>
 </div>
 
@@ -358,6 +479,7 @@
   </script>
 
   <script src="story.js"></script>
+  <script src="quiz.js"></script>
   <script src="data-manager.js"></script>
 </body>
 </html>
