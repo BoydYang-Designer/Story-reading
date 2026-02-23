@@ -1,0 +1,23 @@
+pip install pdfplumber google-generativeai -C槽一次裝好
+
+改裝D槽
+
+第一步.開啟 cmd，輸入：
+
+python -m venv D:\my_venv
+
+等它跑完（約10-30秒），沒有錯誤訊息就成功了。
+----------------------------------------------
+第二步：啟動虛擬環境
+
+D:\my_venv\Scripts\activate
+
+成功後命令列前面會變成：
+(my_venv) C:\Users\id02.GD-ROADMATE>
+--------------------------------------------------
+第三步：安裝套件
+
+pip install pdfplumber google-generativeai
+
+這次套件會裝到 D:\my_venv 裡，不碰 C 槽。
+------------------------------------------------
