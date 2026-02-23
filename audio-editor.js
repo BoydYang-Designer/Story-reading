@@ -331,6 +331,43 @@ function openAudioEditorManager() {
     showView(document.getElementById('audio-editor-manager-view'));
 }
 
+/**
+ * 從 stories（官方）或 loadCustomArticles()（自訂）查找某 title 的大類和子類。
+ * 都找不到才歸入「其他 → 其他」。
+ * @returns {{ major: string, sub: string }}
+ */
+function _getStoryCategory(title) {
+    const normalised = title.trim().toLowerCase();
+
+    // 1. 先查官方 stories
+    if (typeof stories !== 'undefined' && Array.isArray(stories)) {
+        const story = stories.find(s =>
+            (s['標題'] || '').trim().toLowerCase() === normalised
+        );
+        if (story) {
+            const major = story['大類'] || '其他';
+            const sub   = (Array.isArray(story['分類']) ? story['分類'][0] : story['分類']) || '其他';
+            return { major, sub };
+        }
+    }
+
+    // 2. 再查自訂文章（有 major / category 欄位）
+    if (typeof loadCustomArticles === 'function') {
+        const custom = loadCustomArticles().find(a =>
+            (a.title || '').trim().toLowerCase() === normalised ||
+            (a.slug  || '').trim().toLowerCase() === normalised
+        );
+        if (custom) {
+            const major = custom.major    || '其他';
+            const sub   = custom.category || '其他';
+            return { major, sub };
+        }
+    }
+
+    // 3. 完全無法對應
+    return { major: '其他', sub: '其他' };
+}
+
 function renderAudioEditorManager() {
     const listEl = document.getElementById('audio-editor-manager-list');
     if (!listEl) return;
@@ -348,52 +385,128 @@ function renderAudioEditorManager() {
     allTitles.forEach(t => { totalCount += Object.keys(adj[t]).length; });
     document.getElementById('aem-total-count').textContent = `共 ${totalCount} 筆調整`;
 
+    // ── 建立 大類 → 子類 → [title] 的巢狀結構 ──────────────────
+    // grouped = { major: { sub: [title, ...] } }
+    const grouped = {};
+    allTitles.forEach(title => {
+        const { major, sub } = _getStoryCategory(title);
+        if (!grouped[major]) grouped[major] = {};
+        if (!grouped[major][sub]) grouped[major][sub] = [];
+        grouped[major][sub].push(title);
+    });
+
+    // 大類排序：「其他」永遠最後
+    const majorKeys = Object.keys(grouped).sort((a, b) => {
+        if (a === '其他') return 1;
+        if (b === '其他') return -1;
+        return a.localeCompare(b);
+    });
+
+    // ── 產生 HTML ──────────────────────────────────────────────
     let html = '';
-    allTitles.sort().forEach(title => {
-        const sentences = Object.keys(adj[title]);
-        html += `<div class="aem-article-group">
-            <div class="aem-article-title">${title}
-                <span class="aem-count-badge">${sentences.length}</span>
-            </div>`;
 
-        sentences.forEach(sentence => {
-            const entry = adj[title][sentence];
-            const startDiff = (entry.start - entry.originalStart).toFixed(1);
-            const endDiff   = (entry.end   - entry.originalEnd  ).toFixed(1);
-            const startSign = startDiff >= 0 ? '+' : '';
-            const endSign   = endDiff   >= 0 ? '+' : '';
-            const shortSent = sentence.length > 55 ? sentence.substring(0, 55) + '…' : sentence;
+    majorKeys.forEach(major => {
+        // 計算此大類下的總筆數
+        let majorCount = 0;
+        Object.values(grouped[major]).forEach(titles =>
+            titles.forEach(t => { majorCount += Object.keys(adj[t]).length; })
+        );
 
-            html += `<div class="aem-row" data-title="${escapeAttr(title)}" data-sentence="${escapeAttr(sentence)}">
-                <div class="aem-row-sentence" title="${escapeAttr(sentence)}">${shortSent}</div>
-                <div class="aem-row-meta">
-                    <span class="aem-timing">
-                        START ${startSign}${startDiff}s &nbsp;|&nbsp; END ${endSign}${endDiff}s
-                    </span>
-                    <span class="aem-date">${entry.updatedAt || ''}</span>
-                </div>
-                <div class="aem-row-actions">
-                    <button class="aem-edit-btn secondary">✏️ 重新編輯</button>
-                    <button class="aem-delete-btn secondary">🗑 刪除</button>
-                </div>
-            </div>`;
+        html += `
+        <div class="aem-major-group" data-major="${escapeAttr(major)}">
+            <div class="aem-major-header aem-collapsible is-expanded">
+                <span class="aem-collapse-arrow">▾</span>
+                <span class="aem-major-label">${major}</span>
+                <span class="aem-count-badge">${majorCount}</span>
+            </div>
+            <div class="aem-major-body">`;
+
+        const subKeys = Object.keys(grouped[major]).sort((a, b) => {
+            if (a === '其他') return 1;
+            if (b === '其他') return -1;
+            return a.localeCompare(b);
         });
 
-        html += `</div>`;
+        subKeys.forEach(sub => {
+            const titlesInSub = grouped[major][sub].sort();
+            let subCount = 0;
+            titlesInSub.forEach(t => { subCount += Object.keys(adj[t]).length; });
+
+            html += `
+            <div class="aem-sub-group" data-sub="${escapeAttr(sub)}">
+                <div class="aem-sub-header aem-collapsible is-expanded">
+                    <span class="aem-collapse-arrow">▾</span>
+                    <span class="aem-sub-label">${sub}</span>
+                    <span class="aem-count-badge aem-count-badge--sub">${subCount}</span>
+                </div>
+                <div class="aem-sub-body">`;
+
+            titlesInSub.forEach(title => {
+                const sentences = Object.keys(adj[title]);
+                html += `
+                <div class="aem-article-group">
+                    <div class="aem-article-title aem-collapsible is-expanded">
+                        <span class="aem-collapse-arrow">▾</span>
+                        ${title}
+                        <span class="aem-count-badge">${sentences.length}</span>
+                    </div>
+                    <div class="aem-article-body">`;
+
+                sentences.forEach(sentence => {
+                    const entry = adj[title][sentence];
+                    const startDiff = (entry.start - entry.originalStart).toFixed(1);
+                    const endDiff   = (entry.end   - entry.originalEnd  ).toFixed(1);
+                    const startSign = startDiff >= 0 ? '+' : '';
+                    const endSign   = endDiff   >= 0 ? '+' : '';
+                    const shortSent = sentence.length > 55 ? sentence.substring(0, 55) + '…' : sentence;
+
+                    html += `<div class="aem-row" data-title="${escapeAttr(title)}" data-sentence="${escapeAttr(sentence)}">
+                        <div class="aem-row-sentence" title="${escapeAttr(sentence)}">${shortSent}</div>
+                        <div class="aem-row-meta">
+                            <span class="aem-timing">
+                                START ${startSign}${startDiff}s &nbsp;|&nbsp; END ${endSign}${endDiff}s
+                            </span>
+                            <span class="aem-date">${entry.updatedAt || ''}</span>
+                        </div>
+                        <div class="aem-row-actions">
+                            <button class="aem-edit-btn secondary">✏️ 重新編輯</button>
+                            <button class="aem-delete-btn secondary">🗑 刪除</button>
+                        </div>
+                    </div>`;
+                });
+
+                html += `</div></div>`; // .aem-article-body / .aem-article-group
+            });
+
+            html += `</div></div>`; // .aem-sub-body / .aem-sub-group
+        });
+
+        html += `</div></div>`; // .aem-major-body / .aem-major-group
     });
 
     listEl.innerHTML = html;
 
-    // 綁定按鈕事件
+    // ── 折疊/展開事件 ──────────────────────────────────────────
+    listEl.querySelectorAll('.aem-collapsible').forEach(header => {
+        header.addEventListener('click', (e) => {
+            // 若點擊來源是內部按鈕（edit/delete），不觸發折疊
+            if (e.target.closest('button')) return;
+            const isExpanded = header.classList.toggle('is-expanded');
+            const body = header.nextElementSibling;
+            if (body) body.classList.toggle('is-collapsed', !isExpanded);
+        });
+    });
+
+    // ── 綁定 Edit / Delete 事件 ────────────────────────────────
     listEl.querySelectorAll('.aem-edit-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
             const row      = btn.closest('.aem-row');
             const title    = row.dataset.title;
             const sentence = row.dataset.sentence;
             const entry    = adj[title][sentence];
             const audioSrc = `audio/${encodeURIComponent(title.trim())}.mp3`;
 
-            // 先回到首頁（讓 manager view 關閉），再開啟彈窗
             openAudioEditor({
                 title,
                 sentence,
@@ -401,16 +514,14 @@ function renderAudioEditorManager() {
                 end:      entry.originalEnd,
                 audioSrc,
                 player:   new Audio(audioSrc),
-                onSave:   () => {
-                    // 存完後重新渲染 manager
-                    renderAudioEditorManager();
-                }
+                onSave:   () => { renderAudioEditorManager(); }
             });
         });
     });
 
     listEl.querySelectorAll('.aem-delete-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
             const row      = btn.closest('.aem-row');
             const title    = row.dataset.title;
             const sentence = row.dataset.sentence;

@@ -800,7 +800,11 @@ async function playSentenceSnippet(sentenceText, storyTitle) {
         return;
     }
 
-    const { start, end } = match;
+    // 套用已調整的時間（若有 audioAdjustments 記錄則使用，否則用原始值）
+    const adjusted = (typeof getNoteAdjustedTiming === 'function')
+        ? getNoteAdjustedTiming(storyTitle, sentenceText, match.start, match.end)
+        : { start: match.start, end: match.end };
+    const { start, end } = adjusted;
     const duration = (end - start) * 1000;
 
     // Check for invalid duration
@@ -1088,6 +1092,45 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
                 }
             });
             actions.appendChild(voiceBtn);
+
+            // 1b. Audio Edit Button (only for sentences)
+            if (type === 'sentences') {
+                // 非同步建立：先佔位，timestamp 載入後填入真正的 start/end
+                const audioEditBtnPlaceholder = document.createElement('button');
+                audioEditBtnPlaceholder.className = 'audio-edit-inline-btn';
+                audioEditBtnPlaceholder.title = '調整音檔時間';
+                audioEditBtnPlaceholder.innerHTML = '✏️';
+                actions.appendChild(audioEditBtnPlaceholder);
+
+                // 非同步取得 timestamp，再更新按鈕
+                getTimestampForStory(noteViewTitle).then(tsData => {
+                    if (!tsData) return;
+                    const normalize = (t) => t.trim().replace(/[.,?!'"`""'']/g, '').toLowerCase();
+                    const match = tsData.find(line => normalize(line.sentence) === normalize(itemText));
+                    if (!match) return;
+
+                    const audioSrc = `audio/${encodeURIComponent(noteViewTitle.trim())}.mp3`;
+                    // 用 createAudioEditBtn 替換佔位按鈕
+                    const realBtn = createAudioEditBtn({
+                        title:    noteViewTitle,
+                        sentence: itemText,
+                        start:    match.start,
+                        end:      match.end,
+                        audioSrc,
+                        player:   noteAudioPlayer,
+                        onSave:   (newStart, newEnd) => {
+                            // 更新按鈕狀態（is-adjusted）
+                            realBtn.innerHTML = '✏️✓';
+                            realBtn.classList.add('is-adjusted');
+                            realBtn.title = '已調整（點擊再編輯）';
+                        }
+                    });
+                    audioEditBtnPlaceholder.replaceWith(realBtn);
+                }).catch(() => {
+                    // timestamp 不可用，靜默移除佔位按鈕
+                    audioEditBtnPlaceholder.remove();
+                });
+            }
 
             // 2. Word Button (only for words/phrases)
             if (type === 'words' || type === 'phrases') {
