@@ -293,8 +293,9 @@ function showView(view) {
     const customArticlesView = document.getElementById('custom-articles-view');
     const quizView = document.getElementById('quiz-view');
     const scoresDashboardView = document.getElementById('scores-dashboard-view');
+    const audioEditorManagerView = document.getElementById('audio-editor-manager-view');
     // 加入 subCategoryView 和 dataManagerView 到隱藏列表
-    [loginView, appContainer, homeView, subCategoryView, categoryView, playbackView, noteView, dataManagerView, customArticlesView, quizView, scoresDashboardView].forEach(el => {
+    [loginView, appContainer, homeView, subCategoryView, categoryView, playbackView, noteView, dataManagerView, customArticlesView, quizView, scoresDashboardView, audioEditorManagerView].forEach(el => {
         if(el) el.classList.add('is-hidden');
     });
     
@@ -1289,6 +1290,18 @@ if (goToScoresBtn) {
 const backToHomeFromScoresBtn = document.getElementById('back-to-home-from-scores');
 if (backToHomeFromScoresBtn) {
     backToHomeFromScoresBtn.addEventListener('click', () => showView(homeView));
+}
+
+// 音檔時間編輯器：首頁入口 & Back 按鈕
+const goToAudioEditorHomeBtn = document.getElementById('go-to-audio-editor');
+if (goToAudioEditorHomeBtn) {
+    goToAudioEditorHomeBtn.addEventListener('click', () => {
+        if (typeof openAudioEditorManager === 'function') openAudioEditorManager();
+    });
+}
+const backFromAudioEditorBtn = document.getElementById('back-from-audio-editor-manager');
+if (backFromAudioEditorBtn) {
+    backFromAudioEditorBtn.addEventListener('click', () => showView(homeView));
 }
 
 addManualWordBtn.addEventListener('click', () => {

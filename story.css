@@ -3488,3 +3488,307 @@ textarea:focus-visible {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
+/* ============================================================
+   AUDIO EDITOR 
+   ============================================================ */
+
+/* ── 首頁入口按鈕 ─────────────────────────────────────────── */
+.audio-editor-entry {
+  color: var(--color-text);
+  gap: 10px;
+}
+
+/* ── Modal 覆蓋層 ─────────────────────────────────────────── */
+.audio-editor-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+}
+
+.audio-editor-box {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-width: 420px;
+  padding: 20px 22px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ── Header ─────────────────────────────────────────────── */
+.audio-editor-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.audio-editor-icon { font-size: 1.2em; }
+.audio-editor-title {
+  font-weight: 600;
+  font-size: 1em;
+  flex: 1;
+  color: var(--color-text);
+}
+.audio-editor-close-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1em;
+  color: var(--color-text-light);
+  padding: 2px 6px;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+.audio-editor-close-btn:hover { background: var(--color-accent-light); }
+
+/* ── 句子預覽 ────────────────────────────────────────────── */
+.audio-editor-sentence {
+  font-size: 0.88em;
+  color: var(--color-text-light);
+  background: var(--color-accent-subtle);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  line-height: 1.5;
+  font-style: italic;
+}
+
+/* ── 調整 Row ────────────────────────────────────────────── */
+.audio-editor-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.audio-editor-label {
+  font-size: 0.78em;
+  font-weight: 700;
+  color: var(--color-text-light);
+  letter-spacing: 0.05em;
+  width: 42px;
+  flex-shrink: 0;
+}
+.audio-editor-value {
+  font-size: 1em;
+  font-weight: 700;
+  color: var(--color-text);
+  min-width: 46px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+/* 微調按鈕 */
+.audio-adj-btn {
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  font-size: 0.78em;
+  font-weight: 600;
+  padding: 5px 7px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  flex-shrink: 0;
+}
+.audio-adj-btn:hover {
+  background: var(--color-accent-light);
+  border-color: var(--color-accent);
+}
+.audio-adj-btn:active {
+  transform: scale(0.95);
+}
+
+/* ── Duration 顯示 ───────────────────────────────────────── */
+.audio-editor-duration {
+  font-size: 0.82em;
+  color: var(--color-text-light);
+  text-align: center;
+  transition: color 0.2s;
+}
+
+/* ── 中間操作列 ──────────────────────────────────────────── */
+.audio-editor-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+.audio-editor-preview-btn {
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 9px 20px;
+  font-size: 0.92em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, opacity 0.15s;
+}
+.audio-editor-preview-btn:hover { background: var(--color-primary-dark); }
+.audio-editor-preview-btn:disabled { opacity: 0.5; cursor: default; }
+
+.audio-editor-reset-btn {
+  background: none;
+  border: 1.5px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  padding: 9px 14px;
+  font-size: 0.88em;
+  color: var(--color-text-light);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.audio-editor-reset-btn:hover { background: var(--color-accent-subtle); }
+
+/* ── Footer ─────────────────────────────────────────────── */
+.audio-editor-footer {
+  display: flex;
+  gap: 10px;
+  padding-top: 4px;
+  border-top: 1px solid var(--color-border);
+}
+.audio-editor-footer .secondary {
+  flex: 1;
+}
+.audio-editor-save-btn {
+  flex: 2;
+  background: var(--color-accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 10px 0;
+  font-size: 0.95em;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.audio-editor-save-btn:hover { background: #b8905f; }
+
+/* ── 行內 ✏️ 按鈕（Quiz/Note 播放旁） ───────────────────── */
+.audio-edit-inline-btn {
+  background: none;
+  border: 1.5px solid var(--color-border);
+  border-radius: 6px;
+  padding: 3px 7px;
+  font-size: 0.8em;
+  color: var(--color-text-light);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  flex-shrink: 0;
+  line-height: 1.2;
+}
+.audio-edit-inline-btn:hover {
+  background: var(--color-accent-light);
+  border-color: var(--color-accent);
+  color: var(--color-primary);
+}
+/* 已調整過的狀態 */
+.audio-edit-inline-btn.is-adjusted {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  background: var(--color-accent-subtle);
+}
+
+/* ── 總編輯器 View ───────────────────────────────────────── */
+#audio-editor-manager-view h1 {
+  margin-bottom: 2px;
+}
+.aem-subtitle {
+  color: var(--color-text-light);
+  font-size: 0.9em;
+  margin: 0 0 16px;
+}
+.aem-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.aem-empty {
+  text-align: center;
+  color: var(--color-text-light);
+  padding: 40px 20px;
+  line-height: 1.7;
+  font-size: 0.95em;
+}
+
+.aem-article-group {
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  overflow: hidden;
+}
+.aem-article-title {
+  background: var(--color-accent-subtle);
+  padding: 10px 16px;
+  font-weight: 700;
+  font-size: 0.9em;
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid var(--color-border);
+}
+.aem-count-badge {
+  background: var(--color-accent);
+  color: #fff;
+  border-radius: 20px;
+  padding: 1px 8px;
+  font-size: 0.78em;
+  font-weight: 600;
+}
+
+.aem-row {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.aem-row:last-child { border-bottom: none; }
+
+.aem-row-sentence {
+  font-size: 0.9em;
+  color: var(--color-text);
+  line-height: 1.4;
+}
+.aem-row-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.aem-timing {
+  font-size: 0.82em;
+  font-weight: 600;
+  color: var(--color-accent);
+  background: var(--color-accent-subtle);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+.aem-date {
+  font-size: 0.78em;
+  color: var(--color-text-light);
+}
+.aem-row-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 2px;
+}
+.aem-edit-btn, .aem-delete-btn {
+  font-size: 0.82em;
+  padding: 5px 12px;
+}
+.aem-delete-btn {
+  color: #e05c5c;
+  border-color: #f0c8c8;
+}
+.aem-delete-btn:hover {
+  background: #fff0f0;
+  border-color: #e05c5c;
+}
+/* ============================================================
+   AUDIO EDITOR —  尾端
+   ============================================================ */

@@ -1,0 +1,487 @@
+// ============================================================
+//  AUDIO EDITOR — audio-editor.js
+//  音檔時間軸微調系統
+//  - 編輯彈窗：±0.1s / ±0.5s 微調 start/end + 試聽
+//  - 資料層：独立 adjustments 表（localStorage + Firebase）
+//  - 總編輯器：首頁入口，管理所有調整記錄
+//  - 整合點：Quiz 各題播放按鈕旁 ✏️、Note 句子播放旁 ✏️
+// ============================================================
+
+const AUDIO_ADJ_KEY = 'audioAdjustments';
+
+// ── 資料層 ────────────────────────────────────────────────────
+
+function loadAudioAdjustments() {
+    try {
+        return JSON.parse(localStorage.getItem(AUDIO_ADJ_KEY) || '{}');
+    } catch (e) { return {}; }
+}
+
+function saveAudioAdjustments(data) {
+    localStorage.setItem(AUDIO_ADJ_KEY, JSON.stringify(data));
+    // 同步 Firebase
+    if (typeof currentUser !== 'undefined' && currentUser) {
+        db.collection('userNotes').doc(currentUser.uid)
+          .set({ audioAdjustments: data }, { merge: true })
+          .catch(err => console.error('[AudioEditor] Firebase save error:', err));
+    }
+}
+
+/**
+ * 取得某句子的調整後時間，若無調整則回傳原始值
+ * @param {string} title  文章標題
+ * @param {string} sentence  句子文字
+ * @param {number} originalStart
+ * @param {number} originalEnd
+ * @returns {{ start: number, end: number, isAdjusted: boolean }}
+ */
+function getAdjustedTiming(title, sentence, originalStart, originalEnd) {
+    const adj = loadAudioAdjustments();
+    const entry = adj[title]?.[sentence];
+    if (entry) {
+        return { start: entry.start, end: entry.end, isAdjusted: true };
+    }
+    return { start: originalStart, end: originalEnd, isAdjusted: false };
+}
+
+/**
+ * 儲存一筆調整記錄
+ */
+function setAudioAdjustment(title, sentence, newStart, newEnd, originalStart, originalEnd) {
+    const adj = loadAudioAdjustments();
+    if (!adj[title]) adj[title] = {};
+    adj[title][sentence] = {
+        start: Math.round(newStart * 10) / 10,
+        end:   Math.round(newEnd   * 10) / 10,
+        originalStart,
+        originalEnd,
+        updatedAt: new Date().toLocaleDateString()
+    };
+    saveAudioAdjustments(adj);
+}
+
+/**
+ * 刪除調整記錄（恢復原始 timestamp）
+ */
+function deleteAudioAdjustment(title, sentence) {
+    const adj = loadAudioAdjustments();
+    if (adj[title]) {
+        delete adj[title][sentence];
+        if (Object.keys(adj[title]).length === 0) delete adj[title];
+    }
+    saveAudioAdjustments(adj);
+}
+
+// 從 Firestore 載入（登入後呼叫）
+async function loadAudioAdjustmentsFromFirestore() {
+    if (typeof currentUser === 'undefined' || !currentUser) return;
+    try {
+        const doc = await db.collection('userNotes').doc(currentUser.uid).get();
+        if (doc.exists && doc.data().audioAdjustments) {
+            localStorage.setItem(AUDIO_ADJ_KEY, JSON.stringify(doc.data().audioAdjustments));
+        }
+    } catch (e) {
+        console.error('[AudioEditor] Firestore load error:', e);
+    }
+}
+
+// ── 編輯彈窗 ──────────────────────────────────────────────────
+
+let _editorState = {
+    title: null,
+    sentence: null,
+    start: 0,
+    end: 0,
+    originalStart: 0,
+    originalEnd: 0,
+    audioSrc: null,
+    onSave: null,       // callback(newStart, newEnd)
+    player: null,       // Audio 物件
+};
+
+let _editorSnippetTimer = null;
+
+/**
+ * 開啟音檔編輯器彈窗
+ * @param {object} opts
+ *   title        文章標題
+ *   sentence     句子文字
+ *   start        原始 start（秒）
+ *   end          原始 end（秒）
+ *   audioSrc     mp3 路徑
+ *   player       Audio 物件（可複用 quizAudioPlayer / noteAudioPlayer）
+ *   onSave       存檔後 callback(newStart, newEnd)
+ */
+function openAudioEditor({ title, sentence, start, end, audioSrc, player, onSave }) {
+    // 取得已有調整（如果有的話，以調整值為基礎）
+    const adj = loadAudioAdjustments();
+    const existing = adj[title]?.[sentence];
+
+    _editorState = {
+        title,
+        sentence,
+        start:         existing ? existing.start         : start,
+        end:           existing ? existing.end           : end,
+        originalStart: existing ? existing.originalStart : start,
+        originalEnd:   existing ? existing.originalEnd   : end,
+        audioSrc,
+        onSave,
+        player: player || new Audio(),
+    };
+
+    _renderEditorModal();
+    document.getElementById('audio-editor-modal').classList.remove('is-hidden');
+    _updateEditorDisplay();
+}
+
+function closeAudioEditor() {
+    const modal = document.getElementById('audio-editor-modal');
+    modal.classList.add('is-hidden');
+    // 停止試聽
+    _stopEditorPreview();
+}
+
+function _stopEditorPreview() {
+    if (_editorSnippetTimer) {
+        clearTimeout(_editorSnippetTimer);
+        _editorSnippetTimer = null;
+    }
+    if (_editorState.player) {
+        _editorState.player.pause();
+    }
+}
+
+function _renderEditorModal() {
+    const modal = document.getElementById('audio-editor-modal');
+    const box   = modal.querySelector('.audio-editor-box');
+
+    // 截短句子顯示
+    const shortSentence = _editorState.sentence.length > 60
+        ? _editorState.sentence.substring(0, 60) + '…'
+        : _editorState.sentence;
+
+    box.innerHTML = `
+        <div class="audio-editor-header">
+            <span class="audio-editor-icon">✏️</span>
+            <span class="audio-editor-title">調整音檔時間</span>
+            <button class="audio-editor-close-btn" id="audio-editor-close">✕</button>
+        </div>
+
+        <div class="audio-editor-sentence">"${shortSentence}"</div>
+
+        <div class="audio-editor-row">
+            <span class="audio-editor-label">START</span>
+            <button class="audio-adj-btn" data-target="start" data-delta="-0.5">−0.5s</button>
+            <button class="audio-adj-btn" data-target="start" data-delta="-0.1">−0.1s</button>
+            <span class="audio-editor-value" id="editor-start-val">0.0s</span>
+            <button class="audio-adj-btn" data-target="start" data-delta="0.1">+0.1s</button>
+            <button class="audio-adj-btn" data-target="start" data-delta="0.5">+0.5s</button>
+        </div>
+
+        <div class="audio-editor-row">
+            <span class="audio-editor-label">END</span>
+            <button class="audio-adj-btn" data-target="end" data-delta="-0.5">−0.5s</button>
+            <button class="audio-adj-btn" data-target="end" data-delta="-0.1">−0.1s</button>
+            <span class="audio-editor-value" id="editor-end-val">0.0s</span>
+            <button class="audio-adj-btn" data-target="end" data-delta="0.1">+0.1s</button>
+            <button class="audio-adj-btn" data-target="end" data-delta="0.5">+0.5s</button>
+        </div>
+
+        <div class="audio-editor-duration" id="editor-duration">Duration: —</div>
+
+        <div class="audio-editor-actions">
+            <button class="audio-editor-preview-btn" id="audio-editor-preview-btn">▶ 試聽</button>
+            <button class="audio-editor-reset-btn" id="audio-editor-reset-btn">↩ 還原預設</button>
+        </div>
+
+        <div class="audio-editor-footer">
+            <button class="secondary" id="audio-editor-cancel-btn">取消</button>
+            <button class="audio-editor-save-btn" id="audio-editor-save-btn">✓ 儲存</button>
+        </div>
+    `;
+
+    // 事件綁定
+    box.querySelector('#audio-editor-close').addEventListener('click', closeAudioEditor);
+    box.querySelector('#audio-editor-cancel-btn').addEventListener('click', closeAudioEditor);
+
+    // 調整按鈕
+    box.querySelectorAll('.audio-adj-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const target = btn.dataset.target;   // 'start' | 'end'
+            const delta  = parseFloat(btn.dataset.delta);
+            _editorState[target] = Math.round((_editorState[target] + delta) * 10) / 10;
+            // start 不能 < 0，end 不能 <= start
+            if (_editorState.start < 0) _editorState.start = 0;
+            if (_editorState.end <= _editorState.start) {
+                _editorState.end = Math.round((_editorState.start + 0.5) * 10) / 10;
+            }
+            _updateEditorDisplay();
+        });
+    });
+
+    // 試聽
+    box.querySelector('#audio-editor-preview-btn').addEventListener('click', () => {
+        _playEditorPreview();
+    });
+
+    // 還原預設
+    box.querySelector('#audio-editor-reset-btn').addEventListener('click', () => {
+        _editorState.start = _editorState.originalStart;
+        _editorState.end   = _editorState.originalEnd;
+        _updateEditorDisplay();
+        _stopEditorPreview();
+    });
+
+    // 儲存
+    box.querySelector('#audio-editor-save-btn').addEventListener('click', () => {
+        _stopEditorPreview();
+        setAudioAdjustment(
+            _editorState.title,
+            _editorState.sentence,
+            _editorState.start,
+            _editorState.end,
+            _editorState.originalStart,
+            _editorState.originalEnd
+        );
+        showNotification('✓ 音檔時間已儲存', 'success');
+
+        // 存檔後自動試聽一次，然後呼叫 onSave
+        const onSaveCb = _editorState.onSave;
+        closeAudioEditor();
+
+        // 延遲 200ms 讓 modal 關閉動畫完成，再自動試聽並呼叫 callback
+        setTimeout(() => {
+            if (onSaveCb) onSaveCb(_editorState.start, _editorState.end);
+        }, 200);
+    });
+}
+
+function _updateEditorDisplay() {
+    const startEl    = document.getElementById('editor-start-val');
+    const endEl      = document.getElementById('editor-end-val');
+    const durationEl = document.getElementById('editor-duration');
+    if (!startEl) return;
+
+    startEl.textContent    = _editorState.start.toFixed(1) + 's';
+    endEl.textContent      = _editorState.end.toFixed(1) + 's';
+    const dur = (_editorState.end - _editorState.start).toFixed(1);
+    durationEl.textContent = `Duration: ${dur}s`;
+
+    // 標示有沒有異動
+    const changed = _editorState.start !== _editorState.originalStart ||
+                    _editorState.end   !== _editorState.originalEnd;
+    durationEl.style.color = changed ? 'var(--color-accent)' : 'var(--color-text-light)';
+}
+
+function _playEditorPreview() {
+    _stopEditorPreview();
+
+    const player  = _editorState.player;
+    const src     = _editorState.audioSrc;
+    const start   = _editorState.start;
+    const end     = _editorState.end;
+    const previewBtn = document.getElementById('audio-editor-preview-btn');
+
+    if (!src || end <= start) {
+        showNotification('無法試聽：時間設定無效', 'warning');
+        return;
+    }
+
+    // 確保 src 正確
+    const targetFilename = src.split('/').pop();
+    const currentFilename = decodeURIComponent(player.src.split('/').pop() || '');
+    if (currentFilename !== decodeURIComponent(targetFilename)) {
+        player.src = src;
+        player.load();
+    }
+
+    const isMobile = typeof isMobileDevice === 'function' && isMobileDevice();
+    const bufStart = isMobile ? 0.25 : 0.1;
+    const trailMs  = isMobile ? 1000 : 800;
+
+    player.currentTime = Math.max(0, start - bufStart);
+
+    if (previewBtn) {
+        previewBtn.textContent = '⏸ 播放中…';
+        previewBtn.disabled = true;
+    }
+
+    player.play().then(() => {
+        const playMs = (end - start) * 1000 + trailMs;
+        _editorSnippetTimer = setTimeout(() => {
+            player.pause();
+            if (previewBtn) {
+                previewBtn.textContent = '▶ 試聽';
+                previewBtn.disabled = false;
+            }
+            _editorSnippetTimer = null;
+        }, playMs);
+    }).catch(() => {
+        if (previewBtn) {
+            previewBtn.textContent = '▶ 試聽';
+            previewBtn.disabled = false;
+        }
+    });
+}
+
+// ── 總編輯器（Audio Editor Manager）────────────────────────────
+
+function openAudioEditorManager() {
+    renderAudioEditorManager();
+    showView(document.getElementById('audio-editor-manager-view'));
+}
+
+function renderAudioEditorManager() {
+    const listEl = document.getElementById('audio-editor-manager-list');
+    if (!listEl) return;
+
+    const adj = loadAudioAdjustments();
+    const allTitles = Object.keys(adj);
+
+    if (allTitles.length === 0) {
+        listEl.innerHTML = `<div class="aem-empty">尚無調整記錄。<br>在測驗或 Note 中按 <strong>✏️</strong> 即可調整音檔時間。</div>`;
+        return;
+    }
+
+    // 統計總筆數
+    let totalCount = 0;
+    allTitles.forEach(t => { totalCount += Object.keys(adj[t]).length; });
+    document.getElementById('aem-total-count').textContent = `共 ${totalCount} 筆調整`;
+
+    let html = '';
+    allTitles.sort().forEach(title => {
+        const sentences = Object.keys(adj[title]);
+        html += `<div class="aem-article-group">
+            <div class="aem-article-title">${title}
+                <span class="aem-count-badge">${sentences.length}</span>
+            </div>`;
+
+        sentences.forEach(sentence => {
+            const entry = adj[title][sentence];
+            const startDiff = (entry.start - entry.originalStart).toFixed(1);
+            const endDiff   = (entry.end   - entry.originalEnd  ).toFixed(1);
+            const startSign = startDiff >= 0 ? '+' : '';
+            const endSign   = endDiff   >= 0 ? '+' : '';
+            const shortSent = sentence.length > 55 ? sentence.substring(0, 55) + '…' : sentence;
+
+            html += `<div class="aem-row" data-title="${escapeAttr(title)}" data-sentence="${escapeAttr(sentence)}">
+                <div class="aem-row-sentence" title="${escapeAttr(sentence)}">${shortSent}</div>
+                <div class="aem-row-meta">
+                    <span class="aem-timing">
+                        START ${startSign}${startDiff}s &nbsp;|&nbsp; END ${endSign}${endDiff}s
+                    </span>
+                    <span class="aem-date">${entry.updatedAt || ''}</span>
+                </div>
+                <div class="aem-row-actions">
+                    <button class="aem-edit-btn secondary">✏️ 重新編輯</button>
+                    <button class="aem-delete-btn secondary">🗑 刪除</button>
+                </div>
+            </div>`;
+        });
+
+        html += `</div>`;
+    });
+
+    listEl.innerHTML = html;
+
+    // 綁定按鈕事件
+    listEl.querySelectorAll('.aem-edit-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const row      = btn.closest('.aem-row');
+            const title    = row.dataset.title;
+            const sentence = row.dataset.sentence;
+            const entry    = adj[title][sentence];
+            const audioSrc = `audio/${encodeURIComponent(title.trim())}.mp3`;
+
+            // 先回到首頁（讓 manager view 關閉），再開啟彈窗
+            openAudioEditor({
+                title,
+                sentence,
+                start:    entry.originalStart,
+                end:      entry.originalEnd,
+                audioSrc,
+                player:   new Audio(audioSrc),
+                onSave:   () => {
+                    // 存完後重新渲染 manager
+                    renderAudioEditorManager();
+                }
+            });
+        });
+    });
+
+    listEl.querySelectorAll('.aem-delete-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const row      = btn.closest('.aem-row');
+            const title    = row.dataset.title;
+            const sentence = row.dataset.sentence;
+            if (confirm(`刪除此調整記錄，將恢復使用原始 timestamp。\n\n"${sentence.substring(0, 80)}"`)) {
+                deleteAudioAdjustment(title, sentence);
+                showNotification('已刪除調整記錄，恢復原始 timestamp', 'success');
+                renderAudioEditorManager();
+            }
+        });
+    });
+}
+
+function escapeAttr(str) {
+    return str.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+// ── 整合 Quiz：在播放按鈕旁加 ✏️ ────────────────────────────────
+
+/**
+ * 建立一個 ✏️ 編輯按鈕，接受與播放按鈕相同的 {title, sentence, start, end, player} 資訊
+ * 回傳 HTMLButtonElement
+ */
+function createAudioEditBtn({ title, sentence, start, end, audioSrc, player, onSave }) {
+    const adj = loadAudioAdjustments();
+    const isAdjusted = !!(adj[title]?.[sentence]);
+
+    const btn = document.createElement('button');
+    btn.className = `audio-edit-inline-btn${isAdjusted ? ' is-adjusted' : ''}`;
+    btn.title = isAdjusted ? '已調整（點擊再編輯）' : '調整音檔時間';
+    btn.innerHTML = isAdjusted ? '✏️✓' : '✏️';
+
+    btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openAudioEditor({ title, sentence, start, end, audioSrc, player, onSave });
+    });
+
+    return btn;
+}
+
+// ── Quiz 題目：暫停計時後開啟編輯器 ─────────────────────────────
+
+/**
+ * 在 quiz 的各題渲染函數中呼叫，取得調整後的 {start, end}
+ * 如果有調整記錄就用調整值，否則用原始值
+ */
+function getQuizTiming(title, sentence, originalStart, originalEnd) {
+    return getAdjustedTiming(title, sentence, originalStart, originalEnd);
+}
+
+// ── Note 整合：取得試聽用的調整後時間 ────────────────────────────
+
+/**
+ * 在 playSentenceSnippet 中呼叫，取得調整後的 start/end
+ * 如果無調整則回傳原始值
+ */
+function getNoteAdjustedTiming(title, sentence, originalStart, originalEnd) {
+    return getAdjustedTiming(title, sentence, originalStart, originalEnd);
+}
+
+// ── DOM：總編輯器 View 與 Modal 初始化 ───────────────────────────
+
+// ── DOM 初始化 ────────────────────────────────────────────────
+// 注意：go-to-audio-editor 和 back-from-audio-editor-manager 的
+// 按鈕綁定已移至 story.js，確保執行順序正確。
+
+// Modal 背景點擊關閉
+const modal = document.getElementById('audio-editor-modal');
+if (modal) {
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeAudioEditor();
+    });
+}
+
+console.log('✅ Audio Editor loaded.');

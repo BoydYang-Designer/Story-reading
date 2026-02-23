@@ -1079,10 +1079,28 @@ function showDictationQuestion() {
     const wordCount = q.sentence.trim().split(/\s+/).length;
     document.getElementById('dictation-hint').textContent = `${wordCount} words`;
 
-    // Play button
+// Play button
     const playBtn = document.getElementById('dictation-play-btn');
     playBtn.classList.remove('is-playing-voice');
     playBtn.onclick = () => playDictationAudio(q);
+
+    // ✏️ 音檔編輯按鈕（放在播放按鈕旁）
+    const dictEditContainer = document.getElementById('dictation-edit-btn-container');
+    if (dictEditContainer) {
+        dictEditContainer.innerHTML = '';
+        if (q.start != null && q.title) {
+            const editBtn = createAudioEditBtn({
+                title:    q.title,
+                sentence: q.sentence,
+                start:    q.start,
+                end:      q.end,
+                audioSrc: `audio/${encodeURIComponent(q.title.trim())}.mp3`,
+                player:   quizAudioPlayer,
+                onSave:   () => playDictationAudio(q)
+            });
+            dictEditContainer.appendChild(editBtn);
+        }
+    }
 
     // Build options
     const allSentences = Array.from(
@@ -1108,8 +1126,10 @@ function showDictationQuestion() {
 function playDictationAudio(q) {
     if (!q.start) return;
     const playBtn = document.getElementById('dictation-play-btn');
+    // 套用使用者調整後的時間（若無調整則使用原始值）
+    const timing = getQuizTiming(q.title, q.sentence, q.start, q.end);
     playSnippet({
-        start: q.start, end: q.end,
+        start: timing.start, end: timing.end,
         onStart: () => playBtn.classList.add('is-playing-voice'),
         onEnd:   () => playBtn.classList.remove('is-playing-voice')
     });
@@ -1246,10 +1266,26 @@ function showArticleListenQuestion() {
     document.getElementById('article-listen-hint').textContent =
         `${q.wordCount} words`;
 
-    // Play button
+// Play button
     const playBtn = document.getElementById('article-play-btn');
     playBtn.classList.remove('is-playing-voice');
     playBtn.onclick = () => playArticleAudio(q, playBtn);
+
+    // ✏️ 音檔編輯按鈕
+    const artEditContainer = document.getElementById('article-listen-edit-btn-container');
+    if (artEditContainer) {
+        artEditContainer.innerHTML = '';
+        const editBtn = createAudioEditBtn({
+            title:    q.title,
+            sentence: q.sentence,
+            start:    q.start,
+            end:      q.end,
+            audioSrc: `audio/${encodeURIComponent(q.title.trim())}.mp3`,
+            player:   quizAudioPlayer,
+            onSave:   () => playArticleAudio(q, playBtn)
+        });
+        artEditContainer.appendChild(editBtn);
+    }
 
     // Auto-play first time
     setTimeout(() => playArticleAudio(q, playBtn), 300);
@@ -1292,8 +1328,10 @@ async function getTimestampForStoryWithCache(title) {
 // (removed — using playSnippet)
 
 function playArticleAudio(q, btn) {
+    // 套用使用者調整後的時間（若無調整則使用原始值）
+    const timing = getQuizTiming(q.title, q.sentence, q.start, q.end);
     playSnippet({
-        start: q.start, end: q.end,
+        start: timing.start, end: timing.end,
         onStart: () => {
             btn.classList.add('is-playing-voice');
             btn.querySelector('span').textContent = '⏸ Playing...';
@@ -1693,7 +1731,7 @@ function showReorderQuestion() {
     playBtn.classList.remove('is-playing-voice');
     playBtn.querySelector('span:last-child').textContent = 'Play Sentence';
 
-    if (q.start != null) {
+if (q.start != null) {
         playBtn.disabled = false;
         playBtn.style.opacity = '';
         playBtn.onclick = () => playReorderAudio(q);
@@ -1701,6 +1739,24 @@ function showReorderQuestion() {
         playBtn.disabled = true;
         playBtn.style.opacity = '0.35';
         playBtn.onclick = null;
+    }
+
+    // ✏️ 音檔編輯按鈕
+    const reorderEditContainer = document.getElementById('reorder-edit-btn-container');
+    if (reorderEditContainer) {
+        reorderEditContainer.innerHTML = '';
+        if (q.start != null && q.title) {
+            const editBtn = createAudioEditBtn({
+                title:    q.title,
+                sentence: q.sentence,
+                start:    q.start,
+                end:      q.end,
+                audioSrc: `audio/${encodeURIComponent(q.title.trim())}.mp3`,
+                player:   quizAudioPlayer,
+                onSave:   () => playReorderAudio(q)
+            });
+            reorderEditContainer.appendChild(editBtn);
+        }
     }
 
     // Reset UI
@@ -1728,8 +1784,10 @@ function showReorderQuestion() {
 
 function playReorderAudio(q) {
     const playBtn = document.getElementById('reorder-play-btn');
+    // 套用使用者調整後的時間（若無調整則使用原始值）
+    const timing = getQuizTiming(q.title, q.sentence, q.start, q.end);
     playSnippet({
-        start: q.start, end: q.end,
+        start: timing.start, end: timing.end,
         onStart: () => {
             playBtn.classList.add('is-playing-voice');
             playBtn.querySelector('span:last-child').textContent = 'Playing…';
