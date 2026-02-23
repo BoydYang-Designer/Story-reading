@@ -414,12 +414,12 @@ function renderAudioEditorManager() {
 
         html += `
         <div class="aem-major-group" data-major="${escapeAttr(major)}">
-            <div class="aem-major-header aem-collapsible is-expanded">
+            <div class="aem-major-header aem-collapsible">
                 <span class="aem-collapse-arrow">▾</span>
                 <span class="aem-major-label">${major}</span>
                 <span class="aem-count-badge">${majorCount}</span>
             </div>
-            <div class="aem-major-body">`;
+            <div class="aem-major-body is-collapsed">`;
 
         const subKeys = Object.keys(grouped[major]).sort((a, b) => {
             if (a === '其他') return 1;
@@ -434,23 +434,23 @@ function renderAudioEditorManager() {
 
             html += `
             <div class="aem-sub-group" data-sub="${escapeAttr(sub)}">
-                <div class="aem-sub-header aem-collapsible is-expanded">
+                <div class="aem-sub-header aem-collapsible">
                     <span class="aem-collapse-arrow">▾</span>
                     <span class="aem-sub-label">${sub}</span>
                     <span class="aem-count-badge aem-count-badge--sub">${subCount}</span>
                 </div>
-                <div class="aem-sub-body">`;
+                <div class="aem-sub-body is-collapsed">`;
 
             titlesInSub.forEach(title => {
                 const sentences = Object.keys(adj[title]);
                 html += `
                 <div class="aem-article-group">
-                    <div class="aem-article-title aem-collapsible is-expanded">
+                    <div class="aem-article-title aem-collapsible">
                         <span class="aem-collapse-arrow">▾</span>
                         ${title}
                         <span class="aem-count-badge">${sentences.length}</span>
                     </div>
-                    <div class="aem-article-body">`;
+                    <div class="aem-article-body is-collapsed">`;
 
                 sentences.forEach(sentence => {
                     const entry = adj[title][sentence];
