@@ -378,6 +378,10 @@
                     </div>
                     <div class="flashcard-back">
                         <div class="flashcard-context" id="flashcard-context"></div>
+                        <div class="flashcard-back-audio-row">
+                            <button class="flashcard-back-audio-btn" id="flashcard-back-audio-btn" disabled>▶</button>
+                            <span id="flashcard-back-edit-container"></span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -390,6 +394,10 @@
         <!-- Cloze Mode -->
         <div id="quiz-cloze-area" class="is-hidden">
             <div class="quiz-card">
+                <button class="dictation-play-btn" id="cloze-play-btn" style="display:none">
+                    <span>▶ Listen to Sentence</span>
+                </button>
+                <span id="cloze-edit-btn-container"></span>
                 <div class="quiz-sentence" id="cloze-sentence"></div>
             </div>
             <div class="quiz-options" id="cloze-options"></div>
@@ -435,6 +443,7 @@
                 <button class="dictation-play-btn article-cloze-play-btn" id="article-cloze-play-btn">
                     <span>▶ Listen to Sentence</span>
                 </button>
+                <span id="article-cloze-edit-btn-container"></span>
             </div>
             <div class="quiz-options" id="article-cloze-options"></div>
             <div class="quiz-feedback" id="article-cloze-feedback"></div>
