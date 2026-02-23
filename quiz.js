@@ -210,7 +210,61 @@ function renderQuizStatsBar(categoryName, titleName) {
     quizStatsBar.innerHTML = html;
 }
 
-// ── Story Picker (Select Dropdowns) ──────────────────────────
+// ── Word-level diff highlight ─────────────────────────────────
+/**
+ * Compare userAnswer words vs correctAnswer words using LCS.
+ * Returns HTML string of correctAnswer with misplaced/missing words in red.
+ * @param {string} userAnswer
+ * @param {string} correctAnswer
+ * @returns {string} HTML
+ */
+function buildCorrectAnswerWithDiff(userAnswer, correctAnswer) {
+    const escHtml = (s) => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+    const normalize = (t) => t.toLowerCase().replace(/^[^a-z0-9]+|[^a-z0-9]+$/gi, '');
+
+    const correctTokens = (correctAnswer.match(/\S+/g) || []);
+    const userTokens    = (userAnswer.match(/\S+/g) || []);
+
+    const normCorrect = correctTokens.map(normalize);
+    const normUser    = userTokens.map(normalize);
+
+    // LCS between normUser and normCorrect to find which correct positions are matched
+    const m = normUser.length, n = normCorrect.length;
+    const dp = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));
+    for (let i = 1; i <= m; i++) {
+        for (let j = 1; j <= n; j++) {
+            dp[i][j] = normUser[i-1] === normCorrect[j-1]
+                ? dp[i-1][j-1] + 1
+                : Math.max(dp[i-1][j], dp[i][j-1]);
+        }
+    }
+
+    // Backtrack: find which correct positions are in the LCS (= matched by user)
+    const matchedCorrect = new Array(n).fill(false);
+    let i = m, j = n;
+    while (i > 0 && j > 0) {
+        if (normUser[i-1] === normCorrect[j-1]) {
+            matchedCorrect[j-1] = true;
+            i--; j--;
+        } else if (dp[i-1][j] >= dp[i][j-1]) {
+            i--;
+        } else {
+            j--;
+        }
+    }
+
+    // Build HTML: correct words are normal, unmatched (missing/misplaced) are red
+    return correctTokens.map((word, idx) => {
+        if (matchedCorrect[idx]) {
+            return escHtml(word);
+        } else {
+            return `<span class="quiz-diff-wrong">${escHtml(word)}</span>`;
+        }
+    }).join(' ');
+}
+
+
 
 const selMajor    = document.getElementById('quiz-select-major');
 const selCategory = document.getElementById('quiz-select-category');
@@ -613,8 +667,15 @@ function showQuizResult(mode, correct, total, wrongItems) {
                 <div class="quiz-review-card-body" style="${isExpanded ? '' : 'display:none;'}">
                     ${!item.isCorrect ? `
                         <div class="quiz-review-your-ans">Your answer: <em>${item.selected}</em></div>
-                    ` : ''}
-                    <div class="quiz-review-correct-ans">${item.correct}</div>
+                        <div class="quiz-review-correct-ans quiz-review-correct-styled">
+                            <span class="quiz-review-correct-label">✓ Correct answer:</span>
+                            <span class="quiz-review-correct-text">${buildCorrectAnswerWithDiff(item.selected || '', item.correct)}</span>
+                        </div>
+                    ` : `
+                        <div class="quiz-review-correct-ans quiz-review-correct-styled quiz-review-all-correct">
+                            <span class="quiz-review-correct-text">${item.correct}</span>
+                        </div>
+                    `}
                     ${(item.start != null) ? `
                         <button class="quiz-review-play-btn" data-start="${item.start}" data-end="${item.end}" data-title="${item.title}">▶ Listen again</button>
                     ` : (mode !== 'cloze' ? '' : `
@@ -2113,7 +2174,8 @@ document.getElementById('reorder-check-btn').addEventListener('click', () => {
             if (!inLCS[idx]) btn.classList.add('is-incorrect');
         });
 
-        feedback.innerHTML = `✗ Correct order: <em>${q.sentence}</em>`;
+        const userAnswerStr = reorderAnswer.map(a => a.word).join(' ');
+        feedback.innerHTML = `✗ Correct order: <em class="quiz-review-correct-styled">${buildCorrectAnswerWithDiff(userAnswerStr, q.sentence)}</em>`;
         feedback.className = 'quiz-feedback wrong';
         quizState.wrong++;
         quizState.wrongItems.push(q.sentence);

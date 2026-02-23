@@ -800,7 +800,9 @@ async function playSentenceSnippet(sentenceText, storyTitle) {
         return;
     }
 
-    const { start, end } = match;
+    // Use adjusted timing if available
+    const adjusted = getNoteAdjustedTiming(storyTitle, sentenceText, match.start, match.end);
+    const { start, end } = adjusted;
     const duration = (end - start) * 1000;
 
     // Check for invalid duration
@@ -1088,6 +1090,66 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
                 }
             });
             actions.appendChild(voiceBtn);
+
+            // 1b. Audio Edit Button (only for sentences)
+            if (type === 'sentences') {
+                const audioEditBtn = document.createElement('button');
+                audioEditBtn.className = 'secondary note-audio-edit-btn';
+                audioEditBtn.title = '調整音檔時間';
+                audioEditBtn.textContent = '✏️';
+
+                audioEditBtn.addEventListener('click', async (e) => {
+                    e.stopPropagation();
+                    const storyTitle = noteViewTitle;
+                    if (!storyTitle) {
+                        showNotification('無法取得文章標題', 'error');
+                        return;
+                    }
+                    // Get timing from timestamp data
+                    const tsData = await getTimestampForStory(storyTitle);
+                    const normalize = (text) => text.trim().replace(/[.,?!'"`""'']/g, '').toLowerCase();
+                    const match = tsData ? tsData.find(l => normalize(l.sentence) === normalize(itemText)) : null;
+
+                    if (!match) {
+                        showNotification('找不到此句子的時間戳記，無法編輯', 'warning');
+                        return;
+                    }
+
+                    // Update button style if already adjusted
+                    const adj = loadAudioAdjustments();
+                    const isAdjusted = !!(adj[storyTitle]?.[itemText]);
+                    audioEditBtn.textContent = isAdjusted ? '✏️✓' : '✏️';
+                    audioEditBtn.classList.toggle('is-adjusted', isAdjusted);
+
+                    openAudioEditor({
+                        title:    storyTitle,
+                        sentence: itemText,
+                        start:    match.start,
+                        end:      match.end,
+                        audioSrc: `audio/${encodeURIComponent(storyTitle.trim())}.mp3`,
+                        player:   noteAudioPlayer,
+                        onSave:   (newStart, newEnd) => {
+                            // Update button indicator
+                            audioEditBtn.textContent = '✏️✓';
+                            audioEditBtn.classList.add('is-adjusted');
+                            audioEditBtn.title = '已調整（點擊再編輯）';
+                        }
+                    });
+                });
+
+                // Check if already adjusted and set initial style
+                (async () => {
+                    const adj = loadAudioAdjustments();
+                    const storyTitle = noteViewTitle;
+                    if (storyTitle && adj[storyTitle]?.[itemText]) {
+                        audioEditBtn.textContent = '✏️✓';
+                        audioEditBtn.classList.add('is-adjusted');
+                        audioEditBtn.title = '已調整（點擊再編輯）';
+                    }
+                })();
+
+                actions.appendChild(audioEditBtn);
+            }
 
             // 2. Word Button (only for words/phrases)
             if (type === 'words' || type === 'phrases') {

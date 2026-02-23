@@ -427,7 +427,96 @@ function escapeAttr(str) {
     return str.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
-// ── 整合 Quiz：在播放按鈕旁加 ✏️ ────────────────────────────────
+// ── 匯出 / 匯入 ───────────────────────────────────────────────
+
+/**
+ * 匯出所有音檔調整記錄為 JSON 備份檔
+ */
+function exportAudioAdjustments() {
+    const adj = loadAudioAdjustments();
+    const totalTitles = Object.keys(adj).length;
+    let totalEntries = 0;
+    Object.values(adj).forEach(t => { totalEntries += Object.keys(t).length; });
+
+    if (totalEntries === 0) {
+        showNotification('目前沒有任何調整記錄可匯出', 'warning');
+        return;
+    }
+
+    const payload = {
+        type: 'audioAdjustments',
+        version: '1.0',
+        exportDate: new Date().toISOString(),
+        stats: { titles: totalTitles, entries: totalEntries },
+        adjustments: adj
+    };
+
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = `audio-adjustments-${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    showNotification(`✓ 已匯出 ${totalEntries} 筆調整記錄`, 'success');
+}
+
+/**
+ * 匯入音檔調整記錄（合併，不覆蓋現有）
+ * @param {File} file
+ */
+function importAudioAdjustments(file) {
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+        try {
+            const data = JSON.parse(e.target.result);
+
+            // 格式驗證
+            if (data.type !== 'audioAdjustments' || !data.adjustments) {
+                throw new Error('檔案格式不正確，請選擇音檔調整記錄的匯出檔');
+            }
+
+            const incoming = data.adjustments;
+            const existing = loadAudioAdjustments();
+
+            let addedCount   = 0;
+            let skippedCount = 0;
+
+            // 合併策略：existing 優先（不覆蓋已有調整），只新增沒有的條目
+            Object.keys(incoming).forEach(title => {
+                if (!existing[title]) existing[title] = {};
+                Object.keys(incoming[title]).forEach(sentence => {
+                    if (existing[title][sentence]) {
+                        skippedCount++;
+                    } else {
+                        existing[title][sentence] = incoming[title][sentence];
+                        addedCount++;
+                    }
+                });
+            });
+
+            saveAudioAdjustments(existing);
+            renderAudioEditorManager();
+
+            const msg = addedCount > 0
+                ? `✓ 已匯入 ${addedCount} 筆新記錄${skippedCount > 0 ? `（跳過 ${skippedCount} 筆重複）` : ''}`
+                : `所有 ${skippedCount} 筆記錄已存在，無需匯入`;
+            showNotification(msg, addedCount > 0 ? 'success' : 'info');
+
+        } catch (err) {
+            showNotification('匯入失敗：' + err.message, 'error');
+            console.error('[AudioEditor] Import error:', err);
+        }
+    };
+
+    reader.readAsText(file);
+}
+
+// ── DOM：總編輯器 View 與 Modal 初始化 ───────────────────────────
 
 /**
  * 建立一個 ✏️ 編輯按鈕，接受與播放按鈕相同的 {title, sentence, start, end, player} 資訊
@@ -475,6 +564,24 @@ function getNoteAdjustedTiming(title, sentence, originalStart, originalEnd) {
 // ── DOM 初始化 ────────────────────────────────────────────────
 // 注意：go-to-audio-editor 和 back-from-audio-editor-manager 的
 // 按鈕綁定已移至 story.js，確保執行順序正確。
+
+// 匯出按鈕
+const _aemExportBtn = document.getElementById('aem-export-btn');
+if (_aemExportBtn) {
+    _aemExportBtn.addEventListener('click', exportAudioAdjustments);
+}
+
+// 匯入按鈕 → 觸發隱藏 file input
+const _aemImportBtn  = document.getElementById('aem-import-btn');
+const _aemImportInput = document.getElementById('aem-import-input');
+if (_aemImportBtn && _aemImportInput) {
+    _aemImportBtn.addEventListener('click', () => _aemImportInput.click());
+    _aemImportInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) importAudioAdjustments(file);
+        e.target.value = ''; // 允許重複選同一檔案
+    });
+}
 
 // Modal 背景點擊關閉
 const modal = document.getElementById('audio-editor-modal');

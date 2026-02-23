@@ -2693,11 +2693,14 @@ button.secondary:hover {
 
 .quiz-review-your-ans {
     font-size: 0.85em;
-    color: #e05c5c;
-    margin-bottom: 6px;
+    color: #9a9187;
+    margin-bottom: 8px;
+    padding: 6px 10px;
+    background: #fdf6f0;
+    border-radius: 6px;
 }
 
-.quiz-review-your-ans em { font-style: italic; }
+.quiz-review-your-ans em { font-style: italic; color: #c47a5a; }
 
 .quiz-review-correct-ans {
     font-size: 0.92em;
@@ -2705,6 +2708,48 @@ button.secondary:hover {
     line-height: 1.5;
     margin-bottom: 10px;
 }
+
+/* Styled correct answer box */
+.quiz-review-correct-styled {
+    display: block;
+    padding: 8px 12px;
+    background: #f0f8f4;
+    border-left: 3px solid #50b86c;
+    border-radius: 6px;
+    font-size: 0.95em;
+    line-height: 1.65;
+    letter-spacing: 0.01em;
+}
+
+.quiz-review-correct-label {
+    display: block;
+    font-size: 0.78em;
+    font-weight: 700;
+    color: #50b86c;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.quiz-review-correct-text {
+    color: #2d5a3d;
+    font-weight: 500;
+}
+
+.quiz-review-all-correct {
+    background: #f0f8f4;
+    border-left-color: #50b86c;
+}
+
+/* Red highlight for wrong/missing words in correct answer */
+.quiz-diff-wrong {
+    color: #e05c5c;
+    font-weight: 700;
+    background: rgba(224, 92, 92, 0.10);
+    border-radius: 3px;
+    padding: 1px 3px;
+}
+
 
 .quiz-review-play-btn {
     background: var(--color-primary);
@@ -3668,7 +3713,8 @@ textarea:focus-visible {
 .audio-editor-save-btn:hover { background: #b8905f; }
 
 /* ── 行內 ✏️ 按鈕（Quiz/Note 播放旁） ───────────────────── */
-.audio-edit-inline-btn {
+.audio-edit-inline-btn,
+.note-audio-edit-btn {
   background: none;
   border: 1.5px solid var(--color-border);
   border-radius: 6px;
@@ -3680,13 +3726,15 @@ textarea:focus-visible {
   flex-shrink: 0;
   line-height: 1.2;
 }
-.audio-edit-inline-btn:hover {
+.audio-edit-inline-btn:hover,
+.note-audio-edit-btn:hover {
   background: var(--color-accent-light);
   border-color: var(--color-accent);
   color: var(--color-primary);
 }
 /* 已調整過的狀態 */
-.audio-edit-inline-btn.is-adjusted {
+.audio-edit-inline-btn.is-adjusted,
+.note-audio-edit-btn.is-adjusted {
   border-color: var(--color-accent);
   color: var(--color-accent);
   background: var(--color-accent-subtle);
@@ -3701,6 +3749,50 @@ textarea:focus-visible {
   font-size: 0.9em;
   margin: 0 0 16px;
 }
+/* ── 音檔編輯記錄 匯出 / 匯入工具列 ─────────────────────────── */
+.aem-io-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.aem-io-btn {
+  flex: 1;
+  min-width: 130px;
+  padding: 10px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 0.9em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.aem-export-btn {
+  background: var(--color-accent);
+  color: #fff;
+  border: none;
+}
+.aem-export-btn:hover {
+  background: #b8905f;
+  transform: translateY(-1px);
+}
+
+.aem-import-btn {
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border-strong);
+  color: var(--color-text);
+}
+.aem-import-btn:hover {
+  background: var(--color-accent-light);
+  border-color: var(--color-accent);
+  transform: translateY(-1px);
+}
+
 .aem-list {
   display: flex;
   flex-direction: column;

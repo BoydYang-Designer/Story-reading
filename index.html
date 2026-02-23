@@ -652,6 +652,18 @@
   </div>
   <h1>🎛 音檔時間調整記錄</h1>
   <p class="aem-subtitle" id="aem-total-count">共 0 筆調整</p>
+
+  <!-- 匯出 / 匯入工具列 -->
+  <div class="aem-io-bar">
+    <button class="aem-io-btn aem-export-btn" id="aem-export-btn" title="將所有調整記錄匯出為 JSON 備份檔">
+      ⬇ 匯出調整記錄
+    </button>
+    <button class="aem-io-btn secondary aem-import-btn" id="aem-import-btn" title="從 JSON 備份檔匯入調整記錄（合併）">
+      ⬆ 匯入調整記錄
+    </button>
+    <input type="file" id="aem-import-input" accept=".json" style="display:none;">
+  </div>
+
   <div id="audio-editor-manager-list" class="aem-list"></div>
 </div>
 
