@@ -462,7 +462,7 @@ document.getElementById('back-to-note-from-quiz').addEventListener('click', () =
 // ── Mode Card + Subpanel Logic ────────────────────────────────
 
 // Track which subpanel source is selected per mode
-const subpanelSource = { cloze: 'note', dictation: 'note', reorder: 'note' };
+const subpanelSource = { flashcard: 'note', cloze: 'note', dictation: 'note', reorder: 'note' };
 
 // Helper: close all subpanels and un-expand all cards
 function closeAllSubpanels() {
@@ -470,10 +470,32 @@ function closeAllSubpanels() {
     document.querySelectorAll('.quiz-mode-card').forEach(c => c.classList.remove('is-expanded'));
 }
 
-// Flashcard: no subpanel, start directly
+// Flashcard: toggle subpanel；note 為空時自動預選 From Article
 document.getElementById('quiz-mode-flashcard').addEventListener('click', () => {
+    const panel = document.getElementById('subpanel-flashcard');
+    const card  = document.getElementById('quiz-mode-flashcard');
+    const isOpen = !panel.classList.contains('is-hidden');
     closeAllSubpanels();
-    startFlashcard();
+    if (!isOpen) {
+        const items = getAllNoteItems(quizState.scope, quizState.categoryName, quizState.titleName);
+        const hasNote = items.words.length > 0 || items.phrases.length > 0;
+        const preferred = hasNote ? 'note' : 'article';
+        subpanelSource.flashcard = preferred;
+        document.querySelectorAll('.quiz-source-btn[data-mode="flashcard"]').forEach(b => {
+            b.classList.toggle('is-active', b.dataset.source === preferred);
+        });
+        panel.classList.remove('is-hidden');
+        card.classList.add('is-expanded');
+    }
+});
+
+// Flashcard Start 按鈕
+document.getElementById('start-flashcard-btn').addEventListener('click', () => {
+    if (subpanelSource.flashcard === 'article') {
+        startFlashcardFromArticle();
+    } else {
+        startFlashcard();
+    }
 });
 
 // Fill in Blank: toggle subpanel
@@ -807,6 +829,67 @@ document.getElementById('quiz-add-wrong-to-note-btn').addEventListener('click', 
 //  PHASE 1 — FLASHCARD
 // ══════════════════════════════════════════════════════════════
 
+// ── From Article：從 timestamp 隨機挑難字出題 ──────────────
+async function startFlashcardFromArticle() {
+    const title = quizState.titleName;
+    if (!title) {
+        showNotification('Please select an article first.', 'warning');
+        return;
+    }
+    const tsData = await getTimestampForStory(title);
+    if (!tsData || tsData.length === 0) {
+        showNotification('Timestamp file not found for this article.', 'error');
+        return;
+    }
+
+    const STOP = new Set(['that','this','with','have','from','they','been','were','when','what',
+        'will','your','which','their','there','would','could','should','about','after','before',
+        'other','some','than','then','also','into','more','over','just','like','very','well',
+        'even','only','said','have','each','word']);
+
+    const pool = [];
+    tsData.forEach(line => {
+        const words = (line.sentence.match(/\b[a-zA-Z]{4,}\b/g) || [])
+            .filter(w => !STOP.has(w.toLowerCase()));
+        [...new Set(words.map(w => w.toLowerCase()))].forEach(w => {
+            pool.push({ text: w, type: 'word', sentence: line.sentence.trim(), start: line.start, end: line.end });
+        });
+    });
+
+    if (pool.length === 0) {
+        showNotification('Could not extract words from this article.', 'warning');
+        return;
+    }
+
+    const seen = new Set();
+    const deck = shuffle(pool).filter(item => {
+        if (seen.has(item.text)) return false;
+        seen.add(item.text);
+        return true;
+    }).slice(0, 15);
+
+    // 預載音檔
+    const audioSrc = `audio/${encodeURIComponent(title.trim())}.mp3`;
+    if (!quizAudioPlayer.src.endsWith(encodeURIComponent(title.trim()) + '.mp3')) {
+        quizAudioPlayer.src = audioSrc;
+        quizAudioPlayer.preload = 'auto';
+        quizAudioPlayer.load();
+    }
+
+    quizState.mode        = 'flashcard';
+    quizState.flashSource = 'article';
+    quizState.deck        = deck;
+    quizState.deckIndex   = 0;
+    quizState.againQueue  = [];
+    quizState.correct     = 0;
+    quizState.wrong       = 0;
+    quizState.wrongItems  = [];
+
+    closeAllSubpanels();
+    showQuizSession('flashcard');
+    showFlashcard();
+}
+
 function startFlashcard() {
     const items = getAllNoteItems(quizState.scope, quizState.categoryName, quizState.titleName);
     const allItems = [
@@ -818,19 +901,21 @@ function startFlashcard() {
         if (!quizState.titleName && quizState.scope === 'this') {
             showNotification('Select an article first, or switch to "All Notes".', 'warning');
         } else {
-            showNotification('No words or phrases saved yet.', 'warning');
+            showNotification('No words or phrases saved yet. Switch to "From Article" to generate cards from the article.', 'warning');
         }
         return;
     }
 
-    quizState.mode      = 'flashcard';
-    quizState.deck      = shuffle(allItems);
-    quizState.deckIndex = 0;
-    quizState.againQueue = [];
-    quizState.correct   = 0;
-    quizState.wrong     = 0;
-    quizState.wrongItems = [];
+    quizState.mode        = 'flashcard';
+    quizState.flashSource = 'note';
+    quizState.deck        = shuffle(allItems);
+    quizState.deckIndex   = 0;
+    quizState.againQueue  = [];
+    quizState.correct     = 0;
+    quizState.wrong       = 0;
+    quizState.wrongItems  = [];
 
+    closeAllSubpanels();
     showQuizSession('flashcard');
     showFlashcard();
 }
@@ -860,12 +945,14 @@ function showFlashcard() {
 
     document.getElementById('flashcard-word').textContent = item.text;
 
-    // Find context
+    // Find context — article 模式直接用 item.sentence；note 模式從 story 內文找
     const contextEl = document.getElementById('flashcard-context');
-    const ctx = findContextForWord(
-        item.text.replace(/-/g, ' '),
-        quizState.scope === 'this' ? quizState.titleName : null
-    );
+    const ctx = (quizState.flashSource === 'article' && item.sentence)
+        ? item.sentence
+        : findContextForWord(
+            item.text.replace(/-/g, ' '),
+            quizState.scope === 'this' ? quizState.titleName : null
+          );
     if (ctx) {
         // Highlight the word in context
         const highlighted = ctx.replace(
@@ -877,29 +964,66 @@ function showFlashcard() {
         contextEl.textContent = '(No context found)';
     }
 
-    // ── 正面：單字音檔 ──────────────────────────────────────
+    // ── 正面：單字音檔（GitHub mp3 → speechSynthesis fallback）──
     const audioBtn = document.getElementById('flashcard-audio-btn');
 
-    function _playWordAudio() {
-        const wordSrc = `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(item.text.trim())}.mp3`;
-        const wordAudio = new Audio(wordSrc);
+    // 切換卡片時取消上一個 speechSynthesis，避免疊音
+    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+
+    function _playSpeech() {
+        if (!('speechSynthesis' in window)) { audioBtn.classList.remove('is-playing-voice'); return; }
+        window.speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(item.text);
+        u.lang  = 'en-US';
+        u.onend = () => audioBtn.classList.remove('is-playing-voice');
         audioBtn.classList.add('is-playing-voice');
+        window.speechSynthesis.speak(u);
+    }
+
+    function _playWordAudio() {
+        audioBtn.classList.remove('needs-tap');
+        audioBtn.classList.add('is-playing-voice');
+        const wordSrc   = `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(item.text.trim())}.mp3`;
+        const wordAudio = new Audio(wordSrc);
         wordAudio.play().catch(() => {
             audioBtn.classList.remove('is-playing-voice');
-            if ('speechSynthesis' in window) {
-                const u = new SpeechSynthesisUtterance(item.text);
-                u.lang = 'en-US';
-                window.speechSynthesis.speak(u);
-            }
+            _playSpeech();
         });
         wordAudio.addEventListener('ended', () => {
             audioBtn.classList.remove('is-playing-voice');
         }, { once: true });
     }
-
     audioBtn.onclick = _playWordAudio;
-    // 自動播放單字音
-    setTimeout(_playWordAudio, 150);
+
+    // 自動播放 — iOS Safari 非手勢觸發可能被封鎖，偵測後改用 pulse 提示
+    const _autoAudio = new Audio(
+        `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(item.text.trim())}.mp3`
+    );
+    _autoAudio.play()
+        .then(() => {
+            audioBtn.classList.add('is-playing-voice');
+            _autoAudio.addEventListener('ended', () => audioBtn.classList.remove('is-playing-voice'), { once: true });
+        })
+        .catch(() => {
+            // GitHub mp3 失敗 → 試 speechSynthesis
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const _u = new SpeechSynthesisUtterance(item.text);
+                _u.lang = 'en-US';
+                window.speechSynthesis.speak(_u);
+                setTimeout(() => {
+                    if (window.speechSynthesis.speaking) {
+                        audioBtn.classList.add('is-playing-voice');
+                        _u.onend = () => audioBtn.classList.remove('is-playing-voice');
+                    } else {
+                        // iOS 封鎖 → pulse 提示點擊
+                        audioBtn.classList.add('needs-tap');
+                    }
+                }, 100);
+            } else {
+                audioBtn.classList.add('needs-tap');
+            }
+        });
 
     // ── 背面：整句音檔 + ✏️（async 查 timestamp）────────────
     const backAudioBtn      = document.getElementById('flashcard-back-audio-btn');
@@ -974,7 +1098,9 @@ function showFlashcard() {
 }
 
 // Flip card on tap
-document.getElementById('flashcard').addEventListener('click', () => {
+document.getElementById('flashcard').addEventListener('click', (e) => {
+    // 點到按鈕不翻牌（正面 ▶、背面 ▶ 和 ✏️ 都不觸發翻牌）
+    if (e.target.closest('button')) return;
     const card = document.getElementById('flashcard');
     card.classList.toggle('is-flipped');
     if (card.classList.contains('is-flipped')) {

@@ -2349,6 +2349,48 @@ button.secondary:hover {
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
+    transition: transform 0.1s;
+}
+
+/* iOS 自動播被封鎖 → pulse 漣漪提示使用者點擊 */
+@keyframes tapPulse {
+    0%   { box-shadow: 0 0 0 0 rgba(74,111,165,0.55); transform: scale(1); }
+    60%  { box-shadow: 0 0 0 12px rgba(74,111,165,0); transform: scale(1.1); }
+    100% { box-shadow: 0 0 0 0 rgba(74,111,165,0); transform: scale(1); }
+}
+.flashcard-audio-btn.needs-tap {
+    animation: tapPulse 1.3s ease-in-out infinite;
+}
+
+/* 背面句子播放列 */
+.flashcard-back-audio-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 12px;
+}
+.flashcard-back-audio-btn {
+    background: var(--color-accent, #8a7560);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, opacity 0.15s;
+}
+.flashcard-back-audio-btn:disabled {
+    opacity: 0.3;
+    cursor: default;
+}
+.flashcard-back-audio-btn.is-playing-voice {
+    background: var(--color-primary);
 }
 
 .flashcard-hint {
