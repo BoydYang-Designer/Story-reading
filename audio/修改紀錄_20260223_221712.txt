@@ -1,0 +1,23 @@
+【文本校對修正紀錄 V5】
+參考：The-Alchemist-Paulo-Coelho.pdf
+時間：2026-02-23 22:17:12
+============================================================
+
+📄 The Alchemist of Part 1-12 Timestamp.txt  （套用 3 項）
+   [scent] → [cent]
+   TXT: He had not a scent in his pocket, but he had faith.
+   PDF: He had not a cent in his pocket,
+   AI : 建議修正，"cent" (分錢) 比 "scent" (氣味) 在此語境下語義更合理。
+
+   [cafe] → [café]
+   TXT: You put a sign on the door and they went to a small cafe nearby.
+   PDF: He put a sign on the door, and they went to a small café nearby.
+   AI : 建議修正。PDF 詞彙 café 拼寫正確。
+
+   [clean] → [cleaned]
+   TXT: Even if you clean my crystal for an entire year.
+   PDF: “Even if you cleaned my crystal for an
+   AI : 建議修正，過去式動詞時態一致。
+
+============================================================
+總計套用 3 項修正。

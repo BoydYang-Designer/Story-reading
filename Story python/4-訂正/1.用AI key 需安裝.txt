@@ -17,7 +17,18 @@ D:\my_venv\Scripts\activate
 --------------------------------------------------
 第三步：安裝套件
 
-pip install pdfplumber google-generativeai
+pip install google-genai
 
 這次套件會裝到 D:\my_venv 裡，不碰 C 槽。
 ------------------------------------------------
+
+
+
+先解除安裝舊的，再重新裝新的：
+pip uninstall google-generativeai -y
+
+然後：
+pip install google-genai
+
+跑完後再確認：
+pip list | findstr google

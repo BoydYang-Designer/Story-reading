@@ -1,31 +1,4 @@
-# 自動切換虛擬環境啟動器
-# 直接雙擊或執行此程式，會自動使用 D:/my_venv 的 Python。
-# 不需要手動 activate。
-import sys
-import os
-import subprocess
-
-VENV_PYTHON = r"D:\my_venv\Scripts\python.exe"
-
-# 如果目前不是用虛擬環境的 Python，就重新用虛擬環境啟動自己
-if sys.executable.lower() != VENV_PYTHON.lower():
-    if not os.path.exists(VENV_PYTHON):
-        import tkinter as tk
-        from tkinter import messagebox
-        root = tk.Tk()
-        root.withdraw()
-        messagebox.showerror(
-            "找不到虛擬環境",
-            f"找不到虛擬環境：{VENV_PYTHON}\n\n"
-            "請先在 cmd 執行：\n"
-            "python -m venv D:\\my_venv\n"
-            "D:\\my_venv\\Scripts\\activate\n"
-            "pip install pdfplumber google-generativeai"
-        )
-        sys.exit(1)
-    # 用虛擬環境重新執行自己，傳遞所有參數
-    subprocess.run([VENV_PYTHON] + sys.argv)
-    sys.exit(0)
+# Text Corrector V5
 
 """
 Text Corrector V5
@@ -264,12 +237,11 @@ def get_ai_suggestion(api_key: str, candidates: list) -> list:
     每分鐘最多 14 次（留 1 次緩衝），超過自動等待。
     """
     try:
-        import google.generativeai as genai
+        from google import genai as google_genai
     except ImportError:
-        return ["⚠️ 請先安裝：pip install google-generativeai"] * len(candidates)
+        return ["⚠️ 請先安裝：pip install google-genai"] * len(candidates)
 
-    genai.configure(api_key=api_key)
-    model    = genai.GenerativeModel("gemini-1.5-flash")
+    client   = google_genai.Client(api_key=api_key)
     results  = []
     interval = 60 / 14   # 每次請求間隔約 4.3 秒
 
@@ -952,23 +924,81 @@ class App(tk.Tk):
             self.run_btn.config(state="normal")
             return
 
-        # ── 批次 AI 分析 ──
+        # ── 批次 AI 分析（背景執行）──
         if use_ai:
             all_cands_flat = [c for cands in all_candidates.values()
                               for c in cands]
-            prog = ProgressWindow(self, len(all_cands_flat))
-            self.status.set(f"AI 分析中（共 {len(all_cands_flat)} 項）…")
+            total_ai = len(all_cands_flat)
+            prog = ProgressWindow(self, total_ai)
+            self.status.set(f"AI 分析中（共 {total_ai} 項）…")
             self.update()
 
             suggestions = []
-            for i, cand in enumerate(all_cands_flat):
-                prog.update_progress(i)
-                # 單項呼叫
-                s = get_ai_suggestion(self.api_key, [cand])
-                suggestions.extend(s)
+            done_flag   = [False]
+            error_flag  = [None]
 
-            prog.update_progress(len(all_cands_flat))
+            def ai_worker():
+                try:
+                    from google import genai as google_genai
+                    client   = google_genai.Client(api_key=self.api_key)
+                    interval = 60 / 14
+                    for i, cand in enumerate(all_cands_flat):
+                        prompt = (
+                            "You are an English grammar and spelling expert.\n"
+                            "A speech-to-text transcript may have a misrecognized word.\n"
+                            f"TXT sentence: {cand['tgt_frag']}\n"
+                            f"PDF sentence: {cand['pdf_sent']}\n"
+                            f"TXT word: {cand['raw_word']}\n"
+                            f"PDF word: {cand['corrected']}\n"
+                            "Should the TXT word be corrected to the PDF word?\n"
+                            "Consider: grammar, tense, truncated PDF extraction.\n"
+                            "Reply in Traditional Chinese, max 20 words.\n"
+                            "Format: 建議[保留/修正] + 簡短原因"
+                        )
+                        for attempt in range(4):
+                            try:
+                                resp = client.models.generate_content(
+                                    model="gemini-2.5-flash-lite",
+                                    contents=prompt
+                                )
+                                suggestions.append(resp.text.strip())
+                                break
+                            except Exception as e:
+                                err = str(e)
+                                if "429" in err or "quota" in err.lower() or "RESOURCE_EXHAUSTED" in err:
+                                    time.sleep(60 if attempt < 2 else 120)
+                                else:
+                                    suggestions.append("AI 無法判斷：" + err[:50])
+                                    break
+                        else:
+                            suggestions.append("超過速率限制，請稍後再試")
+                        progress_queue.put(i + 1)
+                        if i < total_ai - 1:
+                            time.sleep(interval)
+                except Exception as e:
+                    error_flag[0] = str(e)
+                finally:
+                    done_flag[0] = True
+
+            import queue
+            progress_queue = queue.Queue()
+            t = threading.Thread(target=ai_worker, daemon=True)
+            t.start()
+
+            # 主執行緒輪詢 queue 更新進度條
+            while not done_flag[0] or not progress_queue.empty():
+                try:
+                    val = progress_queue.get_nowait()
+                    prog.update_progress(val)
+                except:
+                    pass
+                self.update()
+                time.sleep(0.05)
+
             prog.destroy()
+
+            if error_flag[0]:
+                messagebox.showwarning("AI 分析錯誤", "AI 分析時發生錯誤：\n" + str(error_flag[0]))
 
             # 寫回各候選
             idx = 0

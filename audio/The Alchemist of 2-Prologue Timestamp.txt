@@ -1,5 +1,5 @@
 [00:00:00.000 --> 00:00:03.040] The alchemist picked up a book that someone in the caravan had brought.
-[00:00:03.780 --> 00:00:06.840] Leaping through the pages, he found a story about Narcissus.
+[00:00:03.780 --> 00:00:06.840] Leafing through the pages, he found a story about Narcissus.
 [00:00:07.460 --> 00:00:13.740] The alchemist knew the legend of Narcissus, a youth who knelt daily beside a lake to contemplate his own beauty.
 [00:00:14.440 --> 00:00:21.020] He was so fascinated by himself that one morning he fell into the lake and drowned at the spot where he fell.
 [00:00:21.200 --> 00:00:23.780] A flower was born, which was called the Narcissus.
