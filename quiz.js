@@ -1799,53 +1799,220 @@ function playReorderAudio(q) {
     });
 }
 
+// ── Drag state ────────────────────────────────────────────────
+let _drag = {
+    active: false, ghost: null, source: null,
+    poolIdx: null, answerPos: null, word: null,
+    startX: 0, startY: 0, moved: false,
+    originEl: null,
+};
+const DRAG_THRESHOLD = 6;
+
+function _dragStart(e, source, poolIdx, answerPos, word) {
+    if (reorderChecked) return;
+    const point = e.touches ? e.touches[0] : e;
+    _drag.startX = point.clientX;
+    _drag.startY = point.clientY;
+    _drag.source = source;
+    _drag.poolIdx = poolIdx;
+    _drag.answerPos = answerPos;
+    _drag.word = word;
+    _drag.active = false;
+    _drag.moved = false;
+    _drag.originEl = e.currentTarget;
+
+    const ghost = document.createElement('div');
+    ghost.className = 'reorder-word reorder-drag-ghost';
+    ghost.textContent = word;
+    ghost.style.display = 'none';
+    document.body.appendChild(ghost);
+    _drag.ghost = ghost;
+}
+
+function _dragMove(e) {
+    if (!_drag.ghost) return;
+    const point = e.touches ? e.touches[0] : e;
+    const dx = point.clientX - _drag.startX;
+    const dy = point.clientY - _drag.startY;
+
+    if (!_drag.active && Math.sqrt(dx * dx + dy * dy) > DRAG_THRESHOLD) {
+        _drag.active = true;
+        _drag.moved  = true;
+        _drag.ghost.style.display = '';
+        if (_drag.originEl) _drag.originEl.classList.add('is-dragging');
+        _updateInsertIndicator(point.clientX, point.clientY);
+    }
+    if (_drag.active) {
+        e.preventDefault();
+        _drag.ghost.style.left = (point.clientX - _drag.ghost.offsetWidth / 2) + 'px';
+        _drag.ghost.style.top  = (point.clientY - _drag.ghost.offsetHeight / 2) + 'px';
+        _updateInsertIndicator(point.clientX, point.clientY);
+    }
+}
+
+function _dragEnd(e) {
+    if (!_drag.ghost) return;
+    const point = e.changedTouches ? e.changedTouches[0] : e;
+
+    if (_drag.active) {
+        const insertPos = _getInsertPosition(point.clientX, point.clientY);
+        _removeInsertIndicator();
+        _drag.ghost.remove();
+        _drag.ghost = null;
+
+        if (insertPos !== null) {
+            // 放開在答案區內 → 插入到指定位置
+            if (_drag.source === 'answer') {
+                reorderAnswer.splice(_drag.answerPos, 1);
+                // 若插入位置在刪除點之後，需補正
+                const finalPos = insertPos > _drag.answerPos ? insertPos - 1 : insertPos;
+                reorderAnswer.splice(finalPos, 0, { word: _drag.word, idx: _drag.poolIdx ?? _drag.answerPos });
+            } else {
+                reorderAnswer.splice(insertPos, 0, { word: _drag.word, idx: _drag.poolIdx });
+            }
+        } else if (_drag.source === 'answer') {
+            // 放開在答案區外 → 退回單字池（移除即可，renderReorderPool 會重新顯示）
+            reorderAnswer.splice(_drag.answerPos, 1);
+        }
+        _drag.active = false;
+    } else {
+        // 點擊（未拖移）：保留原本點擊行為
+        _drag.ghost.remove();
+        _drag.ghost = null;
+        _drag.active = false;
+
+        if (_drag.source === 'pool') {
+            const idx = _drag.poolIdx;
+            if (reorderAnswer.some(a => a.idx === idx)) return;
+            reorderAnswer.push({ word: _drag.word, idx });
+        } else {
+            reorderAnswer.splice(_drag.answerPos, 1);
+        }
+    }
+
+    renderReorderPool();
+    renderReorderAnswer();
+    _drag = { active: false, ghost: null, source: null, poolIdx: null, answerPos: null, word: null, startX: 0, startY: 0, moved: false, originEl: null };
+}
+
+function _getInsertPosition(clientX, clientY) {
+    const answerArea = document.getElementById('reorder-answer-area');
+    const areaRect = answerArea.getBoundingClientRect();
+    if (clientX < areaRect.left - 40 || clientX > areaRect.right + 40 ||
+        clientY < areaRect.top  - 40 || clientY > areaRect.bottom + 40) {
+        return null;
+    }
+    const btns = [...answerArea.querySelectorAll('.reorder-word.in-answer')];
+    if (btns.length === 0) return 0;
+
+    // 分組成「行」（依 top 值的接近程度分組）
+    const rows = [];
+    let currentRow = [];
+    let currentRowTop = null;
+    const ROW_TOLERANCE = 10; // px 差距內視為同一行
+
+    for (let i = 0; i < btns.length; i++) {
+        const rect = btns[i].getBoundingClientRect();
+        const midY = rect.top + rect.height / 2;
+        if (currentRowTop === null || Math.abs(midY - currentRowTop) <= ROW_TOLERANCE) {
+            currentRow.push({ idx: i, rect });
+            if (currentRowTop === null) currentRowTop = midY;
+        } else {
+            rows.push(currentRow);
+            currentRow = [{ idx: i, rect }];
+            currentRowTop = midY;
+        }
+    }
+    if (currentRow.length) rows.push(currentRow);
+
+    // 找到游標最接近的那一行（依 Y 距離）
+    let bestRow = rows[0];
+    let bestRowDist = Infinity;
+    for (const row of rows) {
+        const rowTop = row[0].rect.top;
+        const rowBottom = row[0].rect.bottom;
+        let dist;
+        if (clientY < rowTop) dist = rowTop - clientY;
+        else if (clientY > rowBottom) dist = clientY - rowBottom;
+        else dist = 0;
+        if (dist < bestRowDist) {
+            bestRowDist = dist;
+            bestRow = row;
+        }
+    }
+
+    // 在該行中，依 X 軸決定插入位置
+    for (const { idx, rect } of bestRow) {
+        if (clientX < rect.left + rect.width / 2) return idx;
+    }
+    // 插入到該行最後一個元素之後
+    return bestRow[bestRow.length - 1].idx + 1;
+}
+
+let _insertIndicatorEl = null;
+
+function _updateInsertIndicator(clientX, clientY) {
+    const answerArea = document.getElementById('reorder-answer-area');
+    const pos = _getInsertPosition(clientX, clientY);
+    if (pos === null) { _removeInsertIndicator(); answerArea.classList.remove('drag-over'); return; }
+    answerArea.classList.add('drag-over');
+    if (!_insertIndicatorEl) {
+        _insertIndicatorEl = document.createElement('div');
+        _insertIndicatorEl.className = 'reorder-insert-indicator';
+    }
+    const btns = [...answerArea.querySelectorAll('.reorder-word.in-answer')];
+    if (btns.length === 0 || pos >= btns.length) {
+        answerArea.appendChild(_insertIndicatorEl);
+    } else {
+        answerArea.insertBefore(_insertIndicatorEl, btns[pos]);
+    }
+}
+
+function _removeInsertIndicator() {
+    const answerArea = document.getElementById('reorder-answer-area');
+    if (answerArea) answerArea.classList.remove('drag-over');
+    if (_insertIndicatorEl && _insertIndicatorEl.parentNode) {
+        _insertIndicatorEl.parentNode.removeChild(_insertIndicatorEl);
+    }
+    _insertIndicatorEl = null;
+}
+
+// 全域事件：拖移離開按鈕後仍可追蹤
+document.addEventListener('pointermove', (e) => { if (_drag.ghost) _dragMove(e); }, { passive: false });
+document.addEventListener('pointerup',   (e) => { if (_drag.ghost) _dragEnd(e); });
+document.addEventListener('touchmove',   (e) => { if (_drag.ghost && _drag.active) e.preventDefault(); }, { passive: false });
+
 function renderReorderPool() {
     const wordPool = document.getElementById('reorder-word-pool');
     wordPool.innerHTML = '';
-    
-    // 計算還有多少單字未被選擇
-    const availableWords = reorderPool.filter((word, idx) => 
+
+    const availableWords = reorderPool.filter((word, idx) =>
         !reorderAnswer.some(a => a.idx === idx)
     );
-    
-    // 如果沒有可選單字，顯示提示
     if (availableWords.length === 0) {
         wordPool.innerHTML = '<div style="padding: 12px; color: var(--color-text-light); text-align: center; font-size: 0.9em;">All words selected ✓</div>';
         wordPool.style.minHeight = '40px';
         return;
     }
-    
-    // 根據剩餘單字數量動態調整容器
     wordPool.style.minHeight = 'auto';
-    
+
     reorderPool.forEach((word, idx) => {
         const isUsed = reorderAnswer.some(a => a.idx === idx);
-        
         const btn = document.createElement('button');
         btn.className = 'reorder-word';
-        
-        // 如果已被選擇，添加 is-used 類別（會被隱藏）
-        if (isUsed) {
-            btn.classList.add('is-used');
-        }
-        
-        // 標示第一個和最後一個單字（綠框）
-        const normalizedWord = word.toLowerCase().replace(/[.,?!'"`""'']/g, '');
-        const normalizedFirst = reorderFirstWord.toLowerCase().replace(/[.,?!'"`""'']/g, '');
-        const normalizedLast = reorderLastWord.toLowerCase().replace(/[.,?!'"`""'']/g, '');
-        
-        if (normalizedWord === normalizedFirst || normalizedWord === normalizedLast) {
-            btn.classList.add('is-hint-word');
-        }
-        
+        if (isUsed) btn.classList.add('is-used');
+
+        const nw = word.toLowerCase().replace(/[.,?!'"`“”‘’]/g, '');
+        const nf = reorderFirstWord.toLowerCase().replace(/[.,?!'"`“”‘’]/g, '');
+        const nl = reorderLastWord.toLowerCase().replace(/[.,?!'"`“”‘’]/g, '');
+        if (nw === nf || nw === nl) btn.classList.add('is-hint-word');
+
         btn.textContent = word;
         btn.dataset.idx = idx;
-        btn.addEventListener('click', () => {
-            if (reorderChecked) return;
-            if (reorderAnswer.some(a => a.idx === idx)) return;
-            reorderAnswer.push({ word, idx });
-            renderReorderPool();
-            renderReorderAnswer();
+        btn.addEventListener('pointerdown', (e) => {
+            if (reorderChecked || isUsed) return;
+            e.currentTarget.setPointerCapture(e.pointerId);
+            _dragStart(e, 'pool', idx, null, word);
         });
         wordPool.appendChild(btn);
     });
@@ -1864,16 +2031,14 @@ function renderReorderAnswer() {
         const btn = document.createElement('button');
         btn.className = 'reorder-word in-answer';
         btn.textContent = item.word;
-        btn.addEventListener('click', () => {
+        btn.addEventListener('pointerdown', (e) => {
             if (reorderChecked) return;
-            reorderAnswer.splice(pos, 1);
-            renderReorderPool();
-            renderReorderAnswer();
+            e.currentTarget.setPointerCapture(e.pointerId);
+            _dragStart(e, 'answer', item.idx, pos, item.word);
         });
         answerArea.appendChild(btn);
     });
 }
-
 document.getElementById('reorder-clear-btn').addEventListener('click', () => {
     if (reorderChecked) return;
     reorderAnswer = [];
