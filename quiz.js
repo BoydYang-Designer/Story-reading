@@ -12,6 +12,7 @@ let quizState = {
     scope: 'this',       // 'this' | 'all'
     categoryName: null,
     titleName: null,
+    source: 'home',      // 'home' | 'note' — 記錄從哪裡進入 Quiz
     questions: [],
     currentIndex: 0,
     correct: 0,
@@ -343,11 +344,12 @@ async function pickerPreselect(majorName, categoryName, titleName) {
 
 // ── Entry Point ───────────────────────────────────────────────
 
-function openQuiz(categoryName, titleName) {
+function openQuiz(categoryName, titleName, source) {
     quizState.categoryName = categoryName;
     quizState.titleName    = titleName;
     quizState.scope        = 'this';
     quizState.mode         = null;
+    quizState.source       = source || 'home'; // 記錄來源：'home' 或 'note'
 
     quizTitleEl.textContent    = 'Quiz';
     quizSubtitleEl.textContent = titleName || '';
@@ -392,8 +394,12 @@ document.getElementById('back-to-note-from-quiz').addEventListener('click', () =
         quizMenu.classList.remove('is-hidden');
         renderQuizStatsBar(quizState.categoryName, quizState.titleName);
     } else {
-        // 在選單頁，← Back 回到 note-view
-        showView(document.getElementById('note-view'));
+        // 在選單頁，← Back 依來源決定：首頁 or note-view
+        if (quizState.source === 'note') {
+            showView(document.getElementById('note-view'));
+        } else {
+            showView(document.getElementById('home-view'));
+        }
     }
 });
 
@@ -507,7 +513,7 @@ document.getElementById('quiz-exit-btn').addEventListener('click', () => {
 const goToQuizBtn = document.getElementById('go-to-quiz-btn');
 if (goToQuizBtn) {
     goToQuizBtn.addEventListener('click', () => {
-        openQuiz(noteViewCategory, noteViewTitle);
+        openQuiz(noteViewCategory, noteViewTitle, 'note');
     });
 }
 
