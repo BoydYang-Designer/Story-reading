@@ -175,6 +175,8 @@ function saveQuizScore(categoryName, titleName, mode, score, total) {
     if (!scores[key][mode]) scores[key][mode] = { best: 0, last: 0, count: 0 };
 
     const entry = scores[key][mode];
+    // Track first score
+    if (entry.count === 0) entry.first = score;
     entry.last  = score;
     entry.best  = Math.max(entry.best, score);
     entry.total = total;
@@ -2664,7 +2666,7 @@ function _reorderCycleLetter(letter) {
     const candidates = [];
     reorderPool.forEach((word, idx) => {
         if (reorderAnswer.some(a => a.idx === idx)) return; // already placed
-        const clean = word.toLowerCase().replace(/[^a-z]/g, '');
+        const clean = word.toLowerCase().replace(/[^a-z0-9]/g, '');
         if (clean.startsWith(letter)) candidates.push(idx);
     });
 
@@ -2733,30 +2735,10 @@ document.addEventListener('keydown', (e) => {
             const checkBtn = document.getElementById('reorder-check-btn');
             if (checkBtn && !checkBtn.disabled) checkBtn.click();
         }
-    } else if (e.key.length === 1 && /[a-zA-Z]/.test(e.key)) {
+    } else if (e.key.length === 1 && /[a-zA-Z0-9]/.test(e.key)) {
         if (reorderChecked) return;
         e.preventDefault();
         _reorderCycleLetter(e.key.toLowerCase());
-    } else if (e.key.length === 1 && /[0-9]/.test(e.key)) {
-        if (reorderChecked) return;
-        e.preventDefault();
-        // 1~9 選對應位置的 pool 單字（0 = 第 10 個）
-        const num = e.key === '0' ? 10 : parseInt(e.key, 10);
-        const availableIdxs = reorderPool
-            .map((_, idx) => idx)
-            .filter(idx => !reorderAnswer.some(a => a.idx === idx));
-        const targetIdx = availableIdxs[num - 1];
-        if (targetIdx === undefined) return;
-        // Highlight it
-        _reorderKeyHighlightIdx = targetIdx;
-        _reorderKeyLetter       = '';
-        _reorderKeyCandidates   = [targetIdx];
-        _reorderKeyCyclePos     = 0;
-        document.querySelectorAll('#reorder-word-pool .reorder-word').forEach(el => {
-            const elIdx = parseInt(el.dataset.idx, 10);
-            el.classList.toggle('is-key-highlight', elIdx === targetIdx);
-            if (elIdx === targetIdx) el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-        });
     } else if (e.code === 'Backspace') {
         if (reorderChecked || reorderAnswer.length === 0) return;
         e.preventDefault();
