@@ -99,7 +99,7 @@ let noteAudioPlayer = new Audio();
 let currentSnippetTimeout = null;
 
 // --- New Timestamp State Variables ---
-let isTimestampMode = false;
+let isTimestampMode = true;  // Always timestamp mode — plain text removed
 let timestampData = [];
 let hasTimestampFile = false;
 let lastHighlightedSentence = null;
@@ -2037,18 +2037,15 @@ const url = `https://raw.githubusercontent.com/BoydYang-Designer/Story-reading/m
             const text = await response.text();
             timestampData = parseTimestampText(text);
             hasTimestampFile = timestampData.length > 0;
-            toggleTimestampBtn.style.display = hasTimestampFile ? 'flex' : 'none';
         } else {
             console.warn(`Timestamp file not found for "${title}" (404)`);
             hasTimestampFile = false;
             timestampData = [];
-            toggleTimestampBtn.style.display = 'none';
         }
-    } catch (error) { // 現在這裡正確了，因為前面有 try
+    } catch (error) {
         console.error("Error fetching timestamp file:", error);
         hasTimestampFile = false;
         timestampData = [];
-        toggleTimestampBtn.style.display = 'none';
     }
 }
 
@@ -2299,13 +2296,11 @@ async function showPlayback(index, startTime = 0, maintainTimestampMode = false)
   audio.load();
 
   // 重設狀態（稍後會根據 maintainTimestampMode 重新設定）
-  isTimestampMode = false;
+  isTimestampMode = true;
   timestampData = [];
   hasTimestampFile = false;
   lastHighlightedSentence = null;
   cachedScrollTarget = -1;
-  toggleTimestampBtn.classList.remove('is-active');
-  toggleTimestampBtn.style.display = 'none';
   lastHighlightedWords = [];
   lastActiveSentenceStart = -1;
   stagedWordsContainer.innerHTML = '';
@@ -2327,16 +2322,10 @@ async function showPlayback(index, startTime = 0, maintainTimestampMode = false)
   // 等待新故事的時間戳檔案載入
   await loadTimestampForStory(currentStoryTitle); // 這會更新 hasTimestampFile 和按鈕可見性
 
-  // 根據是否保持模式來決定渲染哪個內容
-  if (wasTimestampMode && hasTimestampFile) {
-      // 保持 Timestamp 模式
-      isTimestampMode = true;
-      toggleTimestampBtn.classList.add('is-active');
+  // Always use timestamp mode; fallback to plain text if no timestamp file
+  if (hasTimestampFile) {
       renderTimestampContent();
   } else {
-      // 預設使用 JSON 模式
-      isTimestampMode = false;
-      toggleTimestampBtn.classList.remove('is-active');
       textContainer.appendChild(parafyAndMakeClickable('\n\n' + story['內文'], currentCategoryName, currentStoryTitle));
   }
 
@@ -2377,8 +2366,7 @@ function stopAudioAndReset() {
   currentCategoryName = null;
   playbackPositionBeforeNote = 0;
 
-  isTimestampMode = false;
-  toggleTimestampBtn.classList.remove('is-active');
+  isTimestampMode = true;
   lastHighlightedSentence = null;
   lastHighlightedWords = [];
   lastActiveSentenceStart = -1;
@@ -2509,38 +2497,11 @@ playPauseBtn.addEventListener('click', () => {
 
 
 // ===== MODIFIED LINE =====
-prevStoryBtn.addEventListener('click', () => { if (currentStoryIndex > 0) { showPlayback(currentStoryIndex - 1, 0, isTimestampMode); } });
+prevStoryBtn.addEventListener('click', () => { if (currentStoryIndex > 0) { showPlayback(currentStoryIndex - 1, 0, true); } });
 // ===== MODIFIED LINE =====
-nextStoryBtn.addEventListener('click', () => { if (currentStoryIndex < currentStoryList.length - 1) { showPlayback(currentStoryIndex + 1, 0, isTimestampMode); } });
+nextStoryBtn.addEventListener('click', () => { if (currentStoryIndex < currentStoryList.length - 1) { showPlayback(currentStoryIndex + 1, 0, true); } });
 
-toggleTimestampBtn.addEventListener('click', () => {
-    if (!hasTimestampFile) {
-        alert('無 Timestamp');
-        return;
-    }
-    isTimestampMode = !isTimestampMode;
-    toggleTimestampBtn.classList.toggle('is-active', isTimestampMode);
-
-    if (isTimestampMode) {
-        stopJsonModeHighlightLoop();
-        lastHighlightedWords.forEach(span => span.classList.remove('is-current-sentence', 'highlight-start', 'highlight-end'));
-        lastHighlightedWords = [];
-        lastActiveSentenceStart = -1;
-        
-        renderTimestampContent();
-        if (isPlaying) timestampUpdateLoop();
-    } else {
-        stopTimestampUpdateLoop();
-        
-        const story = currentStoryList[currentStoryIndex];
-        textContainer.innerHTML = '';
-        textContainer.appendChild(parafyAndMakeClickable('\n\n' + story['內文'], currentCategoryName, currentStoryTitle));
-        lastHighlightedSentence = null;
-        computeScrollMax();
-        
-        if (isPlaying) jsonModeHighlightLoop();
-    }
-});
+// toggleTimestampBtn removed — always timestamp mode
 
 goToStoryNoteBtn.addEventListener('click', () => {
     if (currentCategoryName && currentStoryTitle) {
@@ -2579,10 +2540,8 @@ audio.addEventListener('play', () => {
         clearTimeout(snippetStopTimeout);
         snippetStopTimeout = null;
     }
-    if (isTimestampMode) {
+    if (isTimestampMode && hasTimestampFile) {
         timestampUpdateLoop();
-    } else {
-        jsonModeHighlightLoop();
     }
 });
 
@@ -2608,15 +2567,9 @@ audio.addEventListener('ended', () => {
     stopJsonModeHighlightLoop();
 
     // 重設高亮狀態
-    if (isTimestampMode) {
-        if (lastHighlightedSentence) {
-            lastHighlightedSentence.classList.remove('is-current');
-            lastHighlightedSentence = null;
-        }
-    } else {
-        lastHighlightedWords.forEach(span => span.classList.remove('is-current-sentence', 'highlight-start', 'highlight-end'));
-        lastHighlightedWords = [];
-        lastActiveSentenceStart = -1;
+    if (lastHighlightedSentence) {
+        lastHighlightedSentence.classList.remove('is-current');
+        lastHighlightedSentence = null;
     }
     textContainer.scrollTop = 0; // 滾動到頂部
 
@@ -2942,8 +2895,6 @@ function openCustomArticlePlayback(idx) {
 
     prevStoryBtn.hidden = true;
     nextStoryBtn.hidden = true;
-    toggleTimestampBtn.style.display = 'none';
-
     // Back button returns to custom articles view
     const backBtn = document.getElementById('back-to-category');
     backBtn._customArticleMode = true;
