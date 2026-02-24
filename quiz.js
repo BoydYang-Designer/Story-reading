@@ -2737,6 +2737,26 @@ document.addEventListener('keydown', (e) => {
         if (reorderChecked) return;
         e.preventDefault();
         _reorderCycleLetter(e.key.toLowerCase());
+    } else if (e.key.length === 1 && /[0-9]/.test(e.key)) {
+        if (reorderChecked) return;
+        e.preventDefault();
+        // 1~9 選對應位置的 pool 單字（0 = 第 10 個）
+        const num = e.key === '0' ? 10 : parseInt(e.key, 10);
+        const availableIdxs = reorderPool
+            .map((_, idx) => idx)
+            .filter(idx => !reorderAnswer.some(a => a.idx === idx));
+        const targetIdx = availableIdxs[num - 1];
+        if (targetIdx === undefined) return;
+        // Highlight it
+        _reorderKeyHighlightIdx = targetIdx;
+        _reorderKeyLetter       = '';
+        _reorderKeyCandidates   = [targetIdx];
+        _reorderKeyCyclePos     = 0;
+        document.querySelectorAll('#reorder-word-pool .reorder-word').forEach(el => {
+            const elIdx = parseInt(el.dataset.idx, 10);
+            el.classList.toggle('is-key-highlight', elIdx === targetIdx);
+            if (elIdx === targetIdx) el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        });
     } else if (e.code === 'Backspace') {
         if (reorderChecked || reorderAnswer.length === 0) return;
         e.preventDefault();
