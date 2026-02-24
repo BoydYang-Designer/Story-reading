@@ -4154,3 +4154,43 @@ textarea:focus-visible {
     box-shadow: none !important;
     pointer-events: none;
 }
+
+/* ── Quiz: Article & Note options (difficulty + count) ───────── */
+.quiz-article-options,
+.quiz-note-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--color-border, rgba(255,255,255,0.1));
+}
+.quiz-article-options.is-hidden,
+.quiz-note-options.is-hidden {
+    display: none;
+}
+
+.quiz-diff-btn,
+.quiz-count-btn {
+    flex: 1;
+    padding: 8px 6px;
+    border-radius: 10px;
+    border: 1.5px solid var(--color-border, rgba(255,255,255,0.15));
+    background: transparent;
+    color: var(--color-text, #f0ebe4);
+    font-size: 0.82em;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+    font-family: inherit;
+}
+.quiz-diff-btn:hover,
+.quiz-count-btn:hover {
+    background: rgba(255,255,255,0.07);
+}
+.quiz-diff-btn.is-active,
+.quiz-count-btn.is-active {
+    background: var(--color-accent, #c9a96e);
+    border-color: var(--color-accent, #c9a96e);
+    color: #1a1611;
+    font-weight: 700;
+}

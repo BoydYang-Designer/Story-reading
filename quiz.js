@@ -26,7 +26,9 @@ let quizState = {
     againQueue: [],
     // article quiz specific
     articleSubMode: 'listen',  // 'listen' | 'cloze'
-    articleDifficulty: 'mix',  // 'easy' | 'medium' | 'hard' | 'mix'
+    // difficulty & question count — shared across ALL modes
+    difficulty: 'mix',         // 'easy' | 'medium' | 'hard' | 'mix'
+    questionCount: 10,         // 5 | 10 | 15
 };
 
 let quizAudioPlayer = new Audio();
@@ -468,6 +470,7 @@ const subpanelSource = { flashcard: 'note', cloze: 'note', dictation: 'note', re
 function closeAllSubpanels() {
     document.querySelectorAll('.quiz-subpanel').forEach(p => p.classList.add('is-hidden'));
     document.querySelectorAll('.quiz-mode-card').forEach(c => c.classList.remove('is-expanded'));
+    document.querySelectorAll('.quiz-article-options, .quiz-note-options').forEach(o => o.classList.add('is-hidden'));
 }
 
 // Flashcard: toggle subpanel；note 為空時自動預選 From Article
@@ -528,11 +531,41 @@ document.querySelectorAll('.quiz-source-btn').forEach(btn => {
         e.stopPropagation();
         const mode   = btn.dataset.mode;
         const source = btn.dataset.source;
-        // Highlight active source button within this subpanel
         document.querySelectorAll(`.quiz-source-btn[data-mode="${mode}"]`)
             .forEach(b => b.classList.remove('is-active'));
         btn.classList.add('is-active');
         subpanelSource[mode] = source;
+
+        // Show article options only when From Article is selected
+        const optEl = document.getElementById(`${mode}-article-options`);
+        if (optEl) optEl.classList.toggle('is-hidden', source !== 'article');
+        // For note mode, always show note options
+        const noteOptEl = document.getElementById(`${mode}-note-options`);
+        if (noteOptEl) noteOptEl.classList.toggle('is-hidden', source !== 'note');
+    });
+});
+
+// ── Difficulty buttons ────────────────────────────────────────
+document.querySelectorAll('.quiz-diff-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const mode = btn.dataset.mode;
+        document.querySelectorAll(`.quiz-diff-btn[data-mode="${mode}"]`)
+            .forEach(b => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        quizState.difficulty = btn.dataset.diff;
+    });
+});
+
+// ── Question count buttons ────────────────────────────────────
+document.querySelectorAll('.quiz-count-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const mode = btn.dataset.mode;
+        document.querySelectorAll(`.quiz-count-btn[data-mode="${mode}"]`)
+            .forEach(b => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        quizState.questionCount = parseInt(btn.dataset.count, 10);
     });
 });
 
@@ -862,11 +895,17 @@ async function startFlashcardFromArticle() {
     }
 
     const seen = new Set();
-    const deck = shuffle(pool).filter(item => {
+    let deck = shuffle(pool).filter(item => {
         if (seen.has(item.text)) return false;
         seen.add(item.text);
         return true;
-    }).slice(0, 15);
+    });
+    deck = filterByWordDifficulty(deck, quizState.difficulty);
+    if (deck.length === 0) {
+        showNotification(`No ${quizState.difficulty === 'mix' ? '' : quizState.difficulty + ' '}words found in this article.`, 'warning');
+        return;
+    }
+    deck = deck.slice(0, quizState.questionCount || 10);
 
     // 預載音檔
     const audioSrc = `audio/${encodeURIComponent(title.trim())}.mp3`;
@@ -892,23 +931,25 @@ async function startFlashcardFromArticle() {
 
 function startFlashcard() {
     const items = getAllNoteItems(quizState.scope, quizState.categoryName, quizState.titleName);
-    const allItems = [
+    let allItems = [
         ...items.words.map(w => ({ text: w, type: 'word' })),
         ...items.phrases.map(p => ({ text: p, type: 'phrase' }))
     ];
+
+    allItems = filterByWordDifficulty(allItems, quizState.difficulty);
 
     if (allItems.length === 0) {
         if (!quizState.titleName && quizState.scope === 'this') {
             showNotification('Select an article first, or switch to "All Notes".', 'warning');
         } else {
-            showNotification('No words or phrases saved yet. Switch to "From Article" to generate cards from the article.', 'warning');
+            showNotification(`No ${quizState.difficulty === 'mix' ? '' : quizState.difficulty + ' '}words or phrases found.`, 'warning');
         }
         return;
     }
 
     quizState.mode        = 'flashcard';
     quizState.flashSource = 'note';
-    quizState.deck        = shuffle(allItems);
+    quizState.deck        = shuffle(allItems).slice(0, quizState.questionCount || 10);
     quizState.deckIndex   = 0;
     quizState.againQueue  = [];
     quizState.correct     = 0;
@@ -1160,8 +1201,15 @@ async function startCloze() {
         }
     }
 
+    // Apply difficulty filter to word items before building questions
+    const filteredWordItems = filterByWordDifficulty(wordItems, quizState.difficulty);
+    if (filteredWordItems.length === 0) {
+        showNotification(`No ${quizState.difficulty === 'mix' ? '' : quizState.difficulty + ' '}words found.`, 'warning');
+        return;
+    }
+
     const questions = [];
-    for (const item of wordItems) {
+    for (const item of filteredWordItems) {
         const displayWord = item.text.replace(/-/g, ' ');
 
         if (tsData) {
@@ -1200,7 +1248,7 @@ async function startCloze() {
     }
 
     quizState.mode        = 'cloze';
-    quizState.questions   = shuffle(questions).slice(0, 10);
+    quizState.questions   = shuffle(questions).slice(0, quizState.questionCount || 10);
     quizState.currentIndex = 0;
     quizState.correct     = 0;
     quizState.wrong       = 0;
@@ -1400,8 +1448,14 @@ async function startDictation() {
         return;
     }
 
+    let filteredQ = filterBySentenceDifficulty(questions, quizState.difficulty);
+    if (filteredQ.length === 0) {
+        showNotification(`No ${quizState.difficulty} sentences found in your notes.`, 'warning');
+        return;
+    }
+
     quizState.mode        = 'dictation';
-    quizState.questions   = shuffle(questions).slice(0, 10);
+    quizState.questions   = shuffle(filteredQ).slice(0, quizState.questionCount || 10);
     quizState.currentIndex = 0;
     quizState.correct     = 0;
     quizState.wrong       = 0;
@@ -1553,6 +1607,29 @@ function getDifficultyLabel(wordCount) {
     return                     { label: 'Hard',   color: '#e05c5c', diff: 'hard' };
 }
 
+// Word/phrase difficulty by character length (strip hyphens for phrases)
+function getWordDifficulty(text) {
+    const letters = text.replace(/-/g, '').replace(/[^a-zA-Z]/g, '').length;
+    if (letters <= 5)  return 'easy';
+    if (letters <= 8)  return 'medium';
+    return 'hard';
+}
+
+// Filter word/phrase items by difficulty setting
+function filterByWordDifficulty(items, diff) {
+    if (diff === 'mix') return items;
+    return items.filter(item => getWordDifficulty(item.text) === diff);
+}
+
+// Filter sentence items by difficulty setting
+function filterBySentenceDifficulty(items, diff) {
+    if (diff === 'mix') return items;
+    return items.filter(item => {
+        const wc = (item.sentence || item).trim().split(/\s+/).length;
+        return getDifficultyLabel(wc).diff === diff;
+    });
+}
+
 async function startArticleQuiz() {
     const title = quizState.titleName;
     if (!title) {
@@ -1566,16 +1643,22 @@ async function startArticleQuiz() {
         return;
     }
 
-    // All sentences, no difficulty filter
-    const pool = tsData.filter(l => l.sentence && l.sentence.trim().length > 3);
+    // Filter by difficulty
+    const diff = quizState.difficulty || 'mix';
+    const allSentences = tsData.filter(l => l.sentence && l.sentence.trim().length > 3);
+    const pool = diff === 'mix' ? allSentences : allSentences.filter(l => {
+        const wc = l.sentence.trim().split(/\s+/).length;
+        return getDifficultyLabel(wc).diff === diff;
+    });
 
     if (pool.length < 2) {
-        showNotification('Not enough sentences in this article.', 'warning');
+        const diffLabel = diff === 'mix' ? '' : ` (${diff})`;
+        showNotification(`Not enough${diffLabel} sentences in this article.`, 'warning');
         return;
     }
 
-    // Pick up to 10 questions
-    const selected = shuffle(pool).slice(0, 10);
+    const qCount   = quizState.questionCount || 10;
+    const selected = shuffle(pool).slice(0, qCount);
     const questions = selected.map(l => {
         const _sent = l.sentence.trim();
         // 出題前先查是否有調整記錄，有則優先使用
@@ -1997,9 +2080,17 @@ async function startReorder(source) {
             showNotification('Timestamp file not found for this article.', 'error');
             return;
         }
-        const pool = shuffle(
-            tsData.filter(l => l.sentence && l.sentence.trim().split(/\s+/).length >= 4)
-        ).slice(0, 10);
+        const diff = quizState.difficulty;
+        const rawPool = tsData.filter(l => {
+            if (!l.sentence || l.sentence.trim().split(/\s+/).length < 4) return false;
+            if (diff === 'mix') return true;
+            return getDifficultyLabel(l.sentence.trim().split(/\s+/).length).diff === diff;
+        });
+        if (rawPool.length === 0) {
+            showNotification(`No ${diff === 'mix' ? '' : diff + ' '}sentences found in this article.`, 'warning');
+            return;
+        }
+        const pool = shuffle(rawPool).slice(0, quizState.questionCount || 10);
         sentences = pool.map(l => ({
             sentence: l.sentence.trim(),
             start: l.start,
@@ -2015,10 +2106,18 @@ async function startReorder(source) {
         // From Note — 用 titleName 抓 timestamp，比對句子找 start/end
         const title = quizState.titleName;
         const items = getAllNoteItems(quizState.scope, quizState.categoryName, title);
-        const raw = shuffle(
-            Array.from(items.sentences || [])
-                .filter(s => s.trim().split(/\s+/).length >= 4)
-        ).slice(0, 10);
+        const diff = quizState.difficulty;
+        const allNoteSents = Array.from(items.sentences || [])
+            .filter(s => s.trim().split(/\s+/).length >= 4);
+        const filteredNoteSents = diff === 'mix' ? allNoteSents : allNoteSents.filter(s => {
+            const wc = s.trim().split(/\s+/).length;
+            return getDifficultyLabel(wc).diff === diff;
+        });
+        if (filteredNoteSents.length === 0) {
+            showNotification(`No ${diff === 'mix' ? '' : diff + ' '}sentences in your notes.`, 'warning');
+            return;
+        }
+        const raw = shuffle(filteredNoteSents).slice(0, quizState.questionCount || 10);
 
         if (raw.length === 0) {
             showNotification('No sentences saved yet. Add sentences to your note first.', 'warning');
