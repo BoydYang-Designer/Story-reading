@@ -3684,6 +3684,16 @@ textarea:focus-visible {
   text-align: center;
   flex-shrink: 0;
 }
+/* 差異標籤 (+0.3s / -0.2s) */
+.audio-editor-diff {
+  font-size: 0.78em;
+  font-weight: 600;
+  min-width: 48px;
+  flex-shrink: 0;
+  transition: color 0.15s;
+}
+.audio-editor-diff.is-positive { color: #e07b3a; }
+.audio-editor-diff.is-negative { color: #3a8ee0; }
 
 /* 微調按鈕 */
 .audio-adj-btn {
@@ -3793,9 +3803,16 @@ textarea:focus-visible {
 /* 已調整過的狀態 */
 .audio-edit-inline-btn.is-adjusted,
 .note-audio-edit-btn.is-adjusted {
-  border-color: var(--color-accent);
-  color: var(--color-accent);
-  background: var(--color-accent-subtle);
+  border-color: #3d9457;
+  color: #3d9457;
+  background: rgba(61, 148, 87, 0.10);
+  font-weight: 600;
+}
+.audio-edit-inline-btn.is-adjusted:hover,
+.note-audio-edit-btn.is-adjusted:hover {
+  background: rgba(61, 148, 87, 0.20);
+  border-color: #2e7a44;
+  color: #2e7a44;
 }
 
 /* ── 總編輯器 View ───────────────────────────────────────── */

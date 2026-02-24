@@ -176,6 +176,7 @@ function _renderEditorModal() {
             <span class="audio-editor-value" id="editor-start-val">0.0s</span>
             <button class="audio-adj-btn" data-target="start" data-delta="0.1">+0.1s</button>
             <button class="audio-adj-btn" data-target="start" data-delta="0.5">+0.5s</button>
+            <span class="audio-editor-diff" id="editor-start-diff"></span>
         </div>
 
         <div class="audio-editor-row">
@@ -185,6 +186,7 @@ function _renderEditorModal() {
             <span class="audio-editor-value" id="editor-end-val">0.0s</span>
             <button class="audio-adj-btn" data-target="end" data-delta="0.1">+0.1s</button>
             <button class="audio-adj-btn" data-target="end" data-delta="0.5">+0.5s</button>
+            <span class="audio-editor-diff" id="editor-end-diff"></span>
         </div>
 
         <div class="audio-editor-duration" id="editor-duration">Duration: —</div>
@@ -260,17 +262,43 @@ function _updateEditorDisplay() {
     const startEl    = document.getElementById('editor-start-val');
     const endEl      = document.getElementById('editor-end-val');
     const durationEl = document.getElementById('editor-duration');
+    const startDiffEl = document.getElementById('editor-start-diff');
+    const endDiffEl   = document.getElementById('editor-end-diff');
     if (!startEl) return;
 
-    startEl.textContent    = _editorState.start.toFixed(1) + 's';
-    endEl.textContent      = _editorState.end.toFixed(1) + 's';
+    startEl.textContent = _editorState.start.toFixed(1) + 's';
+    endEl.textContent   = _editorState.end.toFixed(1) + 's';
     const dur = (_editorState.end - _editorState.start).toFixed(1);
     durationEl.textContent = `Duration: ${dur}s`;
 
-    // 標示有沒有異動
-    const changed = _editorState.start !== _editorState.originalStart ||
-                    _editorState.end   !== _editorState.originalEnd;
-    durationEl.style.color = changed ? 'var(--color-accent)' : 'var(--color-text-light)';
+    // 計算差異
+    const startDiff = Math.round((_editorState.start - _editorState.originalStart) * 10) / 10;
+    const endDiff   = Math.round((_editorState.end   - _editorState.originalEnd  ) * 10) / 10;
+    const changed   = startDiff !== 0 || endDiff !== 0;
+
+    // 顯示差異標籤
+    if (startDiffEl) {
+        if (startDiff !== 0) {
+            const sign = startDiff > 0 ? '+' : '';
+            startDiffEl.textContent = `(${sign}${startDiff.toFixed(1)}s)`;
+            startDiffEl.className = `audio-editor-diff ${startDiff > 0 ? 'is-positive' : 'is-negative'}`;
+        } else {
+            startDiffEl.textContent = '';
+            startDiffEl.className = 'audio-editor-diff';
+        }
+    }
+    if (endDiffEl) {
+        if (endDiff !== 0) {
+            const sign = endDiff > 0 ? '+' : '';
+            endDiffEl.textContent = `(${sign}${endDiff.toFixed(1)}s)`;
+            endDiffEl.className = `audio-editor-diff ${endDiff > 0 ? 'is-positive' : 'is-negative'}`;
+        } else {
+            endDiffEl.textContent = '';
+            endDiffEl.className = 'audio-editor-diff';
+        }
+    }
+
+    durationEl.style.color = changed ? 'var(--color-primary)' : 'var(--color-text-light)';
 }
 
 function _playEditorPreview() {
