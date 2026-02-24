@@ -2155,13 +2155,19 @@ if (q.start != null) {
     // Reset UI
     const answerArea = document.getElementById('reorder-answer-area');
     const feedback   = document.getElementById('reorder-feedback');
-    const nextBtn    = document.getElementById('reorder-next');
 
     answerArea.className = 'reorder-answer-area';
     feedback.textContent = '';
     feedback.className   = 'quiz-feedback';
-    nextBtn.classList.add('is-hidden');
-    document.getElementById('reorder-check-btn').disabled = false;
+
+    _reorderClearHighlight();
+
+    // Reset Check button (may have been transformed into Next)
+    const checkBtn = document.getElementById('reorder-check-btn');
+    checkBtn.textContent = 'Check ✓';
+    checkBtn.classList.remove('quiz-btn-next-mode');
+    checkBtn.classList.add('quiz-btn-correct');
+    checkBtn.disabled = false;
     document.getElementById('reorder-clear-btn').disabled = false;
 
     renderReorderPool();
@@ -2440,7 +2446,12 @@ document.getElementById('reorder-clear-btn').addEventListener('click', () => {
 });
 
 document.getElementById('reorder-check-btn').addEventListener('click', () => {
-    if (reorderChecked) return;
+    if (reorderChecked) {
+        // Button has become "Next →" — advance to next question
+        quizState.currentIndex++;
+        showReorderQuestion();
+        return;
+    }
 
     const q = quizState.questions[quizState.currentIndex];
     const tokens = tokenize(q.sentence);
@@ -2451,7 +2462,6 @@ document.getElementById('reorder-check-btn').addEventListener('click', () => {
     }
 
     reorderChecked = true;
-    document.getElementById('reorder-check-btn').disabled = true;
     document.getElementById('reorder-clear-btn').disabled  = true;
 
     const userStr    = normalizeForCheck(reorderAnswer.map(a => a.word));
@@ -2460,7 +2470,6 @@ document.getElementById('reorder-check-btn').addEventListener('click', () => {
 
     const answerArea = document.getElementById('reorder-answer-area');
     const feedback   = document.getElementById('reorder-feedback');
-    const nextBtn    = document.getElementById('reorder-next');
 
     if (isCorrect) {
         answerArea.classList.add('is-correct');
@@ -2521,16 +2530,84 @@ document.getElementById('reorder-check-btn').addEventListener('click', () => {
         isCorrect
     });
 
-    nextBtn.classList.remove('is-hidden');
-});
-
-document.getElementById('reorder-next').addEventListener('click', () => {
-    quizState.currentIndex++;
-    showReorderQuestion();
+    // Transform Check button → Next button
+    const checkBtn = document.getElementById('reorder-check-btn');
+    checkBtn.textContent = 'Next →';
+    checkBtn.classList.remove('quiz-btn-correct');
+    checkBtn.classList.add('quiz-btn-next-mode');
+    checkBtn.disabled = false;
+    checkBtn.dataset.mode = 'next';
 });
 
 // ── Reorder Keyboard Shortcuts ────────────────────────────────
-// Space = Play audio, Enter = Check (if not checked) / Next (if checked)
+// Space  = Play audio
+// Letter = Cycle highlight through pool words starting with that letter
+// Enter  = Select highlighted word → if none highlighted, Check / Next
+// Escape = Clear highlight
+
+// Track which pool word is currently highlighted by keyboard
+let _reorderKeyHighlightIdx = null;   // idx into reorderPool
+let _reorderKeyLetter       = '';     // last pressed letter
+let _reorderKeyCandidates   = [];     // filtered pool idxs for that letter
+let _reorderKeyCyclePos     = -1;     // position in _reorderKeyCandidates
+
+function _reorderClearHighlight() {
+    _reorderKeyHighlightIdx = null;
+    _reorderKeyLetter       = '';
+    _reorderKeyCandidates   = [];
+    _reorderKeyCyclePos     = -1;
+    document.querySelectorAll('#reorder-word-pool .reorder-word.is-key-highlight')
+        .forEach(el => el.classList.remove('is-key-highlight'));
+}
+
+function _reorderCycleLetter(letter) {
+    // Build candidate list: available (not used) pool words starting with letter
+    const candidates = [];
+    reorderPool.forEach((word, idx) => {
+        if (reorderAnswer.some(a => a.idx === idx)) return; // already placed
+        const clean = word.toLowerCase().replace(/[^a-z]/g, '');
+        if (clean.startsWith(letter)) candidates.push(idx);
+    });
+
+    if (candidates.length === 0) {
+        _reorderClearHighlight();
+        return;
+    }
+
+    // If same letter as before → advance cycle; otherwise start fresh
+    if (letter === _reorderKeyLetter) {
+        _reorderKeyCyclePos = (_reorderKeyCyclePos + 1) % candidates.length;
+    } else {
+        _reorderKeyLetter     = letter;
+        _reorderKeyCandidates = candidates;
+        _reorderKeyCyclePos   = 0;
+    }
+    _reorderKeyCandidates = candidates; // refresh (pool may have changed)
+
+    const targetIdx = candidates[_reorderKeyCyclePos];
+    _reorderKeyHighlightIdx = targetIdx;
+
+    // Apply highlight to DOM
+    document.querySelectorAll('#reorder-word-pool .reorder-word').forEach(el => {
+        const elIdx = parseInt(el.dataset.idx, 10);
+        el.classList.toggle('is-key-highlight', elIdx === targetIdx);
+        if (elIdx === targetIdx) el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    });
+}
+
+function _reorderSelectHighlighted() {
+    if (_reorderKeyHighlightIdx === null) return;
+    const idx  = _reorderKeyHighlightIdx;
+    const word = reorderPool[idx];
+    if (!word) return;
+    if (reorderAnswer.some(a => a.idx === idx)) return; // already placed
+
+    reorderAnswer.push({ word, idx });
+    _reorderClearHighlight();
+    renderReorderPool();
+    renderReorderAnswer();
+}
+
 document.addEventListener('keydown', (e) => {
     const reorderArea = document.getElementById('quiz-reorder-area');
     if (!reorderArea || reorderArea.classList.contains('is-hidden')) return;
@@ -2542,15 +2619,32 @@ document.addEventListener('keydown', (e) => {
         if (playBtn && !playBtn.disabled && !playBtn.classList.contains('is-hidden')) {
             playBtn.click();
         }
+    } else if (e.code === 'Escape') {
+        e.preventDefault();
+        _reorderClearHighlight();
     } else if (e.code === 'Enter') {
         e.preventDefault();
-        const nextBtn  = document.getElementById('reorder-next');
-        const checkBtn = document.getElementById('reorder-check-btn');
-        if (nextBtn && !nextBtn.classList.contains('is-hidden')) {
-            nextBtn.click();
-        } else if (checkBtn && !checkBtn.disabled) {
-            checkBtn.click();
+        if (reorderChecked) {
+            document.getElementById('reorder-check-btn').click();
+            return;
         }
+        if (_reorderKeyHighlightIdx !== null) {
+            _reorderSelectHighlighted();
+        } else {
+            const checkBtn = document.getElementById('reorder-check-btn');
+            if (checkBtn && !checkBtn.disabled) checkBtn.click();
+        }
+    } else if (e.key.length === 1 && /[a-zA-Z]/.test(e.key)) {
+        if (reorderChecked) return;
+        e.preventDefault();
+        _reorderCycleLetter(e.key.toLowerCase());
+    } else if (e.code === 'Backspace') {
+        if (reorderChecked || reorderAnswer.length === 0) return;
+        e.preventDefault();
+        reorderAnswer.pop();
+        _reorderClearHighlight();
+        renderReorderPool();
+        renderReorderAnswer();
     }
 });
 

@@ -2461,6 +2461,22 @@ button.secondary:hover {
 
 .quiz-next-btn:active { opacity: 0.8; }
 
+/* Reorder: Check button transformed to Next state */
+.quiz-btn-next-mode {
+    background: var(--color-primary) !important;
+    transition: background 0.25s;
+}
+
+/* Reorder: keyboard letter-highlight */
+.reorder-word.is-key-highlight {
+    background: #bde0ff;
+    border-color: #4aa8ff;
+    color: #003a6e;
+    box-shadow: 0 0 0 2px #4aa8ff55;
+    transform: translateY(-2px);
+    transition: background 0.15s, border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+}
+
 /* ── Options ── */
 .quiz-options {
     display: flex;
