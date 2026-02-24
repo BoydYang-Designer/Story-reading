@@ -996,10 +996,30 @@ button.secondary:hover {
     display: none;
 }
 
-/* Saved word highlighting in text */
+/* Saved word highlighting in text — 綠色螢光筆 */
 .clickable-word.is-saved-word {
-  border-bottom: 2px solid var(--color-primary);
-  font-weight: 600;
+    background: rgba(72, 199, 116, 0.28);
+    border-radius: 3px;
+    padding: 0 1px;
+    font-weight: 600;
+}
+
+/* Saved phrase highlighting — 藍色螢光筆，整個 phrase 連成一條 */
+.is-saved-phrase {
+    background: rgba(66, 153, 225, 0.22);
+    border-radius: 4px;
+    padding: 0 2px;
+    cursor: pointer;
+    display: inline;
+}
+.is-saved-phrase:hover {
+    background: rgba(66, 153, 225, 0.40);
+}
+/* phrase 內的單字取消自己的背景，由外層統一呈現 */
+.is-saved-phrase .clickable-word {
+    background: none !important;
+    padding: 0;
+    font-weight: 600;
 }
 
 /* 11. Data Manager Styles

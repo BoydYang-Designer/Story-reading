@@ -1483,10 +1483,11 @@ textContainer.addEventListener('click', (e) => {
                 }
             }
         } else {
-            // 暫停時：點擊句子 -> 播放該片段；點擊單字 -> 加入暫存並播單字發音
+            // 暫停時：點擊句子 -> 播放該片段；點擊 phrase -> 加入整個 phrase；點擊單字 -> 加入暫存並播單字發音
+
+            // 先判斷是否點到句子本體（非子元素）
             const sentenceSpan = e.target.closest('.timestamp-sentence');
             if (sentenceSpan && e.target === sentenceSpan) {
-                // 點到句子背景本體（非單字）-> 播放音訊片段
                 const startTime = parseFloat(sentenceSpan.dataset.start);
                 const endTime = parseFloat(sentenceSpan.dataset.end);
                 if (!isNaN(startTime) && !isNaN(endTime)) {
@@ -1494,7 +1495,22 @@ textContainer.addEventListener('click', (e) => {
                 }
                 return;
             }
-            
+
+            // 判斷是否點到 phrase span（整個 phrase 為一個單位）
+            const phraseSpan = e.target.closest('.is-saved-phrase');
+            if (phraseSpan) {
+                // phrase 文字：把各 clickable-word 的文字組合起來（含空格）
+                const phraseText = phraseSpan.textContent.trim();
+                const savedForm  = phraseSpan.dataset.phrase || phraseText;
+                playWordAudio(savedForm);
+                const stagedEl = document.createElement('span');
+                stagedEl.className = 'staged-word';
+                stagedEl.textContent = phraseText;
+                stagedWordsContainer.appendChild(stagedEl);
+                return;
+            }
+
+            // 一般單字
             const wordSpan = e.target.closest('.clickable-word');
             if (wordSpan) {
                 const cleanedWord = cleanWord(wordSpan.textContent);
@@ -1509,7 +1525,6 @@ textContainer.addEventListener('click', (e) => {
                     } else {
                         playWordAudio(cleanedWord);
                     }
-                    
                     const stagedWordEl = document.createElement('span');
                     stagedWordEl.className = 'staged-word';
                     stagedWordEl.textContent = cleanedWord;
@@ -1683,10 +1698,8 @@ function renderTimestampContent() {
     textContainer.innerHTML = '';
     textContainer.scrollTop = 0;
     const frag = document.createDocumentFragment();
-    
-    // --- 新增：先取得所有已存單字 ---
-    const savedSet = getSavedWordsForCurrentStory(currentCategoryName, currentStoryTitle);
-    // -----------------------------
+
+    const { wordSet, phraseList } = getSavedSetsForTimestamp(currentCategoryName, currentStoryTitle);
 
     timestampData.forEach(line => {
         const p = document.createElement('p');
@@ -1694,24 +1707,71 @@ function renderTimestampContent() {
         p.dataset.start = line.start;
         p.dataset.end = line.end;
 
-        line.sentence.split(/(\s+|—|–)/).forEach(part => {
+        // Split into tokens (words) and whitespace/dash separators
+        const parts = line.sentence.split(/(\s+|—|–)/);
+        // Extract only non-whitespace tokens for annotation
+        const tokens = parts.filter(pt => pt && !/^(\s+|—|–)$/.test(pt));
+        const ann = annotateTokens(tokens, wordSet, phraseList);
+
+        let tokenIdx = 0;
+        // We need to walk parts and assign annotations to word tokens
+        // Build a parallel index: for each part, if it's a word token, get its annotation
+        const wordPartIndices = [];
+        parts.forEach((pt, i) => {
+            if (pt && !/^(\s+|—|–)$/.test(pt)) wordPartIndices.push(i);
+        });
+
+        // Track open phrase span
+        let phraseSpan = null;
+        let lastPhraseText = null;
+
+        parts.forEach((part, partIdx) => {
             if (!part) return;
-            const span = document.createElement('span');
+
             if (/^(\s+|—|–)$/.test(part)) {
-                span.textContent = part;
-            } else {
+                // Whitespace/dash — if inside a phrase span, append to it; else append to p
+                if (phraseSpan) {
+                    phraseSpan.appendChild(document.createTextNode(part));
+                } else {
+                    p.appendChild(document.createTextNode(part));
+                }
+                return;
+            }
+
+            // It's a word token
+            const a = ann[tokenIdx++];
+
+            if (a.type === 'phrase') {
+                if (a.role === 'start' || a.role === 'solo') {
+                    // Open a new phrase wrapper
+                    phraseSpan = document.createElement('span');
+                    phraseSpan.className = 'is-saved-phrase';
+                    phraseSpan.dataset.phrase = a.phraseOriginal;
+                    lastPhraseText = a.phraseText;
+                    p.appendChild(phraseSpan);
+                }
+                const span = document.createElement('span');
                 span.className = 'clickable-word';
                 span.textContent = part;
+                if (phraseSpan) phraseSpan.appendChild(span);
+                else p.appendChild(span);
 
-                // --- 新增：檢查是否為已存單字 ---
-                if (isWordSaved(part, savedSet)) {
-                    span.classList.add('is-saved-word');
+                if (a.role === 'end' || a.role === 'solo') {
+                    phraseSpan = null;
+                    lastPhraseText = null;
                 }
-                // -----------------------------
+            } else {
+                // Close any open phrase (safety)
+                if (phraseSpan) { phraseSpan = null; lastPhraseText = null; }
+
+                const span = document.createElement('span');
+                span.className = 'clickable-word';
+                span.textContent = part;
+                if (a.type === 'word') span.classList.add('is-saved-word');
+                p.appendChild(span);
             }
-            p.appendChild(span);
         });
-        
+
         frag.appendChild(p);
     });
     textContainer.appendChild(frag);
@@ -3147,3 +3207,78 @@ firebase.auth().onAuthStateChanged(async (user) => {
 });
 
 init();
+// ── Timestamp highlight helpers ───────────────────────────────
+/**
+ * 回傳拆開的 { wordSet, phraseList } 供 timestamp 模式使用
+ * phraseList 每項: { original, tokens[] }，已把儲存時的連字號還原為空格
+ * 長 phrase 優先排前，避免短 phrase 搶先匹配
+ */
+function getSavedSetsForTimestamp(categoryName, titleName) {
+    const wordSet    = new Set();
+    const phraseList = [];
+    if (!categoryName || !titleName) return { wordSet, phraseList };
+
+    const storyData = savedWords[categoryName]?.[titleName];
+    if (!storyData) return { wordSet, phraseList };
+
+    if (storyData.words) {
+        storyData.words.forEach(w => wordSet.add(w.toLowerCase().trim()));
+    }
+    if (storyData.phrases) {
+        storyData.phrases.forEach(p => {
+            const normalized = p.toLowerCase().trim().replace(/-/g, ' ');
+            const tokens = normalized.split(/\s+/).filter(Boolean);
+            if (tokens.length > 0) phraseList.push({ original: p, tokens });
+        });
+        phraseList.sort((a, b) => b.tokens.length - a.tokens.length);
+    }
+    return { wordSet, phraseList };
+}
+
+/**
+ * 把一個句子的 word tokens 與 phraseList 比對
+ * 回傳 annotation 陣列，長度同 tokens：
+ *   { type: 'phrase', phraseOriginal, phraseText, role: 'start'|'mid'|'end'|'solo' }
+ *   { type: 'word' }
+ *   { type: 'none' }
+ * tokens: 原始 token 陣列（含標點，不含空白）
+ */
+function annotateTokens(tokens, wordSet, phraseList) {
+    const strip = t => t.replace(/^[.,?!:;'"`""''()[\]{}\-/*]+|[.,?!:;'"`""''()[\]{}\-/*]+$/g, '').toLowerCase();
+    const n = tokens.length;
+    const ann = Array.from({ length: n }, () => ({ type: 'none' }));
+
+    // 先標記 phrase（長優先）
+    const taken = new Array(n).fill(false);
+    for (const ph of phraseList) {
+        const pt = ph.tokens; // already lowercased, no punct
+        for (let i = 0; i <= n - pt.length; i++) {
+            if (taken[i]) continue;
+            let match = true;
+            for (let k = 0; k < pt.length; k++) {
+                if (taken[i + k] || strip(tokens[i + k]) !== pt[k]) { match = false; break; }
+            }
+            if (match) {
+                const phraseText = tokens.slice(i, i + pt.length).join(' ');
+                for (let k = 0; k < pt.length; k++) {
+                    taken[i + k] = true;
+                    const role = pt.length === 1 ? 'solo'
+                               : k === 0 ? 'start'
+                               : k === pt.length - 1 ? 'end' : 'mid';
+                    ann[i + k] = { type: 'phrase', phraseOriginal: ph.original, phraseText, role };
+                }
+            }
+        }
+    }
+
+    // 再標記未被 phrase 佔用的 word
+    for (let i = 0; i < n; i++) {
+        if (!taken[i]) {
+            const stripped = strip(tokens[i]);
+            if (stripped && isWordSaved(tokens[i], wordSet)) {
+                ann[i] = { type: 'word' };
+            }
+        }
+    }
+    return ann;
+}
