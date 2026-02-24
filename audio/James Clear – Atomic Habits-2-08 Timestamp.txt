@@ -71,7 +71,7 @@
 [00:04:38.800 --> 00:04:41.920] Your cue should also have the same frequency as your desired habit.
 [00:04:42.260 --> 00:04:48.580] If you want to do a habit every day, but you stack it on top of the habit that only happens on Mondays, well then that's not a good choice.
 [00:04:49.320 --> 00:04:54.220] One way to find the right trigger for your habit stack is by brainstorming a list of your current habits.
-[00:04:54.840 --> 00:04:58.980] You can use your habit scorecard, which we created in the last chapter as a starting point.
+[00:04:54.840 --> 00:04:58.980] You can use your habits scorecard, which we created in the last chapter as a starting point.
 [00:04:59.720 --> 00:05:01.820] Alternatively, you can create a list of two columns.
 [00:05:02.460 --> 00:05:05.960] In the first column, write down the habits that you do each day without fail.
 [00:05:06.520 --> 00:05:15.160] For example, get out of bed, take a shower, brush your teeth, get dressed, brew a cup of coffee, eat breakfast, take the kids to school, and so on.

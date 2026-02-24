@@ -15,7 +15,7 @@
 [00:00:37.200 --> 00:00:41.600] This is why remaining part of a group after achieving a goal is crucial for maintaining your habits.
 [00:00:42.140 --> 00:00:47.020] It's friendship and community that embed a new identity and help behaviors last over the long run.
 [00:00:48.960 --> 00:00:49.520] 2.
-[00:00:50.060 --> 00:00:58.500] Imitating the Many In the 1950s, the psychologist Solomon Ash conducted a series of experiments that are now taught to legions of undergrads each year.
+[00:00:50.060 --> 00:00:58.500] Imitating the Many In the 1950s, the psychologist Solomon Asch conducted a series of experiments that are now taught to legions of undergrads each year.
 [00:00:59.320 --> 00:01:02.960] To begin each experiment, the subject entered the room with a group of strangers.
 [00:01:04.060 --> 00:01:11.120] Unbeknownst to the subject, the other participants were actors planted by the researcher and instructed to deliver scripted answers to certain questions.
 [00:01:11.880 --> 00:01:16.340] The group would be shown one card with a line on it and then a second card with a series of lines.
@@ -32,7 +32,7 @@
 [00:02:04.380 --> 00:02:08.820] Their agitation would grow as one person after another delivered the same incorrect response.
 [00:02:09.460 --> 00:02:11.940] Soon, the subject began to doubt their own eyes.
 [00:02:12.400 --> 00:02:15.300] Eventually, they delivered the answer they knew in their heart to be incorrect.
-[00:02:16.460 --> 00:02:19.280] Ash ran this experiment many times and in many different ways.
+[00:02:16.460 --> 00:02:19.280] Asch ran this experiment many times and in many different ways.
 [00:02:19.980 --> 00:02:24.780] And what he discovered was that as the number of actors increased, so did the conformity of the subject.
 [00:02:25.300 --> 00:02:29.280] If it was just the subject and one other actor, then there was no effect on the person's choice.
 [00:02:29.500 --> 00:02:31.200] They just assumed they were in the room with a dummy.
@@ -48,7 +48,7 @@
 [00:03:11.840 --> 00:03:16.340] The normal behavior of the tribe often overpowers the desired behavior of the individual.
 [00:03:17.160 --> 00:03:32.080] For example, one study found that when a chimpanzee learns an effective way to crack nuts open as the member of one group, and then switches to a new group that uses a less effective strategy, it will avoid using the superior nut -cracking method just to blend in with the rest of the chimps.
 [00:03:32.640 --> 00:03:33.420] Humans are similar.
-[00:03:34.020 --> 00:03:37.660] There's a tremendous internal pressure to comply with the norms of the group.
+[00:03:34.020 --> 00:03:37.660] There is's a tremendous internal pressure to comply with the norms of the group.
 [00:03:38.200 --> 00:03:44.300] The reward of being accepted is often greater than the reward of winning an argument or looking smart or finding truth.
 [00:03:45.360 --> 00:03:49.220] Most days, we'd rather be wrong with the crowd than be right by ourselves.
 [00:03:50.140 --> 00:03:52.400] The human mind knows how to get along with others.
@@ -83,7 +83,7 @@
 [00:05:45.840 --> 00:05:49.700] When our mother comes to visit, we clean up the house because we don't want to be judged.
 [00:05:50.160 --> 00:05:54.700] We are continually wondering, what will others think of me and altering our behavior based on the answer?
 [00:05:55.760 --> 00:06:04.380] The Polgar Sisters, the chess prodigies mentioned at the beginning of this chapter, are evidence of the powerful and lasting impact social influences can have on our behavior.
-[00:06:04.980 --> 00:06:09.800] The sisters practice chess for many hours each day and continue this remarkable effort for decades.
+[00:06:04.980 --> 00:06:09.800] The sisters practiced chess for many hours each day and continue this remarkable effort for decades.
 [00:06:10.640 --> 00:06:15.900] But these habits and behaviors maintain their attractiveness in part because they were valued by their culture.
 [00:06:16.660 --> 00:06:23.780] From the praise of their parents to the achievement of different status markers like becoming a grandmaster, they had many reasons to continue their effort.
 [00:06:25.700 --> 00:06:30.720] Chapter Summary The culture we live in determines which behaviors are attractive to us.

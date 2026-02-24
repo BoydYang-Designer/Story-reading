@@ -40,15 +40,17 @@ except ImportError:
 # ══════════════════════════════════════════════
 
 STOPWORDS = {
-    "a","an","the","and","or","but","in","on","at","to","for","of","by",
-    "with","from","as","is","it","be","he","she","we","i","me","my","you",
-    "so","if","up","do","no","not","its","was","are","has","had","have",
+    "a","an","the","and","or","but","at","for","of","by",
+    "with","as","is","it","be","he","she","we","i","me","my","you",
+    "so","if","do","no","not","its","was","are","has","had","have",
     "his","her","our","their","your","this","that","who","what","which",
-    "will","can","may","just","all","one","two","out","now","then","they",
+    "will","can","may","just","all","one","two","now","then","they",
     "him","them","been","were","did","got","get","go","oh","said","says",
     "am","does","each","few","how","more","most","other","some","than",
     "too","very","s","t","re","ve","ll","d",
 }
+# 刻意移除的詞（容易被語音誤辨，需要比對）：
+#   in / into / on / onto / to / up / out / off / over / under / from
 
 TIMESTAMP_RE = re.compile(
     r"(\[\d{2}:\d{2}:\d{2}[.,]\d+\s*-->\s*\d{2}:\d{2}:\d{2}[.,]\d+\]\s*)"
@@ -439,10 +441,19 @@ def diff_sentences(tgt_frag: str, pdf_sent: str, seg_idx: int) -> list:
 
             if tw_c in STOPWORDS or rw_c in STOPWORDS:
                 continue
-            if len(tw_c) <= 2 or len(rw_c) <= 2:
-                continue
-            if abs(len(tw_c) - len(rw_c)) > max(2, int(len(tw_c) * 0.45)):
-                continue
+
+            # 短介系詞組（如 in/into, on/onto, up/upon, out/outside）
+            # 只要其中一個是另一個的前綴就允許通過
+            SHORT_PREP = {"in","into","on","onto","to","up","out","off",
+                          "over","under","from","upon","within","without"}
+            is_prep_pair = (tw_c in SHORT_PREP or rw_c in SHORT_PREP) and (
+                tw_c.startswith(rw_c) or rw_c.startswith(tw_c))
+
+            if not is_prep_pair:
+                if len(tw_c) <= 2 or len(rw_c) <= 2:
+                    continue
+                if abs(len(tw_c) - len(rw_c)) > max(2, int(len(tw_c) * 0.45)):
+                    continue
 
             sim = difflib.SequenceMatcher(None, tw_c, rw_c).ratio()
             if sim < WORD_SIM_THRESHOLD or tw_c == rw_c:

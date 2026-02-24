@@ -31,7 +31,7 @@
 [00:01:50.020 --> 00:01:51.220] What is your mom's name?
 [00:01:52.600 --> 00:01:54.840] Uh, um, I stalled.
 [00:01:56.080 --> 00:01:56.880] 10 seconds passed.
-[00:01:58.120 --> 00:02:03.520] Patty, I said casually, ignoring the fact that it had taken me 10 seconds to remember my own mother's name.
+[00:01:58.120 --> 00:02:03.520] Patti, I said casually, ignoring the fact that it had taken me 10 seconds to remember my own mother's name.
 [00:02:04.960 --> 00:02:06.700] That is the last question I remember.
 [00:02:07.520 --> 00:02:12.820] My body was unable to handle the rapid swelling in my brain, and I lost consciousness before the ambulance arrived.
 [00:02:13.620 --> 00:02:17.200] Minutes later, I was carried out of school and taken to the local hospital.
@@ -59,7 +59,7 @@
 [00:04:14.660 --> 00:04:20.700] And now, after ten years of normal life, my parents found themselves back in the same place with a different child.
 [00:04:22.380 --> 00:04:27.180] While I slipped into a coma, the hospital sent a priest and a social worker to comfort my parents.
 [00:04:27.180 --> 00:04:32.760] It was the same priest who had met with them a decade earlier, on the evening they found out my sister had cancer.
-[00:04:33.560 --> 00:04:37.440] As day faded in tonight, a series of machines kept me alive.
+[00:04:33.560 --> 00:04:37.440] As day faded in night, a series of machines kept me alive.
 [00:04:38.500 --> 00:04:40.880] My parents slept restlessly on a hospital mattress.
 [00:04:41.420 --> 00:04:45.460] One moment they would collapse from fatigue, the next they would be wide awake with worry.
 [00:04:46.300 --> 00:04:50.040] My mother would tell me later, it was one of the worst nights I've ever had.

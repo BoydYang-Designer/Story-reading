@@ -1,0 +1,26 @@
+【文本校對修正紀錄 V5】
+參考：Atomic habits ( PDFDrive ).pdf
+時間：2026-02-24 11:23:28
+============================================================
+
+📄 James Clear – Atomic Habits-1-05 Timestamp.txt  （套用 2 項）
+   [goals's] → [goals]
+   TXT: The problem with a goals's first mentality is that you're continually putting happiness off until the next milestone.
+   PDF: be happy.” The problem with a goals-first mentality is that you’re continually
+
+   [systems's] → [systems]
+   TXT: A systems's first mentality provides the antidote.
+   PDF: A systems-first mentality provides the antidote.
+
+📄 James Clear – Atomic Habits-3-5 Timestamp.txt  （套用 1 項）
+   [Polgars's] → [Polgars]
+   TXT: Laszlo successfully courted Klara, and within a few years, the Polgars's were parents to three young girls, Susan, Sophia, and Judith.
+   PDF: Laszlo successfully courted Klara, and within a few years, the Polgars were
+
+📄 James Clear – Atomic Habits-3-7 Timestamp.txt  （套用 1 項）
+   [There's] → [There is] ✏️手動
+   TXT: There's a tremendous internal pressure to comply with the norms of the group.
+   PDF: There is tremendous internal pressure to comply with the
+
+============================================================
+總計套用 4 項修正。
