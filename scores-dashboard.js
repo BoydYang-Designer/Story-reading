@@ -195,27 +195,73 @@ function calcArticleFamSummary(categoryName, titleName) {
     const key   = `${categoryName}||${titleName}`;
     const entry = data[key] || {};
 
-    const noteWordItems = Object.values(entry.noteWords     || {});
-    const noteSentItems = Object.values(entry.noteSentences || {});
-    const allNoteItems  = [...noteWordItems, ...noteSentItems];
-    const noteTotal     = allNoteItems.length;
-    const noteFamScores = allNoteItems.map(calcFamiliarity);
-    const noteAvg       = noteTotal > 0
-        ? Math.round(noteFamScores.reduce((a, b) => a + b, 0) / noteTotal) : null;
+    // ── Note：從 savedWords 取得全部項目（含未測驗）──────────
+    const noteData = (typeof savedWords !== 'undefined')
+        ? (savedWords[categoryName]?.[titleName] || {}) : {};
 
-    // Article words (from Flashcard/Flashcard+ Article mode)
+    const allNoteWords = [
+        ...(noteData.words    ? Array.from(noteData.words)    : []),
+        ...(noteData.phrases  ? Array.from(noteData.phrases)  : []),
+    ].map(t => t.trim()).filter(Boolean);
+    const allNoteSents = (noteData.sentences ? Array.from(noteData.sentences) : [])
+        .map(t => t.trim()).filter(Boolean);
+
+    const testedNoteWords = entry.noteWords     || {};
+    const testedNoteSents = entry.noteSentences || {};
+
+    // 已測驗用真實分數，未測驗補 0%
+    function scorePool(allTexts, testedMap) {
+        return allTexts.map(t => {
+            const rec = testedMap[t];
+            return rec ? calcFamiliarity(rec) : 0;
+        });
+    }
+
+    const noteWordScores = scorePool(allNoteWords, testedNoteWords);
+    const noteSentScores = scorePool(allNoteSents, testedNoteSents);
+
+    // 如果 savedWords 是空的但 itemScores 裡有資料（舊資料），fallback
+    const fallbackWordItems = Object.values(testedNoteWords);
+    const fallbackSentItems = Object.values(testedNoteSents);
+
+    const noteWordFamScores = allNoteWords.length > 0 ? noteWordScores
+        : fallbackWordItems.map(calcFamiliarity);
+    const noteSentFamScores = allNoteSents.length > 0 ? noteSentScores
+        : fallbackSentItems.map(calcFamiliarity);
+
+    const noteWordTotal = allNoteWords.length > 0 ? allNoteWords.length : fallbackWordItems.length;
+    const noteSentTotal = allNoteSents.length > 0 ? allNoteSents.length : fallbackSentItems.length;
+
+    const noteWordAvg = noteWordTotal > 0
+        ? Math.round(noteWordFamScores.reduce((a, b) => a + b, 0) / noteWordTotal) : null;
+    const noteSentAvg = noteSentTotal > 0
+        ? Math.round(noteSentFamScores.reduce((a, b) => a + b, 0) / noteSentTotal) : null;
+
+    // Note 整體 = 單字 + 句子平均
+    let noteAvg = null;
+    if (noteWordAvg !== null && noteSentAvg !== null) noteAvg = Math.round((noteWordAvg + noteSentAvg) / 2);
+    else if (noteWordAvg !== null) noteAvg = noteWordAvg;
+    else if (noteSentAvg !== null) noteAvg = noteSentAvg;
+
+    const noteTestedWordCount = allNoteWords.length > 0
+        ? allNoteWords.filter(t => testedNoteWords[t]).length : fallbackWordItems.filter(i => (i.correct + i.wrong) > 0).length;
+    const noteTestedSentCount = allNoteSents.length > 0
+        ? allNoteSents.filter(t => testedNoteSents[t]).length : fallbackSentItems.filter(i => (i.correct + i.wrong) > 0).length;
+
+    const noteUntestedWordCount = noteWordTotal - noteTestedWordCount;
+    const noteUntestedSentCount = noteSentTotal - noteTestedSentCount;
+    const noteTotal = noteWordTotal + noteSentTotal;
+
+    // ── Article ───────────────────────────────────────────────
     const artWordItems    = Object.values(entry.articleWords    || {});
-    // Article sentences (from Dictation/Reorder Article mode)
     const artSentItems    = Object.values(entry.articleSentences || {});
 
-    // Article 熟悉度需考慮文章的「全部句子」（含未測驗），句子總數存在 cache 裡
-    const cachedTotalSents = _getArticleSentenceTotal(categoryName, titleName);
-    const testedSentCount  = artSentItems.length;
-    // 未測驗的句子補上熟悉度 0
-    const artSentFamScores = artSentItems.map(calcFamiliarity);
+    const cachedTotalSents  = _getArticleSentenceTotal(categoryName, titleName);
+    const testedSentCount   = artSentItems.length;
+    const artSentFamScores  = artSentItems.map(calcFamiliarity);
     const untestedSentCount = Math.max(0, cachedTotalSents - testedSentCount);
     const allArtSentFamScores = [...artSentFamScores, ...Array(untestedSentCount).fill(0)];
-    const artSentTotal    = testedSentCount + untestedSentCount; // 含未測驗
+    const artSentTotal    = testedSentCount + untestedSentCount;
 
     const artWordTotal    = artWordItems.length;
     const artWordFamScores = artWordItems.map(calcFamiliarity);
@@ -224,17 +270,16 @@ function calcArticleFamSummary(categoryName, titleName) {
     const artSentAvg      = artSentTotal > 0
         ? Math.round(allArtSentFamScores.reduce((a, b) => a + b, 0) / artSentTotal) : null;
 
-    // Article 熟悉度 = 單字 + 句子的平均（各佔50%，有資料的才算）
     let artAvg = null;
     if (artWordAvg !== null && artSentAvg !== null) artAvg = Math.round((artWordAvg + artSentAvg) / 2);
     else if (artWordAvg !== null) artAvg = artWordAvg;
     else if (artSentAvg !== null) artAvg = artSentAvg;
-    else if (cachedTotalSents > 0 && testedSentCount === 0) artAvg = 0; // 有句子但完全未測
+    else if (cachedTotalSents > 0 && testedSentCount === 0) artAvg = 0;
 
     const artTotal   = artWordTotal + artSentTotal;
 
     const totalItems  = noteTotal + artTotal;
-    const totalTested = allNoteItems.filter(i => (i.correct + i.wrong) > 0).length
+    const totalTested = noteTestedWordCount + noteTestedSentCount
                       + artWordItems.filter(i => (i.correct + i.wrong) > 0).length
                       + artSentItems.filter(i => (i.correct + i.wrong) > 0).length;
 
@@ -245,6 +290,10 @@ function calcArticleFamSummary(categoryName, titleName) {
 
     return {
         famAvg, noteAvg, artAvg,
+        noteWordAvg, noteSentAvg,
+        noteWordTotal, noteSentTotal,
+        noteTestedWordCount, noteUntestedWordCount,
+        noteTestedSentCount, noteUntestedSentCount,
         artWordAvg, artSentAvg,
         noteTotal, artTotal,
         artWordTotal, artSentTotal, testedSentCount, untestedSentCount,
@@ -545,10 +594,11 @@ function _toggleSection(header) {
 
 function _buildArticleRowHtml(article) {
     const { title, cat, summary } = article;
-    const { famAvg, noteAvg, artWordAvg, artSentAvg,
-            hasPractice, testedSentCount, untestedSentCount } = summary;
+    const { noteAvg, artWordAvg, artSentAvg,
+            noteWordTotal, noteSentTotal, noteTestedWordCount, noteTestedSentCount,
+            testedSentCount, untestedSentCount } = summary;
 
-    function famChip(avg, topLabel, extraInfo) {
+    function famChip(avg, topLabel, subInfo) {
         if (avg === null || avg === undefined) {
             return `<div class="browser-fam-chip chip-untested">
                 <span class="chip-top-label">${topLabel}</span>
@@ -559,27 +609,29 @@ function _buildArticleRowHtml(article) {
         return `<div class="browser-fam-chip ${colorClass}">
             <span class="chip-top-label">${topLabel}</span>
             <span class="chip-val">${avg}%</span>
-            ${extraInfo ? `<span class="chip-sub">${extraInfo}</span>` : ''}
+            ${subInfo ? `<span class="chip-sub">${subInfo}</span>` : ''}
             <div class="chip-bar-wrap"><div class="chip-bar" style="width:${avg}%"></div></div>
         </div>`;
     }
 
-    // 句子顯示已測/總數
-    const totalSents = (testedSentCount ?? 0) + (untestedSentCount ?? 0);
-    const sentInfo = totalSents > 0 ? `${testedSentCount ?? 0}/${totalSents}句` : '';
+    // Note：已測/總數（單字+句子合計）
+    const noteTotalAll  = (noteWordTotal ?? 0) + (noteSentTotal ?? 0);
+    const noteTestedAll = (noteTestedWordCount ?? 0) + (noteTestedSentCount ?? 0);
+    const noteInfo = noteTotalAll > 0 ? `${noteTestedAll}/${noteTotalAll}項` : '';
 
-    // 永遠顯示全部 4 個 chip（未測驗顯示 —）
-    const chipsHtml = `<div class="browser-article-chips">
-        ${famChip(noteAvg,    '📝 Note')}
-        ${famChip(artWordAvg, '🃏 單字')}
-        ${famChip(artSentAvg, '🎧 句子', sentInfo)}
-    </div>`;
+    // Article 句子：已測/總數
+    const totalSents = (testedSentCount ?? 0) + (untestedSentCount ?? 0);
+    const sentInfo   = totalSents > 0 ? `${testedSentCount ?? 0}/${totalSents}句` : '';
 
     return `<div class="browser-article-row" data-title="${_escHtml(title)}" data-cat="${_escHtml(cat)}">
         <div class="browser-article-main">
             <div class="browser-article-title">${_escHtml(title)}</div>
         </div>
-        ${chipsHtml}
+        <div class="browser-article-chips">
+            ${famChip(noteAvg,    '📝 Note',  noteInfo)}
+            ${famChip(artWordAvg, '🃏 單字')}
+            ${famChip(artSentAvg, '🎧 句子',  sentInfo)}
+        </div>
         <div class="browser-article-arrow">→</div>
     </div>`;
 }
