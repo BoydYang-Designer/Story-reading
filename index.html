@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>Reading Challenge</title>
   <link rel="stylesheet" href="story.css">
+  <link rel="stylesheet" href="scores-dashboard.css">
   <link rel="icon" href="data:,">
 </head>
 <body>
@@ -754,6 +755,42 @@
     <div class="scores-clear-row">
         <button class="secondary" id="scores-clear-all-btn">🗑 Clear All Records</button>
     </div>
+
+    <!-- ── Item-level Learning Status Section ── -->
+    <div class="item-level-section-header">
+        <h2>📚 細部學習狀態</h2>
+        <span class="item-section-badge">點擊文章查看單字/句子</span>
+    </div>
+    <div id="item-level-summary-section"></div>
+</div>
+
+<!-- ===== ITEM DETAIL VIEW ===== -->
+<div id="item-detail-view" class="is-hidden">
+    <div class="view-top-nav">
+        <button class="secondary btn-back-top" id="back-from-detail-view">← Back</button>
+    </div>
+    <h2 class="detail-view-heading" id="detail-view-title"></h2>
+
+    <!-- Summary chips -->
+    <div id="detail-summary-bar"></div>
+
+    <!-- Tabs: Note Words / Note Sentences / Article Sentences -->
+    <div class="detail-tabs">
+        <button class="detail-tab-btn is-active" data-tab="noteWords" data-label="📝 Note 單字">📝 Note 單字</button>
+        <button class="detail-tab-btn" data-tab="noteSentences" data-label="📝 Note 句子">📝 Note 句子</button>
+        <button class="detail-tab-btn" data-tab="articleSentences" data-label="📖 Article 句子">📖 Article</button>
+    </div>
+
+    <!-- Sort bar -->
+    <div class="detail-sort-bar">
+        <span class="detail-sort-label">排序：</span>
+        <button class="detail-sort-btn is-active" data-sort="need" data-label="需練優先">需練優先 ↓</button>
+        <button class="detail-sort-btn" data-sort="alpha" data-label="A–Z">A–Z</button>
+        <button class="detail-sort-btn" data-sort="recent" data-label="最近測驗">最近測驗</button>
+    </div>
+
+    <!-- Items list -->
+    <div id="detail-items-list"></div>
 </div>
 
 <!-- 音檔時間調整 總編輯器 View（必須在 app-container 內） -->
@@ -832,6 +869,7 @@
 
 <script src="story.js"></script>
   <script src="quiz.js"></script>
+  <script src="scores-dashboard.js"></script>
   <script src="audio-editor.js"></script>
   <script src="data-manager.js"></script>
 </body>
