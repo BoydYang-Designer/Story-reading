@@ -33,6 +33,32 @@ let quizState = {
 
 let quizAudioPlayer = new Audio();
 
+// ── Replay 計數（用於評分）────────────────────────────────────
+// _quizReplayCount : 當前題目手動重播次數（自動播放不算）
+// _quizAutoPlayed  : 目前題目是否已完成自動播放（第一次不計）
+// _quizIsEditingAudio : 編輯音檔模式中，播放不計入 replay
+let _quizReplayCount    = 0;
+let _quizAutoPlayed     = false;
+let _quizIsEditingAudio = false;
+
+/** 每道新題目出現時重置計數 */
+function _resetReplayCount() {
+    _quizReplayCount    = 0;
+    _quizAutoPlayed     = false;
+    _quizIsEditingAudio = false;
+}
+
+/** 手動播放時呼叫（自動播放後第一次起才計數）*/
+function _trackReplay() {
+    if (_quizIsEditingAudio) return; // 編輯模式不計
+    if (!_quizAutoPlayed) {
+        // 第一次播放視為自動播放，標記後不計入
+        _quizAutoPlayed = true;
+        return;
+    }
+    _quizReplayCount++;
+}
+
 // ── Unified snippet player ────────────────────────────────────
 // Plays a time-bounded segment of quizAudioPlayer.
 // Uses setTimeout as primary stop mechanism (more reliable than timeupdate).
@@ -113,78 +139,6 @@ function shuffle(arr) {
         [a[i], a[j]] = [a[j], a[i]];
     }
     return a;
-}
-
-/**
- * 根據熟悉度加權抽題
- * 熟悉度低（未測驗或常答錯）→ 權重高 → 更容易被抽到
- *
- * 權重對照：
- *   未測驗 / 熟悉度 0%        → 3.0x
- *   熟悉度 1–39%  (需練習)    → 2.5x
- *   熟悉度 40–69% (普通)      → 1.5x
- *   熟悉度 70–100% (熟悉)     → 1.0x
- *
- * @param {Array}    items        要抽取的項目陣列
- * @param {number}   n            要抽取的數量
- * @param {Function} keyFn        取得每個 item 的辨識文字（用來查熟悉度）
- * @param {string}   categoryName
- * @param {string}   titleName
- * @returns {Array}  抽取後的陣列（長度 = min(n, items.length)）
- */
-function weightedSample(items, n, keyFn, categoryName, titleName) {
-    if (!items || items.length === 0) return [];
-    n = Math.min(n, items.length);
-
-    function getFam(item) {
-        const key = (keyFn ? keyFn(item) : (item.text || item.sentence || ''));
-        if (!key || typeof loadItemScores !== 'function') return 0;
-        try {
-            const data  = loadItemScores();
-            const stKey = `${categoryName}||${titleName}`;
-            const entry = data[stKey];
-            if (!entry) return 0;
-            for (const bucket of ['noteWords', 'noteSentences', 'articleSentences']) {
-                const rec = entry[bucket]?.[key.trim()];
-                if (rec) {
-                    const total = (rec.correct || 0) + (rec.wrong || 0);
-                    if (total === 0) return 0;
-                    const errorRate = (rec.wrong || 0) / total;
-                    const days = rec.lastSeen
-                        ? Math.floor((Date.now() - new Date(rec.lastSeen).getTime()) / 86400000)
-                        : Infinity;
-                    let dayDecay = 0;
-                    if (days >= 30)      dayDecay = 1;
-                    else if (days >= 7)  dayDecay = (days - 7) / 23;
-                    return 100 - Math.round(errorRate * 70 + dayDecay * 30);
-                }
-            }
-        } catch (e) {}
-        return 0; // 未測驗
-    }
-
-    function getWeight(fam) {
-        if (fam <= 0)  return 3.0;
-        if (fam < 40)  return 2.5;
-        if (fam < 70)  return 1.5;
-        return 1.0;
-    }
-
-    // 加權不放回抽樣
-    const pool   = items.map(item => ({ item, weight: getWeight(getFam(item)) }));
-    const result = [];
-    for (let i = 0; i < n; i++) {
-        const totalW = pool.reduce((s, p) => s + p.weight, 0);
-        let rand = Math.random() * totalW;
-        let idx  = 0;
-        for (let j = 0; j < pool.length; j++) {
-            rand -= pool[j].weight;
-            if (rand <= 0) { idx = j; break; }
-        }
-        result.push(pool[idx].item);
-        pool.splice(idx, 1);
-    }
-    return result;
 }
 
 function getNoteData(categoryName, titleName) {
@@ -979,7 +933,7 @@ async function startFlashcardFromArticle() {
         showNotification(`No ${quizState.difficulty === 'mix' ? '' : quizState.difficulty + ' '}words found in this article.`, 'warning');
         return;
     }
-    deck = weightedSample(deck, quizState.questionCount || 10, item => item.text, quizState.categoryName, title);
+    deck = deck.slice(0, quizState.questionCount || 10);
 
     // 預載音檔
     const audioSrc = `audio/${encodeURIComponent(title.trim())}.mp3`;
@@ -1023,7 +977,7 @@ function startFlashcard() {
 
     quizState.mode        = 'flashcard';
     quizState.flashSource = 'note';
-    quizState.deck        = weightedSample(allItems, quizState.questionCount || 10, item => item.text, quizState.categoryName, quizState.titleName);
+    quizState.deck        = shuffle(allItems).slice(0, quizState.questionCount || 10);
     quizState.deckIndex   = 0;
     quizState.againQueue  = [];
     quizState.correct     = 0;
@@ -1040,6 +994,7 @@ function buildFullDeck() {
 }
 
 function showFlashcard() {
+    _resetReplayCount();
     const card = document.getElementById('flashcard');
 
     // Combine deck + again queue
@@ -1096,6 +1051,7 @@ function showFlashcard() {
     }
 
     function _playWordAudio() {
+        _trackReplay();
         audioBtn.classList.remove('needs-tap');
         audioBtn.classList.add('is-playing-voice');
         const wordSrc   = `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(item.text.trim())}.mp3`;
@@ -1229,7 +1185,7 @@ document.getElementById('flashcard-correct').addEventListener('click', () => {
     quizState.correct++;
     quizState.deckIndex++;
     if (typeof recordItemResult === 'function' && quizState.flashSource === 'note' && _fcItem)
-        recordItemResult(quizState.categoryName, quizState.titleName, 'noteWord', _fcItem.text, true);
+        recordItemResult(quizState.categoryName, quizState.titleName, 'noteWord', _fcItem.text, true, _quizReplayCount);
     showFlashcard();
 });
 
@@ -1241,7 +1197,7 @@ document.getElementById('flashcard-wrong').addEventListener('click', () => {
     quizState.deck.push(item);
     quizState.deckIndex++;
     if (typeof recordItemResult === 'function' && quizState.flashSource === 'note' && item)
-        recordItemResult(quizState.categoryName, quizState.titleName, 'noteWord', item.text, false);
+        recordItemResult(quizState.categoryName, quizState.titleName, 'noteWord', item.text, false, _quizReplayCount);
     showFlashcard();
 });
 
@@ -1327,7 +1283,7 @@ async function startCloze() {
     }
 
     quizState.mode        = 'cloze';
-    quizState.questions   = weightedSample(questions, quizState.questionCount || 10, q => q.word, quizState.categoryName, quizState.titleName);
+    quizState.questions   = shuffle(questions).slice(0, quizState.questionCount || 10);
     quizState.currentIndex = 0;
     quizState.correct     = 0;
     quizState.wrong       = 0;
@@ -1339,6 +1295,7 @@ async function startCloze() {
 }
 
 function showClozeQuestion() {
+    _resetReplayCount();
     if (quizState.currentIndex >= quizState.questions.length) {
         showQuizResult('cloze', quizState.correct,
             quizState.questions.length, quizState.wrongItems);
@@ -1372,7 +1329,7 @@ function showClozeQuestion() {
                 ? getAdjustedTiming(q.title, q.sentence, q.origStart ?? q.start, q.origEnd ?? q.end)
                 : { start: q.start, end: q.end };
 
-            const _playCloze = () => playSnippet({
+            const _playCloze = () => { _trackReplay(); playSnippet({
                 start: _ct.start, end: _ct.end,
                 onStart: () => {
                     _clozePlayBtn.classList.add('is-playing-voice');
@@ -1382,7 +1339,7 @@ function showClozeQuestion() {
                     _clozePlayBtn.classList.remove('is-playing-voice');
                     _clozePlayBtn.querySelector('span').textContent = '▶ Listen to Sentence';
                 }
-            });
+            }); };
             _clozePlayBtn.onclick = _playCloze;
 
             // ✏️ 編輯鈕
@@ -1476,7 +1433,7 @@ function handleClozeAnswer(selected, correct, btn) {
     });
 
     document.getElementById('cloze-next').classList.remove('is-hidden');
-    if (typeof recordItemResult === 'function') recordItemResult(quizState.categoryName, quizState.titleName, 'noteWord', correct, isCorrect);
+    if (typeof recordItemResult === 'function') recordItemResult(quizState.categoryName, quizState.titleName, 'noteWord', correct, isCorrect, _quizReplayCount);
 }
 
 document.getElementById('cloze-next').addEventListener('click', () => {
@@ -1535,7 +1492,7 @@ async function startDictation() {
     }
 
     quizState.mode        = 'dictation';
-    quizState.questions   = weightedSample(filteredQ, quizState.questionCount || 10, q => q.sentence, quizState.categoryName, quizState.titleName);
+    quizState.questions   = shuffle(filteredQ).slice(0, quizState.questionCount || 10);
     quizState.currentIndex = 0;
     quizState.correct     = 0;
     quizState.wrong       = 0;
@@ -1556,6 +1513,7 @@ async function startDictation() {
 // (removed — using playSnippet)
 
 function showDictationQuestion() {
+    _resetReplayCount();
     // Clear any pending stop
     if (dictationStopTimeout) {
         clearTimeout(dictationStopTimeout);
@@ -1621,6 +1579,7 @@ function showDictationQuestion() {
 }
 
 function playDictationAudio(q) {
+    _trackReplay();
     if (!q.start) return;
     const playBtn = document.getElementById('dictation-play-btn');
     // 套用使用者調整後的時間（若無調整則使用原始值）
@@ -1668,7 +1627,7 @@ function handleDictationAnswer(selected, correct, btn) {
     });
 
     document.getElementById('dictation-next').classList.remove('is-hidden');
-    if (typeof recordItemResult === 'function') recordItemResult(quizState.categoryName, quizState.titleName, 'noteSentence', correct, isCorrect);
+    if (typeof recordItemResult === 'function') recordItemResult(quizState.categoryName, quizState.titleName, 'noteSentence', correct, isCorrect, _quizReplayCount);
 }
 
 document.getElementById('dictation-next').addEventListener('click', () => {
@@ -1739,7 +1698,7 @@ async function startArticleQuiz() {
     }
 
     const qCount   = quizState.questionCount || 10;
-    const selected = weightedSample(pool, qCount, l => l.sentence, quizState.categoryName, title);
+    const selected = shuffle(pool).slice(0, qCount);
     const questions = selected.map(l => {
         const _sent = l.sentence.trim();
         // 出題前先查是否有調整記錄，有則優先使用
@@ -1783,6 +1742,7 @@ async function startArticleQuiz() {
 // ── Article Listen & Choose ───────────────────────────────────
 
 function showArticleListenQuestion() {
+    _resetReplayCount();
     if (quizState.currentIndex >= quizState.questions.length) {
         showQuizResult(quizState.mode, quizState.correct,
             quizState.questions.length, quizState.wrongItems);
@@ -1864,6 +1824,7 @@ async function getTimestampForStoryWithCache(title) {
 // (removed — using playSnippet)
 
 function playArticleAudio(q, btn) {
+    _trackReplay();
     // 套用使用者調整後的時間（若無調整則使用原始值）
     const timing = getQuizTiming(q.title, q.sentence, q.start, q.end);
     playSnippet({
@@ -1913,7 +1874,7 @@ function handleArticleListenAnswer(selected, q, btn) {
     });
 
     document.getElementById('article-listen-next').classList.remove('is-hidden');
-    if (typeof recordItemResult === 'function') recordItemResult(quizState.categoryName, quizState.titleName, 'articleSentence', q.sentence, isCorrect);
+    if (typeof recordItemResult === 'function') recordItemResult(quizState.categoryName, quizState.titleName, 'articleSentence', q.sentence, isCorrect, _quizReplayCount);
 }
 
 document.getElementById('article-listen-next').addEventListener('click', () => {
@@ -1924,6 +1885,7 @@ document.getElementById('article-listen-next').addEventListener('click', () => {
 // ── Article Fill in Blank ─────────────────────────────────────
 
 function showArticleClozeQuestion() {
+    _resetReplayCount();
     if (quizState.currentIndex >= quizState.questions.length) {
         showQuizResult(quizState.mode, quizState.correct,
             quizState.questions.length, quizState.wrongItems);
@@ -2036,7 +1998,7 @@ function handleArticleClozeAnswer(selected, correct, q, btn) {
     });
 
     document.getElementById('article-cloze-next').classList.remove('is-hidden');
-    if (typeof recordItemResult === 'function') recordItemResult(quizState.categoryName, quizState.titleName, 'articleSentence', q.sentence, isCorrect);
+    if (typeof recordItemResult === 'function') recordItemResult(quizState.categoryName, quizState.titleName, 'articleSentence', q.sentence, isCorrect, _quizReplayCount);
 }
 
 document.getElementById('article-cloze-next').addEventListener('click', () => {
@@ -2173,7 +2135,7 @@ async function startReorder(source) {
             showNotification(`No ${diff === 'mix' ? '' : diff + ' '}sentences found in this article.`, 'warning');
             return;
         }
-        const pool = weightedSample(rawPool, quizState.questionCount || 10, l => l.sentence, quizState.categoryName, title);
+        const pool = shuffle(rawPool).slice(0, quizState.questionCount || 10);
         sentences = pool.map(l => ({
             sentence: l.sentence.trim(),
             start: l.start,
@@ -2200,7 +2162,7 @@ async function startReorder(source) {
             showNotification(`No ${diff === 'mix' ? '' : diff + ' '}sentences in your notes.`, 'warning');
             return;
         }
-        const raw = weightedSample(filteredNoteSents, quizState.questionCount || 10, s => s, quizState.categoryName, quizState.titleName);
+        const raw = shuffle(filteredNoteSents).slice(0, quizState.questionCount || 10);
 
         if (raw.length === 0) {
             showNotification('No sentences saved yet. Add sentences to your note first.', 'warning');
@@ -2270,6 +2232,7 @@ function normalizeForCheck(tokens) {
 }
 
 function showReorderQuestion() {
+    _resetReplayCount();
     if (quizState.currentIndex >= quizState.questions.length) {
         showQuizResult('reorder', quizState.correct,
             quizState.questions.length, quizState.wrongItems);
@@ -2364,6 +2327,7 @@ if (q.start != null) {
 // (removed — using playSnippet)
 
 function playReorderAudio(q) {
+    _trackReplay();
     const playBtn = document.getElementById('reorder-play-btn');
     // 套用使用者調整後的時間（若無調整則使用原始值）
     const timing = getQuizTiming(q.title, q.sentence, q.start, q.end);
@@ -2593,7 +2557,12 @@ function renderReorderPool() {
     }
     wordPool.style.minHeight = 'auto';
 
-    reorderPool.forEach((word, idx) => {
+    // 按字母排序顯示（保留原始 idx 供 reorderAnswer 追蹤）
+    const sortedEntries = reorderPool
+        .map((word, idx) => ({ word, idx }))
+        .sort((a, b) => a.word.toLowerCase().localeCompare(b.word.toLowerCase()));
+
+    sortedEntries.forEach(({ word, idx }) => {
         const isUsed = reorderAnswer.some(a => a.idx === idx);
         const btn = document.createElement('button');
         btn.className = 'reorder-word';
@@ -2729,7 +2698,7 @@ document.getElementById('reorder-check-btn').addEventListener('click', () => {
     });
     if (typeof recordItemResult === 'function') {
         const _rtype = (typeof subpanelSource !== 'undefined' && subpanelSource.reorder === 'article') ? 'articleSentence' : 'noteSentence';
-        recordItemResult(quizState.categoryName, quizState.titleName, _rtype, q.sentence, isCorrect);
+        recordItemResult(quizState.categoryName, quizState.titleName, _rtype, q.sentence, isCorrect, _quizReplayCount);
     }
 
     // Transform Check button → Next button
@@ -2851,3 +2820,22 @@ document.addEventListener('keydown', (e) => {
 });
 
 console.log('✅ Quiz system loaded.');
+
+// ── Audio Editor Flag（編輯期間不計 replay）──────────────────
+// 在 audio-editor.js 載入後，包裝 open/close 設定 flag
+window.addEventListener('load', () => {
+    if (typeof openAudioEditor === 'function') {
+        const _origOpen = openAudioEditor;
+        window.openAudioEditor = function(opts) {
+            _quizIsEditingAudio = true;
+            return _origOpen(opts);
+        };
+    }
+    if (typeof closeAudioEditor === 'function') {
+        const _origClose = closeAudioEditor;
+        window.closeAudioEditor = function() {
+            _quizIsEditingAudio = false;
+            return _origClose();
+        };
+    }
+});

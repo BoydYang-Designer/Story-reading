@@ -70,7 +70,18 @@ window.loadItemScoresFromFirestore = loadItemScoresFromFirestore;
 /**
  * 記錄單一題目結果
  */
-function recordItemResult(categoryName, titleName, itemType, itemText, isCorrect) {
+/**
+ * 記錄單一題目結果
+ * @param {string}  categoryName
+ * @param {string}  titleName
+ * @param {string}  itemType     'noteWords' | 'noteSentences' | 'articleSentences'
+ * @param {string}  itemText
+ * @param {boolean} isCorrect
+ * @param {number}  replayCount  手動重播次數（預設 0）
+ *                               答對時每次重播額外記 1 wrong（方案 B）
+ *                               答錯時忽略（避免雙重懲罰）
+ */
+function recordItemResult(categoryName, titleName, itemType, itemText, isCorrect, replayCount = 0) {
     if (!categoryName || !titleName || !itemText) return;
 
     const data = loadItemScores();
@@ -83,9 +94,18 @@ function recordItemResult(categoryName, titleName, itemType, itemText, isCorrect
         data[key][itemType][text] = { correct: 0, wrong: 0, firstSeen: _todayStr(), lastSeen: null };
     }
 
-    if (isCorrect) data[key][itemType][text].correct++;
-    else           data[key][itemType][text].wrong++;
-    data[key][itemType][text].lastSeen = _todayStr();
+    const rec = data[key][itemType][text];
+
+    if (isCorrect) {
+        rec.correct++;
+        // 方案 B：答對但重播 N 次 → 額外記 N 次 wrong
+        // 數學保證熟悉度下限 = 30%，永遠 >= 答錯（30%）
+        if (replayCount > 0) rec.wrong += replayCount;
+    } else {
+        // 答錯時只記 1 次 wrong，不疊加 replay 懲罰（避免雙重懲罰）
+        rec.wrong++;
+    }
+    rec.lastSeen = _todayStr();
 
     saveItemScores(data);
 }

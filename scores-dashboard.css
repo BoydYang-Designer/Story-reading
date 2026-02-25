@@ -829,3 +829,52 @@
     font-size: 0.72rem;
     color: var(--color-text-light);
 }
+
+/* ── Replay mechanism grid in modal ─────────────────────── */
+
+.info-replay-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.info-replay-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 9px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--color-border);
+}
+
+.replay-ok      { background: rgba(80,184,108,0.06);  border-color: rgba(80,184,108,0.25); }
+.replay-warn    { background: rgba(224,92,92,0.06);   border-color: rgba(224,92,92,0.25); }
+.replay-neutral { background: rgba(0,0,0,0.03);       border-color: var(--color-border); }
+.replay-edit    { background: rgba(110,158,207,0.06); border-color: rgba(110,158,207,0.25); }
+
+.replay-icon {
+    font-size: 0.85rem;
+    font-weight: 700;
+    min-width: 40px;
+    text-align: center;
+    flex-shrink: 0;
+    color: var(--color-text);
+}
+
+.replay-desc {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.replay-desc strong {
+    font-size: 0.8rem;
+    color: var(--color-text);
+}
+
+.replay-desc span {
+    font-size: 0.72rem;
+    color: var(--color-text-light);
+    line-height: 1.4;
+}

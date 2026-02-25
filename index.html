@@ -832,6 +832,46 @@
                 <p class="info-note">💡 例如：熟悉度 0% 的單字被抽到的機率是熟悉度 70% 以上的單字的 3 倍</p>
             </section>
 
+            <section class="info-section">
+                <h3>🔁 重播懲罰機制</h3>
+                <p>測驗時每道題的<strong>音檔播放次數</strong>也會影響熟悉度：</p>
+                <div class="info-replay-grid">
+                    <div class="info-replay-item replay-ok">
+                        <div class="replay-icon">▶ ×1</div>
+                        <div class="replay-desc">
+                            <strong>自動播放（不計入）</strong>
+                            <span>題目出現時的第一次播放不影響評分</span>
+                        </div>
+                    </div>
+                    <div class="info-replay-item replay-warn">
+                        <div class="replay-icon">▶ ×2+</div>
+                        <div class="replay-desc">
+                            <strong>手動重播（每次 +1 wrong）</strong>
+                            <span>答對時，每多按一次重播額外記 1 次 wrong</span>
+                        </div>
+                    </div>
+                    <div class="info-replay-item replay-neutral">
+                        <div class="replay-icon">✗</div>
+                        <div class="replay-desc">
+                            <strong>答錯時不疊加</strong>
+                            <span>答錯只記 1 次 wrong，避免雙重懲罰</span>
+                        </div>
+                    </div>
+                    <div class="info-replay-item replay-edit">
+                        <div class="replay-icon">✏️</div>
+                        <div class="replay-desc">
+                            <strong>編輯音檔不計入</strong>
+                            <span>點擊編輯按鈕後的播放完全不影響評分</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="info-formula-box" style="margin-top:12px;">
+                    <div class="info-formula">答對 + 重播 N 次 → correct +1，wrong +N</div>
+                    <div class="info-formula-sub">數學保證：答對的熟悉度（≥30%）永遠不低於答錯（30%）</div>
+                </div>
+                <p class="info-note">💡 例如：答對但重播 2 次 → correct=1, wrong=2 → 熟悉度約 53%；答錯 → 熟悉度 30%</p>
+            </section>
+
         </div>
     </div>
 </div>
