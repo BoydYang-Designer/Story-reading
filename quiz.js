@@ -961,6 +961,13 @@ function startFlashcard() {
         ...items.phrases.map(p => ({ text: p, type: 'phrase' }))
     ];
 
+    // 排除字母數少於 4 的純單字（phrases 不過濾，因含空格）
+    allItems = allItems.filter(i => {
+        if (i.type === 'phrase') return true;
+        const letters = i.text.replace(/[^a-zA-Z]/g, '').length;
+        return letters >= 4;
+    });
+
     allItems = filterByWordDifficulty(allItems, quizState.difficulty);
 
     if (allItems.length === 0) {
@@ -1183,7 +1190,7 @@ document.getElementById('flashcard-correct').addEventListener('click', () => {
     quizState.deckIndex++;
     if (typeof recordItemResult === 'function' && _fcItem) {
         const _itype = quizState.flashSource === 'article' ? 'articleWords' : 'noteWords';
-        recordItemResult(quizState.categoryName, quizState.titleName, _itype, _fcItem.text, true, _quizReplayCount);
+        recordItemResult(quizState.categoryName, quizState.titleName, _itype, _fcItem.text, true, _quizReplayCount, 'fc');
     }
     showFlashcard();
 });
@@ -1197,7 +1204,7 @@ document.getElementById('flashcard-wrong').addEventListener('click', () => {
     quizState.deckIndex++;
     if (typeof recordItemResult === 'function' && item) {
         const _itype = quizState.flashSource === 'article' ? 'articleWords' : 'noteWords';
-        recordItemResult(quizState.categoryName, quizState.titleName, _itype, item.text, false, _quizReplayCount);
+        recordItemResult(quizState.categoryName, quizState.titleName, _itype, item.text, false, _quizReplayCount, 'fc');
     }
     showFlashcard();
 });
@@ -1388,7 +1395,7 @@ function handleDictationAnswer(selected, correct, btn) {
     });
 
     document.getElementById('dictation-next').classList.remove('is-hidden');
-    if (typeof recordItemResult === 'function') recordItemResult(quizState.categoryName, quizState.titleName, 'noteSentences', correct, isCorrect, _quizReplayCount);
+    if (typeof recordItemResult === 'function') recordItemResult(quizState.categoryName, quizState.titleName, 'noteSentences', correct, isCorrect, _quizReplayCount, 'dictation');
 }
 
 document.getElementById('dictation-next').addEventListener('click', () => {
@@ -1635,7 +1642,7 @@ function handleArticleListenAnswer(selected, q, btn) {
     });
 
     document.getElementById('article-listen-next').classList.remove('is-hidden');
-    if (typeof recordItemResult === 'function') recordItemResult(quizState.categoryName, quizState.titleName, 'articleSentences', q.sentence, isCorrect, _quizReplayCount);
+    if (typeof recordItemResult === 'function') recordItemResult(quizState.categoryName, quizState.titleName, 'articleSentences', q.sentence, isCorrect, _quizReplayCount, 'articleListen');
 }
 
 document.getElementById('article-listen-next').addEventListener('click', () => {
@@ -1759,7 +1766,7 @@ function handleArticleClozeAnswer(selected, correct, q, btn) {
     });
 
     document.getElementById('article-cloze-next').classList.remove('is-hidden');
-    if (typeof recordItemResult === 'function') recordItemResult(quizState.categoryName, quizState.titleName, 'articleSentences', q.sentence, isCorrect, _quizReplayCount);
+    // Article Cloze 已停用，不再記錄 itemScore
 }
 
 document.getElementById('article-cloze-next').addEventListener('click', () => {
@@ -2438,7 +2445,7 @@ document.getElementById('reorder-check-btn').addEventListener('click', () => {
     });
     if (typeof recordItemResult === 'function') {
         const _rtype = (typeof subpanelSource !== 'undefined' && subpanelSource.reorder === 'article') ? 'articleSentences' : 'noteSentences';
-        recordItemResult(quizState.categoryName, quizState.titleName, _rtype, q.sentence, isCorrect, _quizReplayCount);
+        recordItemResult(quizState.categoryName, quizState.titleName, _rtype, q.sentence, isCorrect, _quizReplayCount, 'reorder');
     }
 
     // Transform Check button → Next button
@@ -2659,6 +2666,11 @@ function startFcplus() {
         // 排除 1 個字母以下、純標點、或含空格超過 1 段（phrase 整體判斷字母數）
         const clean = i.text.replace(/[^a-zA-Z]/g, '');
         return clean.length >= 2;
+    }).filter(i => {
+        // 額外排除純單字字母數少於 4 的（phrases 不過濾）
+        if (i.type === 'phrase') return true;
+        const letters = i.text.replace(/[^a-zA-Z]/g, '').length;
+        return letters >= 4;
     });
 
     allItems = filterByWordDifficulty(allItems, quizState.difficulty);
@@ -2701,7 +2713,7 @@ async function startFcplusFromArticle() {
     const pool = [];
     if (tsData) {
         tsData.forEach(line => {
-            const words = (line.sentence.match(/\b[a-zA-Z]{2,}\b/g) || [])
+            const words = (line.sentence.match(/\b[a-zA-Z]{4,}\b/g) || [])
                 .filter(w => !STOP.has(w.toLowerCase()));
             [...new Set(words.map(w => w.toLowerCase()))].forEach(w => {
                 pool.push({ text: w, type: 'word', sentence: line.sentence.trim(),
@@ -3034,7 +3046,7 @@ document.getElementById('fcplus-submit-btn').addEventListener('click', () => {
     if (typeof recordItemResult === 'function') {
         const itemType = quizState.flashSource === 'article' ? 'articleWords' : 'noteWords';
         recordItemResult(quizState.categoryName, quizState.titleName,
-            itemType, word, correct, _quizReplayCount);
+            itemType, word, correct, _quizReplayCount, 'fcplus');
     }
 
     if (correct) {

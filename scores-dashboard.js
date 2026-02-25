@@ -116,10 +116,14 @@ window.loadItemScoresFromFirestore = loadItemScoresFromFirestore;
  * @param {string}  itemText
  * @param {boolean} isCorrect
  * @param {number}  replayCount  手動重播次數（預設 0）
- *                               答對時每次重播額外記 1 wrong（方案 B）
- *                               答錯時忽略（避免雙重懲罰）
+ * @param {string}  source       來源模式：'fc'|'fcplus'|'dictation'|'reorder'|'articleListen'
+ *
+ * 加權規則：
+ *   noteWords / articleWords    → fc 30%，fcplus 70%
+ *   noteSentences               → dictation 30%，reorder 70%
+ *   articleSentences            → articleListen 30%，reorder 70%
  */
-function recordItemResult(categoryName, titleName, itemType, itemText, isCorrect, replayCount = 0) {
+function recordItemResult(categoryName, titleName, itemType, itemText, isCorrect, replayCount = 0, source = 'fc') {
     if (!categoryName || !titleName || !itemText) return;
 
     const data = loadItemScores();
@@ -129,49 +133,130 @@ function recordItemResult(categoryName, titleName, itemType, itemText, isCorrect
 
     const text = itemText.trim();
     if (!data[key][itemType][text]) {
-        data[key][itemType][text] = { correct: 0, wrong: 0, firstSeen: _todayStr(), lastSeen: null };
+        data[key][itemType][text] = { fc: null, fcplus: null, dictation: null, reorder: null, articleListen: null, firstSeen: _todayStr(), lastSeen: null };
     }
 
     const rec = data[key][itemType][text];
 
+    // 確保來源欄位存在
+    if (!rec[source]) rec[source] = { correct: 0, wrong: 0 };
+    const src = rec[source];
+
     if (isCorrect) {
-        rec.correct++;
-        // 方案 B：答對但重播 N 次 → 額外記 N 次 wrong
-        // 數學保證熟悉度下限 = 30%，永遠 >= 答錯（30%）
-        if (replayCount > 0) rec.wrong += replayCount;
+        src.correct++;
+        if (replayCount > 0) src.wrong += replayCount;
     } else {
-        // 答錯時只記 1 次 wrong，不疊加 replay 懲罰（避免雙重懲罰）
-        rec.wrong++;
+        src.wrong++;
     }
     rec.lastSeen = _todayStr();
+    if (!rec.firstSeen) rec.firstSeen = _todayStr();
 
     saveItemScores(data);
+}
+
+/**
+ * 計算單一 source record 的熟悉度（0–100）
+ */
+function _calcSourceFam(srcRec) {
+    if (!srcRec || (srcRec.correct === 0 && srcRec.wrong === 0)) return null;
+    const total     = srcRec.correct + srcRec.wrong;
+    const errorRate = total > 0 ? srcRec.wrong / total : 0;
+    return Math.round((1 - errorRate) * 100);
+}
+
+/**
+ * 根據 itemType 計算加權熟悉度（0–100）
+ * 只有一個來源有資料時直接用該來源，不強制扣分
+ */
+function calcWeightedFamiliarity(rec, itemType) {
+    if (!rec) return 0;
+
+    let w1Key, w2Key, w1, w2; // w1=30%, w2=70%
+
+    if (itemType === 'noteWords' || itemType === 'articleWords') {
+        w1Key = 'fc'; w2Key = 'fcplus'; w1 = 0.3; w2 = 0.7;
+    } else if (itemType === 'noteSentences') {
+        w1Key = 'dictation'; w2Key = 'reorder'; w1 = 0.3; w2 = 0.7;
+    } else if (itemType === 'articleSentences') {
+        w1Key = 'articleListen'; w2Key = 'reorder'; w1 = 0.3; w2 = 0.7;
+    } else {
+        // fallback：舊格式 { correct, wrong }
+        return calcFamiliarityLegacy(rec);
+    }
+
+    const f1 = _calcSourceFam(rec[w1Key]);
+    const f2 = _calcSourceFam(rec[w2Key]);
+
+    if (f1 !== null && f2 !== null) return Math.round(f1 * w1 + f2 * w2);
+    if (f2 !== null) return f2;
+    if (f1 !== null) return f1;
+    return 0;
+}
+
+/**
+ * 舊格式 { correct, wrong } 相容計算（不再用於新資料）
+ */
+function calcFamiliarityLegacy(rec) {
+    if (!rec || (rec.correct === 0 && rec.wrong === 0)) return 0;
+    const total     = rec.correct + rec.wrong;
+    const errorRate = total > 0 ? rec.wrong / total : 0;
+    const days = daysSince(rec.lastSeen);
+    let dayDecay = 0;
+    if (days >= 30)     dayDecay = 1;
+    else if (days >= 7) dayDecay = (days - 7) / 23;
+    return Math.round((1 - errorRate) * 70 + (1 - dayDecay) * 30);
+}
+
+/**
+ * 判斷 rec 是否有任何測驗記錄
+ */
+function _recHasPractice(rec) {
+    if (!rec) return false;
+    const sources = ['fc','fcplus','dictation','reorder','articleListen'];
+    return sources.some(s => rec[s] && (rec[s].correct + rec[s].wrong) > 0);
+}
+
+/**
+ * 取得 rec 的總答對/答錯數（所有來源合計）
+ */
+function _recTotals(rec) {
+    if (!rec) return { correct: 0, wrong: 0 };
+    const sources = ['fc','fcplus','dictation','reorder','articleListen'];
+    let correct = 0, wrong = 0;
+    sources.forEach(s => {
+        if (rec[s]) { correct += rec[s].correct || 0; wrong += rec[s].wrong || 0; }
+    });
+    return { correct, wrong };
 }
 
 // ── 需練指數 & 熟悉度 ────────────────────────────────────────
 
 /**
- * 需練指數 0–100（越高越需要練習）
- * 熟悉度 = 100 - needScore
+ * 需練指數（保留向後相容，供外部呼叫）
+ * 新資料請用 calcWeightedFamiliarity
  */
 function calcNeedScore(itemRecord) {
-    if (!itemRecord || (itemRecord.correct === 0 && itemRecord.wrong === 0)) {
-        return 100;
-    }
-    const total     = itemRecord.correct + itemRecord.wrong;
-    const errorRate = total > 0 ? itemRecord.wrong / total : 0;
-    const days = daysSince(itemRecord.lastSeen);
-    let dayDecay = 0;
-    if (days >= 30)     dayDecay = 1;
-    else if (days >= 7) dayDecay = (days - 7) / 23;
-    return Math.round(errorRate * 70 + dayDecay * 30);
+    return 100 - calcFamiliarity(itemRecord);
 }
 
 /**
  * 熟悉度 0–100（越高代表越熟悉）
+ * 新格式：用加權計算；舊格式 { correct, wrong } fallback
+ * ⚠️ 此函式不知道 itemType，呼叫方應盡量改用 calcWeightedFamiliarity(rec, itemType)
  */
-function calcFamiliarity(itemRecord) {
-    return 100 - calcNeedScore(itemRecord);
+function calcFamiliarity(itemRecord, itemType) {
+    if (!itemRecord) return 0;
+    // 新格式偵測：有任一 source key
+    const hasNewFormat = ['fc','fcplus','dictation','reorder','articleListen'].some(s => itemRecord[s]);
+    if (hasNewFormat && itemType) return calcWeightedFamiliarity(itemRecord, itemType);
+    if (hasNewFormat) {
+        // 沒有傳 itemType 時嘗試所有來源平均
+        const vals = ['fc','fcplus','dictation','reorder','articleListen']
+            .map(s => _calcSourceFam(itemRecord[s])).filter(v => v !== null);
+        return vals.length > 0 ? Math.round(vals.reduce((a,b)=>a+b,0)/vals.length) : 0;
+    }
+    // 舊格式 fallback
+    return calcFamiliarityLegacy(itemRecord);
 }
 
 function getNeedScoreColor(score) {
@@ -209,25 +294,25 @@ function calcArticleFamSummary(categoryName, titleName) {
     const testedNoteWords = entry.noteWords     || {};
     const testedNoteSents = entry.noteSentences || {};
 
-    // 已測驗用真實分數，未測驗補 0%
-    function scorePool(allTexts, testedMap) {
+    // 已測驗用加權真實分數，未測驗補 0%
+    function scorePool(allTexts, testedMap, itype) {
         return allTexts.map(t => {
             const rec = testedMap[t];
-            return rec ? calcFamiliarity(rec) : 0;
+            return rec ? calcWeightedFamiliarity(rec, itype) : 0;
         });
     }
 
-    const noteWordScores = scorePool(allNoteWords, testedNoteWords);
-    const noteSentScores = scorePool(allNoteSents, testedNoteSents);
+    const noteWordScores = scorePool(allNoteWords, testedNoteWords, 'noteWords');
+    const noteSentScores = scorePool(allNoteSents, testedNoteSents, 'noteSentences');
 
     // 如果 savedWords 是空的但 itemScores 裡有資料（舊資料），fallback
     const fallbackWordItems = Object.values(testedNoteWords);
     const fallbackSentItems = Object.values(testedNoteSents);
 
     const noteWordFamScores = allNoteWords.length > 0 ? noteWordScores
-        : fallbackWordItems.map(calcFamiliarity);
+        : fallbackWordItems.map(r => calcWeightedFamiliarity(r, 'noteWords'));
     const noteSentFamScores = allNoteSents.length > 0 ? noteSentScores
-        : fallbackSentItems.map(calcFamiliarity);
+        : fallbackSentItems.map(r => calcWeightedFamiliarity(r, 'noteSentences'));
 
     const noteWordTotal = allNoteWords.length > 0 ? allNoteWords.length : fallbackWordItems.length;
     const noteSentTotal = allNoteSents.length > 0 ? allNoteSents.length : fallbackSentItems.length;
@@ -258,13 +343,13 @@ function calcArticleFamSummary(categoryName, titleName) {
 
     const cachedTotalSents  = _getArticleSentenceTotal(categoryName, titleName);
     const testedSentCount   = artSentItems.length;
-    const artSentFamScores  = artSentItems.map(calcFamiliarity);
+    const artSentFamScores  = artSentItems.map(r => calcWeightedFamiliarity(r, 'articleSentences'));
     const untestedSentCount = Math.max(0, cachedTotalSents - testedSentCount);
     const allArtSentFamScores = [...artSentFamScores, ...Array(untestedSentCount).fill(0)];
     const artSentTotal    = testedSentCount + untestedSentCount;
 
     const artWordTotal    = artWordItems.length;
-    const artWordFamScores = artWordItems.map(calcFamiliarity);
+    const artWordFamScores = artWordItems.map(r => calcWeightedFamiliarity(r, 'articleWords'));
     const artWordAvg      = artWordTotal > 0
         ? Math.round(artWordFamScores.reduce((a, b) => a + b, 0) / artWordTotal) : null;
     const artSentAvg      = artSentTotal > 0
@@ -656,6 +741,29 @@ document.getElementById('scores-clear-all-btn')?.addEventListener('click', () =>
     renderScoresDashboard();
 });
 
+// Clear Old Format Data button（清除舊格式 { correct, wrong } 資料）
+document.getElementById('scores-clear-legacy-btn')?.addEventListener('click', () => {
+    if (!confirm('清除舊格式學習記錄？\n\n只會刪除使用舊版系統記錄的資料（不含新版加權資料），此操作無法還原。')) return;
+    const data = loadItemScores();
+    let cleared = 0;
+    Object.keys(data).forEach(key => {
+        ['noteWords','noteSentences','articleWords','articleSentences'].forEach(itype => {
+            if (!data[key][itype]) return;
+            Object.keys(data[key][itype]).forEach(text => {
+                const rec = data[key][itype][text];
+                const hasNewFormat = ['fc','fcplus','dictation','reorder','articleListen'].some(s => rec[s]);
+                if (!hasNewFormat) {
+                    delete data[key][itype][text];
+                    cleared++;
+                }
+            });
+        });
+    });
+    saveItemScores(data);
+    renderScoresDashboard();
+    alert(`已清除 ${cleared} 筆舊格式記錄。`);
+});
+
 // Home review badge（保留相容）
 function renderHomeReviewBadge() {}
 
@@ -742,16 +850,20 @@ function renderDetailView() {
 
     // Get items for current tab
     const itemMap = entry[tab] || {};
-    let items = Object.entries(itemMap).map(([text, rec]) => ({
-        text,
-        correct:     rec.correct || 0,
-        wrong:       rec.wrong   || 0,
-        lastSeen:    rec.lastSeen  || null,
-        firstSeen:   rec.firstSeen || null,
-        famScore:    calcFamiliarity(rec),
-        needScore:   calcNeedScore(rec),
-        hasPractice: (rec.correct + rec.wrong) > 0,
-    }));
+    let items = Object.entries(itemMap).map(([text, rec]) => {
+        const totals = _recTotals(rec);
+        return {
+            text,
+            correct:     totals.correct,
+            wrong:       totals.wrong,
+            lastSeen:    rec.lastSeen  || null,
+            firstSeen:   rec.firstSeen || null,
+            famScore:    calcWeightedFamiliarity(rec, tab),
+            needScore:   100 - calcWeightedFamiliarity(rec, tab),
+            hasPractice: _recHasPractice(rec),
+            rec,
+        };
+    });
 
     // Add untested items from savedWords (for note tabs)
     if (tab === 'noteWords' || tab === 'noteSentences') {
@@ -764,7 +876,7 @@ function renderDetailView() {
             const t = text.trim();
             if (!itemMap[t]) {
                 items.push({ text: t, correct: 0, wrong: 0, lastSeen: null, firstSeen: null,
-                             famScore: 0, needScore: 100, hasPractice: false });
+                             famScore: 0, needScore: 100, hasPractice: false, rec: null });
             }
         });
     }
@@ -844,7 +956,7 @@ function buildDetailItemHtml(item, tab) {
         </div>`;
     }
 
-    const { text, correct, wrong, lastSeen, famScore, needScore, hasPractice } = item;
+    const { text, correct, wrong, lastSeen, famScore, hasPractice, rec } = item;
 
     // Color based on familiarity
     const colorClass = getFamiliarityColor(famScore);
@@ -858,6 +970,38 @@ function buildDetailItemHtml(item, tab) {
            <span class="detail-stat days-stat">📅 ${daysAgo}</span>`
         : `<span class="detail-stat untested-stat">未測驗</span>`;
 
+    // ── 子來源明細 ────────────────────────────────────────────
+    let sourceHtml = '';
+    if (rec && hasPractice) {
+        let sources = [];
+        if (tab === 'noteWords' || tab === 'articleWords') {
+            sources = [
+                { key: 'fc',     label: '🃏 FC',    weight: '30%' },
+                { key: 'fcplus', label: '🔤 FC+',   weight: '70%' },
+            ];
+        } else if (tab === 'noteSentences') {
+            sources = [
+                { key: 'dictation', label: '🎧 Dictation', weight: '30%' },
+                { key: 'reorder',   label: '🔀 Reorder',   weight: '70%' },
+            ];
+        } else if (tab === 'articleSentences') {
+            sources = [
+                { key: 'articleListen', label: '📖 Listen', weight: '30%' },
+                { key: 'reorder',       label: '🔀 Reorder', weight: '70%' },
+            ];
+        }
+        const srcParts = sources.map(s => {
+            const sr = rec[s.key];
+            if (!sr || (sr.correct + sr.wrong) === 0) {
+                return `<span class="detail-src-chip detail-src-none">${s.label} <em>未測</em></span>`;
+            }
+            const fam = _calcSourceFam(sr) ?? 0;
+            const fc  = getFamiliarityColor(fam);
+            return `<span class="detail-src-chip ${fc}">${s.label} ${fam}% <em>${s.weight}</em> ✓${sr.correct} ✗${sr.wrong}</span>`;
+        }).join('');
+        sourceHtml = `<div class="detail-item-sources">${srcParts}</div>`;
+    }
+
     const isSentence = (tab === 'noteSentences' || tab === 'articleSentences');
     const textClass  = isSentence ? 'detail-text-sentence' : 'detail-text-word';
 
@@ -870,6 +1014,7 @@ function buildDetailItemHtml(item, tab) {
             <div class="detail-score-bar ${colorClass}" style="width:${famScore}%"></div>
         </div>
         <div class="detail-item-stats">${statsHtml}</div>
+        ${sourceHtml}
     </div>`;
 }
 
