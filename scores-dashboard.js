@@ -295,6 +295,51 @@ function _updateSortBtnUI() {
     btn.classList.toggle('sort-desc', _dashSortDir === 'desc');
 }
 
+// ── 每個分類（cat）的獨立排序狀態 ────────────────────────────
+// key = cat name，value = { key: 'note'|'artWord'|'artSent'|'alpha', dir: 'asc'|'desc' }
+const _catSortState = {};
+
+function _getCatSort(cat) {
+    if (!_catSortState[cat]) _catSortState[cat] = { key: null, dir: 'asc' };
+    return _catSortState[cat];
+}
+
+function _sortArticlesByCat(articles, cat) {
+    const { key, dir } = _getCatSort(cat);
+
+    return [...articles].sort((a, b) => {
+        const aTested = a.summary.hasPractice;
+        const bTested = b.summary.hasPractice;
+
+        if (key === 'alpha') {
+            const cmp = a.title.localeCompare(b.title);
+            return dir === 'asc' ? cmp : -cmp;
+        }
+
+        // 其他 key：未測驗固定排後（字母），已測驗按選定維度
+        if (!aTested && !bTested) return a.title.localeCompare(b.title);
+        if (!aTested) return 1;
+        if (!bTested) return -1;
+
+        let fa = 0, fb = 0;
+        if (key === 'note') {
+            fa = a.summary.noteAvg ?? 0;
+            fb = b.summary.noteAvg ?? 0;
+        } else if (key === 'artWord') {
+            fa = a.summary.artWordAvg ?? 0;
+            fb = b.summary.artWordAvg ?? 0;
+        } else if (key === 'artSent') {
+            fa = a.summary.artSentAvg ?? 0;
+            fb = b.summary.artSentAvg ?? 0;
+        } else {
+            // default: overall famAvg
+            fa = a.summary.famAvg ?? 0;
+            fb = b.summary.famAvg ?? 0;
+        }
+        return dir === 'asc' ? fa - fb : fb - fa;
+    });
+}
+
 // ── 瀏覽層渲染 ───────────────────────────────────────────────
 
 function _renderBrowserSection() {
@@ -350,33 +395,27 @@ function _renderBrowserSection() {
                 return { title, cat, summary };
             });
 
-            // Sort: tested by familiarity, untested alphabetically at end
-            articles.sort((a, b) => {
-                const aTested = a.summary.hasPractice;
-                const bTested = b.summary.hasPractice;
-                // 未測驗排後面（按字母）
-                if (!aTested && !bTested) return a.title.localeCompare(b.title);
-                if (!aTested) return 1;
-                if (!bTested) return -1;
-                // 已測驗按熟悉度
-                const fa = a.summary.famAvg ?? 0;
-                const fb = b.summary.famAvg ?? 0;
-                return _dashSortDir === 'desc' ? fa - fb : fb - fa;
-            });
+            // Sort using per-cat sort state
+            articles = _sortArticlesByCat(articles, cat);
 
             const practicedCount = articles.filter(a => a.summary.hasPractice).length;
             const catBadge = practicedCount > 0
                 ? `<span class="browser-cat-practiced-badge">${practicedCount}/${articles.length}</span>`
                 : `<span class="browser-cat-count-badge">${articles.length}</span>`;
 
+            const catKey = _escHtml(cat);
             catsHtml += `
-                <div class="browser-cat-group" data-cat="${_escHtml(cat)}">
+                <div class="browser-cat-group" data-cat="${catKey}">
                     <div class="browser-cat-header" data-cat-toggle>
                         <span class="browser-cat-arrow">▸</span>
                         <span class="browser-cat-name">${_escHtml(cat)}</span>
                         ${catBadge}
                     </div>
                     <div class="browser-cat-body" style="display:none">
+                        <div class="cat-sort-bar" data-cat="${catKey}">
+                            <span class="cat-sort-label">排序：</span>
+                            ${_buildCatSortBtns(cat)}
+                        </div>
                         ${articles.map(a => _buildArticleRowHtml(a)).join('')}
                     </div>
                 </div>`;
@@ -411,6 +450,89 @@ function _renderBrowserSection() {
             openDetailView(row.dataset.cat, row.dataset.title);
         });
     });
+
+    // Bind cat sort buttons
+    _bindCatSortBtns(container);
+}
+
+function _buildCatSortBtns(cat) {
+    const { key, dir } = _getCatSort(cat);
+    const arrow = dir === 'asc' ? ' ↑' : ' ↓';
+
+    const btns = [
+        { k: 'note',    label: '📝 Note',  title: 'Note 整體熟悉度' },
+        { k: 'artWord', label: '🃏 單字',   title: 'Article 單字熟悉度' },
+        { k: 'artSent', label: '🎧 句子',   title: 'Article 句子熟悉度' },
+        { k: 'alpha',   label: 'A–Z',      title: '字母排序' },
+    ];
+
+    return btns.map(b => {
+        const isActive = key === b.k;
+        return `<button class="cat-sort-btn${isActive ? ' is-active' : ''}"
+            data-sort-cat="${_escHtml(cat)}" data-sort-key="${b.k}"
+            title="${b.title}">${b.label}${isActive ? arrow : ''}</button>`;
+    }).join('');
+}
+
+function _rebuildCatBody(catGroupEl, cat) {
+    const storyList = typeof stories !== 'undefined' ? stories : [];
+    const rawTitles = [];
+    storyList.forEach(s => {
+        const cats = Array.isArray(s['分類']) && s['分類'].length > 0
+            ? s['分類'] : ['Uncategorized'];
+        if (cats[0] === cat) rawTitles.push(s['標題']);
+    });
+    // Also from itemData
+    const itemData = loadItemScores();
+    Object.keys(itemData).forEach(k => {
+        const [c, t] = k.split('||');
+        if (c === cat && t && !rawTitles.includes(t)) rawTitles.push(t);
+    });
+
+    let articles = rawTitles.map(title => {
+        const summary = calcArticleFamSummary(cat, title);
+        return { title, cat, summary };
+    });
+    articles = _sortArticlesByCat(articles, cat);
+
+    const body = catGroupEl.querySelector('.browser-cat-body');
+    if (!body) return;
+
+    // Rebuild sort bar + article rows
+    const sortBarHtml = `<div class="cat-sort-bar" data-cat="${_escHtml(cat)}">
+        <span class="cat-sort-label">排序：</span>
+        ${_buildCatSortBtns(cat)}
+    </div>`;
+    const rowsHtml = articles.map(a => _buildArticleRowHtml(a)).join('');
+    body.innerHTML = sortBarHtml + rowsHtml;
+
+    // Re-bind article row clicks
+    body.querySelectorAll('.browser-article-row').forEach(row => {
+        row.addEventListener('click', () => openDetailView(row.dataset.cat, row.dataset.title));
+    });
+
+    // Re-bind sort buttons
+    _bindCatSortBtns(body);
+}
+
+function _bindCatSortBtns(container) {
+    container.querySelectorAll('.cat-sort-btn').forEach(btn => {
+        btn.addEventListener('click', e => {
+            e.stopPropagation();
+            const cat     = btn.dataset.sortCat;
+            const sortKey = btn.dataset.sortKey;
+            const state   = _getCatSort(cat);
+            if (state.key === sortKey) {
+                state.dir = state.dir === 'asc' ? 'desc' : 'asc';
+            } else {
+                state.key = sortKey;
+                state.dir = 'asc'; // 預設昇冪（低熟悉度在前）
+            }
+            // Rebuild this cat's body
+            const catGroup = btn.closest('.browser-cat-group');
+            if (catGroup) _rebuildCatBody(catGroup, cat);
+        });
+    });
 }
 
 function _toggleSection(header) {
@@ -423,46 +545,41 @@ function _toggleSection(header) {
 
 function _buildArticleRowHtml(article) {
     const { title, cat, summary } = article;
-    const { famAvg, noteAvg, artAvg, artWordAvg, artSentAvg,
-            hasPractice, totalTested, totalItems, testedSentCount, untestedSentCount } = summary;
+    const { famAvg, noteAvg, artWordAvg, artSentAvg,
+            hasPractice, testedSentCount, untestedSentCount } = summary;
 
-    function famChip(avg, label, extraInfo) {
-        if (avg === null) {
+    function famChip(avg, topLabel, extraInfo) {
+        if (avg === null || avg === undefined) {
             return `<div class="browser-fam-chip chip-untested">
-                <span class="chip-label">${label}</span>
+                <span class="chip-top-label">${topLabel}</span>
                 <span class="chip-val">—</span>
             </div>`;
         }
         const colorClass = getFamiliarityColor(avg);
         return `<div class="browser-fam-chip ${colorClass}">
-            <span class="chip-label">${label}</span>
-            <span class="chip-val">${avg}%${extraInfo ? `<span class="chip-extra">${extraInfo}</span>` : ''}</span>
+            <span class="chip-top-label">${topLabel}</span>
+            <span class="chip-val">${avg}%</span>
+            ${extraInfo ? `<span class="chip-sub">${extraInfo}</span>` : ''}
             <div class="chip-bar-wrap"><div class="chip-bar" style="width:${avg}%"></div></div>
         </div>`;
     }
 
-    const overallBadge = hasPractice
-        ? (famAvg !== null
-            ? `<span class="browser-article-fam ${getFamiliarityColor(famAvg)}">${famAvg}%</span>`
-            : '')
-        : `<span class="browser-article-fam fam-untested">未測驗</span>`;
+    // 句子顯示已測/總數
+    const totalSents = (testedSentCount ?? 0) + (untestedSentCount ?? 0);
+    const sentInfo = totalSents > 0 ? `${testedSentCount ?? 0}/${totalSents}句` : '';
 
-    // Article chip 細節：句子顯示已測/總數
-    const artSentInfo = (testedSentCount !== undefined && untestedSentCount !== undefined && (testedSentCount + untestedSentCount) > 0)
-        ? ` ${testedSentCount}/${testedSentCount + untestedSentCount}句` : '';
+    // 永遠顯示全部 4 個 chip（未測驗顯示 —）
+    const chipsHtml = `<div class="browser-article-chips">
+        ${famChip(noteAvg,    '📝 Note')}
+        ${famChip(artWordAvg, '🃏 單字')}
+        ${famChip(artSentAvg, '🎧 句子', sentInfo)}
+    </div>`;
 
     return `<div class="browser-article-row" data-title="${_escHtml(title)}" data-cat="${_escHtml(cat)}">
         <div class="browser-article-main">
             <div class="browser-article-title">${_escHtml(title)}</div>
-            ${overallBadge}
         </div>
-        ${hasPractice ? `<div class="browser-article-chips">
-            ${famChip(noteAvg, '📝 Note')}
-            ${famChip(artWordAvg !== undefined ? artWordAvg : artAvg, '📖 單字')}
-            ${famChip(artSentAvg !== undefined ? artSentAvg : null, '📖 句子', artSentInfo)}
-        </div>` : (testedSentCount === 0 && untestedSentCount > 0 ? `<div class="browser-article-chips">
-            ${famChip(0, '📖 句子', `0/${untestedSentCount}句`)}
-        </div>` : '')}
+        ${chipsHtml}
         <div class="browser-article-arrow">→</div>
     </div>`;
 }
