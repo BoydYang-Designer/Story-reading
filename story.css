@@ -4202,3 +4202,59 @@ textarea:focus-visible {
 [data-theme="dark"] .fcplus-letter-input {
     color: var(--color-text);
 }
+
+/* =============================================
+   FLASHCARD+ 結果正面「下一題」按鈕 + 手機優化
+   ============================================= */
+
+.fcplus-result-next-btn {
+    margin-top: 28px;
+    width: 100%;
+    max-width: 340px;
+    padding: 18px 24px;
+    font-size: 1.08rem;
+    font-weight: 700;
+    border-radius: 16px;
+    background: var(--color-primary);
+    color: white;
+    border: none;
+    box-shadow: 0 6px 16px rgba(122, 107, 90, 0.3);
+    transition: all 0.2s ease;
+}
+
+.fcplus-result-next-btn:active {
+    transform: translateY(3px);
+    box-shadow: 0 3px 8px rgba(122, 107, 90, 0.4);
+}
+
+/* 手機專屬優化 */
+@media (max-width: 480px) {
+    .fcplus-letter-input,
+    .fcplus-result-letter,
+    .fcplus-letter-hint {
+        width: 38px !important;
+        height: 46px !important;
+        font-size: 1.28rem !important;
+        margin: 3px !important;
+    }
+    
+    .fcplus-letters {
+        gap: 10px !important;
+    }
+    
+    .fcplus-result-next-btn {
+        margin-top: 24px;
+        padding: 20px 28px;
+        font-size: 1.15rem;
+    }
+    
+    /* 防止鍵盤蓋住卡片 */
+    .fcplus-letters input:focus {
+        scroll-margin-top: 140px;
+    }
+}
+
+/* 確保結果正面 Next 按鈕不會被其他樣式蓋掉 */
+#fcplus-front-result .fcplus-result-next-btn {
+    margin-top: 32px;
+}

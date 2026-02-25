@@ -3067,23 +3067,26 @@ document.getElementById('fcplus-submit-btn').addEventListener('click', () => {
 // ── Card flip ─────────────────────────────────────────────────
 
 document.getElementById('fcplus-card').addEventListener('click', (e) => {
-    if (e.target.closest('button') || e.target.closest('input')) return;
-    if (!_fcplusSubmitted) return; // 未提交不能翻牌
+    // 排除按鈕與輸入框
+    if (e.target.closest('button') || e.target.closest('input') || e.target.closest('.fcplus-result-next-btn')) return;
+    if (!_fcplusSubmitted) return;
 
     const card = document.getElementById('fcplus-card');
 
     if (!_fcplusFlipped) {
-        // Front → Back
         _fcplusFlipped = true;
         card.classList.add('fcplus-flipped-back');
         _showFcplusBack();
     } else if (!_fcplusAfterFlip) {
-        // Back → Front (result)
         _fcplusAfterFlip = true;
         card.classList.remove('fcplus-flipped-back');
         _showFcplusFrontResult();
+        
+        // 隱藏背面的 Next，避免重複
+        const backNext = document.getElementById('fcplus-next-btn');
+        if (backNext) backNext.style.display = 'none';
     }
-    // 翻回正面後不再翻
+    // 已在結果正面時不再翻卡
 });
 
 function _showFcplusFront() {
@@ -3104,7 +3107,7 @@ function _showFcplusFrontResult() {
     const resultEl = document.getElementById('fcplus-front-result');
     resultEl.classList.remove('is-hidden');
 
-    // Rebuild result display
+    // ==================== 原有重建結果顯示 ====================
     const word   = _fcplusItem.text;
     const inputs = _getAllFcplusInputs(); // still in DOM, disabled
 
@@ -3128,7 +3131,6 @@ function _showFcplusFrontResult() {
             span.className   = 'fcplus-letter-hint';
             span.textContent = ch.toLowerCase();
         } else {
-            // Find matching input
             const inp = inputs.find(el => parseInt(el.dataset.idx) === i);
             const typed    = inp ? inp.value.toLowerCase() : '';
             const expected = ch.toLowerCase();
@@ -3150,6 +3152,23 @@ function _showFcplusFrontResult() {
     // Sentence (same as front)
     const ctx = document.getElementById('fcplus-sentence').textContent;
     document.getElementById('fcplus-sentence-result').textContent = ctx;
+
+    // ==================== 新增：結果正面「下一題」按鈕 ====================
+    let nextBtn = document.getElementById('fcplus-result-next-btn');
+    if (!nextBtn) {
+        nextBtn = document.createElement('button');
+        nextBtn.id = 'fcplus-result-next-btn';
+        nextBtn.textContent = '下一題 →';
+        nextBtn.className = 'quiz-next-btn fcplus-result-next-btn';
+        resultEl.appendChild(nextBtn);
+    }
+    nextBtn.style.display = 'block';
+
+    nextBtn.onclick = () => {
+        quizState.deckIndex++;
+        showFcplusCard();
+    };
+    // =================================================================
 }
 
 // ── Next button (on back) ─────────────────────────────────────
