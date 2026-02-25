@@ -798,28 +798,39 @@
         <div class="scoring-modal-body">
 
             <section class="info-section">
-                <h3>🎯 熟悉度計算公式</h3>
-                <p>每個單字或句子都有一個<strong>熟悉度（0–100%）</strong>，由兩個因素決定：</p>
-                <div class="info-formula-box">
-                    <div class="info-formula">熟悉度 = 100 − 需練指數</div>
-                    <div class="info-formula-sub">需練指數 = 錯誤率 × 70 + 遺忘衰減 × 30</div>
-                </div>
+                <h3>🎯 熟悉度計算方式</h3>
+                <p>每個單字或句子的熟悉度由<strong>兩種測驗來源加權合計（0–100%）</strong>，各來源以答對率獨立計算後合併：</p>
                 <table class="info-table">
-                    <thead><tr><th>因素</th><th>說明</th><th>佔比</th></tr></thead>
+                    <thead><tr><th>類別</th><th>來源 30%</th><th>來源 70%</th></tr></thead>
                     <tbody>
                         <tr>
-                            <td>錯誤率</td>
-                            <td>答錯次數 ÷ 總答題次數</td>
-                            <td>70%</td>
+                            <td>📝 Note 單字</td>
+                            <td>🃏 Flashcard</td>
+                            <td>🔤 FC Plus</td>
                         </tr>
                         <tr>
-                            <td>遺忘衰減</td>
-                            <td>7天內 = 0%；7–30天線性增加；30天以上 = 100%</td>
-                            <td>30%</td>
+                            <td>📝 Note 句子</td>
+                            <td>🎧 Dictation</td>
+                            <td>🔀 Reorder</td>
+                        </tr>
+                        <tr>
+                            <td>📖 Article 單字</td>
+                            <td>🃏 Flashcard</td>
+                            <td>🔤 FC Plus</td>
+                        </tr>
+                        <tr>
+                            <td>📖 Article 句子</td>
+                            <td>📖 Listen</td>
+                            <td>🔀 Reorder</td>
                         </tr>
                     </tbody>
                 </table>
+                <div class="info-formula-box" style="margin-top:10px;">
+                    <div class="info-formula">熟悉度 = 來源A答對率 × 30% + 來源B答對率 × 70%</div>
+                    <div class="info-formula-sub">若只有一個來源有測驗記錄，直接採用該來源的分數</div>
+                </div>
                 <p class="info-note">⬜ 未測驗過的項目：熟悉度 = 0%（優先出題）</p>
+                <p class="info-note">⚙️ 字母數少於 4 的純單字（如 "dog"）不列入單字測驗；含空格的片語不受此限制</p>
             </section>
 
             <section class="info-section">
@@ -829,21 +840,21 @@
                         <span class="info-color-dot fam-green"></span>
                         <div>
                             <strong>熟悉（綠）</strong>
-                            <span>熟悉度 ≥ 70%</span>
+                            <span>熟悉度 ≥ 60%</span>
                         </div>
                     </div>
                     <div class="info-color-item">
                         <span class="info-color-dot fam-yellow"></span>
                         <div>
                             <strong>普通（黃）</strong>
-                            <span>熟悉度 40–69%</span>
+                            <span>熟悉度 30–59%</span>
                         </div>
                     </div>
                     <div class="info-color-item">
                         <span class="info-color-dot fam-red"></span>
                         <div>
                             <strong>需練習（紅）</strong>
-                            <span>熟悉度 &lt; 40%</span>
+                            <span>熟悉度 &lt; 30%</span>
                         </div>
                     </div>
                 </div>
@@ -861,23 +872,23 @@
                             <td><span class="weight-badge w3">3.0×</span></td>
                         </tr>
                         <tr class="weight-row-red">
-                            <td>1–39%</td>
+                            <td>1–29%</td>
                             <td>需練習</td>
                             <td><span class="weight-badge w25">2.5×</span></td>
                         </tr>
                         <tr class="weight-row-yellow">
-                            <td>40–69%</td>
+                            <td>30–59%</td>
                             <td>普通</td>
                             <td><span class="weight-badge w15">1.5×</span></td>
                         </tr>
                         <tr class="weight-row-green">
-                            <td>70–100%</td>
+                            <td>60–100%</td>
                             <td>熟悉</td>
                             <td><span class="weight-badge w1">1.0×</span></td>
                         </tr>
                     </tbody>
                 </table>
-                <p class="info-note">💡 例如：熟悉度 0% 的單字被抽到的機率是熟悉度 70% 以上的單字的 3 倍</p>
+                <p class="info-note">💡 例如：熟悉度 0% 的單字被抽到的機率是熟悉度 60% 以上的單字的 3 倍</p>
             </section>
 
             <section class="info-section">
@@ -915,9 +926,9 @@
                 </div>
                 <div class="info-formula-box" style="margin-top:12px;">
                     <div class="info-formula">答對 + 重播 N 次 → correct +1，wrong +N</div>
-                    <div class="info-formula-sub">數學保證：答對的熟悉度（≥30%）永遠不低於答錯（30%）</div>
+                    <div class="info-formula-sub">重播懲罰套用於各來源分開計算，再依加權比例合併</div>
                 </div>
-                <p class="info-note">💡 例如：答對但重播 2 次 → correct=1, wrong=2 → 熟悉度約 53%；答錯 → 熟悉度 30%</p>
+                <p class="info-note">💡 例如：FC+ 答對但重播 2 次 → correct=1, wrong=2 → 該來源熟悉度 33%（佔 70%權重）</p>
             </section>
 
         </div>
