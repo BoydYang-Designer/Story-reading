@@ -294,8 +294,9 @@ function showView(view) {
     const quizView = document.getElementById('quiz-view');
     const scoresDashboardView = document.getElementById('scores-dashboard-view');
     const audioEditorManagerView = document.getElementById('audio-editor-manager-view');
+    const itemDetailView = document.getElementById('item-detail-view');
     // 加入 subCategoryView 和 dataManagerView 到隱藏列表
-    [loginView, appContainer, homeView, subCategoryView, categoryView, playbackView, noteView, dataManagerView, customArticlesView, quizView, scoresDashboardView, audioEditorManagerView].forEach(el => {
+    [loginView, appContainer, homeView, subCategoryView, categoryView, playbackView, noteView, dataManagerView, customArticlesView, quizView, scoresDashboardView, audioEditorManagerView, itemDetailView].forEach(el => {
         if(el) el.classList.add('is-hidden');
     });
     

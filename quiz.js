@@ -115,6 +115,78 @@ function shuffle(arr) {
     return a;
 }
 
+/**
+ * 根據熟悉度加權抽題
+ * 熟悉度低（未測驗或常答錯）→ 權重高 → 更容易被抽到
+ *
+ * 權重對照：
+ *   未測驗 / 熟悉度 0%        → 3.0x
+ *   熟悉度 1–39%  (需練習)    → 2.5x
+ *   熟悉度 40–69% (普通)      → 1.5x
+ *   熟悉度 70–100% (熟悉)     → 1.0x
+ *
+ * @param {Array}    items        要抽取的項目陣列
+ * @param {number}   n            要抽取的數量
+ * @param {Function} keyFn        取得每個 item 的辨識文字（用來查熟悉度）
+ * @param {string}   categoryName
+ * @param {string}   titleName
+ * @returns {Array}  抽取後的陣列（長度 = min(n, items.length)）
+ */
+function weightedSample(items, n, keyFn, categoryName, titleName) {
+    if (!items || items.length === 0) return [];
+    n = Math.min(n, items.length);
+
+    function getFam(item) {
+        const key = (keyFn ? keyFn(item) : (item.text || item.sentence || ''));
+        if (!key || typeof loadItemScores !== 'function') return 0;
+        try {
+            const data  = loadItemScores();
+            const stKey = `${categoryName}||${titleName}`;
+            const entry = data[stKey];
+            if (!entry) return 0;
+            for (const bucket of ['noteWords', 'noteSentences', 'articleSentences']) {
+                const rec = entry[bucket]?.[key.trim()];
+                if (rec) {
+                    const total = (rec.correct || 0) + (rec.wrong || 0);
+                    if (total === 0) return 0;
+                    const errorRate = (rec.wrong || 0) / total;
+                    const days = rec.lastSeen
+                        ? Math.floor((Date.now() - new Date(rec.lastSeen).getTime()) / 86400000)
+                        : Infinity;
+                    let dayDecay = 0;
+                    if (days >= 30)      dayDecay = 1;
+                    else if (days >= 7)  dayDecay = (days - 7) / 23;
+                    return 100 - Math.round(errorRate * 70 + dayDecay * 30);
+                }
+            }
+        } catch (e) {}
+        return 0; // 未測驗
+    }
+
+    function getWeight(fam) {
+        if (fam <= 0)  return 3.0;
+        if (fam < 40)  return 2.5;
+        if (fam < 70)  return 1.5;
+        return 1.0;
+    }
+
+    // 加權不放回抽樣
+    const pool   = items.map(item => ({ item, weight: getWeight(getFam(item)) }));
+    const result = [];
+    for (let i = 0; i < n; i++) {
+        const totalW = pool.reduce((s, p) => s + p.weight, 0);
+        let rand = Math.random() * totalW;
+        let idx  = 0;
+        for (let j = 0; j < pool.length; j++) {
+            rand -= pool[j].weight;
+            if (rand <= 0) { idx = j; break; }
+        }
+        result.push(pool[idx].item);
+        pool.splice(idx, 1);
+    }
+    return result;
+}
+
 function getNoteData(categoryName, titleName) {
     return savedWords[categoryName]?.[titleName] || {
         words: new Set(), phrases: new Set(), sentences: new Set()
@@ -907,7 +979,7 @@ async function startFlashcardFromArticle() {
         showNotification(`No ${quizState.difficulty === 'mix' ? '' : quizState.difficulty + ' '}words found in this article.`, 'warning');
         return;
     }
-    deck = deck.slice(0, quizState.questionCount || 10);
+    deck = weightedSample(deck, quizState.questionCount || 10, item => item.text, quizState.categoryName, title);
 
     // 預載音檔
     const audioSrc = `audio/${encodeURIComponent(title.trim())}.mp3`;
@@ -951,7 +1023,7 @@ function startFlashcard() {
 
     quizState.mode        = 'flashcard';
     quizState.flashSource = 'note';
-    quizState.deck        = shuffle(allItems).slice(0, quizState.questionCount || 10);
+    quizState.deck        = weightedSample(allItems, quizState.questionCount || 10, item => item.text, quizState.categoryName, quizState.titleName);
     quizState.deckIndex   = 0;
     quizState.againQueue  = [];
     quizState.correct     = 0;
@@ -1255,7 +1327,7 @@ async function startCloze() {
     }
 
     quizState.mode        = 'cloze';
-    quizState.questions   = shuffle(questions).slice(0, quizState.questionCount || 10);
+    quizState.questions   = weightedSample(questions, quizState.questionCount || 10, q => q.word, quizState.categoryName, quizState.titleName);
     quizState.currentIndex = 0;
     quizState.correct     = 0;
     quizState.wrong       = 0;
@@ -1463,7 +1535,7 @@ async function startDictation() {
     }
 
     quizState.mode        = 'dictation';
-    quizState.questions   = shuffle(filteredQ).slice(0, quizState.questionCount || 10);
+    quizState.questions   = weightedSample(filteredQ, quizState.questionCount || 10, q => q.sentence, quizState.categoryName, quizState.titleName);
     quizState.currentIndex = 0;
     quizState.correct     = 0;
     quizState.wrong       = 0;
@@ -1667,7 +1739,7 @@ async function startArticleQuiz() {
     }
 
     const qCount   = quizState.questionCount || 10;
-    const selected = shuffle(pool).slice(0, qCount);
+    const selected = weightedSample(pool, qCount, l => l.sentence, quizState.categoryName, title);
     const questions = selected.map(l => {
         const _sent = l.sentence.trim();
         // 出題前先查是否有調整記錄，有則優先使用
@@ -2101,7 +2173,7 @@ async function startReorder(source) {
             showNotification(`No ${diff === 'mix' ? '' : diff + ' '}sentences found in this article.`, 'warning');
             return;
         }
-        const pool = shuffle(rawPool).slice(0, quizState.questionCount || 10);
+        const pool = weightedSample(rawPool, quizState.questionCount || 10, l => l.sentence, quizState.categoryName, title);
         sentences = pool.map(l => ({
             sentence: l.sentence.trim(),
             start: l.start,
@@ -2128,7 +2200,7 @@ async function startReorder(source) {
             showNotification(`No ${diff === 'mix' ? '' : diff + ' '}sentences in your notes.`, 'warning');
             return;
         }
-        const raw = shuffle(filteredNoteSents).slice(0, quizState.questionCount || 10);
+        const raw = weightedSample(filteredNoteSents, quizState.questionCount || 10, s => s, quizState.categoryName, quizState.titleName);
 
         if (raw.length === 0) {
             showNotification('No sentences saved yet. Add sentences to your note first.', 'warning');

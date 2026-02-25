@@ -1,51 +1,20 @@
 // ============================================================
-//  SCORES DASHBOARD — scores-dashboard.js
+//  SCORES DASHBOARD — scores-dashboard.js  (重構版)
 //
-//  包含：
-//  1. Session 分數 Dashboard（原 quiz.js 2770行以後）
-//  2. Item-level 細粒度記錄系統（單字/句子個別追蹤）
-//  3. 文章細節頁（兩層式）
+//  架構：
+//  1. 分類瀏覽層：大類 → 分類（可折疊），列出文章 + 熟悉度
+//  2. 文章細節頁：單字 / 句子的細粒度學習結果
+//  3. 熟悉度排序：昇冪 / 降冪
 //
 //  依賴：quiz.js（需先載入）
 //  localStorage keys:
-//    - readingChallengeQuizScores  → session 分數（原有）
-//    - readingChallengeItemScores  → item 細粒度記錄（新增）
+//    - readingChallengeItemScores  → item 細粒度記錄
+//    - readingChallengeQuizScores  → session 分數（仍保留寫入，但不顯示於此 Dashboard）
 // ============================================================
 
 // ══════════════════════════════════════════════════════════════
-//  PART 1 — SESSION SCORE DASHBOARD
-//  （從 quiz.js 搬移）
+//  SHARED UTILITIES
 // ══════════════════════════════════════════════════════════════
-
-const SCORE_MODE_META = {
-    flashcard:        { icon: '🃏', label: 'Flashcard' },
-    cloze:            { icon: '✏️', label: 'Fill in Blank' },
-    dictation:        { icon: '🎧', label: 'Dictation' },
-    reorder:          { icon: '🔀', label: 'Reorder' },
-    'article-listen': { icon: '👂', label: 'Article Listen' },
-    'article-cloze':  { icon: '📝', label: 'Article Cloze' },
-};
-const SCORE_MODES = Object.keys(SCORE_MODE_META);
-const REVIEW_DAYS = 7;
-
-// Dashboard state
-let _dashFilter   = 'all';
-let _dashSortMode = null;
-let _dashSortDir  = 'desc';
-
-function openScoresDashboard() {
-    _dashFilter   = 'all';
-    _dashSortMode = null;
-    _dashSortDir  = 'desc';
-    renderScoresDashboard();
-    showView(document.getElementById('scores-dashboard-view'));
-}
-
-function getScoreColor(pct) {
-    if (pct >= 0.9) return 'score-green';
-    if (pct >= 0.6) return 'score-yellow';
-    return 'score-red';
-}
 
 function daysSince(dateStr) {
     if (!dateStr) return Infinity;
@@ -54,299 +23,19 @@ function daysSince(dateStr) {
     return Math.floor((Date.now() - d.getTime()) / 86400000);
 }
 
-function buildDashboardRows(scores) {
-    const storyList = typeof stories !== 'undefined' ? stories : [];
-    const titleMajor = {};
-    for (const s of storyList) {
-        titleMajor[s['標題']] = s['大類'] || 'Uncategorized';
-    }
-
-    const allTitles = new Set(storyList.map(s => s['標題']));
-    for (const key of Object.keys(scores)) {
-        const title = key.split('||')[1];
-        if (title) allTitles.add(title);
-    }
-
-    const rows = [];
-    for (const title of allTitles) {
-        const major = titleMajor[title] || 'Other';
-        const key   = Object.keys(scores).find(k => k.endsWith('||' + title));
-        const entry = key ? scores[key] : {};
-
-        const modeData = {};
-        for (const mode of SCORE_MODES) {
-            const d = entry[mode];
-            if (d) {
-                const pct      = d.total > 0 ? d.best / d.total : 0;
-                const firstPct = d.total > 0 && d.first != null ? d.first / d.total : null;
-                const trend    = firstPct != null ? pct - firstPct : null;
-                const days     = daysSince(d.lastDate);
-                modeData[mode] = { ...d, pct, firstPct, trend, days };
-            }
-        }
-
-        const hasPractice = Object.keys(modeData).length > 0;
-        const needsReview = hasPractice && Object.values(modeData).some(d => d.days >= REVIEW_DAYS);
-
-        rows.push({ title, major, entry, modeData, hasPractice, needsReview });
-    }
-    return rows;
+function _todayStr() {
+    return new Date().toLocaleDateString();
 }
 
-function renderScoresDashboard() {
-    const scores  = loadQuizScores();
-    const tableEl = document.getElementById('scores-dashboard-table');
-    if (!tableEl) return;
-
-    const allRows = buildDashboardRows(scores);
-
-    // ── Summary Strip ──────────────────────────────────────────
-    let totalAttempts = 0, perfectCount = 0, bestPctSum = 0, bestPctCount = 0;
-    let practicedSet = new Set();
-    const modeUsage = {};
-    const totalArticles = allRows.length;
-
-    for (const row of allRows) {
-        if (row.hasPractice) practicedSet.add(row.title);
-        for (const mode of SCORE_MODES) {
-            const d = row.modeData[mode];
-            if (!d) continue;
-            totalAttempts += d.count || 0;
-            bestPctSum    += d.pct;
-            bestPctCount++;
-            if (d.best === d.total && d.total > 0) perfectCount++;
-            modeUsage[mode] = (modeUsage[mode] || 0) + (d.count || 0);
-        }
-    }
-
-    const coveragePct = totalArticles > 0
-        ? Math.round(practicedSet.size / totalArticles * 100) + '%' : '—';
-
-    document.getElementById('summary-coverage').textContent      = coveragePct;
-    document.getElementById('summary-total-attempts').textContent = totalAttempts;
-    document.getElementById('summary-avg-best').textContent       = bestPctCount > 0
-        ? Math.round(bestPctSum / bestPctCount * 100) + '%' : '—';
-    document.getElementById('summary-perfect-count').textContent  = perfectCount;
-
-    // ── Alert Row ─────────────────────────────────────────────
-    const alertRow = document.getElementById('scores-alert-row');
-    let alertHtml = '';
-
-    if (Object.keys(modeUsage).length > 0) {
-        const leastMode = Object.keys(modeUsage).sort((a, b) => modeUsage[a] - modeUsage[b])[0];
-        const meta = SCORE_MODE_META[leastMode];
-        alertHtml += `<div class="scores-alert scores-alert-blind">
-            💡 最少練習的模式：<strong>${meta.icon} ${meta.label}</strong>（${modeUsage[leastMode]} 次）
-        </div>`;
-    }
-
-    const reviewCount = allRows.filter(r => r.needsReview).length;
-    if (reviewCount > 0) {
-        alertHtml += `<div class="scores-alert scores-alert-review">
-            🔔 有 <strong>${reviewCount}</strong> 篇文章超過 ${REVIEW_DAYS} 天未練習，建議複習
-        </div>`;
-    }
-    alertRow.innerHTML = alertHtml;
-
-    // ── Filter buttons ────────────────────────────────────────
-    document.querySelectorAll('.scores-filter-btn').forEach(btn => {
-        btn.classList.toggle('is-active', btn.dataset.filter === _dashFilter);
-    });
-
-    // ── Apply filter & sort ───────────────────────────────────
-    let visibleRows = allRows;
-    if (_dashFilter === 'practiced') visibleRows = allRows.filter(r => r.hasPractice);
-    if (_dashFilter === 'review')    visibleRows = allRows.filter(r => r.needsReview);
-
-    if (_dashSortMode) {
-        visibleRows = [...visibleRows].sort((a, b) => {
-            const pctA = a.modeData[_dashSortMode]?.pct ?? -1;
-            const pctB = b.modeData[_dashSortMode]?.pct ?? -1;
-            return _dashSortDir === 'desc' ? pctB - pctA : pctA - pctB;
-        });
-    }
-
-    // ── Build table HTML ──────────────────────────────────────
-    let html = `<div class="scores-table-header">
-        <div class="scores-col-article">Article</div>
-        ${SCORE_MODES.map(m => {
-            const isSorted = _dashSortMode === m;
-            const arrow = isSorted ? (_dashSortDir === 'desc' ? ' ↓' : ' ↑') : '';
-            return `<div class="scores-col-mode scores-col-sortable${isSorted ? ' is-sorted' : ''}"
-                        data-sort-mode="${m}"
-                        title="按 ${SCORE_MODE_META[m].label} 排序">
-                        ${SCORE_MODE_META[m].icon}${arrow}
-                    </div>`;
-        }).join('')}
-    </div>`;
-
-    if (visibleRows.length === 0) {
-        html += `<div class="scores-empty-state">
-            ${_dashFilter === 'review' ? '🎉 沒有待複習的文章！' : 'No quiz scores yet. Start practicing!'}
-        </div>`;
-        tableEl.innerHTML = html;
-        bindSortHeaders(tableEl);
-        renderItemLevelSummarySection();
-        return;
-    }
-
-    if (_dashSortMode) {
-        html += `<div class="scores-major-group">
-            <div class="scores-major-label">排序結果</div>
-            ${visibleRows.map(row => buildSessionRowHtml(row)).join('')}
-        </div>`;
-    } else {
-        const majors = [...new Set(visibleRows.map(r => r.major))].sort();
-        for (const major of majors) {
-            const group = visibleRows.filter(r => r.major === major).sort((a, b) => a.title.localeCompare(b.title));
-            html += `<div class="scores-major-group">
-                <div class="scores-major-label">${major}</div>
-                ${group.map(row => buildSessionRowHtml(row)).join('')}
-            </div>`;
-        }
-    }
-
-    tableEl.innerHTML = html;
-    bindSortHeaders(tableEl);
-
-    // ── Render item-level section below ───────────────────────
-    renderItemLevelSummarySection();
-}
-
-function buildSessionRowHtml(row) {
-    const reviewFlag = row.needsReview ? '<span class="scores-review-flag" title="超過 7 天未練習">🔔</span>' : '';
-    return `<div class="scores-row${row.needsReview ? ' scores-row-review' : ''}">
-        <div class="scores-col-article" title="${row.title}">${reviewFlag}${row.title}</div>
-        ${SCORE_MODES.map(mode => {
-            const d = row.modeData[mode];
-            if (!d) return `<div class="scores-col-mode scores-cell-empty" title="尚未練習"></div>`;
-
-            const pctText    = Math.round(d.pct * 100) + '%';
-            const colorClass = getScoreColor(d.pct);
-            const daysAgo    = d.days === Infinity ? '—' : d.days === 0 ? '今天' : `${d.days}天前`;
-
-            let trendHtml = '';
-            if (d.trend !== null) {
-                if (d.trend > 0.05)       trendHtml = `<span class="scores-trend up">↑</span>`;
-                else if (d.trend < -0.05) trendHtml = `<span class="scores-trend down">↓</span>`;
-                else                      trendHtml = `<span class="scores-trend flat">→</span>`;
-            }
-
-            const cellReview = d.days >= REVIEW_DAYS ? ' scores-cell-overdue' : '';
-            const firstInfo  = d.firstPct != null
-                ? `首次: ${Math.round(d.firstPct * 100)}% → 最佳: ${pctText}`
-                : `最佳: ${pctText}`;
-            const tooltip = [
-                SCORE_MODE_META[mode].label,
-                firstInfo,
-                `練習次數: ${d.count}`,
-                `上次: ${daysAgo}`,
-                d.days >= REVIEW_DAYS ? '⚠️ 建議複習！' : ''
-            ].filter(Boolean).join('\n');
-
-            return `<div class="scores-col-mode scores-cell ${colorClass}${cellReview}" title="${tooltip}">
-                <span class="scores-cell-score">${d.best}/${d.total}</span>
-                <span class="scores-cell-pct">${pctText}${trendHtml}</span>
-            </div>`;
-        }).join('')}
-    </div>`;
-}
-
-function bindSortHeaders(tableEl) {
-    tableEl.querySelectorAll('.scores-col-sortable').forEach(col => {
-        col.addEventListener('click', () => {
-            const mode = col.dataset.sortMode;
-            if (_dashSortMode === mode) {
-                if (_dashSortDir === 'desc') _dashSortDir = 'asc';
-                else { _dashSortMode = null; _dashSortDir = 'desc'; }
-            } else {
-                _dashSortMode = mode;
-                _dashSortDir  = 'desc';
-            }
-            renderScoresDashboard();
-        });
-    });
-}
-
-// Filter buttons
-document.querySelectorAll('.scores-filter-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        _dashFilter = btn.dataset.filter;
-        renderScoresDashboard();
-    });
-});
-
-// Clear All button
-document.getElementById('scores-clear-all-btn')?.addEventListener('click', () => {
-    if (!confirm('Clear all quiz score records? This cannot be undone.')) return;
-    localStorage.removeItem(QUIZ_SCORES_KEY);
-    localStorage.removeItem(ITEM_SCORES_KEY);
-    if (typeof currentUser !== 'undefined' && currentUser) {
-        db.collection('userNotes').doc(currentUser.uid)
-          .set({ quizScores: {}, itemScores: {} }, { merge: true })
-          .catch(err => console.error('Score clear error:', err));
-    }
-    renderScoresDashboard();
-});
-
-// ── Home page: "Today's Review" badge ────────────────────────
-function renderHomeReviewBadge() {
-    const existing = document.getElementById('home-review-banner');
-    if (existing) existing.remove();
-
-    const scores = loadQuizScores();
-    let reviewCount = 0;
-    for (const key of Object.keys(scores)) {
-        const entry = scores[key];
-        const hasPractice = SCORE_MODES.some(m => entry[m]);
-        if (!hasPractice) continue;
-        const needsReview = SCORE_MODES.some(m => entry[m] && daysSince(entry[m].lastDate) >= REVIEW_DAYS);
-        if (needsReview) reviewCount++;
-    }
-
-    if (reviewCount === 0) return;
-
-    const banner = document.createElement('div');
-    banner.id = 'home-review-banner';
-    banner.className = 'home-review-banner';
-    banner.innerHTML = `🔔 <strong>${reviewCount}</strong> 篇文章待複習
-        <button id="home-review-goto-btn" class="home-review-btn">查看 →</button>`;
-    banner.querySelector('#home-review-goto-btn').addEventListener('click', () => {
-        _dashFilter = 'review';
-        openScoresDashboard();
-    });
-
-    const quizBtn = document.getElementById('go-to-scores');
-    if (quizBtn) quizBtn.insertAdjacentElement('afterend', banner);
-}
-
-// Override saveQuizScore to track first score
-function saveQuizScore(categoryName, titleName, mode, score, total) {
-    const scores = loadQuizScores();
-    const key = `${categoryName}||${titleName}`;
-    if (!scores[key]) scores[key] = {};
-    if (!scores[key][mode]) scores[key][mode] = { best: 0, last: 0, count: 0 };
-
-    const entry = scores[key][mode];
-    if (entry.count === 0) entry.first = score;
-    entry.last  = score;
-    entry.best  = Math.max(entry.best, score);
-    entry.total = total;
-    entry.count++;
-    entry.lastDate = new Date().toLocaleDateString();
-
-    localStorage.setItem(QUIZ_SCORES_KEY, JSON.stringify(scores));
-
-    if (typeof currentUser !== 'undefined' && currentUser) {
-        db.collection('userNotes').doc(currentUser.uid)
-          .set({ quizScores: scores }, { merge: true })
-          .catch(err => console.error('Quiz score save error:', err));
-    }
+function _escHtml(s) {
+    return String(s)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
 }
 
 // ══════════════════════════════════════════════════════════════
-//  PART 2 — ITEM-LEVEL TRACKER
-//  細粒度記錄每個單字/句子的測驗結果
+//  ITEM-LEVEL TRACKER（細粒度記錄）
 // ══════════════════════════════════════════════════════════════
 
 const ITEM_SCORES_KEY = 'readingChallengeItemScores';
@@ -380,11 +69,6 @@ window.loadItemScoresFromFirestore = loadItemScoresFromFirestore;
 
 /**
  * 記錄單一題目結果
- * @param {string} categoryName
- * @param {string} titleName
- * @param {string} itemType  'noteWord' | 'noteSentence' | 'articleSentence'
- * @param {string} itemText
- * @param {boolean} isCorrect
  */
 function recordItemResult(categoryName, titleName, itemType, itemText, isCorrect) {
     if (!categoryName || !titleName || !itemText) return;
@@ -406,18 +90,11 @@ function recordItemResult(categoryName, titleName, itemType, itemText, isCorrect
     saveItemScores(data);
 }
 
-function _todayStr() {
-    return new Date().toLocaleDateString();
-}
-
-// ── Need-practice score calculation ─────────────────────────
+// ── 需練指數 & 熟悉度 ────────────────────────────────────────
 
 /**
  * 需練指數 0–100（越高越需要練習）
- *
- * 未測驗       → 100
- * 有記錄       → 錯誤率 × 70 + 遺忘時間衰減 × 30
- * dayDecay：7天內=0, 7–30天線性增加, 30天以上=100
+ * 熟悉度 = 100 - needScore
  */
 function calcNeedScore(itemRecord) {
     if (!itemRecord || (itemRecord.correct === 0 && itemRecord.wrong === 0)) {
@@ -425,13 +102,18 @@ function calcNeedScore(itemRecord) {
     }
     const total     = itemRecord.correct + itemRecord.wrong;
     const errorRate = total > 0 ? itemRecord.wrong / total : 0;
-
     const days = daysSince(itemRecord.lastSeen);
     let dayDecay = 0;
-    if (days >= 30)      dayDecay = 1;
-    else if (days >= 7)  dayDecay = (days - 7) / 23;
-
+    if (days >= 30)     dayDecay = 1;
+    else if (days >= 7) dayDecay = (days - 7) / 23;
     return Math.round(errorRate * 70 + dayDecay * 30);
+}
+
+/**
+ * 熟悉度 0–100（越高代表越熟悉）
+ */
+function calcFamiliarity(itemRecord) {
+    return 100 - calcNeedScore(itemRecord);
 }
 
 function getNeedScoreColor(score) {
@@ -440,7 +122,17 @@ function getNeedScoreColor(score) {
     return 'need-green';
 }
 
-function calcArticleNeedSummary(categoryName, titleName) {
+function getFamiliarityColor(fam) {
+    if (fam >= 60) return 'fam-green';
+    if (fam >= 30) return 'fam-yellow';
+    return 'fam-red';
+}
+
+/**
+ * 計算文章的熟悉度摘要
+ * 回傳 { famAvg, noteAvg, artAvg, noteTotal, artTotal, hasPractice, totalTested, totalItems }
+ */
+function calcArticleFamSummary(categoryName, titleName) {
     const data  = loadItemScores();
     const key   = `${categoryName}||${titleName}`;
     const entry = data[key] || {};
@@ -448,147 +140,301 @@ function calcArticleNeedSummary(categoryName, titleName) {
     const noteWordItems = Object.values(entry.noteWords     || {});
     const noteSentItems = Object.values(entry.noteSentences || {});
     const allNoteItems  = [...noteWordItems, ...noteSentItems];
-    const noteScores    = allNoteItems.map(calcNeedScore);
-    const noteUntested  = allNoteItems.filter(i => i.correct === 0 && i.wrong === 0).length;
     const noteTotal     = allNoteItems.length;
+    const noteFamScores = allNoteItems.map(calcFamiliarity);
     const noteAvg       = noteTotal > 0
-        ? Math.round(noteScores.reduce((a, b) => a + b, 0) / noteTotal) : null;
+        ? Math.round(noteFamScores.reduce((a, b) => a + b, 0) / noteTotal) : null;
 
     const artItems   = Object.values(entry.articleSentences || {});
-    const artScores  = artItems.map(calcNeedScore);
-    const artUntested = artItems.filter(i => i.correct === 0 && i.wrong === 0).length;
     const artTotal   = artItems.length;
+    const artFamScores = artItems.map(calcFamiliarity);
     const artAvg     = artTotal > 0
-        ? Math.round(artScores.reduce((a, b) => a + b, 0) / artTotal) : null;
+        ? Math.round(artFamScores.reduce((a, b) => a + b, 0) / artTotal) : null;
+
+    const totalItems  = noteTotal + artTotal;
+    const totalTested = allNoteItems.filter(i => (i.correct + i.wrong) > 0).length
+                      + artItems.filter(i => (i.correct + i.wrong) > 0).length;
+
+    let famAvg = null;
+    if (noteAvg !== null && artAvg !== null) famAvg = Math.round((noteAvg + artAvg) / 2);
+    else if (noteAvg !== null) famAvg = noteAvg;
+    else if (artAvg  !== null) famAvg = artAvg;
 
     return {
-        noteAvg, noteUntested, noteTotal,
-        artAvg,  artUntested,  artTotal,
-        hasPractice: noteTotal > 0 || artTotal > 0
+        famAvg, noteAvg, artAvg,
+        noteTotal, artTotal,
+        totalItems, totalTested,
+        hasPractice: totalItems > 0
     };
 }
 
-// ── NOTE: tracking calls are injected directly in quiz.js handlers ──
+// ── Legacy: calcArticleNeedSummary（向後相容）──────────────
+function calcArticleNeedSummary(categoryName, titleName) {
+    const s = calcArticleFamSummary(categoryName, titleName);
+    return {
+        noteAvg:    s.noteAvg !== null ? 100 - s.noteAvg : null,
+        artAvg:     s.artAvg  !== null ? 100 - s.artAvg  : null,
+        noteTotal:  s.noteTotal,
+        artTotal:   s.artTotal,
+        hasPractice: s.hasPractice
+    };
+}
 
 // ══════════════════════════════════════════════════════════════
-//  PART 3 — ITEM-LEVEL SUMMARY SECTION（Dashboard 下半部）
+//  PART 1 — SCORES DASHBOARD（分類瀏覽層）
 // ══════════════════════════════════════════════════════════════
 
-function renderItemLevelSummarySection() {
-    const container = document.getElementById('item-level-summary-section');
+// Dashboard 狀態
+let _dashSortDir = 'desc'; // 'desc' = 熟悉度低→高（需要練習的在前），'asc' = 熟悉度高→低
+
+function openScoresDashboard() {
+    _dashSortDir = 'desc';
+    renderScoresDashboard();
+    showView(document.getElementById('scores-dashboard-view'));
+}
+
+function renderScoresDashboard() {
+    _renderBrowserSection();
+    _updateSortBtnUI();
+}
+
+// ── 排序按鈕 UI ─────────────────────────────────────────────
+
+function _updateSortBtnUI() {
+    const btn = document.getElementById('dash-sort-fam-btn');
+    if (!btn) return;
+    btn.textContent = _dashSortDir === 'desc'
+        ? '熟悉度 ↑（最需練習優先）'
+        : '熟悉度 ↓（最熟悉優先）';
+    btn.classList.toggle('sort-desc', _dashSortDir === 'desc');
+}
+
+// ── 瀏覽層渲染 ───────────────────────────────────────────────
+
+function _renderBrowserSection() {
+    const container = document.getElementById('scores-browser-section');
     if (!container) return;
 
-    const itemData  = loadItemScores();
     const storyList = typeof stories !== 'undefined' ? stories : [];
+    const itemData  = loadItemScores();
 
-    // Build title → { major, cat } map
-    const titleMap = {};
-    storyList.forEach(s => {
-        titleMap[s['標題']] = {
-            major: s['大類'] || 'Uncategorized',
-            cat:   s['分類']?.[0] || 'Uncategorized'
-        };
-    });
-    Object.keys(itemData).forEach(key => {
-        const [cat, title] = key.split('||');
-        if (title && !titleMap[title]) {
-            titleMap[title] = { major: 'Other', cat };
-        }
-    });
-
-    // Build rows — only articles with item data
-    const rows = Object.entries(titleMap)
-        .map(([title, info]) => {
-            const summary = calcArticleNeedSummary(info.cat, title);
-            return { title, major: info.major, categoryName: info.cat, summary };
-        })
-        .filter(r => r.summary.hasPractice)
-        .sort((a, b) => {
-            const aScore = a.summary.noteAvg ?? a.summary.artAvg ?? 0;
-            const bScore = b.summary.noteAvg ?? b.summary.artAvg ?? 0;
-            return bScore - aScore;
-        });
-
-    if (rows.length === 0) {
-        container.innerHTML = `<div class="item-section-empty">
-            <p>📝 完成任何測驗後，這裡會顯示每篇文章的細部學習狀態</p>
-        </div>`;
+    if (storyList.length === 0) {
+        container.innerHTML = `<div class="browser-empty">沒有文章資料</div>`;
         return;
     }
 
-    const majors = [...new Set(rows.map(r => r.major))].sort();
+    // Build structure: majorMap[major][cat] = [{ title, cat, summary }]
+    const majorMap = {};
+    storyList.forEach(s => {
+        const major = s['大類'] || 'Uncategorized';
+        const cats  = Array.isArray(s['分類']) && s['分類'].length > 0
+            ? s['分類'] : ['Uncategorized'];
+        const cat   = cats[0];
+        if (!majorMap[major]) majorMap[major] = {};
+        if (!majorMap[major][cat]) majorMap[major][cat] = [];
+        majorMap[major][cat].push(s['標題']);
+    });
+
+    // Also add titles only in itemData but not in storyList
+    Object.keys(itemData).forEach(key => {
+        const [cat, title] = key.split('||');
+        if (!title) return;
+        const found = storyList.find(s => s['標題'] === title);
+        if (!found) {
+            const major = 'Other';
+            if (!majorMap[major]) majorMap[major] = {};
+            if (!majorMap[major][cat]) majorMap[major][cat] = [];
+            if (!majorMap[major][cat].includes(title)) majorMap[major][cat].push(title);
+        }
+    });
+
+    const majors = Object.keys(majorMap).sort();
     let html = '';
+
     for (const major of majors) {
-        const group = rows.filter(r => r.major === major);
-        html += `<div class="item-major-group">
-            <div class="item-major-label">${major}</div>
-            ${group.map(row => buildItemRowHtml(row)).join('')}
-        </div>`;
+        const cats = Object.keys(majorMap[major]).sort();
+        let catsHtml = '';
+
+        for (const cat of cats) {
+            const rawTitles = majorMap[major][cat];
+
+            // Compute familiarity for each article
+            let articles = rawTitles.map(title => {
+                const summary = calcArticleFamSummary(cat, title);
+                return { title, cat, summary };
+            });
+
+            // Sort by familiarity
+            articles.sort((a, b) => {
+                const fa = a.summary.famAvg ?? 0;
+                const fb = b.summary.famAvg ?? 0;
+                // desc = low familiarity first (needs practice)
+                return _dashSortDir === 'desc' ? fa - fb : fb - fa;
+            });
+
+            const practicedCount = articles.filter(a => a.summary.hasPractice).length;
+            const catBadge = practicedCount > 0
+                ? `<span class="browser-cat-practiced-badge">${practicedCount}/${articles.length}</span>`
+                : `<span class="browser-cat-count-badge">${articles.length}</span>`;
+
+            catsHtml += `
+                <div class="browser-cat-group" data-cat="${_escHtml(cat)}">
+                    <div class="browser-cat-header" data-cat-toggle>
+                        <span class="browser-cat-arrow">▸</span>
+                        <span class="browser-cat-name">${_escHtml(cat)}</span>
+                        ${catBadge}
+                    </div>
+                    <div class="browser-cat-body" style="display:none">
+                        ${articles.map(a => _buildArticleRowHtml(a)).join('')}
+                    </div>
+                </div>`;
+        }
+
+        html += `
+            <div class="browser-major-group">
+                <div class="browser-major-header" data-major-toggle>
+                    <span class="browser-major-arrow">▸</span>
+                    <span class="browser-major-name">${_escHtml(major)}</span>
+                    <span class="browser-major-count">${Object.values(majorMap[major]).flat().length} 篇</span>
+                </div>
+                <div class="browser-major-body" style="display:none">
+                    ${catsHtml}
+                </div>
+            </div>`;
     }
 
-    container.innerHTML = html;
+    container.innerHTML = html || `<div class="browser-empty">沒有文章資料</div>`;
 
-    container.querySelectorAll('.item-article-row').forEach(row => {
+    // Bind toggles
+    container.querySelectorAll('[data-major-toggle]').forEach(h =>
+        h.addEventListener('click', () => _toggleSection(h))
+    );
+    container.querySelectorAll('[data-cat-toggle]').forEach(h =>
+        h.addEventListener('click', () => _toggleSection(h))
+    );
+
+    // Bind article row clicks
+    container.querySelectorAll('.browser-article-row').forEach(row => {
         row.addEventListener('click', () => {
             openDetailView(row.dataset.cat, row.dataset.title);
         });
     });
 }
 
-function buildItemRowHtml(row) {
-    const { title, categoryName, summary } = row;
-    const { noteAvg, noteTotal, artAvg, artTotal } = summary;
+function _toggleSection(header) {
+    const body  = header.nextElementSibling;
+    const arrow = header.querySelector('.browser-major-arrow, .browser-cat-arrow');
+    const isCollapsed = body.style.display === 'none';
+    body.style.display = isCollapsed ? '' : 'none';
+    if (arrow) arrow.textContent = isCollapsed ? '▾' : '▸';
+}
 
-    function scoreChip(avg, total, label) {
-        if (total === 0) {
-            return `<div class="item-score-chip chip-none">
+function _buildArticleRowHtml(article) {
+    const { title, cat, summary } = article;
+    const { famAvg, noteAvg, artAvg, hasPractice, totalTested, totalItems } = summary;
+
+    function famChip(avg, label) {
+        if (avg === null) {
+            return `<div class="browser-fam-chip chip-untested">
                 <span class="chip-label">${label}</span>
                 <span class="chip-val">—</span>
             </div>`;
         }
-        if (avg === null) {
-            return `<div class="item-score-chip chip-untested">
-                <span class="chip-label">${label}</span>
-                <span class="chip-val">⬜</span>
-            </div>`;
-        }
-        const colorClass = getNeedScoreColor(avg);
-        return `<div class="item-score-chip ${colorClass}" title="${label} 平均需練 ${avg}%">
+        const colorClass = getFamiliarityColor(avg);
+        return `<div class="browser-fam-chip ${colorClass}">
             <span class="chip-label">${label}</span>
             <span class="chip-val">${avg}%</span>
             <div class="chip-bar-wrap"><div class="chip-bar" style="width:${avg}%"></div></div>
         </div>`;
     }
 
-    return `<div class="item-article-row" data-title="${_escHtml(title)}" data-cat="${_escHtml(categoryName)}">
-        <div class="item-row-title">${_escHtml(title)}</div>
-        <div class="item-row-chips">
-            ${scoreChip(noteAvg, noteTotal, '📝 Note')}
-            ${scoreChip(artAvg,  artTotal,  '📖 Article')}
+    const overallBadge = hasPractice
+        ? (famAvg !== null
+            ? `<span class="browser-article-fam ${getFamiliarityColor(famAvg)}">${famAvg}%</span>`
+            : '')
+        : `<span class="browser-article-fam fam-untested">未測驗</span>`;
+
+    return `<div class="browser-article-row" data-title="${_escHtml(title)}" data-cat="${_escHtml(cat)}">
+        <div class="browser-article-main">
+            <div class="browser-article-title">${_escHtml(title)}</div>
+            ${overallBadge}
         </div>
-        <div class="item-row-arrow">→</div>
+        ${hasPractice ? `<div class="browser-article-chips">
+            ${famChip(noteAvg, '📝 Note')}
+            ${famChip(artAvg,  '📖 Article')}
+        </div>` : ''}
+        <div class="browser-article-arrow">→</div>
     </div>`;
 }
 
+// ── Sort button binding ───────────────────────────────────────
+
+document.getElementById('dash-sort-fam-btn')?.addEventListener('click', () => {
+    _dashSortDir = _dashSortDir === 'desc' ? 'asc' : 'desc';
+    renderScoresDashboard();
+});
+
+// Clear All button
+document.getElementById('scores-clear-all-btn')?.addEventListener('click', () => {
+    if (!confirm('清除所有學習記錄？此操作無法還原。')) return;
+    localStorage.removeItem(ITEM_SCORES_KEY);
+    if (typeof QUIZ_SCORES_KEY !== 'undefined') localStorage.removeItem(QUIZ_SCORES_KEY);
+    if (typeof currentUser !== 'undefined' && currentUser) {
+        db.collection('userNotes').doc(currentUser.uid)
+          .set({ itemScores: {}, quizScores: {} }, { merge: true })
+          .catch(err => console.error('Score clear error:', err));
+    }
+    renderScoresDashboard();
+});
+
+// Home review badge（保留相容）
+function renderHomeReviewBadge() {}
+
+// saveQuizScore（保留向後相容，供 quiz.js 使用）
+function saveQuizScore(categoryName, titleName, mode, score, total) {
+    if (typeof QUIZ_SCORES_KEY === 'undefined') return;
+    const scores = typeof loadQuizScores === 'function' ? loadQuizScores() : {};
+    const key = `${categoryName}||${titleName}`;
+    if (!scores[key]) scores[key] = {};
+    const SCORE_MODE_META = {
+        flashcard: {}, cloze: {}, dictation: {}, reorder: {},
+        'article-listen': {}, 'article-cloze': {}
+    };
+    if (!scores[key][mode]) scores[key][mode] = { best: 0, last: 0, count: 0 };
+    const entry = scores[key][mode];
+    if (entry.count === 0) entry.first = score;
+    entry.last  = score;
+    entry.best  = Math.max(entry.best, score);
+    entry.total = total;
+    entry.count++;
+    entry.lastDate = new Date().toLocaleDateString();
+    localStorage.setItem(QUIZ_SCORES_KEY, JSON.stringify(scores));
+    if (typeof currentUser !== 'undefined' && currentUser) {
+        db.collection('userNotes').doc(currentUser.uid)
+          .set({ quizScores: scores }, { merge: true })
+          .catch(err => console.error('Quiz score save error:', err));
+    }
+}
+
 // ══════════════════════════════════════════════════════════════
-//  PART 4 — ARTICLE DETAIL VIEW（兩層式細節頁）
+//  PART 2 — ARTICLE DETAIL VIEW（兩層式細節頁）
 // ══════════════════════════════════════════════════════════════
 
 let detailViewState = {
     categoryName: null,
     titleName:    null,
     tab:          'noteWords',
-    sortBy:       'need',
-    sortDir:      'desc',
-    fromNote:     false,   // 從 Note 頁進入時為 true，用於返回導向
+    sortBy:       'fam',      // 'fam' | 'alpha' | 'recent'
+    sortDir:      'asc',      // for fam: asc = 低熟悉度優先（需練習）
+    fromNote:     false,
 };
 
 function openDetailView(categoryName, titleName) {
     detailViewState.categoryName = categoryName;
     detailViewState.titleName    = titleName;
     detailViewState.tab          = 'noteWords';
-    detailViewState.sortBy       = 'need';
-    detailViewState.sortDir      = 'desc';
+    detailViewState.sortBy       = 'fam';
+    detailViewState.sortDir      = 'asc';
 
     document.getElementById('detail-view-title').textContent = titleName;
     renderDetailView();
@@ -611,7 +457,8 @@ function renderDetailView() {
         const isActive = btn.dataset.sort === sortBy;
         btn.classList.toggle('is-active', isActive);
         if (isActive) {
-            btn.textContent = btn.dataset.label + (sortDir === 'desc' ? ' ↓' : ' ↑');
+            const arrow = sortDir === 'asc' ? ' ↑' : ' ↓';
+            btn.textContent = btn.dataset.label + arrow;
         } else {
             btn.textContent = btn.dataset.label;
         }
@@ -621,11 +468,12 @@ function renderDetailView() {
     const itemMap = entry[tab] || {};
     let items = Object.entries(itemMap).map(([text, rec]) => ({
         text,
-        correct:    rec.correct || 0,
-        wrong:      rec.wrong   || 0,
-        lastSeen:   rec.lastSeen  || null,
-        firstSeen:  rec.firstSeen || null,
-        needScore:  calcNeedScore(rec),
+        correct:     rec.correct || 0,
+        wrong:       rec.wrong   || 0,
+        lastSeen:    rec.lastSeen  || null,
+        firstSeen:   rec.firstSeen || null,
+        famScore:    calcFamiliarity(rec),
+        needScore:   calcNeedScore(rec),
         hasPractice: (rec.correct + rec.wrong) > 0,
     }));
 
@@ -640,7 +488,8 @@ function renderDetailView() {
         pool.forEach(text => {
             const t = text.trim();
             if (!itemMap[t]) {
-                items.push({ text: t, correct: 0, wrong: 0, lastSeen: null, firstSeen: null, needScore: 100, hasPractice: false });
+                items.push({ text: t, correct: 0, wrong: 0, lastSeen: null, firstSeen: null,
+                             famScore: 0, needScore: 100, hasPractice: false });
             }
         });
     }
@@ -649,39 +498,37 @@ function renderDetailView() {
     items.sort((a, b) => {
         if (sortBy === 'alpha') {
             const va = a.text.toLowerCase(), vb = b.text.toLowerCase();
-            return sortDir === 'desc' ? vb.localeCompare(va) : va.localeCompare(vb);
+            return sortDir === 'asc' ? va.localeCompare(vb) : vb.localeCompare(va);
         }
-        let va, vb;
-        if (sortBy === 'need') {
-            va = a.needScore; vb = b.needScore;
-        } else { // recent
-            va = a.lastSeen ? new Date(a.lastSeen).getTime() : 0;
-            vb = b.lastSeen ? new Date(b.lastSeen).getTime() : 0;
+        if (sortBy === 'recent') {
+            const va = a.lastSeen ? new Date(a.lastSeen).getTime() : 0;
+            const vb = b.lastSeen ? new Date(b.lastSeen).getTime() : 0;
+            return sortDir === 'asc' ? va - vb : vb - va;
         }
-        return sortDir === 'desc' ? vb - va : va - vb;
+        // fam: asc = 低熟悉度在前（最需練習）
+        return sortDir === 'asc' ? a.famScore - b.famScore : b.famScore - a.famScore;
     });
 
     // Summary bar
     const tested   = items.filter(i => i.hasPractice).length;
     const untested = items.length - tested;
-    const avgNeed  = items.length > 0
-        ? Math.round(items.reduce((s, i) => s + i.needScore, 0) / items.length) : 0;
+    const avgFam   = items.length > 0
+        ? Math.round(items.reduce((s, i) => s + i.famScore, 0) / items.length) : 0;
+    const famClass = avgFam >= 60 ? 'chip-ok' : avgFam >= 30 ? 'chip-warn' : 'chip-danger';
 
     document.getElementById('detail-summary-bar').innerHTML = `
         <span class="detail-sum-chip">📝 共 ${items.length} 項</span>
         <span class="detail-sum-chip">✅ 已測 ${tested}</span>
         <span class="detail-sum-chip ${untested > 0 ? 'chip-warn' : ''}">⬜ 未測 ${untested}</span>
-        <span class="detail-sum-chip ${avgNeed >= 60 ? 'chip-danger' : avgNeed >= 30 ? 'chip-warn' : 'chip-ok'}">
-            平均需練 ${avgNeed}%
-        </span>
+        <span class="detail-sum-chip ${famClass}">熟悉度 ${avgFam}%</span>
     `;
 
     // Items list
     const listEl = document.getElementById('detail-items-list');
     if (items.length === 0) {
         listEl.innerHTML = `<div class="detail-empty">
-            ${tab === 'noteWords'      ? '此文章尚無筆記單字' :
-              tab === 'noteSentences'  ? '此文章尚無筆記句子' :
+            ${tab === 'noteWords'     ? '此文章尚無筆記單字' :
+              tab === 'noteSentences' ? '此文章尚無筆記句子' :
               '尚無 Article 模式測驗記錄'}
         </div>`;
         return;
@@ -691,9 +538,11 @@ function renderDetailView() {
 }
 
 function buildDetailItemHtml(item, tab) {
-    const { text, correct, wrong, lastSeen, needScore, hasPractice } = item;
-    const colorClass = getNeedScoreColor(needScore);
-    const daysAgo    = lastSeen
+    const { text, correct, wrong, lastSeen, famScore, needScore, hasPractice } = item;
+
+    // Color based on familiarity
+    const colorClass = getFamiliarityColor(famScore);
+    const daysAgo = lastSeen
         ? (daysSince(lastSeen) === 0 ? '今天' : `${daysSince(lastSeen)}天前`)
         : '—';
 
@@ -708,24 +557,19 @@ function buildDetailItemHtml(item, tab) {
 
     return `<div class="detail-item ${colorClass}">
         <div class="detail-item-top">
-            <div class="detail-need-badge ${colorClass}">${needScore}</div>
+            <div class="detail-fam-badge ${colorClass}">${famScore}%</div>
             <div class="${textClass}">${_escHtml(text)}</div>
         </div>
         <div class="detail-score-bar-wrap">
-            <div class="detail-score-bar ${colorClass}" style="width:${needScore}%"></div>
+            <div class="detail-score-bar ${colorClass}" style="width:${famScore}%"></div>
         </div>
         <div class="detail-item-stats">${statsHtml}</div>
     </div>`;
 }
 
-function _escHtml(s) {
-    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-
 // ── Detail view event listeners ──────────────────────────────
 
-document.getElementById('back-from-detail-view').addEventListener('click', () => {
-    // 如果從 Note 頁進入，返回 Note 頁；否則返回 Dashboard
+document.getElementById('back-from-detail-view')?.addEventListener('click', () => {
     if (detailViewState.fromNote) {
         detailViewState.fromNote = false;
         showView(document.getElementById('note-view'));
@@ -744,17 +588,18 @@ document.querySelectorAll('.detail-tab-btn').forEach(btn => {
 document.querySelectorAll('.detail-sort-btn').forEach(btn => {
     btn.addEventListener('click', () => {
         if (detailViewState.sortBy === btn.dataset.sort) {
-            detailViewState.sortDir = detailViewState.sortDir === 'desc' ? 'asc' : 'desc';
+            detailViewState.sortDir = detailViewState.sortDir === 'asc' ? 'desc' : 'asc';
         } else {
             detailViewState.sortBy  = btn.dataset.sort;
-            detailViewState.sortDir = 'desc';
+            // fam 預設 asc（低熟悉度在前），其他預設 desc
+            detailViewState.sortDir = btn.dataset.sort === 'fam' ? 'asc' : 'desc';
         }
         renderDetailView();
     });
 });
 
-// ── Note 頁入口：從 Note 頁直接進入細節頁 ──────────────────
-// 提供給 index.html 的按鈕呼叫
+// ── Note 頁入口 ───────────────────────────────────────────────
+
 document.getElementById('note-learning-status-btn')?.addEventListener('click', () => {
     const cat   = typeof noteViewCategory !== 'undefined' ? noteViewCategory : null;
     const title = typeof noteViewTitle    !== 'undefined' ? noteViewTitle    : null;
@@ -765,177 +610,35 @@ document.getElementById('note-learning-status-btn')?.addEventListener('click', (
     openDetailViewFromNote(cat, title);
 });
 
-/**
- * 從 Note 頁進入細節頁（記錄來源以便返回）
- */
 function openDetailViewFromNote(categoryName, titleName) {
     detailViewState.fromNote = true;
     openDetailView(categoryName, titleName);
 }
 
+console.log('✅ Scores Dashboard (重構版) loaded.');
+
 // ══════════════════════════════════════════════════════════════
-//  PART 5 — ALL ARTICLES BROWSER（Dashboard 內所有文章瀏覽）
+//  說明面板（? 按鈕）
 // ══════════════════════════════════════════════════════════════
 
-// Dashboard 的 Tab 狀態
-let _dashItemTab = 'practiced'; // 'practiced' | 'all'
+function openScoringInfoModal() {
+    let modal = document.getElementById('scoring-info-modal');
+    if (!modal) return;
+    modal.classList.remove('is-hidden');
+    modal.classList.add('is-visible');
+}
 
-// Tab 切換按鈕
-document.querySelectorAll('.item-tab-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        _dashItemTab = btn.dataset.itab;
-        document.querySelectorAll('.item-tab-btn').forEach(b =>
-            b.classList.toggle('is-active', b.dataset.itab === _dashItemTab)
-        );
-        renderItemLevelSummarySection();
-    });
+function closeScoringInfoModal() {
+    const modal = document.getElementById('scoring-info-modal');
+    if (!modal) return;
+    modal.classList.remove('is-visible');
+    modal.classList.add('is-hidden');
+}
+
+document.getElementById('scoring-info-btn')?.addEventListener('click', openScoringInfoModal);
+document.getElementById('scoring-info-close')?.addEventListener('click', closeScoringInfoModal);
+
+// 點擊背景關閉
+document.getElementById('scoring-info-modal')?.addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) closeScoringInfoModal();
 });
-
-// 覆寫 renderItemLevelSummarySection，加入 all articles 模式
-const _origRenderItemSection = renderItemLevelSummarySection;
-renderItemLevelSummarySection = function() {
-    const container = document.getElementById('item-level-summary-section');
-    if (!container) return;
-
-    if (_dashItemTab === 'practiced') {
-        _renderPracticedArticles(container);
-    } else {
-        _renderAllArticles(container);
-    }
-};
-
-function _renderPracticedArticles(container) {
-    const itemData  = loadItemScores();
-    const storyList = typeof stories !== 'undefined' ? stories : [];
-
-    const titleMap = {};
-    storyList.forEach(s => {
-        titleMap[s['標題']] = {
-            major: s['大類'] || 'Uncategorized',
-            cat:   s['分類']?.[0] || 'Uncategorized'
-        };
-    });
-    Object.keys(itemData).forEach(key => {
-        const [cat, title] = key.split('||');
-        if (title && !titleMap[title]) titleMap[title] = { major: 'Other', cat };
-    });
-
-    const rows = Object.entries(titleMap)
-        .map(([title, info]) => {
-            const summary = calcArticleNeedSummary(info.cat, title);
-            return { title, major: info.major, categoryName: info.cat, summary };
-        })
-        .filter(r => r.summary.hasPractice)
-        .sort((a, b) => {
-            const aScore = a.summary.noteAvg ?? a.summary.artAvg ?? 0;
-            const bScore = b.summary.noteAvg ?? b.summary.artAvg ?? 0;
-            return bScore - aScore;
-        });
-
-    if (rows.length === 0) {
-        container.innerHTML = `<div class="item-section-empty">
-            <p>📝 完成任何測驗後，這裡會顯示每篇文章的細部學習狀態</p>
-        </div>`;
-        return;
-    }
-
-    const majors = [...new Set(rows.map(r => r.major))].sort();
-    let html = '';
-    for (const major of majors) {
-        const group = rows.filter(r => r.major === major);
-        html += `<div class="item-major-group">
-            <div class="item-major-label">${major}</div>
-            ${group.map(row => buildItemRowHtml(row)).join('')}
-        </div>`;
-    }
-    container.innerHTML = html;
-    _bindItemRowClicks(container);
-}
-
-function _renderAllArticles(container) {
-    const storyList = typeof stories !== 'undefined' ? stories : [];
-    if (storyList.length === 0) {
-        container.innerHTML = `<div class="item-section-empty"><p>沒有文章資料</p></div>`;
-        return;
-    }
-
-    // Group by major → category
-    const majorMap = {};
-    storyList.forEach(s => {
-        const major = s['大類'] || 'Uncategorized';
-        const cat   = s['分類']?.[0] || 'Uncategorized';
-        if (!majorMap[major]) majorMap[major] = {};
-        if (!majorMap[major][cat]) majorMap[major][cat] = [];
-        majorMap[major][cat].push(s['標題']);
-    });
-
-    const majors = Object.keys(majorMap).sort();
-    let html = '';
-
-    for (const major of majors) {
-        const cats = Object.keys(majorMap[major]).sort();
-        let majorHtml = '';
-
-        for (const cat of cats) {
-            const titles = majorMap[major][cat].sort();
-            const articlesHtml = titles.map(title => {
-                const summary = calcArticleNeedSummary(cat, title);
-                const row = { title, major, categoryName: cat, summary };
-                return buildItemRowHtml(row);
-            }).join('');
-
-            majorHtml += `
-                <div class="all-articles-cat-group">
-                    <div class="all-articles-cat-label" data-cat-toggle>
-                        <span>${cat}</span>
-                        <span class="all-articles-count">${titles.length} 篇</span>
-                        <span class="all-articles-arrow">▸</span>
-                    </div>
-                    <div class="all-articles-cat-body" style="display:none">
-                        ${articlesHtml}
-                    </div>
-                </div>`;
-        }
-
-        html += `<div class="item-major-group all-articles-major-group">
-            <div class="item-major-label all-articles-major-label" data-major-toggle>
-                <span>${major}</span>
-                <span class="all-articles-arrow">▸</span>
-            </div>
-            <div class="all-articles-major-body" style="display:none">
-                ${majorHtml}
-            </div>
-        </div>`;
-    }
-
-    container.innerHTML = html;
-    _bindItemRowClicks(container);
-    _bindAllArticlesToggle(container);
-}
-
-function _bindItemRowClicks(container) {
-    container.querySelectorAll('.item-article-row').forEach(row => {
-        row.addEventListener('click', () => {
-            openDetailView(row.dataset.cat, row.dataset.title);
-        });
-    });
-}
-
-function _bindAllArticlesToggle(container) {
-    function toggleSection(header) {
-        const body  = header.nextElementSibling;
-        const arrow = header.querySelector('.all-articles-arrow');
-        const isCollapsed = body.style.display === 'none';
-        body.style.display  = isCollapsed ? '' : 'none';
-        arrow.textContent   = isCollapsed ? '▾' : '▸';
-    }
-
-    container.querySelectorAll('[data-major-toggle]').forEach(h =>
-        h.addEventListener('click', () => toggleSection(h))
-    );
-    container.querySelectorAll('[data-cat-toggle]').forEach(h =>
-        h.addEventListener('click', () => toggleSection(h))
-    );
-}
-
-console.log('✅ Scores Dashboard loaded.');
