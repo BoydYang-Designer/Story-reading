@@ -348,6 +348,24 @@
 .fam-red    { background: rgba(224,92,92,0.12);  border-color: rgba(224,92,92,0.35);  color: #a83030; }
 .fam-red    .chip-bar { background: #e05c5c; }
 
+/* chip-extra：chip 裡顯示補充資訊（如句子已測/總數）*/
+.chip-extra {
+    display: block;
+    font-size: 0.68rem;
+    opacity: 0.75;
+    font-weight: 400;
+    margin-top: 1px;
+}
+
+/* placeholder items (未測驗句子佔位) */
+.detail-item-placeholder {
+    opacity: 0.5;
+}
+.detail-placeholder-text {
+    color: var(--color-text-light);
+    font-style: italic;
+}
+
 /* dark mode */
 [data-theme="dark"] .fam-green  { background: rgba(80,184,108,0.18); border-color: rgba(80,184,108,0.4); color: #7ce89e; }
 [data-theme="dark"] .fam-yellow { background: rgba(220,180,60,0.18); border-color: rgba(220,180,60,0.4); color: #f5d06a; }
@@ -396,6 +414,7 @@
 .detail-sum-chip.chip-ok     { border-color: rgba(80,184,108,0.5);  color: #2d8a50; background: rgba(80,184,108,0.08); }
 
 /* Tabs */
+/* 原有的 detail-tabs 保留向後相容 */
 .detail-tabs {
     display: flex;
     margin-bottom: 12px;
@@ -403,6 +422,38 @@
     border-radius: var(--radius-sm);
     overflow: hidden;
     background: var(--color-surface);
+}
+
+/* 新的兩層 tab 結構 */
+.detail-tab-groups {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+
+.detail-tab-group {
+    flex: 1;
+    min-width: 0;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    background: var(--color-surface);
+}
+
+.detail-tab-group-label {
+    padding: 5px 10px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--color-text-light);
+    background: var(--color-bg);
+    border-bottom: 1px solid var(--color-border);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+.detail-tab-group-btns {
+    display: flex;
 }
 
 .detail-tab-btn {

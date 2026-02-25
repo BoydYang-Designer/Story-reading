@@ -127,7 +127,6 @@ const quizSubtitleEl    = document.getElementById('quiz-subtitle');
 const quizStatsBar      = document.getElementById('quiz-stats-bar');
 
 const flashcardArea     = document.getElementById('quiz-flashcard-area');
-const clozeArea         = document.getElementById('quiz-cloze-area');
 const dictationArea     = document.getElementById('quiz-dictation-area');
 
 // ── Helpers ───────────────────────────────────────────────────
@@ -249,7 +248,7 @@ function renderQuizStatsBar(categoryName, titleName) {
     const data = scores[key];
     if (!data) { quizStatsBar.innerHTML = ''; return; }
 
-    const modes = { flashcard: '🃏', cloze: '✏️', dictation: '🎧' };
+    const modes = { flashcard: '🃏', dictation: '🎧' };
     let html = '<div class="quiz-stats-row">';
     for (const [mode, icon] of Object.entries(modes)) {
         if (data[mode]) {
@@ -516,7 +515,7 @@ document.getElementById('back-to-note-from-quiz').addEventListener('click', () =
 // ── Mode Card + Subpanel Logic ────────────────────────────────
 
 // Track which subpanel source is selected per mode
-const subpanelSource = { flashcard: 'note', cloze: 'note', dictation: 'note', reorder: 'note', fcplus: 'note' };
+const subpanelSource = { flashcard: 'note', dictation: 'note', reorder: 'note', fcplus: 'note' };
 
 // Helper: close all subpanels and un-expand all cards
 function closeAllSubpanels() {
@@ -550,18 +549,6 @@ document.getElementById('start-flashcard-btn').addEventListener('click', () => {
         startFlashcardFromArticle();
     } else {
         startFlashcard();
-    }
-});
-
-// Fill in Blank: toggle subpanel
-document.getElementById('quiz-mode-cloze').addEventListener('click', () => {
-    const panel = document.getElementById('subpanel-cloze');
-    const card  = document.getElementById('quiz-mode-cloze');
-    const isOpen = !panel.classList.contains('is-hidden');
-    closeAllSubpanels();
-    if (!isOpen) {
-        panel.classList.remove('is-hidden');
-        card.classList.add('is-expanded');
     }
 });
 
@@ -619,16 +606,6 @@ document.querySelectorAll('.quiz-count-btn').forEach(btn => {
         btn.classList.add('is-active');
         quizState.questionCount = parseInt(btn.dataset.count, 10);
     });
-});
-
-// Start buttons inside subpanels
-document.getElementById('start-cloze-btn').addEventListener('click', () => {
-    if (subpanelSource.cloze === 'article') {
-        quizState.articleSubMode = 'cloze';
-        startArticleQuiz();
-    } else {
-        startCloze();
-    }
 });
 
 // Reorder: toggle subpanel
@@ -694,7 +671,6 @@ function showQuizSession(mode) {
     quizSession.classList.remove('is-hidden');
 
     flashcardArea.classList.add('is-hidden');
-    clozeArea.classList.add('is-hidden');
     dictationArea.classList.add('is-hidden');
     document.getElementById('quiz-article-listen-area').classList.add('is-hidden');
     document.getElementById('quiz-article-cloze-area').classList.add('is-hidden');
@@ -702,7 +678,6 @@ function showQuizSession(mode) {
     document.getElementById('quiz-fcplus-area').classList.add('is-hidden');
 
     if (mode === 'flashcard')       flashcardArea.classList.remove('is-hidden');
-    if (mode === 'cloze')           clozeArea.classList.remove('is-hidden');
     if (mode === 'dictation')       dictationArea.classList.remove('is-hidden');
     if (mode === 'article-listen')  document.getElementById('quiz-article-listen-area').classList.remove('is-hidden');
     if (mode === 'article-cloze')   document.getElementById('quiz-article-cloze-area').classList.remove('is-hidden');
@@ -787,9 +762,7 @@ function showQuizResult(mode, correct, total, wrongItems) {
                     `}
                     ${(item.start != null) ? `
                         <button class="quiz-review-play-btn" data-start="${item.start}" data-end="${item.end}" data-title="${item.title}">▶ Listen again</button>
-                    ` : (mode !== 'cloze' ? '' : `
-                        <button class="quiz-review-play-btn quiz-review-play-word" data-word="${item.correct}">▶ Pronounce</button>
-                    `)}
+                    ` : ''}
                 </div>
             `;
             reviewEl.appendChild(div);
@@ -870,7 +843,6 @@ document.getElementById('quiz-retry-btn').addEventListener('click', () => {
     quizState.retryWrongOnly = false;
     const mode = quizState.mode;
     if (mode === 'flashcard')        startFlashcard();
-    else if (mode === 'cloze')       startCloze();
     else if (mode === 'dictation')   startDictation();
     else if (mode === 'reorder')     startReorder(subpanelSource.reorder || 'note');
     else if (mode === 'article-listen' || mode === 'article-cloze') startArticleQuiz();
@@ -879,8 +851,7 @@ document.getElementById('quiz-retry-btn').addEventListener('click', () => {
 document.getElementById('quiz-retry-wrong-btn').addEventListener('click', () => {
     quizState.retryWrongOnly = true;
     const mode = quizState.mode;
-    if (mode === 'cloze')                startClozeRetryWrong();
-    else if (mode === 'dictation')       startDictationRetryWrong();
+    if (mode === 'dictation')       startDictationRetryWrong();
     else if (mode === 'reorder')         startReorderRetryWrong();
     else if (mode === 'article-listen')  startArticleRetryWrong();
     else if (mode === 'article-cloze')   startArticleRetryWrong();
@@ -1210,8 +1181,10 @@ document.getElementById('flashcard-correct').addEventListener('click', () => {
     const _fcItem = quizState.deck[quizState.deckIndex];
     quizState.correct++;
     quizState.deckIndex++;
-    if (typeof recordItemResult === 'function' && quizState.flashSource === 'note' && _fcItem)
-        recordItemResult(quizState.categoryName, quizState.titleName, 'noteWords', _fcItem.text, true, _quizReplayCount);
+    if (typeof recordItemResult === 'function' && _fcItem) {
+        const _itype = quizState.flashSource === 'article' ? 'articleWords' : 'noteWords';
+        recordItemResult(quizState.categoryName, quizState.titleName, _itype, _fcItem.text, true, _quizReplayCount);
+    }
     showFlashcard();
 });
 
@@ -1222,249 +1195,11 @@ document.getElementById('flashcard-wrong').addEventListener('click', () => {
     // Add to end of deck to review again
     quizState.deck.push(item);
     quizState.deckIndex++;
-    if (typeof recordItemResult === 'function' && quizState.flashSource === 'note' && item)
-        recordItemResult(quizState.categoryName, quizState.titleName, 'noteWords', item.text, false, _quizReplayCount);
+    if (typeof recordItemResult === 'function' && item) {
+        const _itype = quizState.flashSource === 'article' ? 'articleWords' : 'noteWords';
+        recordItemResult(quizState.categoryName, quizState.titleName, _itype, item.text, false, _quizReplayCount);
+    }
     showFlashcard();
-});
-
-// ══════════════════════════════════════════════════════════════
-//  PHASE 2 — CLOZE (Fill in the Blank)
-// ══════════════════════════════════════════════════════════════
-
-async function startCloze() {
-    const items = getAllNoteItems(quizState.scope, quizState.categoryName, quizState.titleName);
-    const wordItems = [
-        ...items.words.map(w => ({ text: w, type: 'word' })),
-        ...items.phrases.map(p => ({ text: p, type: 'phrase' }))
-    ];
-
-    if (wordItems.length < 2) {
-        showNotification('Need at least 2 words/phrases saved. Switch to "From Article" if no notes yet.', 'warning');
-        return;
-    }
-
-    const title = quizState.scope === 'this' ? quizState.titleName : null;
-    const _norm = t => t.trim().replace(/[.,?!'"`\u201c\u201d\u2018\u2019]/g, '').toLowerCase();
-
-    // 優先從 timestamp 取句子（含 start/end），fallback 到 story 內文
-    let tsData = null;
-    if (title) {
-        tsData = await getTimestampForStory(title);
-        // 預載音檔
-        if (tsData) {
-            const _audioSrc = `audio/${encodeURIComponent(title.trim())}.mp3`;
-            const _targetFile = encodeURIComponent(title.trim()) + '.mp3';
-            if (!quizAudioPlayer.src.endsWith(_targetFile)) {
-                quizAudioPlayer.src = _audioSrc;
-                quizAudioPlayer.preload = 'auto';
-                quizAudioPlayer.load();
-            }
-        }
-    }
-
-    // Apply difficulty filter to word items before building questions
-    const filteredWordItems = filterByWordDifficulty(wordItems, quizState.difficulty);
-    if (filteredWordItems.length === 0) {
-        showNotification(`No ${quizState.difficulty === 'mix' ? '' : quizState.difficulty + ' '}words found.`, 'warning');
-        return;
-    }
-
-    const questions = [];
-    for (const item of filteredWordItems) {
-        const displayWord = item.text.replace(/-/g, ' ');
-
-        if (tsData) {
-            // 從 timestamp 找含有此單字的句子
-            const _match = tsData.find(l =>
-                l.sentence && l.sentence.toLowerCase().includes(displayWord.toLowerCase())
-            );
-            if (_match) {
-                // 取調整後時間（優先使用 audioAdjustments）
-                const _timing = (typeof getAdjustedTiming === 'function')
-                    ? getAdjustedTiming(title, _match.sentence.trim(), _match.start, _match.end)
-                    : { start: _match.start, end: _match.end, isAdjusted: false };
-                questions.push({
-                    word:     item.text,
-                    sentence: _match.sentence.trim(),
-                    start:    _timing.start,
-                    end:      _timing.end,
-                    origStart: _match.start,
-                    origEnd:   _match.end,
-                    title
-                });
-                continue;
-            }
-        }
-
-        // Fallback：從 story 內文找（無 timestamp，不能播音）
-        const ctx = findContextForWord(displayWord, title);
-        if (ctx) {
-            questions.push({ word: item.text, sentence: ctx, start: null, end: null, origStart: null, origEnd: null, title: null });
-        }
-    }
-
-    if (questions.length === 0) {
-        showNotification('Could not find sentence contexts for your words.', 'warning');
-        return;
-    }
-
-    quizState.mode        = 'cloze';
-    quizState.questions   = shuffle(questions).slice(0, quizState.questionCount || 10);
-    quizState.currentIndex = 0;
-    quizState.correct     = 0;
-    quizState.wrong       = 0;
-    quizState.wrongItems  = [];
-    quizState.answeredQuestions = [];
-
-    showQuizSession('cloze');
-    showClozeQuestion();
-}
-
-function showClozeQuestion() {
-    _resetReplayCount();
-    if (quizState.currentIndex >= quizState.questions.length) {
-        showQuizResult('cloze', quizState.correct,
-            quizState.questions.length, quizState.wrongItems);
-        return;
-    }
-
-    const q = quizState.questions[quizState.currentIndex];
-    updateProgress(quizState.currentIndex + 1, quizState.questions.length);
-
-    // Build blanked sentence
-    const displayWord = q.word.replace(/-/g, ' ');
-    const blanked = q.sentence.replace(
-        new RegExp(`(${displayWord.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi'),
-        '<span class="cloze-blank">_____</span>'
-    );
-    document.getElementById('cloze-sentence').innerHTML = blanked;
-
-    // ── 播放按鈕 + ✏️ 編輯鈕 ──────────────────────────────
-    const _clozePlayBtn     = document.getElementById('cloze-play-btn');
-    const _clozeEditCont    = document.getElementById('cloze-edit-btn-container');
-    if (_clozeEditCont) _clozeEditCont.innerHTML = '';
-
-    if (_clozePlayBtn) {
-        if (q.start != null && q.end != null && q.title) {
-            _clozePlayBtn.style.display = '';
-            _clozePlayBtn.classList.remove('is-playing-voice');
-            _clozePlayBtn.querySelector('span').textContent = '▶ Listen to Sentence';
-
-            // 取調整後時間（每次重新查，因為用戶可能剛儲存過）
-            const _ct = (typeof getAdjustedTiming === 'function')
-                ? getAdjustedTiming(q.title, q.sentence, q.origStart ?? q.start, q.origEnd ?? q.end)
-                : { start: q.start, end: q.end };
-
-            const _playCloze = () => { _trackReplay(); playSnippet({
-                start: _ct.start, end: _ct.end,
-                onStart: () => {
-                    _clozePlayBtn.classList.add('is-playing-voice');
-                    _clozePlayBtn.querySelector('span').textContent = '⏸ Playing...';
-                },
-                onEnd: () => {
-                    _clozePlayBtn.classList.remove('is-playing-voice');
-                    _clozePlayBtn.querySelector('span').textContent = '▶ Listen to Sentence';
-                }
-            }); };
-            _clozePlayBtn.onclick = _playCloze;
-
-            // ✏️ 編輯鈕
-            if (_clozeEditCont && typeof createAudioEditBtn === 'function') {
-                const _editBtn = createAudioEditBtn({
-                    title:    q.title,
-                    sentence: q.sentence,
-                    start:    q.origStart ?? q.start,
-                    end:      q.origEnd   ?? q.end,
-                    audioSrc: `audio/${encodeURIComponent(q.title.trim())}.mp3`,
-                    player:   quizAudioPlayer,
-                    onSave:   (ns, ne) => {
-                        _ct.start = ns; _ct.end = ne;
-                        _editBtn.innerHTML = '✏️✓';
-                        _editBtn.classList.add('is-adjusted');
-                    }
-                });
-                _clozeEditCont.appendChild(_editBtn);
-            }
-
-            // 自動播放
-            setTimeout(_playCloze, 300);
-        } else {
-            // 無 timestamp → 隱藏播放鈕
-            _clozePlayBtn.style.display = 'none';
-        }
-    }
-
-    // Build options: correct + 3 distractors from all words
-    const allItems = getAllNoteItems(quizState.scope, quizState.categoryName, quizState.titleName);
-    const pool = [
-        ...Array.from(allItems.words),
-        ...Array.from(allItems.phrases)
-    ].filter(w => w !== q.word);
-
-    const distractors = shuffle(pool).slice(0, 3);
-    const options = shuffle([q.word, ...distractors]);
-
-    const optionsEl = document.getElementById('cloze-options');
-    optionsEl.innerHTML = '';
-    document.getElementById('cloze-feedback').textContent = '';
-    document.getElementById('cloze-next').classList.add('is-hidden');
-
-    options.forEach(opt => {
-        const btn = document.createElement('button');
-        btn.className = 'quiz-option-btn';
-        btn.textContent = opt.replace(/-/g, ' ');
-        btn.addEventListener('click', () => handleClozeAnswer(opt, q.word, btn));
-        optionsEl.appendChild(btn);
-    });
-}
-
-function handleClozeAnswer(selected, correct, btn) {
-    // Disable all buttons
-    document.querySelectorAll('#cloze-options .quiz-option-btn').forEach(b => {
-        b.disabled = true;
-        if (b.textContent === correct.replace(/-/g, ' ')) {
-            b.classList.add('is-correct');
-        }
-    });
-
-    const feedbackEl = document.getElementById('cloze-feedback');
-    const isCorrect = selected === correct;
-
-    if (isCorrect) {
-        btn.classList.add('is-correct');
-        feedbackEl.textContent = '✓ Correct!';
-        feedbackEl.className = 'quiz-feedback correct';
-        quizState.correct++;
-    } else {
-        btn.classList.add('is-wrong');
-        feedbackEl.textContent = `✗ Answer: ${correct.replace(/-/g, ' ')}`;
-        feedbackEl.className = 'quiz-feedback wrong';
-        quizState.wrong++;
-        quizState.wrongItems.push(correct);
-    }
-
-    // Record for review
-    const _aq = quizState.questions[quizState.currentIndex];
-    quizState.answeredQuestions.push({
-        type:      'word',
-        question:  _aq?.sentence   || '',
-        selected:  selected.replace(/-/g, ' '),
-        correct:   correct.replace(/-/g, ' '),
-        isCorrect,
-        start:     _aq?.start     ?? null,
-        end:       _aq?.end       ?? null,
-        origStart: _aq?.origStart ?? null,
-        origEnd:   _aq?.origEnd   ?? null,
-        title:     _aq?.title     ?? null
-    });
-
-    document.getElementById('cloze-next').classList.remove('is-hidden');
-    if (typeof recordItemResult === 'function') recordItemResult(quizState.categoryName, quizState.titleName, 'noteWords', correct, isCorrect, _quizReplayCount);
-}
-
-document.getElementById('cloze-next').addEventListener('click', () => {
-    quizState.currentIndex++;
-    showClozeQuestion();
 });
 
 // ══════════════════════════════════════════════════════════════
@@ -2057,27 +1792,6 @@ function startArticleRetryWrong() {
 }
 
 // ── Retry Wrong Only ──────────────────────────────────────────
-
-function startClozeRetryWrong() {
-    const wrongQs = quizState.answeredQuestions.filter(q => !q.isCorrect);
-    if (wrongQs.length === 0) return;
-
-    // Rebuild questions from wrong answers
-    const questions = wrongQs.map(q => ({
-        word: q.correct,
-        sentence: q.question
-    }));
-
-    quizState.questions   = shuffle(questions);
-    quizState.currentIndex = 0;
-    quizState.correct     = 0;
-    quizState.wrong       = 0;
-    quizState.wrongItems  = [];
-    quizState.answeredQuestions = [];
-
-    showQuizSession('cloze');
-    showClozeQuestion();
-}
 
 function startDictationRetryWrong() {
     const wrongQs = quizState.answeredQuestions.filter(q => !q.isCorrect);
@@ -3318,7 +3032,7 @@ document.getElementById('fcplus-submit-btn').addEventListener('click', () => {
 
     // Record score
     if (typeof recordItemResult === 'function') {
-        const itemType = 'noteWords'; // Flashcard+ 永遠是單字，不論來源
+        const itemType = quizState.flashSource === 'article' ? 'articleWords' : 'noteWords';
         recordItemResult(quizState.categoryName, quizState.titleName,
             itemType, word, correct, _quizReplayCount);
     }

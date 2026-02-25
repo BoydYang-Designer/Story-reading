@@ -303,11 +303,11 @@
                 <div class="quiz-mode-desc">Words & Phrases</div>
             </div>
 
-            <!-- Fill in Blank -->
-            <div class="quiz-mode-card" id="quiz-mode-cloze">
-                <div class="quiz-mode-icon">✏️</div>
-                <div class="quiz-mode-name">Fill in Blank</div>
-                <div class="quiz-mode-desc">From note or article</div>
+            <!-- Flashcard+ -->
+            <div class="quiz-mode-card" id="quiz-mode-fcplus">
+                <div class="quiz-mode-icon">🃏✨</div>
+                <div class="quiz-mode-name">Flashcard+</div>
+                <div class="quiz-mode-desc">Spell the word</div>
             </div>
 
             <!-- Dictation -->
@@ -322,13 +322,6 @@
                 <div class="quiz-mode-icon">🔀</div>
                 <div class="quiz-mode-name">Reorder</div>
                 <div class="quiz-mode-desc">Rearrange the sentence</div>
-            </div>
-
-            <!-- Flashcard+ -->
-            <div class="quiz-mode-card" id="quiz-mode-fcplus">
-                <div class="quiz-mode-icon">🃏✨</div>
-                <div class="quiz-mode-name">Flashcard+</div>
-                <div class="quiz-mode-desc">Spell the word</div>
             </div>
 
         </div>
@@ -399,39 +392,6 @@
                 </div>
             </div>
             <button class="quiz-next-btn" id="start-fcplus-btn">Start →</button>
-        </div>
-
-        <!-- Fill in Blank sub-panel -->
-        <div class="quiz-subpanel is-hidden" id="subpanel-cloze">
-            <div class="quiz-subpanel-source-row">
-                <button class="quiz-source-btn is-active" data-source="note" data-mode="cloze">📝 From Note</button>
-                <button class="quiz-source-btn" data-source="article" data-mode="cloze">📖 From Article</button>
-            </div>
-            <div class="quiz-note-options is-hidden" id="cloze-note-options">
-                <div class="quiz-subpanel-source-row">
-                    <button class="quiz-diff-btn is-active" data-diff="mix" data-mode="cloze">Mix</button>
-                    <button class="quiz-diff-btn" data-diff="easy" data-mode="cloze">🟢 Easy</button>
-                    <button class="quiz-diff-btn" data-diff="medium" data-mode="cloze">🟡 Medium</button>
-                    <button class="quiz-diff-btn" data-diff="hard" data-mode="cloze">🔴 Hard</button>
-                </div>
-                <div class="quiz-subpanel-source-row">
-                    <button class="quiz-count-btn is-active" data-count="10" data-mode="cloze">10 題</button>
-                    <button class="quiz-count-btn" data-count="5" data-mode="cloze">5 題</button>
-                </div>
-            </div>
-            <div class="quiz-article-options is-hidden" id="cloze-article-options">
-                <div class="quiz-subpanel-source-row">
-                    <button class="quiz-diff-btn is-active" data-diff="mix" data-mode="cloze">Mix</button>
-                    <button class="quiz-diff-btn" data-diff="easy" data-mode="cloze">🟢 Easy</button>
-                    <button class="quiz-diff-btn" data-diff="medium" data-mode="cloze">🟡 Medium</button>
-                    <button class="quiz-diff-btn" data-diff="hard" data-mode="cloze">🔴 Hard</button>
-                </div>
-                <div class="quiz-subpanel-source-row">
-                    <button class="quiz-count-btn is-active" data-count="10" data-mode="cloze">10 題</button>
-                    <button class="quiz-count-btn" data-count="5" data-mode="cloze">5 題</button>
-                </div>
-            </div>
-            <button class="quiz-next-btn" id="start-cloze-btn">Start →</button>
         </div>
 
         <!-- Dictation sub-panel -->
@@ -973,11 +933,22 @@
     <!-- Summary chips -->
     <div id="detail-summary-bar"></div>
 
-    <!-- Tabs: Note Words / Note Sentences / Article Sentences -->
-    <div class="detail-tabs">
-        <button class="detail-tab-btn is-active" data-tab="noteWords" data-label="📝 Note 單字">📝 Note 單字</button>
-        <button class="detail-tab-btn" data-tab="noteSentences" data-label="📝 Note 句子">📝 Note 句子</button>
-        <button class="detail-tab-btn" data-tab="articleSentences" data-label="📖 Article 句子">📖 Article</button>
+    <!-- Tabs: 兩層結構 Note / Article -->
+    <div class="detail-tab-groups">
+        <div class="detail-tab-group">
+            <div class="detail-tab-group-label">📝 Note</div>
+            <div class="detail-tab-group-btns">
+                <button class="detail-tab-btn is-active" data-tab="noteWords" data-label="Note 單字">單字</button>
+                <button class="detail-tab-btn" data-tab="noteSentences" data-label="Note 句子">句子</button>
+            </div>
+        </div>
+        <div class="detail-tab-group">
+            <div class="detail-tab-group-label">📖 Article</div>
+            <div class="detail-tab-group-btns">
+                <button class="detail-tab-btn" data-tab="articleWords" data-label="Article 單字">單字</button>
+                <button class="detail-tab-btn" data-tab="articleSentences" data-label="Article 句子">句子</button>
+            </div>
+        </div>
     </div>
 
     <!-- Sort bar -->

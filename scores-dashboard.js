@@ -39,6 +39,44 @@ function _escHtml(s) {
 // ══════════════════════════════════════════════════════════════
 
 const ITEM_SCORES_KEY = 'readingChallengeItemScores';
+const ART_SENT_TOTAL_KEY = 'readingChallengeArticleSentTotals';
+
+// ── Article 句子總數快取（含未測驗）──────────────────────────
+// 結構：{ "categoryName||titleName": { total: N, updatedAt: "date" } }
+
+function loadArticleSentTotals() {
+    try { return JSON.parse(localStorage.getItem(ART_SENT_TOTAL_KEY) || '{}'); }
+    catch (e) { return {}; }
+}
+
+function saveArticleSentTotals(data) {
+    localStorage.setItem(ART_SENT_TOTAL_KEY, JSON.stringify(data));
+}
+
+/**
+ * 取得文章句子總數（0 表示尚未快取）
+ */
+function _getArticleSentenceTotal(categoryName, titleName) {
+    const cache = loadArticleSentTotals();
+    const key   = `${categoryName}||${titleName}`;
+    return cache[key]?.total || 0;
+}
+
+/**
+ * 進入 Detail View 時呼叫，fetch Timestamp 取得句子總數並快取
+ * 每次進入 Detail View 都更新一次
+ */
+async function _updateArticleSentenceTotal(categoryName, titleName) {
+    if (typeof getTimestampForStory !== 'function') return;
+    try {
+        const tsData = await getTimestampForStory(titleName);
+        const total  = tsData ? tsData.length : 0;
+        const cache  = loadArticleSentTotals();
+        const key    = `${categoryName}||${titleName}`;
+        cache[key]   = { total, updatedAt: _todayStr() };
+        saveArticleSentTotals(cache);
+    } catch (e) { console.error('Article sent total update error:', e); }
+}
 
 function loadItemScores() {
     try {
@@ -74,7 +112,7 @@ window.loadItemScoresFromFirestore = loadItemScoresFromFirestore;
  * 記錄單一題目結果
  * @param {string}  categoryName
  * @param {string}  titleName
- * @param {string}  itemType     'noteWords' | 'noteSentences' | 'articleSentences'
+ * @param {string}  itemType     'noteWords' | 'noteSentences' | 'articleWords' | 'articleSentences'
  * @param {string}  itemText
  * @param {boolean} isCorrect
  * @param {number}  replayCount  手動重播次數（預設 0）
@@ -86,7 +124,7 @@ function recordItemResult(categoryName, titleName, itemType, itemText, isCorrect
 
     const data = loadItemScores();
     const key  = `${categoryName}||${titleName}`;
-    if (!data[key]) data[key] = { noteWords: {}, noteSentences: {}, articleSentences: {} };
+    if (!data[key]) data[key] = { noteWords: {}, noteSentences: {}, articleWords: {}, articleSentences: {} };
     if (!data[key][itemType]) data[key][itemType] = {};
 
     const text = itemText.trim();
@@ -165,15 +203,40 @@ function calcArticleFamSummary(categoryName, titleName) {
     const noteAvg       = noteTotal > 0
         ? Math.round(noteFamScores.reduce((a, b) => a + b, 0) / noteTotal) : null;
 
-    const artItems   = Object.values(entry.articleSentences || {});
-    const artTotal   = artItems.length;
-    const artFamScores = artItems.map(calcFamiliarity);
-    const artAvg     = artTotal > 0
-        ? Math.round(artFamScores.reduce((a, b) => a + b, 0) / artTotal) : null;
+    // Article words (from Flashcard/Flashcard+ Article mode)
+    const artWordItems    = Object.values(entry.articleWords    || {});
+    // Article sentences (from Dictation/Reorder Article mode)
+    const artSentItems    = Object.values(entry.articleSentences || {});
+
+    // Article 熟悉度需考慮文章的「全部句子」（含未測驗），句子總數存在 cache 裡
+    const cachedTotalSents = _getArticleSentenceTotal(categoryName, titleName);
+    const testedSentCount  = artSentItems.length;
+    // 未測驗的句子補上熟悉度 0
+    const artSentFamScores = artSentItems.map(calcFamiliarity);
+    const untestedSentCount = Math.max(0, cachedTotalSents - testedSentCount);
+    const allArtSentFamScores = [...artSentFamScores, ...Array(untestedSentCount).fill(0)];
+    const artSentTotal    = testedSentCount + untestedSentCount; // 含未測驗
+
+    const artWordTotal    = artWordItems.length;
+    const artWordFamScores = artWordItems.map(calcFamiliarity);
+    const artWordAvg      = artWordTotal > 0
+        ? Math.round(artWordFamScores.reduce((a, b) => a + b, 0) / artWordTotal) : null;
+    const artSentAvg      = artSentTotal > 0
+        ? Math.round(allArtSentFamScores.reduce((a, b) => a + b, 0) / artSentTotal) : null;
+
+    // Article 熟悉度 = 單字 + 句子的平均（各佔50%，有資料的才算）
+    let artAvg = null;
+    if (artWordAvg !== null && artSentAvg !== null) artAvg = Math.round((artWordAvg + artSentAvg) / 2);
+    else if (artWordAvg !== null) artAvg = artWordAvg;
+    else if (artSentAvg !== null) artAvg = artSentAvg;
+    else if (cachedTotalSents > 0 && testedSentCount === 0) artAvg = 0; // 有句子但完全未測
+
+    const artTotal   = artWordTotal + artSentTotal;
 
     const totalItems  = noteTotal + artTotal;
     const totalTested = allNoteItems.filter(i => (i.correct + i.wrong) > 0).length
-                      + artItems.filter(i => (i.correct + i.wrong) > 0).length;
+                      + artWordItems.filter(i => (i.correct + i.wrong) > 0).length
+                      + artSentItems.filter(i => (i.correct + i.wrong) > 0).length;
 
     let famAvg = null;
     if (noteAvg !== null && artAvg !== null) famAvg = Math.round((noteAvg + artAvg) / 2);
@@ -182,7 +245,9 @@ function calcArticleFamSummary(categoryName, titleName) {
 
     return {
         famAvg, noteAvg, artAvg,
+        artWordAvg, artSentAvg,
         noteTotal, artTotal,
+        artWordTotal, artSentTotal, testedSentCount, untestedSentCount,
         totalItems, totalTested,
         hasPractice: totalItems > 0
     };
@@ -226,6 +291,7 @@ function _updateSortBtnUI() {
     btn.textContent = _dashSortDir === 'desc'
         ? '熟悉度 ↑（最需練習優先）'
         : '熟悉度 ↓（最熟悉優先）';
+    btn.title = '未測驗文章固定排在後方，按字母排列';
     btn.classList.toggle('sort-desc', _dashSortDir === 'desc');
 }
 
@@ -284,11 +350,17 @@ function _renderBrowserSection() {
                 return { title, cat, summary };
             });
 
-            // Sort by familiarity
+            // Sort: tested by familiarity, untested alphabetically at end
             articles.sort((a, b) => {
+                const aTested = a.summary.hasPractice;
+                const bTested = b.summary.hasPractice;
+                // 未測驗排後面（按字母）
+                if (!aTested && !bTested) return a.title.localeCompare(b.title);
+                if (!aTested) return 1;
+                if (!bTested) return -1;
+                // 已測驗按熟悉度
                 const fa = a.summary.famAvg ?? 0;
                 const fb = b.summary.famAvg ?? 0;
-                // desc = low familiarity first (needs practice)
                 return _dashSortDir === 'desc' ? fa - fb : fb - fa;
             });
 
@@ -351,9 +423,10 @@ function _toggleSection(header) {
 
 function _buildArticleRowHtml(article) {
     const { title, cat, summary } = article;
-    const { famAvg, noteAvg, artAvg, hasPractice, totalTested, totalItems } = summary;
+    const { famAvg, noteAvg, artAvg, artWordAvg, artSentAvg,
+            hasPractice, totalTested, totalItems, testedSentCount, untestedSentCount } = summary;
 
-    function famChip(avg, label) {
+    function famChip(avg, label, extraInfo) {
         if (avg === null) {
             return `<div class="browser-fam-chip chip-untested">
                 <span class="chip-label">${label}</span>
@@ -363,7 +436,7 @@ function _buildArticleRowHtml(article) {
         const colorClass = getFamiliarityColor(avg);
         return `<div class="browser-fam-chip ${colorClass}">
             <span class="chip-label">${label}</span>
-            <span class="chip-val">${avg}%</span>
+            <span class="chip-val">${avg}%${extraInfo ? `<span class="chip-extra">${extraInfo}</span>` : ''}</span>
             <div class="chip-bar-wrap"><div class="chip-bar" style="width:${avg}%"></div></div>
         </div>`;
     }
@@ -374,6 +447,10 @@ function _buildArticleRowHtml(article) {
             : '')
         : `<span class="browser-article-fam fam-untested">未測驗</span>`;
 
+    // Article chip 細節：句子顯示已測/總數
+    const artSentInfo = (testedSentCount !== undefined && untestedSentCount !== undefined && (testedSentCount + untestedSentCount) > 0)
+        ? ` ${testedSentCount}/${testedSentCount + untestedSentCount}句` : '';
+
     return `<div class="browser-article-row" data-title="${_escHtml(title)}" data-cat="${_escHtml(cat)}">
         <div class="browser-article-main">
             <div class="browser-article-title">${_escHtml(title)}</div>
@@ -381,8 +458,11 @@ function _buildArticleRowHtml(article) {
         </div>
         ${hasPractice ? `<div class="browser-article-chips">
             ${famChip(noteAvg, '📝 Note')}
-            ${famChip(artAvg,  '📖 Article')}
-        </div>` : ''}
+            ${famChip(artWordAvg !== undefined ? artWordAvg : artAvg, '📖 單字')}
+            ${famChip(artSentAvg !== undefined ? artSentAvg : null, '📖 句子', artSentInfo)}
+        </div>` : (testedSentCount === 0 && untestedSentCount > 0 ? `<div class="browser-article-chips">
+            ${famChip(0, '📖 句子', `0/${untestedSentCount}句`)}
+        </div>` : '')}
         <div class="browser-article-arrow">→</div>
     </div>`;
 }
@@ -449,7 +529,7 @@ let detailViewState = {
     fromNote:     false,
 };
 
-function openDetailView(categoryName, titleName) {
+async function openDetailView(categoryName, titleName) {
     detailViewState.categoryName = categoryName;
     detailViewState.titleName    = titleName;
     detailViewState.tab          = 'noteWords';
@@ -459,6 +539,13 @@ function openDetailView(categoryName, titleName) {
     document.getElementById('detail-view-title').textContent = titleName;
     renderDetailView();
     showView(document.getElementById('item-detail-view'));
+
+    // 背景更新文章句子總數（每次進入都更新）
+    await _updateArticleSentenceTotal(categoryName, titleName);
+    // 更新後重新渲染（若目前顯示的是 article 相關 tab 才重渲）
+    if (detailViewState.tab === 'articleSentences') {
+        renderDetailView();
+    }
 }
 
 function renderDetailView() {
@@ -504,7 +591,6 @@ function renderDetailView() {
         const pool = tab === 'noteWords'
             ? [...(noteData.words || []), ...(noteData.phrases || [])]
             : [...(noteData.sentences || [])];
-
         pool.forEach(text => {
             const t = text.trim();
             if (!itemMap[t]) {
@@ -512,6 +598,22 @@ function renderDetailView() {
                              famScore: 0, needScore: 100, hasPractice: false });
             }
         });
+    }
+
+    // Article 句子 tab：加入未測驗的句子（來自 Timestamp 快取）
+    if (tab === 'articleSentences') {
+        const cachedTotal = _getArticleSentenceTotal(categoryName, titleName);
+        const testedCount = items.length;
+        const untestedNeeded = Math.max(0, cachedTotal - testedCount);
+        // 加入佔位（未測驗句子不知道具體文字，只加數量提示）
+        for (let i = 0; i < untestedNeeded; i++) {
+            items.push({
+                text: `（未測驗句子 ${testedCount + i + 1}）`,
+                correct: 0, wrong: 0, lastSeen: null, firstSeen: null,
+                famScore: 0, needScore: 100, hasPractice: false,
+                isPlaceholder: true
+            });
+        }
     }
 
     // Sort
@@ -547,9 +649,10 @@ function renderDetailView() {
     const listEl = document.getElementById('detail-items-list');
     if (items.length === 0) {
         listEl.innerHTML = `<div class="detail-empty">
-            ${tab === 'noteWords'     ? '此文章尚無筆記單字' :
-              tab === 'noteSentences' ? '此文章尚無筆記句子' :
-              '尚無 Article 模式測驗記錄'}
+            ${tab === 'noteWords'        ? '此文章尚無筆記單字' :
+              tab === 'noteSentences'    ? '此文章尚無筆記句子' :
+              tab === 'articleWords'     ? '尚無 Article 單字測驗記錄（Flashcard/Flashcard+ Article 模式）' :
+              '尚無 Article 句子測驗記錄（Dictation/Reorder Article 模式）'}
         </div>`;
         return;
     }
@@ -558,6 +661,20 @@ function renderDetailView() {
 }
 
 function buildDetailItemHtml(item, tab) {
+    // 未測驗佔位（僅 articleSentences tab 的未知句子）
+    if (item.isPlaceholder) {
+        return `<div class="detail-item fam-red detail-item-placeholder">
+            <div class="detail-item-top">
+                <div class="detail-fam-badge fam-red">0%</div>
+                <div class="detail-text-sentence detail-placeholder-text">未測驗</div>
+            </div>
+            <div class="detail-score-bar-wrap">
+                <div class="detail-score-bar fam-red" style="width:0%"></div>
+            </div>
+            <div class="detail-item-stats"><span class="detail-stat untested-stat">未測驗</span></div>
+        </div>`;
+    }
+
     const { text, correct, wrong, lastSeen, famScore, needScore, hasPractice } = item;
 
     // Color based on familiarity
@@ -572,7 +689,7 @@ function buildDetailItemHtml(item, tab) {
            <span class="detail-stat days-stat">📅 ${daysAgo}</span>`
         : `<span class="detail-stat untested-stat">未測驗</span>`;
 
-    const isSentence = tab !== 'noteWords';
+    const isSentence = (tab === 'noteSentences' || tab === 'articleSentences');
     const textClass  = isSentence ? 'detail-text-sentence' : 'detail-text-word';
 
     return `<div class="detail-item ${colorClass}">

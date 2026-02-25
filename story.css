@@ -2797,6 +2797,9 @@ button.secondary:hover {
     font-size: 0.95em;
     line-height: 1.65;
     letter-spacing: 0.01em;
+    color: #1a3a2a;          /* override any inherited red from .quiz-feedback.wrong */
+    font-style: normal;      /* undo the <em> italic */
+    font-weight: 500;
 }
 
 .quiz-review-correct-label {
@@ -4186,6 +4189,16 @@ textarea:focus-visible {
 }
 
 /* dark mode */
+[data-theme="dark"] .quiz-review-correct-styled {
+    background: rgba(80, 184, 108, 0.08);
+    color: #c8e6d0;
+}
+
+[data-theme="dark"] .quiz-diff-wrong {
+    color: #ff8a8a;
+    background: rgba(255, 100, 100, 0.15);
+}
+
 [data-theme="dark"] .fcplus-letter-input {
     color: var(--color-text);
 }
