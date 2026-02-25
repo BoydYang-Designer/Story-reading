@@ -3923,3 +3923,269 @@ textarea:focus-visible {
     color: #1a1611;
     font-weight: 700;
 }
+
+/* ══════════════════════════════════════════════════════════
+   FLASHCARD+ MODE
+   ══════════════════════════════════════════════════════════ */
+
+/* Card container — same perspective as flashcard */
+.fcplus-card {
+    position: relative;
+    width: 100%;
+    min-height: 260px;
+    cursor: pointer;
+    border-radius: 20px;
+    background: var(--color-surface);
+    border: 2px solid var(--color-border);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow 0.2s;
+}
+
+.fcplus-card:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}
+
+/* Front / Back shared */
+.fcplus-front,
+.fcplus-back,
+#fcplus-front-result {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 20px;
+    gap: 12px;
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 260px;
+}
+
+.fcplus-back {
+    background: var(--color-bg);
+    border-radius: 18px;
+}
+
+/* Play row */
+.fcplus-play-row {
+    display: flex;
+    justify-content: center;
+}
+
+/* Sentence */
+.fcplus-sentence {
+    font-size: 0.92rem;
+    color: var(--color-text-light);
+    text-align: center;
+    line-height: 1.6;
+    max-width: 100%;
+    word-break: break-word;
+}
+
+/* Letter input row */
+.fcplus-letters {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    margin: 4px 0;
+}
+
+/* Fixed hint letter (first/last of each word segment) */
+.fcplus-letter-hint {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 38px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    border-bottom: 2px solid var(--color-primary);
+    text-transform: lowercase;
+}
+
+/* Hint inputs: same style as normal input but with semi-transparent placeholder */
+.fcplus-letter-hint-input {
+    border-bottom-color: var(--color-primary) !important;
+}
+.fcplus-letter-hint-input::placeholder {
+    color: var(--color-primary);
+    opacity: 0.35;
+    font-weight: 700;
+}
+.fcplus-letter-hint-input:focus::placeholder {
+    opacity: 0.25;
+}
+
+/* Blank input boxes */
+.fcplus-letter-input {
+    width: 32px;
+    height: 38px;
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border: none;
+    border-bottom: 2px solid var(--color-border);
+    background: transparent;
+    color: var(--color-text);
+    font-family: inherit;
+    outline: none;
+    border-radius: 0;
+    transition: border-color 0.15s;
+    text-transform: lowercase;
+    padding: 0;
+}
+
+.fcplus-letter-input:focus {
+    border-bottom-color: var(--color-primary);
+}
+
+.fcplus-letter-input.fcplus-letter-correct {
+    border-bottom-color: #50b86c;
+    color: #2d8a50;
+}
+
+.fcplus-letter-input.fcplus-letter-wrong {
+    border-bottom-color: #e05c5c;
+    color: #a83030;
+}
+
+/* Hyphen between words */
+.fcplus-hyphen {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--color-text-light);
+    padding: 0 2px;
+    line-height: 38px;
+}
+
+/* Submit button */
+.fcplus-submit-btn {
+    margin-top: 4px;
+    padding: 10px 28px;
+    background: var(--color-primary);
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: opacity 0.15s, transform 0.1s;
+}
+
+.fcplus-submit-btn:hover {
+    opacity: 0.88;
+    transform: scale(1.02);
+}
+
+.fcplus-submit-btn.is-hidden {
+    display: none;
+}
+
+/* Flip hint after submit */
+.fcplus-flip-hint {
+    font-size: 0.8rem;
+    color: var(--color-text-light);
+    margin-top: 4px;
+}
+
+.fcplus-flip-hint.is-hidden {
+    display: none;
+}
+
+/* Back: context sentence */
+.fcplus-context {
+    font-size: 1em;
+    color: var(--color-text);
+    text-align: center;
+    line-height: 1.6;
+    word-break: break-word;
+}
+
+/* Back: wrong word highlight */
+.fcplus-back-wrong {
+    color: #a83030 !important;
+    background: rgba(224,92,92,0.15) !important;
+    font-weight: 700;
+}
+
+/* Back: correct word highlight */
+.fcplus-context mark {
+    background: rgba(138,121,104,0.15);
+    color: var(--color-primary);
+    font-weight: 700;
+    border-radius: 4px;
+    padding: 0 2px;
+}
+
+/* Next button on back */
+.fcplus-next-btn {
+    margin-top: 8px;
+    width: auto;
+    padding: 10px 32px;
+}
+
+/* Front result: letter display */
+.fcplus-result-letters {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    margin: 4px 0;
+}
+
+.fcplus-result-letter {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 38px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-bottom: 2px solid var(--color-border);
+}
+
+.fcplus-result-letter.correct {
+    color: #2d8a50;
+    border-bottom-color: #50b86c;
+}
+
+.fcplus-result-letter.wrong {
+    color: #a83030;
+    border-bottom-color: #e05c5c;
+}
+
+/* Correct answer label */
+.fcplus-correct-answer {
+    font-size: 0.9rem;
+    font-weight: 700;
+    padding: 6px 16px;
+    border-radius: 12px;
+    margin-top: 4px;
+}
+
+.fcplus-correct-answer.is-correct {
+    color: #2d8a50;
+    background: rgba(80,184,108,0.12);
+}
+
+.fcplus-correct-answer.is-wrong {
+    color: #a83030;
+    background: rgba(224,92,92,0.1);
+}
+
+/* Flipped state: show back visually */
+.fcplus-card.fcplus-flipped-back {
+    background: var(--color-bg);
+    border-color: var(--color-primary);
+}
+
+/* dark mode */
+[data-theme="dark"] .fcplus-letter-input {
+    color: var(--color-text);
+}

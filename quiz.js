@@ -141,6 +141,30 @@ function shuffle(arr) {
     return a;
 }
 
+function weightedSample(pool, n, keyFn, categoryName, titleName) {
+    if (!pool || pool.length === 0) return [];
+    n = Math.min(n, pool.length);
+    let history = {};
+    try { history = JSON.parse(localStorage.getItem('quizWordHistory') || '{}'); } catch (e) {}
+    const weighted = pool.map(item => {
+        const key = keyFn ? keyFn(item) : String(item);
+        const h = history[key];
+        return { item, weight: h ? 1 + (h.wrong || 0) * 2 : 1 };
+    });
+    const reservoir = [];
+    for (const { item, weight } of weighted) {
+        const r = Math.pow(Math.random(), 1 / weight);
+        if (reservoir.length < n) {
+            reservoir.push({ item, r });
+            if (reservoir.length === n) reservoir.sort((a, b) => a.r - b.r);
+        } else if (r > reservoir[0].r) {
+            reservoir[0] = { item, r };
+            reservoir.sort((a, b) => a.r - b.r);
+        }
+    }
+    return shuffle(reservoir.map(e => e.item));
+}
+
 function getNoteData(categoryName, titleName) {
     return savedWords[categoryName]?.[titleName] || {
         words: new Set(), phrases: new Set(), sentences: new Set()
@@ -492,7 +516,7 @@ document.getElementById('back-to-note-from-quiz').addEventListener('click', () =
 // ── Mode Card + Subpanel Logic ────────────────────────────────
 
 // Track which subpanel source is selected per mode
-const subpanelSource = { flashcard: 'note', cloze: 'note', dictation: 'note', reorder: 'note' };
+const subpanelSource = { flashcard: 'note', cloze: 'note', dictation: 'note', reorder: 'note', fcplus: 'note' };
 
 // Helper: close all subpanels and un-expand all cards
 function closeAllSubpanels() {
@@ -675,6 +699,7 @@ function showQuizSession(mode) {
     document.getElementById('quiz-article-listen-area').classList.add('is-hidden');
     document.getElementById('quiz-article-cloze-area').classList.add('is-hidden');
     document.getElementById('quiz-reorder-area').classList.add('is-hidden');
+    document.getElementById('quiz-fcplus-area').classList.add('is-hidden');
 
     if (mode === 'flashcard')       flashcardArea.classList.remove('is-hidden');
     if (mode === 'cloze')           clozeArea.classList.remove('is-hidden');
@@ -682,6 +707,7 @@ function showQuizSession(mode) {
     if (mode === 'article-listen')  document.getElementById('quiz-article-listen-area').classList.remove('is-hidden');
     if (mode === 'article-cloze')   document.getElementById('quiz-article-cloze-area').classList.remove('is-hidden');
     if (mode === 'reorder')         document.getElementById('quiz-reorder-area').classList.remove('is-hidden');
+    if (mode === 'fcplus')          document.getElementById('quiz-fcplus-area').classList.remove('is-hidden');
 }
 
 // ── Show Result ───────────────────────────────────────────────
@@ -1185,7 +1211,7 @@ document.getElementById('flashcard-correct').addEventListener('click', () => {
     quizState.correct++;
     quizState.deckIndex++;
     if (typeof recordItemResult === 'function' && quizState.flashSource === 'note' && _fcItem)
-        recordItemResult(quizState.categoryName, quizState.titleName, 'noteWord', _fcItem.text, true, _quizReplayCount);
+        recordItemResult(quizState.categoryName, quizState.titleName, 'noteWords', _fcItem.text, true, _quizReplayCount);
     showFlashcard();
 });
 
@@ -1197,7 +1223,7 @@ document.getElementById('flashcard-wrong').addEventListener('click', () => {
     quizState.deck.push(item);
     quizState.deckIndex++;
     if (typeof recordItemResult === 'function' && quizState.flashSource === 'note' && item)
-        recordItemResult(quizState.categoryName, quizState.titleName, 'noteWord', item.text, false, _quizReplayCount);
+        recordItemResult(quizState.categoryName, quizState.titleName, 'noteWords', item.text, false, _quizReplayCount);
     showFlashcard();
 });
 
@@ -1433,7 +1459,7 @@ function handleClozeAnswer(selected, correct, btn) {
     });
 
     document.getElementById('cloze-next').classList.remove('is-hidden');
-    if (typeof recordItemResult === 'function') recordItemResult(quizState.categoryName, quizState.titleName, 'noteWord', correct, isCorrect, _quizReplayCount);
+    if (typeof recordItemResult === 'function') recordItemResult(quizState.categoryName, quizState.titleName, 'noteWords', correct, isCorrect, _quizReplayCount);
 }
 
 document.getElementById('cloze-next').addEventListener('click', () => {
@@ -1627,7 +1653,7 @@ function handleDictationAnswer(selected, correct, btn) {
     });
 
     document.getElementById('dictation-next').classList.remove('is-hidden');
-    if (typeof recordItemResult === 'function') recordItemResult(quizState.categoryName, quizState.titleName, 'noteSentence', correct, isCorrect, _quizReplayCount);
+    if (typeof recordItemResult === 'function') recordItemResult(quizState.categoryName, quizState.titleName, 'noteSentences', correct, isCorrect, _quizReplayCount);
 }
 
 document.getElementById('dictation-next').addEventListener('click', () => {
@@ -1874,7 +1900,7 @@ function handleArticleListenAnswer(selected, q, btn) {
     });
 
     document.getElementById('article-listen-next').classList.remove('is-hidden');
-    if (typeof recordItemResult === 'function') recordItemResult(quizState.categoryName, quizState.titleName, 'articleSentence', q.sentence, isCorrect, _quizReplayCount);
+    if (typeof recordItemResult === 'function') recordItemResult(quizState.categoryName, quizState.titleName, 'articleSentences', q.sentence, isCorrect, _quizReplayCount);
 }
 
 document.getElementById('article-listen-next').addEventListener('click', () => {
@@ -1998,7 +2024,7 @@ function handleArticleClozeAnswer(selected, correct, q, btn) {
     });
 
     document.getElementById('article-cloze-next').classList.remove('is-hidden');
-    if (typeof recordItemResult === 'function') recordItemResult(quizState.categoryName, quizState.titleName, 'articleSentence', q.sentence, isCorrect, _quizReplayCount);
+    if (typeof recordItemResult === 'function') recordItemResult(quizState.categoryName, quizState.titleName, 'articleSentences', q.sentence, isCorrect, _quizReplayCount);
 }
 
 document.getElementById('article-cloze-next').addEventListener('click', () => {
@@ -2697,7 +2723,7 @@ document.getElementById('reorder-check-btn').addEventListener('click', () => {
         isCorrect
     });
     if (typeof recordItemResult === 'function') {
-        const _rtype = (typeof subpanelSource !== 'undefined' && subpanelSource.reorder === 'article') ? 'articleSentence' : 'noteSentence';
+        const _rtype = (typeof subpanelSource !== 'undefined' && subpanelSource.reorder === 'article') ? 'articleSentences' : 'noteSentences';
         recordItemResult(quizState.categoryName, quizState.titleName, _rtype, q.sentence, isCorrect, _quizReplayCount);
     }
 
@@ -2839,3 +2865,621 @@ window.addEventListener('load', () => {
         };
     }
 });
+
+// ══════════════════════════════════════════════════════════════
+//  FLASHCARD+ MODE
+//  正面填字 → 提交 → 翻牌看答案 → 下一題（在背面）
+// ══════════════════════════════════════════════════════════════
+
+// ── Subpanel & Start ─────────────────────────────────────────
+
+document.getElementById('quiz-mode-fcplus').addEventListener('click', () => {
+    const panel = document.getElementById('subpanel-fcplus');
+    const card  = document.getElementById('quiz-mode-fcplus');
+    const isOpen = !panel.classList.contains('is-hidden');
+    closeAllSubpanels();
+    if (!isOpen) {
+        const items = getAllNoteItems(quizState.scope, quizState.categoryName, quizState.titleName);
+        const hasNote = items.words.length > 0 || items.phrases.length > 0;
+        const preferred = hasNote ? 'note' : 'article';
+        subpanelSource.fcplus = preferred;
+        document.querySelectorAll('.quiz-source-btn[data-mode="fcplus"]').forEach(b => {
+            b.classList.toggle('is-active', b.dataset.source === preferred);
+        });
+        const noteOpts    = document.getElementById('fcplus-note-options');
+        const articleOpts = document.getElementById('fcplus-article-options');
+        if (preferred === 'note') {
+            noteOpts?.classList.remove('is-hidden');
+            articleOpts?.classList.add('is-hidden');
+        } else {
+            articleOpts?.classList.remove('is-hidden');
+            noteOpts?.classList.add('is-hidden');
+        }
+        panel.classList.remove('is-hidden');
+        card.classList.add('is-expanded');
+    }
+});
+
+document.querySelectorAll('.quiz-source-btn[data-mode="fcplus"]').forEach(btn => {
+    btn.addEventListener('click', () => {
+        subpanelSource.fcplus = btn.dataset.source;
+        document.querySelectorAll('.quiz-source-btn[data-mode="fcplus"]').forEach(b =>
+            b.classList.toggle('is-active', b === btn)
+        );
+        const noteOpts    = document.getElementById('fcplus-note-options');
+        const articleOpts = document.getElementById('fcplus-article-options');
+        if (btn.dataset.source === 'note') {
+            noteOpts?.classList.remove('is-hidden');
+            articleOpts?.classList.add('is-hidden');
+        } else {
+            articleOpts?.classList.remove('is-hidden');
+            noteOpts?.classList.add('is-hidden');
+        }
+    });
+});
+
+document.getElementById('start-fcplus-btn').addEventListener('click', () => {
+    if (subpanelSource.fcplus === 'article') {
+        startFcplusFromArticle();
+    } else {
+        startFcplus();
+    }
+});
+
+// ── State ─────────────────────────────────────────────────────
+
+let _fcplusSubmitted  = false; // 是否已提交答案
+let _fcplusIsCorrect  = false; // 本題是否答對
+let _fcplusFlipped    = false; // 是否已翻到背面
+let _fcplusAfterFlip  = false; // 是否已翻回正面（查看結果）
+let _fcplusItem       = null;  // 當前題目 item
+
+// ── Start from Note ───────────────────────────────────────────
+
+function startFcplus() {
+    const items = getAllNoteItems(quizState.scope, quizState.categoryName, quizState.titleName);
+    let allItems = [
+        ...items.words.map(w => ({ text: w, type: 'word' })),
+        ...items.phrases.map(p => ({ text: p, type: 'phrase' }))
+    ].filter(i => {
+        // 排除 1 個字母以下、純標點、或含空格超過 1 段（phrase 整體判斷字母數）
+        const clean = i.text.replace(/[^a-zA-Z]/g, '');
+        return clean.length >= 2;
+    });
+
+    allItems = filterByWordDifficulty(allItems, quizState.difficulty);
+
+    if (allItems.length === 0) {
+        showNotification('No suitable words found. Add words to your note first.', 'warning');
+        return;
+    }
+
+    quizState.mode        = 'fcplus';
+    quizState.flashSource = 'note';
+    quizState.deck        = weightedSample(allItems, quizState.questionCount || 10,
+                                item => item.text, quizState.categoryName, quizState.titleName);
+    quizState.deckIndex   = 0;
+    quizState.correct     = 0;
+    quizState.wrong       = 0;
+    quizState.wrongItems  = [];
+
+    closeAllSubpanels();
+    showQuizSession('fcplus');
+    showFcplusCard();
+}
+
+// ── Start from Article ────────────────────────────────────────
+
+async function startFcplusFromArticle() {
+    const title = quizState.titleName;
+    if (!title) {
+        showNotification('Please select an article using the dropdowns above.', 'warning');
+        return;
+    }
+
+    const tsData = await getTimestampForStory(title);
+
+    const STOP = new Set(['that','this','with','have','from','they','been','were','when','what',
+        'will','your','which','their','there','would','could','should','about','after','before',
+        'other','some','than','then','also','into','more','over','just','like','very','well',
+        'even','only','said','have','each','word']);
+
+    const pool = [];
+    if (tsData) {
+        tsData.forEach(line => {
+            const words = (line.sentence.match(/\b[a-zA-Z]{2,}\b/g) || [])
+                .filter(w => !STOP.has(w.toLowerCase()));
+            [...new Set(words.map(w => w.toLowerCase()))].forEach(w => {
+                pool.push({ text: w, type: 'word', sentence: line.sentence.trim(),
+                            start: line.start, end: line.end });
+            });
+        });
+    }
+
+    if (pool.length === 0) {
+        showNotification('Could not extract words from this article.', 'warning');
+        return;
+    }
+
+    const seen = new Set();
+    let deck = shuffle(pool).filter(item => {
+        if (seen.has(item.text)) return false;
+        seen.add(item.text);
+        return true;
+    });
+    deck = filterByWordDifficulty(deck, quizState.difficulty);
+    deck = weightedSample(deck, quizState.questionCount || 10,
+                          item => item.text, quizState.categoryName, title);
+
+    if (deck.length === 0) {
+        showNotification('No words found for selected difficulty.', 'warning');
+        return;
+    }
+
+    const audioSrc = `audio/${encodeURIComponent(title.trim())}.mp3`;
+    if (!quizAudioPlayer.src.endsWith(encodeURIComponent(title.trim()) + '.mp3')) {
+        quizAudioPlayer.src = audioSrc;
+        quizAudioPlayer.preload = 'auto';
+        quizAudioPlayer.load();
+    }
+
+    quizState.mode        = 'fcplus';
+    quizState.flashSource = 'article';
+    quizState.deck        = deck;
+    quizState.deckIndex   = 0;
+    quizState.correct     = 0;
+    quizState.wrong       = 0;
+    quizState.wrongItems  = [];
+
+    closeAllSubpanels();
+    showQuizSession('fcplus');
+    showFcplusCard();
+}
+
+// ── Show Card ─────────────────────────────────────────────────
+
+async function showFcplusCard() {
+    _resetReplayCount();
+    _fcplusSubmitted = false;
+    _fcplusIsCorrect = false;
+    _fcplusFlipped   = false;
+    _fcplusAfterFlip = false;
+
+    const deck = quizState.deck;
+    if (quizState.deckIndex >= deck.length) {
+        showQuizResult('fcplus', quizState.correct,
+            quizState.correct + quizState.wrong, quizState.wrongItems);
+        return;
+    }
+
+    const item = deck[quizState.deckIndex];
+    _fcplusItem = item;
+    updateProgress(quizState.deckIndex + 1, deck.length);
+
+    // Reset card state
+    const card = document.getElementById('fcplus-card');
+    card.classList.remove('is-flipped', 'fcplus-flipped-back');
+    _showFcplusFront();
+
+    // Build letter inputs
+    _buildFcplusLetters(item.text);
+
+    // Sentence display
+    const ctx = (quizState.flashSource === 'article' && item.sentence)
+        ? item.sentence
+        : findContextForWord(item.text.replace(/-/g, ' '),
+            quizState.scope === 'this' ? quizState.titleName : null);
+
+    const sentEl = document.getElementById('fcplus-sentence');
+    if (ctx) {
+        const blanked = ctx.replace(
+            new RegExp(`\\b${item.text.replace(/-/g, ' ').replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi'),
+            '_'.repeat(item.text.length)
+        );
+        sentEl.textContent = blanked;
+    } else {
+        sentEl.textContent = '';
+    }
+
+    // Back side context
+    const ctxEl = document.getElementById('fcplus-context');
+    if (ctx) {
+        const highlighted = ctx.replace(
+            new RegExp(`(${item.text.replace(/-/g, ' ').replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi'),
+            '<mark class="fcplus-wrong-mark" id="fcplus-back-mark">$1</mark>'
+        );
+        ctxEl.innerHTML = highlighted;
+    } else {
+        ctxEl.textContent = item.text;
+    }
+
+    // Back audio
+    const backAudioBtn      = document.getElementById('fcplus-back-audio-btn');
+    const backEditContainer = document.getElementById('fcplus-back-edit-container');
+    backAudioBtn.disabled = true;
+    backAudioBtn.onclick  = null;
+    if (backEditContainer) backEditContainer.innerHTML = '';
+
+    const flashTitle = quizState.scope === 'this' ? quizState.titleName : null;
+    if (flashTitle && ctx) {
+        const audioSrc   = `audio/${encodeURIComponent(flashTitle.trim())}.mp3`;
+        const targetFile = encodeURIComponent(flashTitle.trim()) + '.mp3';
+        if (!quizAudioPlayer.src.endsWith(targetFile)) {
+            quizAudioPlayer.src = audioSrc;
+            quizAudioPlayer.load();
+        }
+        try {
+            const tsData = await getTimestampForStory(flashTitle);
+            if (tsData) {
+                const norm  = t => t.trim().replace(/[.,?!'"`\u201c\u201d\u2018\u2019]/g, '').toLowerCase();
+                const match = tsData.find(l => norm(l.sentence) === norm(ctx));
+                if (match) {
+                    const timing = (typeof getAdjustedTiming === 'function')
+                        ? getAdjustedTiming(flashTitle, ctx, match.start, match.end)
+                        : { start: match.start, end: match.end };
+
+                    backAudioBtn.disabled = false;
+                    backAudioBtn.onclick = () => {
+                        playSnippet({
+                            start: timing.start, end: timing.end,
+                            onStart: () => backAudioBtn.classList.add('is-playing-voice'),
+                            onEnd:   () => backAudioBtn.classList.remove('is-playing-voice')
+                        });
+                    };
+
+                    if (backEditContainer && typeof createAudioEditBtn === 'function') {
+                        const editBtn = createAudioEditBtn({
+                            title: flashTitle, sentence: ctx,
+                            start: match.start, end: match.end,
+                            audioSrc, player: quizAudioPlayer,
+                            onSave: (ns, ne) => { timing.start = ns; timing.end = ne; }
+                        });
+                        backEditContainer.appendChild(editBtn);
+                    }
+                }
+            }
+        } catch (e) {}
+    }
+
+    // Front audio (word pronunciation)
+    _setupFcplusFrontAudio(item);
+}
+
+// ── Build letter input boxes ──────────────────────────────────
+
+function _buildFcplusLetters(word) {
+    const container = document.getElementById('fcplus-letters');
+    container.innerHTML = '';
+
+    // Split into chars; hyphens are fixed display
+    const chars = word.split('');
+
+    chars.forEach((ch, i) => {
+        if (ch === '-') {
+            // Hyphen: fixed label
+            const sep = document.createElement('span');
+            sep.className = 'fcplus-hyphen';
+            sep.textContent = '-';
+            container.appendChild(sep);
+        } else {
+            const isFirst = (i === 0) || (chars[i-1] === '-' && i === chars.findIndex((c,j) => j >= i && c !== '-'));
+            const isLast  = (i === chars.length - 1) || (chars[i+1] === '-' && i === [...chars].reverse().findIndex((c,j) => j >= chars.length - 1 - i && c !== '-') );
+
+            // Recalculate first/last letter of each word segment
+            // Simple: first letter if i===0 or chars[i-1]==='-'
+            // Last letter if i===chars.length-1 or chars[i+1]==='-'
+            const isSegFirst = i === 0 || chars[i - 1] === '-';
+            const isSegLast  = i === chars.length - 1 || chars[i + 1] === '-';
+            const isHint     = isSegFirst || isSegLast;
+
+            // All letters are inputs; hint positions show semi-transparent placeholder
+            const inp = document.createElement('input');
+            inp.type      = 'text';
+            inp.maxLength = 1;
+            inp.className = isHint
+                ? 'fcplus-letter-input fcplus-letter-hint-input'
+                : 'fcplus-letter-input';
+            inp.dataset.idx  = i;
+            inp.dataset.char = ch.toLowerCase();
+            if (isHint) inp.placeholder = ch.toLowerCase();
+            inp.autocomplete   = 'off';
+            inp.autocorrect    = 'off';
+            inp.autocapitalize = 'off';
+            inp.spellcheck     = false;
+
+            inp.addEventListener('input', _fcplusHandleInput);
+            inp.addEventListener('keydown', _fcplusHandleKeydown);
+            container.appendChild(inp);
+        }
+    });
+
+    _checkFcplusAllFilled();
+
+    // Auto-focus the first input (which is the first hint input)
+    const firstInput = container.querySelector('.fcplus-letter-input');
+    if (firstInput) firstInput.focus();
+}
+
+function _getAllFcplusInputs() {
+    return Array.from(document.getElementById('fcplus-letters').querySelectorAll('.fcplus-letter-input'));
+}
+
+function _fcplusHandleInput(e) {
+    const inp   = e.currentTarget;
+    const val   = inp.value.replace(/[^a-zA-Z]/g, '').slice(-1);
+    inp.value   = val;
+    if (val) {
+        // Move to next input
+        const inputs = _getAllFcplusInputs();
+        const idx    = inputs.indexOf(inp);
+        if (idx < inputs.length - 1) inputs[idx + 1].focus();
+    }
+    _checkFcplusAllFilled();
+}
+
+function _fcplusHandleKeydown(e) {
+    if (e.key === 'Backspace') {
+        const inp    = e.currentTarget;
+        const inputs = _getAllFcplusInputs();
+        const idx    = inputs.indexOf(inp);
+        if (inp.value === '' && idx > 0) {
+            inputs[idx - 1].value = '';
+            inputs[idx - 1].focus();
+            _checkFcplusAllFilled();
+            e.preventDefault();
+        }
+    }
+}
+
+function _checkFcplusAllFilled() {
+    const inputs  = _getAllFcplusInputs();
+    const allFilled = inputs.length > 0 && inputs.every(i => i.value.trim() !== '');
+    const submitBtn = document.getElementById('fcplus-submit-btn');
+    submitBtn.classList.toggle('is-hidden', !allFilled);
+}
+
+// ── Front audio setup ─────────────────────────────────────────
+
+function _setupFcplusFrontAudio(item) {
+    const audioBtn = document.getElementById('fcplus-audio-btn');
+    if (!audioBtn) return;
+    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+
+    function _playSpeech() {
+        if (!('speechSynthesis' in window)) return;
+        window.speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(item.text);
+        u.lang  = 'en-US';
+        u.onend = () => audioBtn.classList.remove('is-playing-voice');
+        audioBtn.classList.add('is-playing-voice');
+        window.speechSynthesis.speak(u);
+    }
+
+    function _playWord() {
+        if (!_fcplusSubmitted) _trackReplay(); // 提交後不計懲罰
+        audioBtn.classList.add('is-playing-voice');
+        const src  = `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(item.text.trim())}.mp3`;
+        const au   = new Audio(src);
+        au.play().catch(() => { audioBtn.classList.remove('is-playing-voice'); _playSpeech(); });
+        au.addEventListener('ended', () => audioBtn.classList.remove('is-playing-voice'), { once: true });
+    }
+    audioBtn.onclick = _playWord;
+
+    // Also wire result-side audio btn
+    const resultBtn = document.getElementById('fcplus-audio-btn-result');
+    if (resultBtn) resultBtn.onclick = () => {
+        // After submit, no penalty
+        audioBtn.classList.add('is-playing-voice');
+        const src  = `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(item.text.trim())}.mp3`;
+        const au   = new Audio(src);
+        au.play().catch(_playSpeech);
+        au.addEventListener('ended', () => audioBtn.classList.remove('is-playing-voice'), { once: true });
+    };
+
+    // Auto-play first time
+    const autoAu = new Audio(
+        `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(item.text.trim())}.mp3`
+    );
+    autoAu.play().then(() => {
+        audioBtn.classList.add('is-playing-voice');
+        autoAu.addEventListener('ended', () => audioBtn.classList.remove('is-playing-voice'), { once: true });
+    }).catch(() => {
+        if ('speechSynthesis' in window) {
+            const u = new SpeechSynthesisUtterance(item.text);
+            u.lang = 'en-US';
+            window.speechSynthesis.speak(u);
+        }
+    });
+}
+
+// ── Submit ────────────────────────────────────────────────────
+
+document.getElementById('fcplus-submit-btn').addEventListener('click', () => {
+    if (_fcplusSubmitted) return;
+    _fcplusSubmitted = true;
+
+    const inputs = _getAllFcplusInputs();
+    const word   = _fcplusItem.text;
+    let   correct = true;
+
+    inputs.forEach(inp => {
+        const typed   = inp.value.toLowerCase();
+        const expected = inp.dataset.char;
+        if (typed !== expected) {
+            correct = false;
+            inp.classList.add('fcplus-letter-wrong');
+        } else {
+            inp.classList.add('fcplus-letter-correct');
+        }
+        inp.disabled = true;
+    });
+
+    _fcplusIsCorrect = correct;
+
+    // Record score
+    if (typeof recordItemResult === 'function') {
+        const itemType = 'noteWords'; // Flashcard+ 永遠是單字，不論來源
+        recordItemResult(quizState.categoryName, quizState.titleName,
+            itemType, word, correct, _quizReplayCount);
+    }
+
+    if (correct) {
+        quizState.correct++;
+    } else {
+        quizState.wrong++;
+        quizState.wrongItems.push(word);
+        // Mark back-side word red
+        const mark = document.getElementById('fcplus-back-mark');
+        if (mark) mark.classList.add('fcplus-back-wrong');
+    }
+
+    // Hide submit, show flip hint
+    document.getElementById('fcplus-submit-btn').classList.add('is-hidden');
+    document.getElementById('fcplus-flip-hint').classList.remove('is-hidden');
+});
+
+// ── Card flip ─────────────────────────────────────────────────
+
+document.getElementById('fcplus-card').addEventListener('click', (e) => {
+    if (e.target.closest('button') || e.target.closest('input')) return;
+    if (!_fcplusSubmitted) return; // 未提交不能翻牌
+
+    const card = document.getElementById('fcplus-card');
+
+    if (!_fcplusFlipped) {
+        // Front → Back
+        _fcplusFlipped = true;
+        card.classList.add('fcplus-flipped-back');
+        _showFcplusBack();
+    } else if (!_fcplusAfterFlip) {
+        // Back → Front (result)
+        _fcplusAfterFlip = true;
+        card.classList.remove('fcplus-flipped-back');
+        _showFcplusFrontResult();
+    }
+    // 翻回正面後不再翻
+});
+
+function _showFcplusFront() {
+    document.querySelector('.fcplus-front').classList.remove('is-hidden');
+    document.getElementById('fcplus-front-result').classList.add('is-hidden');
+    document.querySelector('.fcplus-back').classList.add('is-hidden');
+}
+
+function _showFcplusBack() {
+    document.querySelector('.fcplus-front').classList.add('is-hidden');
+    document.getElementById('fcplus-front-result').classList.add('is-hidden');
+    document.querySelector('.fcplus-back').classList.remove('is-hidden');
+}
+
+function _showFcplusFrontResult() {
+    document.querySelector('.fcplus-front').classList.add('is-hidden');
+    document.querySelector('.fcplus-back').classList.add('is-hidden');
+    const resultEl = document.getElementById('fcplus-front-result');
+    resultEl.classList.remove('is-hidden');
+
+    // Rebuild result display
+    const word   = _fcplusItem.text;
+    const inputs = _getAllFcplusInputs(); // still in DOM, disabled
+
+    // Result letters row
+    const resultLetters = document.getElementById('fcplus-result-letters');
+    resultLetters.innerHTML = '';
+    word.split('').forEach((ch, i) => {
+        if (ch === '-') {
+            const sep = document.createElement('span');
+            sep.className   = 'fcplus-hyphen';
+            sep.textContent = '-';
+            resultLetters.appendChild(sep);
+            return;
+        }
+        const isSegFirst = i === 0 || word[i - 1] === '-';
+        const isSegLast  = i === word.length - 1 || word[i + 1] === '-';
+        const isHint     = isSegFirst || isSegLast;
+
+        const span = document.createElement('span');
+        if (isHint) {
+            span.className   = 'fcplus-letter-hint';
+            span.textContent = ch.toLowerCase();
+        } else {
+            // Find matching input
+            const inp = inputs.find(el => parseInt(el.dataset.idx) === i);
+            const typed    = inp ? inp.value.toLowerCase() : '';
+            const expected = ch.toLowerCase();
+            span.className   = typed === expected
+                ? 'fcplus-result-letter correct'
+                : 'fcplus-result-letter wrong';
+            span.textContent = typed || '_';
+        }
+        resultLetters.appendChild(span);
+    });
+
+    // Correct answer row
+    const correctEl = document.getElementById('fcplus-correct-answer');
+    correctEl.textContent = _fcplusIsCorrect ? '✓ Correct!' : `Answer: ${word}`;
+    correctEl.className   = _fcplusIsCorrect
+        ? 'fcplus-correct-answer is-correct'
+        : 'fcplus-correct-answer is-wrong';
+
+    // Sentence (same as front)
+    const ctx = document.getElementById('fcplus-sentence').textContent;
+    document.getElementById('fcplus-sentence-result').textContent = ctx;
+}
+
+// ── Next button (on back) ─────────────────────────────────────
+
+document.getElementById('fcplus-next-btn').addEventListener('click', () => {
+    quizState.deckIndex++;
+    showFcplusCard();
+});
+
+// ── Keyboard shortcuts for Flashcard+ ────────────────────────
+document.addEventListener('keydown', (e) => {
+    const fcArea = document.getElementById('quiz-fcplus-area');
+    if (!fcArea || fcArea.classList.contains('is-hidden')) return;
+
+    if (e.code === 'Space') {
+        e.preventDefault();
+        const backAudio   = document.getElementById('fcplus-back-audio-btn');
+        const resultAudio = document.getElementById('fcplus-audio-btn-result');
+        const frontAudio  = document.getElementById('fcplus-audio-btn');
+        if (_fcplusFlipped && !_fcplusAfterFlip && backAudio && !backAudio.disabled) {
+            backAudio.click();
+        } else if (_fcplusAfterFlip && resultAudio) {
+            resultAudio.click();
+        } else if (frontAudio) {
+            frontAudio.click();
+        }
+        return;
+    }
+
+    if (e.code === 'Backspace' && !_fcplusSubmitted) {
+        if (document.activeElement && document.activeElement.classList.contains('fcplus-letter-input')) return;
+        e.preventDefault();
+        const inputs = _getAllFcplusInputs();
+        for (let i = inputs.length - 1; i >= 0; i--) {
+            if (inputs[i].value !== '') {
+                inputs[i].value = '';
+                inputs[i].focus();
+                _checkFcplusAllFilled();
+                break;
+            }
+        }
+        return;
+    }
+
+    if (e.code === 'Enter') {
+        e.preventDefault();
+        if (!_fcplusSubmitted) {
+            const submitBtn = document.getElementById('fcplus-submit-btn');
+            if (submitBtn && !submitBtn.classList.contains('is-hidden')) submitBtn.click();
+            return;
+        }
+        if (!_fcplusFlipped) { document.getElementById('fcplus-card').click(); return; }
+        if (!_fcplusAfterFlip) { document.getElementById('fcplus-card').click(); return; }
+        quizState.deckIndex++;
+        showFcplusCard();
+    }
+});
+
+console.log('✅ Flashcard+ loaded.');

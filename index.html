@@ -324,6 +324,13 @@
                 <div class="quiz-mode-desc">Rearrange the sentence</div>
             </div>
 
+            <!-- Flashcard+ -->
+            <div class="quiz-mode-card" id="quiz-mode-fcplus">
+                <div class="quiz-mode-icon">🃏✨</div>
+                <div class="quiz-mode-name">Flashcard+</div>
+                <div class="quiz-mode-desc">Spell the word</div>
+            </div>
+
         </div>
 
         <!-- Expandable sub-panels (one per mode that supports source selection) -->
@@ -359,6 +366,39 @@
                 </div>
             </div>
             <button class="quiz-next-btn" id="start-flashcard-btn">Start →</button>
+        </div>
+
+        <!-- Flashcard+ sub-panel -->
+        <div class="quiz-subpanel is-hidden" id="subpanel-fcplus">
+            <div class="quiz-subpanel-source-row">
+                <button class="quiz-source-btn is-active" data-source="note" data-mode="fcplus">📝 From Note</button>
+                <button class="quiz-source-btn" data-source="article" data-mode="fcplus">📖 From Article</button>
+            </div>
+            <div class="quiz-note-options is-hidden" id="fcplus-note-options">
+                <div class="quiz-subpanel-source-row">
+                    <button class="quiz-diff-btn is-active" data-diff="mix" data-mode="fcplus">Mix</button>
+                    <button class="quiz-diff-btn" data-diff="easy" data-mode="fcplus">🟢 Easy</button>
+                    <button class="quiz-diff-btn" data-diff="medium" data-mode="fcplus">🟡 Medium</button>
+                    <button class="quiz-diff-btn" data-diff="hard" data-mode="fcplus">🔴 Hard</button>
+                </div>
+                <div class="quiz-subpanel-source-row">
+                    <button class="quiz-count-btn is-active" data-count="10" data-mode="fcplus">10 題</button>
+                    <button class="quiz-count-btn" data-count="5" data-mode="fcplus">5 題</button>
+                </div>
+            </div>
+            <div class="quiz-article-options is-hidden" id="fcplus-article-options">
+                <div class="quiz-subpanel-source-row">
+                    <button class="quiz-diff-btn is-active" data-diff="mix" data-mode="fcplus">Mix</button>
+                    <button class="quiz-diff-btn" data-diff="easy" data-mode="fcplus">🟢 Easy</button>
+                    <button class="quiz-diff-btn" data-diff="medium" data-mode="fcplus">🟡 Medium</button>
+                    <button class="quiz-diff-btn" data-diff="hard" data-mode="fcplus">🔴 Hard</button>
+                </div>
+                <div class="quiz-subpanel-source-row">
+                    <button class="quiz-count-btn is-active" data-count="10" data-mode="fcplus">10 題</button>
+                    <button class="quiz-count-btn" data-count="5" data-mode="fcplus">5 題</button>
+                </div>
+            </div>
+            <button class="quiz-next-btn" id="start-fcplus-btn">Start →</button>
         </div>
 
         <!-- Fill in Blank sub-panel -->
@@ -495,6 +535,53 @@
             <div class="flashcard-actions">
                 <button class="quiz-btn quiz-btn-wrong" id="flashcard-wrong">✗ Again</button>
                 <button class="quiz-btn quiz-btn-correct" id="flashcard-correct">✓ Got it</button>
+            </div>
+        </div>
+
+        <!-- Flashcard+ Mode -->
+        <div id="quiz-fcplus-area" class="is-hidden">
+            <div class="flashcard-wrap">
+                <div class="fcplus-card" id="fcplus-card">
+
+                    <!-- FRONT: spelling input -->
+                    <div class="fcplus-front">
+                        <!-- Play button (top) -->
+                        <div class="fcplus-play-row">
+                            <button class="flashcard-audio-btn" id="fcplus-audio-btn">▶</button>
+                        </div>
+                        <!-- Sentence with blank -->
+                        <div class="fcplus-sentence" id="fcplus-sentence"></div>
+                        <!-- Letter inputs -->
+                        <div class="fcplus-letters" id="fcplus-letters"></div>
+                        <!-- Hint: first/last letter label -->
+                        <div class="fcplus-hint" id="fcplus-hint"></div>
+                        <!-- Submit button (hidden until all filled) -->
+                        <button class="fcplus-submit-btn is-hidden" id="fcplus-submit-btn">提交 ✓</button>
+                        <!-- After submit: flip hint -->
+                        <div class="fcplus-flip-hint is-hidden" id="fcplus-flip-hint">點擊卡片查看答案 →</div>
+                    </div>
+
+                    <!-- FRONT-RESULT: shown when flipped back -->
+                    <div class="fcplus-front-result is-hidden" id="fcplus-front-result">
+                        <div class="fcplus-play-row">
+                            <button class="flashcard-audio-btn" id="fcplus-audio-btn-result">▶</button>
+                        </div>
+                        <div class="fcplus-sentence" id="fcplus-sentence-result"></div>
+                        <div class="fcplus-result-letters" id="fcplus-result-letters"></div>
+                        <div class="fcplus-correct-answer" id="fcplus-correct-answer"></div>
+                    </div>
+
+                    <!-- BACK -->
+                    <div class="fcplus-back">
+                        <div class="fcplus-context" id="fcplus-context"></div>
+                        <div class="flashcard-back-audio-row">
+                            <button class="flashcard-back-audio-btn" id="fcplus-back-audio-btn" disabled>▶</button>
+                            <span id="fcplus-back-edit-container"></span>
+                        </div>
+                        <button class="quiz-next-btn fcplus-next-btn" id="fcplus-next-btn">Next →</button>
+                    </div>
+
+                </div>
             </div>
         </div>
 
