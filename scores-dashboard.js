@@ -648,6 +648,7 @@ let detailViewState = {
     tab:          'noteWords',
     sortBy:       'need',
     sortDir:      'desc',
+    fromNote:     false,   // 從 Note 頁進入時為 true，用於返回導向
 };
 
 function openDetailView(categoryName, titleName) {
@@ -792,7 +793,13 @@ function _escHtml(s) {
 // ── Detail view event listeners ──────────────────────────────
 
 document.getElementById('back-from-detail-view').addEventListener('click', () => {
-    showView(document.getElementById('scores-dashboard-view'));
+    // 如果從 Note 頁進入，返回 Note 頁；否則返回 Dashboard
+    if (detailViewState.fromNote) {
+        detailViewState.fromNote = false;
+        showView(document.getElementById('note-view'));
+    } else {
+        showView(document.getElementById('scores-dashboard-view'));
+    }
 });
 
 document.querySelectorAll('.detail-tab-btn').forEach(btn => {
@@ -813,5 +820,197 @@ document.querySelectorAll('.detail-sort-btn').forEach(btn => {
         renderDetailView();
     });
 });
+
+// ── Note 頁入口：從 Note 頁直接進入細節頁 ──────────────────
+// 提供給 index.html 的按鈕呼叫
+document.getElementById('note-learning-status-btn')?.addEventListener('click', () => {
+    const cat   = typeof noteViewCategory !== 'undefined' ? noteViewCategory : null;
+    const title = typeof noteViewTitle    !== 'undefined' ? noteViewTitle    : null;
+    if (!cat || !title) {
+        showNotification('請先選擇一篇文章的 Note', 'warning');
+        return;
+    }
+    openDetailViewFromNote(cat, title);
+});
+
+/**
+ * 從 Note 頁進入細節頁（記錄來源以便返回）
+ */
+function openDetailViewFromNote(categoryName, titleName) {
+    detailViewState.fromNote = true;
+    openDetailView(categoryName, titleName);
+}
+
+// ══════════════════════════════════════════════════════════════
+//  PART 5 — ALL ARTICLES BROWSER（Dashboard 內所有文章瀏覽）
+// ══════════════════════════════════════════════════════════════
+
+// Dashboard 的 Tab 狀態
+let _dashItemTab = 'practiced'; // 'practiced' | 'all'
+
+// Tab 切換按鈕
+document.querySelectorAll('.item-tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        _dashItemTab = btn.dataset.itab;
+        document.querySelectorAll('.item-tab-btn').forEach(b =>
+            b.classList.toggle('is-active', b.dataset.itab === _dashItemTab)
+        );
+        renderItemLevelSummarySection();
+    });
+});
+
+// 覆寫 renderItemLevelSummarySection，加入 all articles 模式
+const _origRenderItemSection = renderItemLevelSummarySection;
+renderItemLevelSummarySection = function() {
+    const container = document.getElementById('item-level-summary-section');
+    if (!container) return;
+
+    if (_dashItemTab === 'practiced') {
+        _renderPracticedArticles(container);
+    } else {
+        _renderAllArticles(container);
+    }
+};
+
+function _renderPracticedArticles(container) {
+    const itemData  = loadItemScores();
+    const storyList = typeof stories !== 'undefined' ? stories : [];
+
+    const titleMap = {};
+    storyList.forEach(s => {
+        titleMap[s['標題']] = {
+            major: s['大類'] || 'Uncategorized',
+            cat:   s['分類']?.[0] || 'Uncategorized'
+        };
+    });
+    Object.keys(itemData).forEach(key => {
+        const [cat, title] = key.split('||');
+        if (title && !titleMap[title]) titleMap[title] = { major: 'Other', cat };
+    });
+
+    const rows = Object.entries(titleMap)
+        .map(([title, info]) => {
+            const summary = calcArticleNeedSummary(info.cat, title);
+            return { title, major: info.major, categoryName: info.cat, summary };
+        })
+        .filter(r => r.summary.hasPractice)
+        .sort((a, b) => {
+            const aScore = a.summary.noteAvg ?? a.summary.artAvg ?? 0;
+            const bScore = b.summary.noteAvg ?? b.summary.artAvg ?? 0;
+            return bScore - aScore;
+        });
+
+    if (rows.length === 0) {
+        container.innerHTML = `<div class="item-section-empty">
+            <p>📝 完成任何測驗後，這裡會顯示每篇文章的細部學習狀態</p>
+        </div>`;
+        return;
+    }
+
+    const majors = [...new Set(rows.map(r => r.major))].sort();
+    let html = '';
+    for (const major of majors) {
+        const group = rows.filter(r => r.major === major);
+        html += `<div class="item-major-group">
+            <div class="item-major-label">${major}</div>
+            ${group.map(row => buildItemRowHtml(row)).join('')}
+        </div>`;
+    }
+    container.innerHTML = html;
+    _bindItemRowClicks(container);
+}
+
+function _renderAllArticles(container) {
+    const storyList = typeof stories !== 'undefined' ? stories : [];
+    if (storyList.length === 0) {
+        container.innerHTML = `<div class="item-section-empty"><p>沒有文章資料</p></div>`;
+        return;
+    }
+
+    // Group by major → category
+    const majorMap = {};
+    storyList.forEach(s => {
+        const major = s['大類'] || 'Uncategorized';
+        const cat   = s['分類']?.[0] || 'Uncategorized';
+        if (!majorMap[major]) majorMap[major] = {};
+        if (!majorMap[major][cat]) majorMap[major][cat] = [];
+        majorMap[major][cat].push(s['標題']);
+    });
+
+    const majors = Object.keys(majorMap).sort();
+    let html = '';
+
+    for (const major of majors) {
+        const cats = Object.keys(majorMap[major]).sort();
+        let majorHtml = '';
+
+        for (const cat of cats) {
+            const titles = majorMap[major][cat].sort();
+            const articlesHtml = titles.map(title => {
+                const summary = calcArticleNeedSummary(cat, title);
+                const row = { title, major, categoryName: cat, summary };
+                return buildItemRowHtml(row);
+            }).join('');
+
+            majorHtml += `
+                <div class="all-articles-cat-group">
+                    <div class="all-articles-cat-label" data-cat-toggle>
+                        <span>${cat}</span>
+                        <span class="all-articles-count">${titles.length} 篇</span>
+                        <span class="all-articles-arrow">▾</span>
+                    </div>
+                    <div class="all-articles-cat-body">
+                        ${articlesHtml}
+                    </div>
+                </div>`;
+        }
+
+        html += `<div class="item-major-group all-articles-major-group">
+            <div class="item-major-label all-articles-major-label" data-major-toggle>
+                <span>${major}</span>
+                <span class="all-articles-arrow">▾</span>
+            </div>
+            <div class="all-articles-major-body">
+                ${majorHtml}
+            </div>
+        </div>`;
+    }
+
+    container.innerHTML = html;
+    _bindItemRowClicks(container);
+    _bindAllArticlesToggle(container);
+}
+
+function _bindItemRowClicks(container) {
+    container.querySelectorAll('.item-article-row').forEach(row => {
+        row.addEventListener('click', () => {
+            openDetailView(row.dataset.cat, row.dataset.title);
+        });
+    });
+}
+
+function _bindAllArticlesToggle(container) {
+    // Major toggle
+    container.querySelectorAll('[data-major-toggle]').forEach(header => {
+        header.addEventListener('click', () => {
+            const body  = header.nextElementSibling;
+            const arrow = header.querySelector('.all-articles-arrow');
+            const isOpen = body.style.display !== 'none';
+            body.style.display = isOpen ? 'none' : '';
+            arrow.textContent  = isOpen ? '▸' : '▾';
+        });
+    });
+
+    // Category toggle
+    container.querySelectorAll('[data-cat-toggle]').forEach(header => {
+        header.addEventListener('click', () => {
+            const body  = header.nextElementSibling;
+            const arrow = header.querySelector('.all-articles-arrow');
+            const isOpen = body.style.display !== 'none';
+            body.style.display = isOpen ? 'none' : '';
+            arrow.textContent  = isOpen ? '▸' : '▾';
+        });
+    });
+}
 
 console.log('✅ Scores Dashboard loaded.');

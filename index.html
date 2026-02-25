@@ -144,6 +144,9 @@
     <div class="view-top-nav">
         <button class="secondary btn-back-top" id="back-to-home-from-note">← Back</button>
         <div class="note-top-actions">
+            <button id="note-learning-status-btn" class="secondary btn-back-top" title="查看學習狀態">
+                📊
+            </button>
             <button id="export-current-note-json-btn" class="secondary btn-back-top" hidden>
                 Export Note
             </button>
@@ -759,7 +762,10 @@
     <!-- ── Item-level Learning Status Section ── -->
     <div class="item-level-section-header">
         <h2>📚 細部學習狀態</h2>
-        <span class="item-section-badge">點擊文章查看單字/句子</span>
+        <div class="item-tab-btns">
+            <button class="item-tab-btn is-active" data-itab="practiced">已練習</button>
+            <button class="item-tab-btn" data-itab="all">所有文章</button>
+        </div>
     </div>
     <div id="item-level-summary-section"></div>
 </div>
