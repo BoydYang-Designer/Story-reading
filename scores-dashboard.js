@@ -468,75 +468,7 @@ function calcArticleNeedSummary(categoryName, titleName) {
     };
 }
 
-// ── Hook into quiz answer handlers ──────────────────────────
-
-// Cloze (note word)
-const _origHandleClozeAnswer = handleClozeAnswer;
-window.handleClozeAnswer = function(selected, correct, btn) {
-    _origHandleClozeAnswer(selected, correct, btn);
-    recordItemResult(
-        quizState.categoryName, quizState.titleName,
-        'noteWord', correct, selected === correct
-    );
-};
-
-// Dictation (note sentence)
-const _origHandleDictationAnswer = handleDictationAnswer;
-window.handleDictationAnswer = function(selected, correct, btn) {
-    _origHandleDictationAnswer(selected, correct, btn);
-    recordItemResult(
-        quizState.categoryName, quizState.titleName,
-        'noteSentence', correct, selected === correct
-    );
-};
-
-// Article Listen
-const _origHandleArticleListenAnswer = handleArticleListenAnswer;
-window.handleArticleListenAnswer = function(selected, q, btn) {
-    _origHandleArticleListenAnswer(selected, q, btn);
-    recordItemResult(
-        quizState.categoryName, quizState.titleName,
-        'articleSentence', q.sentence, selected === q.sentence
-    );
-};
-
-// Article Cloze
-const _origHandleArticleClozeAnswer = handleArticleClozeAnswer;
-window.handleArticleClozeAnswer = function(selected, correct, q, btn) {
-    _origHandleArticleClozeAnswer(selected, correct, q, btn);
-    recordItemResult(
-        quizState.categoryName, quizState.titleName,
-        'articleSentence', q.sentence, selected.toLowerCase() === correct.toLowerCase()
-    );
-};
-
-// Reorder — intercept via capture listener
-document.getElementById('reorder-check-btn').addEventListener('click', () => {
-    setTimeout(() => {
-        const last = quizState.answeredQuestions[quizState.answeredQuestions.length - 1];
-        if (!last || last._itemTracked) return;
-        last._itemTracked = true;
-        const itemType = (typeof subpanelSource !== 'undefined' && subpanelSource.reorder === 'article')
-            ? 'articleSentence' : 'noteSentence';
-        recordItemResult(
-            quizState.categoryName, quizState.titleName,
-            itemType, last.correct, last.isCorrect
-        );
-    }, 0);
-}, true);
-
-// Flashcard (note word)
-document.getElementById('flashcard-correct').addEventListener('click', () => {
-    if (quizState.flashSource !== 'note') return;
-    const item = quizState.deck[quizState.deckIndex - 1];
-    if (item) recordItemResult(quizState.categoryName, quizState.titleName, 'noteWord', item.text, true);
-}, true);
-
-document.getElementById('flashcard-wrong').addEventListener('click', () => {
-    if (quizState.flashSource !== 'note') return;
-    const item = quizState.deck[quizState.deckIndex - 1];
-    if (item) recordItemResult(quizState.categoryName, quizState.titleName, 'noteWord', item.text, false);
-}, true);
+// ── NOTE: tracking calls are injected directly in quiz.js handlers ──
 
 // ══════════════════════════════════════════════════════════════
 //  PART 3 — ITEM-LEVEL SUMMARY SECTION（Dashboard 下半部）
@@ -957,9 +889,9 @@ function _renderAllArticles(container) {
                     <div class="all-articles-cat-label" data-cat-toggle>
                         <span>${cat}</span>
                         <span class="all-articles-count">${titles.length} 篇</span>
-                        <span class="all-articles-arrow">▾</span>
+                        <span class="all-articles-arrow">▸</span>
                     </div>
-                    <div class="all-articles-cat-body">
+                    <div class="all-articles-cat-body" style="display:none">
                         ${articlesHtml}
                     </div>
                 </div>`;
@@ -968,9 +900,9 @@ function _renderAllArticles(container) {
         html += `<div class="item-major-group all-articles-major-group">
             <div class="item-major-label all-articles-major-label" data-major-toggle>
                 <span>${major}</span>
-                <span class="all-articles-arrow">▾</span>
+                <span class="all-articles-arrow">▸</span>
             </div>
-            <div class="all-articles-major-body">
+            <div class="all-articles-major-body" style="display:none">
                 ${majorHtml}
             </div>
         </div>`;
@@ -990,27 +922,20 @@ function _bindItemRowClicks(container) {
 }
 
 function _bindAllArticlesToggle(container) {
-    // Major toggle
-    container.querySelectorAll('[data-major-toggle]').forEach(header => {
-        header.addEventListener('click', () => {
-            const body  = header.nextElementSibling;
-            const arrow = header.querySelector('.all-articles-arrow');
-            const isOpen = body.style.display !== 'none';
-            body.style.display = isOpen ? 'none' : '';
-            arrow.textContent  = isOpen ? '▸' : '▾';
-        });
-    });
+    function toggleSection(header) {
+        const body  = header.nextElementSibling;
+        const arrow = header.querySelector('.all-articles-arrow');
+        const isCollapsed = body.style.display === 'none';
+        body.style.display  = isCollapsed ? '' : 'none';
+        arrow.textContent   = isCollapsed ? '▾' : '▸';
+    }
 
-    // Category toggle
-    container.querySelectorAll('[data-cat-toggle]').forEach(header => {
-        header.addEventListener('click', () => {
-            const body  = header.nextElementSibling;
-            const arrow = header.querySelector('.all-articles-arrow');
-            const isOpen = body.style.display !== 'none';
-            body.style.display = isOpen ? 'none' : '';
-            arrow.textContent  = isOpen ? '▸' : '▾';
-        });
-    });
+    container.querySelectorAll('[data-major-toggle]').forEach(h =>
+        h.addEventListener('click', () => toggleSection(h))
+    );
+    container.querySelectorAll('[data-cat-toggle]').forEach(h =>
+        h.addEventListener('click', () => toggleSection(h))
+    );
 }
 
 console.log('✅ Scores Dashboard loaded.');

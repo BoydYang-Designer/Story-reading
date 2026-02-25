@@ -1153,8 +1153,11 @@ document.getElementById('flashcard').addEventListener('click', (e) => {
 });
 
 document.getElementById('flashcard-correct').addEventListener('click', () => {
+    const _fcItem = quizState.deck[quizState.deckIndex];
     quizState.correct++;
     quizState.deckIndex++;
+    if (typeof recordItemResult === 'function' && quizState.flashSource === 'note' && _fcItem)
+        recordItemResult(quizState.categoryName, quizState.titleName, 'noteWord', _fcItem.text, true);
     showFlashcard();
 });
 
@@ -1165,6 +1168,8 @@ document.getElementById('flashcard-wrong').addEventListener('click', () => {
     // Add to end of deck to review again
     quizState.deck.push(item);
     quizState.deckIndex++;
+    if (typeof recordItemResult === 'function' && quizState.flashSource === 'note' && item)
+        recordItemResult(quizState.categoryName, quizState.titleName, 'noteWord', item.text, false);
     showFlashcard();
 });
 
@@ -1399,6 +1404,7 @@ function handleClozeAnswer(selected, correct, btn) {
     });
 
     document.getElementById('cloze-next').classList.remove('is-hidden');
+    if (typeof recordItemResult === 'function') recordItemResult(quizState.categoryName, quizState.titleName, 'noteWord', correct, isCorrect);
 }
 
 document.getElementById('cloze-next').addEventListener('click', () => {
@@ -1590,6 +1596,7 @@ function handleDictationAnswer(selected, correct, btn) {
     });
 
     document.getElementById('dictation-next').classList.remove('is-hidden');
+    if (typeof recordItemResult === 'function') recordItemResult(quizState.categoryName, quizState.titleName, 'noteSentence', correct, isCorrect);
 }
 
 document.getElementById('dictation-next').addEventListener('click', () => {
@@ -1834,6 +1841,7 @@ function handleArticleListenAnswer(selected, q, btn) {
     });
 
     document.getElementById('article-listen-next').classList.remove('is-hidden');
+    if (typeof recordItemResult === 'function') recordItemResult(quizState.categoryName, quizState.titleName, 'articleSentence', q.sentence, isCorrect);
 }
 
 document.getElementById('article-listen-next').addEventListener('click', () => {
@@ -1956,6 +1964,7 @@ function handleArticleClozeAnswer(selected, correct, q, btn) {
     });
 
     document.getElementById('article-cloze-next').classList.remove('is-hidden');
+    if (typeof recordItemResult === 'function') recordItemResult(quizState.categoryName, quizState.titleName, 'articleSentence', q.sentence, isCorrect);
 }
 
 document.getElementById('article-cloze-next').addEventListener('click', () => {
@@ -2646,6 +2655,10 @@ document.getElementById('reorder-check-btn').addEventListener('click', () => {
         correct: q.sentence,
         isCorrect
     });
+    if (typeof recordItemResult === 'function') {
+        const _rtype = (typeof subpanelSource !== 'undefined' && subpanelSource.reorder === 'article') ? 'articleSentence' : 'noteSentence';
+        recordItemResult(quizState.categoryName, quizState.titleName, _rtype, q.sentence, isCorrect);
+    }
 
     // Transform Check button → Next button
     const checkBtn = document.getElementById('reorder-check-btn');
