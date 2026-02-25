@@ -2454,7 +2454,7 @@ let _insertIndicatorEl = null;
 function _updateInsertIndicator(clientX, clientY) {
     const answerArea = document.getElementById('reorder-answer-area');
     const pos = _getInsertPosition(clientX, clientY);
-    if (pos === null) { _removeInsertIndicator(); answerArea.classList.remove('drag-over'); return; }
+    if (pos === null) { _removeInsertIndicator(); _clearNeighborHighlight(); answerArea.classList.remove('drag-over'); return; }
     answerArea.classList.add('drag-over');
     if (!_insertIndicatorEl) {
         _insertIndicatorEl = document.createElement('div');
@@ -2466,6 +2466,21 @@ function _updateInsertIndicator(clientX, clientY) {
     } else {
         answerArea.insertBefore(_insertIndicatorEl, btns[pos]);
     }
+
+    // 標記左右相鄰單字搖晃，讓使用者在手指遮住時也能感知插入位置
+    _clearNeighborHighlight();
+    const leftBtn  = btns[pos - 1] ?? null;
+    const rightBtn = btns[pos]     ?? null;
+    if (leftBtn)  leftBtn.classList.add('is-neighbor-left');
+    if (rightBtn) rightBtn.classList.add('is-neighbor-right');
+}
+
+function _clearNeighborHighlight() {
+    const answerArea = document.getElementById('reorder-answer-area');
+    if (!answerArea) return;
+    answerArea.querySelectorAll('.is-neighbor-left, .is-neighbor-right').forEach(el => {
+        el.classList.remove('is-neighbor-left', 'is-neighbor-right');
+    });
 }
 
 function _removeInsertIndicator() {
@@ -2475,6 +2490,7 @@ function _removeInsertIndicator() {
         _insertIndicatorEl.parentNode.removeChild(_insertIndicatorEl);
     }
     _insertIndicatorEl = null;
+    _clearNeighborHighlight();
 }
 
 // 全域事件：拖移離開按鈕後仍可追蹤

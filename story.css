@@ -4144,6 +4144,32 @@ textarea:focus-visible {
     to   { opacity: 1;    transform: scaleY(1.05); }
 }
 
+/* 拖曳時，插入位置左右的相鄰單字搖晃提示 */
+@keyframes reorder-neighbor-wiggle {
+    0%   { transform: translateX(0)    rotate(0deg);   }
+    20%  { transform: translateX(-4px) rotate(-4deg);  }
+    40%  { transform: translateX(4px)  rotate(4deg);   }
+    60%  { transform: translateX(-3px) rotate(-2.5deg);}
+    80%  { transform: translateX(3px)  rotate(2.5deg); }
+    100% { transform: translateX(0)    rotate(0deg);   }
+}
+
+.reorder-word.is-neighbor-left,
+.reorder-word.is-neighbor-right {
+    animation: reorder-neighbor-wiggle 0.4s ease-in-out infinite;
+    outline: 2px solid var(--color-accent, #c9a96e);
+    outline-offset: 1px;
+    z-index: 1;
+    position: relative;
+}
+/* 左邊的單字向左偏、右邊的向右偏，更有「撥開空間」的感覺 */
+.reorder-word.is-neighbor-left {
+    animation-direction: normal;
+}
+.reorder-word.is-neighbor-right {
+    animation-direction: reverse;
+}
+
 /* 答案區中正在被拖移的單字：顯示虛線佔位框 */
 .reorder-word.is-dragging {
     opacity: 0;
