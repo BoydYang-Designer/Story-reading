@@ -299,21 +299,21 @@
     white-space: nowrap;
     flex: 1;
     min-width: 0;
-    cursor: pointer;
-    transition: white-space 0.15s;
 }
 
-/* 手機上點擊展開全名 */
-.browser-article-title.is-expanded {
-    white-space: normal;
-    overflow: visible;
-    text-overflow: unset;
-    word-break: break-word;
-}
-
+/* 桌機：hover 顯示全名 */
 @media (hover: hover) {
-    /* 桌機：hover 顯示全名 */
     .browser-article-title:hover {
+        white-space: normal;
+        overflow: visible;
+        text-overflow: unset;
+        word-break: break-word;
+    }
+}
+
+/* 手機：直接展開，不截斷 */
+@media (hover: none) {
+    .browser-article-title {
         white-space: normal;
         overflow: visible;
         text-overflow: unset;
