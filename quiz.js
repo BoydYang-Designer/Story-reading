@@ -641,11 +641,108 @@ document.getElementById('start-dictation-btn').addEventListener('click', () => {
 
 document.getElementById('quiz-exit-btn').addEventListener('click', () => {
     quizAudioPlayer.pause();
-    quizMenu.classList.remove('is-hidden');
-    quizSession.classList.add('is-hidden');
-    quizResult.classList.add('is-hidden');
-    renderQuizStatsBar(quizState.categoryName, quizState.titleName);
+
+    // 判斷是否已有作答紀錄（flashcard 用 correct+wrong，其他用 answeredQuestions）
+    const hasAnswered = quizState.answeredQuestions.length > 0 ||
+                        quizState.correct > 0 || quizState.wrong > 0;
+
+    if (!hasAnswered) {
+        // 未答任何題，直接回選單
+        quizMenu.classList.remove('is-hidden');
+        quizSession.classList.add('is-hidden');
+        quizResult.classList.add('is-hidden');
+        renderQuizStatsBar(quizState.categoryName, quizState.titleName);
+        return;
+    }
+
+    // 有作答紀錄 → 顯示確認對話框
+    _showEndQuizConfirm();
 });
+
+/** 顯示「提前結束」確認浮層 */
+function _showEndQuizConfirm() {
+    // 移除舊的（避免重複）
+    const old = document.getElementById('quiz-end-confirm-overlay');
+    if (old) old.remove();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'quiz-end-confirm-overlay';
+    overlay.style.cssText = `
+        position:fixed;inset:0;z-index:9999;
+        background:rgba(0,0,0,0.45);
+        display:flex;align-items:center;justify-content:center;
+        padding:20px;
+    `;
+
+    // 計算已答題數
+    let answered, correct;
+    if (quizState.mode === 'flashcard' || quizState.mode === 'fcplus') {
+        answered = quizState.correct + quizState.wrong;
+        correct  = quizState.correct;
+    } else {
+        answered = quizState.answeredQuestions.length;
+        correct  = quizState.answeredQuestions.filter(q => q.isCorrect).length;
+    }
+
+    overlay.innerHTML = `
+        <div style="background:var(--color-card,#fff);border-radius:16px;padding:28px 24px;max-width:320px;width:100%;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.2);">
+            <div style="font-size:2em;margin-bottom:8px;">⏹️</div>
+            <div style="font-size:1.05em;font-weight:700;margin-bottom:6px;">結束測驗？</div>
+            <div style="font-size:0.88em;color:var(--color-text-light,#888);margin-bottom:20px;">
+                已完成 <strong>${answered}</strong> 題，答對 <strong>${correct}</strong> 題。<br>
+                未作答的題目不列入計分。
+            </div>
+            <div style="display:flex;gap:12px;justify-content:center;">
+                <button id="quiz-end-cancel-btn" style="flex:1;padding:10px 0;border-radius:10px;border:1.5px solid var(--color-border,#ddd);background:transparent;color:var(--color-text,#333);font-size:0.95em;cursor:pointer;">繼續作答</button>
+                <button id="quiz-end-confirm-btn" style="flex:1;padding:10px 0;border-radius:10px;border:none;background:#e05c5c;color:#fff;font-size:0.95em;font-weight:700;cursor:pointer;">結束計分</button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    document.getElementById('quiz-end-cancel-btn').addEventListener('click', () => {
+        overlay.remove();
+        quizAudioPlayer.play().catch(() => {}); // 嘗試恢復播放（通常不需要）
+    });
+
+    document.getElementById('quiz-end-confirm-btn').addEventListener('click', () => {
+        overlay.remove();
+        _finishQuizEarly();
+    });
+
+    // 點擊遮罩關閉
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) overlay.remove();
+    });
+}
+
+/** 提前結束：只計算已作答題目 */
+function _finishQuizEarly() {
+    quizAudioPlayer.pause();
+    quizSession.classList.add('is-hidden');
+
+    const mode = quizState.mode;
+
+    if (mode === 'flashcard' || mode === 'fcplus') {
+        // flashcard 類：用 correct/wrong 直接計分
+        const total = quizState.correct + quizState.wrong;
+        showQuizResult(mode, quizState.correct, total, quizState.wrongItems);
+    } else {
+        // 其他模式：用 answeredQuestions 計分
+        const answered = quizState.answeredQuestions;
+        const correct  = answered.filter(q => q.isCorrect).length;
+        const total    = answered.length;
+        const wrongs   = answered.filter(q => !q.isCorrect).map(q => q.correct);
+
+        // 覆寫 quizState 讓 showQuizResult 正確渲染
+        quizState.correct     = correct;
+        quizState.wrong       = total - correct;
+        quizState.wrongItems  = wrongs;
+
+        showQuizResult(mode, correct, total, wrongs);
+    }
+}
 
 // Go to quiz btn from note view
 const goToQuizBtn = document.getElementById('go-to-quiz-btn');

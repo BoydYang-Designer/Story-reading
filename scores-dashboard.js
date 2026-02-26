@@ -580,7 +580,18 @@ function _renderBrowserSection() {
 
     // Bind article row clicks
     container.querySelectorAll('.browser-article-row').forEach(row => {
-        row.addEventListener('click', () => {
+        row.addEventListener('click', (e) => {
+            const titleEl = e.target.closest('.browser-article-title');
+            if (titleEl) {
+                // 判斷是否被截斷（scrollWidth > clientWidth）
+                const isTruncated = titleEl.scrollWidth > titleEl.clientWidth + 2;
+                const isExpanded  = titleEl.classList.contains('is-expanded');
+                if (isTruncated || isExpanded) {
+                    titleEl.classList.toggle('is-expanded');
+                    e.stopPropagation();
+                    return;
+                }
+            }
             openDetailView(row.dataset.cat, row.dataset.title);
         });
     });
@@ -642,7 +653,19 @@ function _rebuildCatBody(catGroupEl, cat) {
 
     // Re-bind article row clicks
     body.querySelectorAll('.browser-article-row').forEach(row => {
-        row.addEventListener('click', () => openDetailView(row.dataset.cat, row.dataset.title));
+        row.addEventListener('click', (e) => {
+            const titleEl = e.target.closest('.browser-article-title');
+            if (titleEl) {
+                const isTruncated = titleEl.scrollWidth > titleEl.clientWidth + 2;
+                const isExpanded  = titleEl.classList.contains('is-expanded');
+                if (isTruncated || isExpanded) {
+                    titleEl.classList.toggle('is-expanded');
+                    e.stopPropagation();
+                    return;
+                }
+            }
+            openDetailView(row.dataset.cat, row.dataset.title);
+        });
     });
 
     // Re-bind sort buttons
