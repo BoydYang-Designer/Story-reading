@@ -78,6 +78,53 @@ async function _updateArticleSentenceTotal(categoryName, titleName) {
     } catch (e) { console.error('Article sent total update error:', e); }
 }
 
+// ── 舊格式清理 ───────────────────────────────────────────────
+/**
+ * 移除每個 item record 上的頂層 correct / wrong 欄位（舊格式殘留）
+ *
+ * 舊版系統直接將 correct/wrong 存在 record 頂層，無法判斷來源。
+ * 現行系統以 source-based 格式（fc/fcplus/reorder/dictation/articleListen）計算熟悉度，
+ * 頂層的舊格式欄位不參與任何計算，反而造成混淆，一律移除。
+ *
+ * 處理邏輯：
+ *   - 混合格式（舊+新並存）→ 只移除頂層 correct/wrong，保留 source 資料
+ *   - 純舊格式（只有頂層、無任何 source）→ 整筆刪除，視為未測驗
+ *
+ * @param {object} data  itemScores 完整物件（直接修改並回傳）
+ * @returns {object} 清理後的 data
+ */
+function cleanLegacyFields(data) {
+    const sources = ['fc','fcplus','dictation','reorder','articleListen'];
+    let removedFields = 0, removedRecords = 0;
+
+    Object.keys(data).forEach(articleKey => {
+        ['noteWords','noteSentences','articleWords','articleSentences'].forEach(itype => {
+            const items = data[articleKey]?.[itype];
+            if (!items) return;
+            Object.keys(items).forEach(text => {
+                const rec = items[text];
+                if (!rec || typeof rec !== 'object') return;
+                const hasTopLevel  = 'correct' in rec || 'wrong' in rec;
+                if (!hasTopLevel) return;
+                const hasNewFormat = sources.some(s => rec[s] != null);
+                if (hasNewFormat) {
+                    delete rec.correct;
+                    delete rec.wrong;
+                    removedFields++;
+                } else {
+                    delete items[text];
+                    removedRecords++;
+                }
+            });
+        });
+    });
+
+    if (removedFields > 0 || removedRecords > 0) {
+        console.log(`[cleanLegacyFields] 清理：移除混合格式頂層欄位 ${removedFields} 筆，移除純舊格式記錄 ${removedRecords} 筆`);
+    }
+    return data;
+}
+
 function loadItemScores() {
     try {
         return JSON.parse(localStorage.getItem(ITEM_SCORES_KEY) || '{}');
@@ -98,7 +145,11 @@ async function loadItemScoresFromFirestore() {
     try {
         const doc = await db.collection('userNotes').doc(currentUser.uid).get();
         if (doc.exists && doc.data().itemScores) {
-            localStorage.setItem(ITEM_SCORES_KEY, JSON.stringify(doc.data().itemScores));
+            // 載入時自動清理舊格式，確保熟悉度計算正確
+            // 若有清理到資料，saveItemScores 會同步回 Firestore（一次性，之後不再觸發）
+            const cleaned = cleanLegacyFields(doc.data().itemScores);
+            localStorage.setItem(ITEM_SCORES_KEY, JSON.stringify(cleaned));
+            saveItemScores(cleaned);
         }
     } catch (e) { console.error('Item scores load error:', e); }
 }
@@ -854,6 +905,8 @@ function importItemScores(file) {
                 });
             });
 
+            // 合併後清理舊格式，確保計算一致
+            cleanLegacyFields(current);
             saveItemScores(current);
 
             // 若有 articleSentTotals 也一併合併
