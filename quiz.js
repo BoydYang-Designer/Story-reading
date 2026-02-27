@@ -183,15 +183,47 @@ function shuffle(arr) {
     return a;
 }
 
-function weightedSample(pool, n, keyFn, categoryName, titleName) {
+/**
+ * 依熟悉度加權抽題
+ * 優先順序：未測驗(6×) > 熟悉度<30%(4×) > 熟悉度30-59%(2×) > 熟悉度>=60%(1×)
+ */
+function weightedSample(pool, n, keyFn, categoryName, titleName, itemType) {
     if (!pool || pool.length === 0) return [];
     n = Math.min(n, pool.length);
-    let history = {};
-    try { history = JSON.parse(localStorage.getItem('quizWordHistory') || '{}'); } catch (e) {}
+
+    // 讀取 itemScores（熟悉度的真正來源）
+    let itemScores = {};
+    try { itemScores = JSON.parse(localStorage.getItem('readingChallengeItemScores') || '{}'); } catch (e) {}
+    const storeKey = `${categoryName}||${titleName}`;
+    const typeData = (itemScores[storeKey] && itemType) ? (itemScores[storeKey][itemType] || {}) : {};
+
     const weighted = pool.map(item => {
-        const key = keyFn ? keyFn(item) : String(item);
-        const h = history[key];
-        return { item, weight: h ? 1 + (h.wrong || 0) * 2 : 1 };
+        const text = keyFn ? keyFn(item) : String(item);
+        const rec  = typeData[text] || null;
+
+        let fam = null;
+        if (rec) {
+            if (typeof calcWeightedFamiliarity === 'function' && itemType) {
+                fam = calcWeightedFamiliarity(rec, itemType);
+            } else {
+                // fallback：平均所有有記錄的來源
+                const sources = ['fc','fcplus','dictation','reorder','articleListen'];
+                const vals = sources.map(s => {
+                    const sr = rec[s];
+                    if (!sr) return null;
+                    const total = (sr.correct || 0) + (sr.wrong || 0);
+                    return total > 0 ? Math.round((1 - sr.wrong / total) * 100) : null;
+                }).filter(v => v !== null);
+                if (vals.length > 0) fam = Math.round(vals.reduce((a, b) => a + b, 0) / vals.length);
+            }
+        }
+
+        let weight;
+        if (fam === null)  weight = 6;  // ⬜ 從未測驗
+        else if (fam < 30) weight = 4;  // 🔴 需練習
+        else if (fam < 60) weight = 2;  // 🟡 普通
+        else               weight = 1;  // 🟢 熟悉
+        return { item, weight };
     });
     const reservoir = [];
     for (const { item, weight } of weighted) {
@@ -1080,7 +1112,8 @@ async function startFlashcardFromArticle() {
         showNotification(`No ${quizState.difficulty === 'mix' ? '' : quizState.difficulty + ' '}words found in this article.`, 'warning');
         return;
     }
-    deck = deck.slice(0, quizState.questionCount || 10);
+    deck = weightedSample(deck, quizState.questionCount || 10,
+                    item => item.text, quizState.categoryName, title, 'articleWords');
 
     // 預載音檔（同時設定 HTMLAudioElement 與 WebAudioEngine）
     const audioSrc = `audio/${encodeURIComponent(title.trim())}.mp3`;
@@ -1127,7 +1160,8 @@ function startFlashcard() {
 
     quizState.mode        = 'flashcard';
     quizState.flashSource = 'note';
-    quizState.deck        = shuffle(allItems).slice(0, quizState.questionCount || 10);
+    quizState.deck        = weightedSample(allItems, quizState.questionCount || 10,
+                                item => item.text, quizState.categoryName, quizState.titleName, 'noteWords');
     quizState.deckIndex   = 0;
     quizState.againQueue  = [];
     quizState.correct     = 0;
@@ -1402,7 +1436,8 @@ async function startDictation() {
     }
 
     quizState.mode        = 'dictation';
-    quizState.questions   = shuffle(filteredQ).slice(0, quizState.questionCount || 10);
+    quizState.questions   = weightedSample(filteredQ, quizState.questionCount || 10,
+                                item => item.sentence, quizState.categoryName, quizState.titleName || quizState.scope, 'noteSentences');
     quizState.currentIndex = 0;
     quizState.correct     = 0;
     quizState.wrong       = 0;
@@ -2836,7 +2871,7 @@ function startFcplus() {
     quizState.mode        = 'fcplus';
     quizState.flashSource = 'note';
     quizState.deck        = weightedSample(allItems, quizState.questionCount || 10,
-                                item => item.text, quizState.categoryName, quizState.titleName);
+                                item => item.text, quizState.categoryName, quizState.titleName, 'noteWords');
     quizState.deckIndex   = 0;
     quizState.correct     = 0;
     quizState.wrong       = 0;
@@ -2888,7 +2923,7 @@ async function startFcplusFromArticle() {
     });
     deck = filterByWordDifficulty(deck, quizState.difficulty);
     deck = weightedSample(deck, quizState.questionCount || 10,
-                          item => item.text, quizState.categoryName, title);
+                          item => item.text, quizState.categoryName, title, 'articleWords');
 
     if (deck.length === 0) {
         showNotification('No words found for selected difficulty.', 'warning');

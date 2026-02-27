@@ -865,33 +865,37 @@
 
             <section class="info-section">
                 <h3>🎲 出題頻率加權</h3>
-                <p>測驗時<strong>不是純隨機抽題</strong>，熟悉度低的項目被選中的機率更高：</p>
+                <p>測驗時<strong>不是純隨機抽題</strong>，系統依照每個項目的<strong>熟悉度</strong>動態調整被抽到的機率，讓你把時間花在最需要練習的地方：</p>
                 <table class="info-table">
-                    <thead><tr><th>熟悉度</th><th>狀態</th><th>出題權重</th></tr></thead>
+                    <thead><tr><th>熟悉度狀態</th><th>範圍</th><th>出題權重</th></tr></thead>
                     <tbody>
                         <tr class="weight-row-red">
-                            <td>0%（未測驗）</td>
-                            <td>未測驗</td>
-                            <td><span class="weight-badge w3">3.0×</span></td>
+                            <td>⬜ 從未測驗</td>
+                            <td>完全沒做過</td>
+                            <td><span class="weight-badge w3">6×</span></td>
                         </tr>
                         <tr class="weight-row-red">
-                            <td>1–29%</td>
-                            <td>需練習</td>
-                            <td><span class="weight-badge w25">2.5×</span></td>
+                            <td>🔴 需練習</td>
+                            <td>熟悉度 0–29%</td>
+                            <td><span class="weight-badge w25">4×</span></td>
                         </tr>
                         <tr class="weight-row-yellow">
-                            <td>30–59%</td>
-                            <td>普通</td>
-                            <td><span class="weight-badge w15">1.5×</span></td>
+                            <td>🟡 普通</td>
+                            <td>熟悉度 30–59%</td>
+                            <td><span class="weight-badge w15">2×</span></td>
                         </tr>
                         <tr class="weight-row-green">
-                            <td>60–100%</td>
-                            <td>熟悉</td>
-                            <td><span class="weight-badge w1">1.0×</span></td>
+                            <td>🟢 熟悉</td>
+                            <td>熟悉度 60–100%</td>
+                            <td><span class="weight-badge w1">1×</span></td>
                         </tr>
                     </tbody>
                 </table>
-                <p class="info-note">💡 例如：熟悉度 0% 的單字被抽到的機率是熟悉度 60% 以上的單字的 3 倍</p>
+                <div class="info-formula-box" style="margin-top:10px;">
+                    <div class="info-formula">出題優先順序：從未測驗（6×）＞ 需練習（4×）＞ 普通（2×）＞ 熟悉（1×）</div>
+                    <div class="info-formula-sub">熟悉度由各測驗模式的答對率加權計算（見「熟悉度計算方式」）</div>
+                </div>
+                <p class="info-note">💡 例如：一個從未測驗的單字，被抽到的機率是熟悉度 ≥60% 單字的 <strong>6 倍</strong>；熟悉度 &lt;30% 的單字也有 <strong>4 倍</strong></p>
             </section>
 
             <section class="info-section">
