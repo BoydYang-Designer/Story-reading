@@ -107,16 +107,51 @@ var WebAudioEngine = (() => {
      * 精確播放 MP3 的指定片段
      *
      * @param {object} options
-     *   src      {string}    音檔路徑（e.g. "audio/The Alchemist.mp3"）
-     *   start    {number}    起始秒數
-     *   end      {number}    結束秒數
-     *   onStart  {function}  播放開始時的 callback（可選）
-     *   onEnd    {function}  播放結束時的 callback（可選）
-     *   onError  {function}  錯誤時的 callback（可選）
+     *   src         {string}    音檔路徑（e.g. "audio/The Alchemist.mp3"）
+     *   start       {number}    起始秒數
+     *   end         {number}    結束秒數
+     *   nextStart   {number}    下一句的起始秒數（選填）
+     *                           用於計算安全的 tail padding，避免播到下一句。
+     *                           若不提供，使用預設值 0.35s（長段落停頓時足夠）。
+     *   onStart  {function}     播放開始時的 callback（可選）
+     *   onEnd    {function}     播放結束時的 callback（可選）
+     *   onError  {function}     錯誤時的 callback（可選）
      *
      * @returns {Promise<void>}
      */
-    async function playSnippet({ src, start, end, onStart, onEnd, onError }) {
+
+    // ── Tail Padding 參數 ───────────────────────────────────
+    // 問題根源：Whisper timestamp 的 end 標在最後一個母音結束，
+    // 輔音尾音（students /s/、braked /t/、roads /z/）有 20~80ms 拖尾在 end 之後。
+    // Web Audio API source.start() 的 duration 是精確截斷，造成尾音被硬切。
+    //
+    // 解法：動態計算 padding
+    //   - 若知道下一句 nextStart → padding = min(0.35, gap × 0.4)
+    //     確保不超過句子間距的 40%，留 60% 給自然停頓感
+    //   - 若不知道下一句 → 預設 0.35s（適用於段落停頓等長間距情況）
+    //
+    // 另外使用 GainNode 做最後 80ms 的線性淡出（fade-out），
+    // 讓截斷感更自然，即使 padding 剛好在下一句邊緣也不會有突兀感。
+
+    const DEFAULT_TAIL  = 0.35;   // 不知道下一句時的預設 padding（秒）
+    const SAFE_GAP_RATIO = 0.40;  // 最多使用間距的 40% 作為 padding
+    const FADE_DURATION  = 0.08;  // 結尾 GainNode 淡出時長（80ms）
+
+    /**
+     * 根據下一句起始時間動態計算安全 tail padding
+     * @param {number} end         本句 end 秒數
+     * @param {number|undefined} nextStart  下一句 start 秒數（可選）
+     * @returns {number}  安全的 padding 秒數
+     */
+    function _calcTailPadding(end, nextStart) {
+        if (nextStart !== undefined && nextStart > end) {
+            const gap = nextStart - end;
+            return Math.min(DEFAULT_TAIL, gap * SAFE_GAP_RATIO);
+        }
+        return DEFAULT_TAIL;
+    }
+
+    async function playSnippet({ src, start, end, nextStart, onStart, onEnd, onError }) {
         // 停止任何正在播放的片段
         stop();
 
@@ -141,41 +176,52 @@ var WebAudioEngine = (() => {
         }
 
         // BUG-A02 修正：為本次播放建立唯一 token
-        // 若在 await _loadBuffer 期間呼叫了 stop()，token 會被重置為 null
-        // loadBuffer 完成後比對 token，確保不在已取消的情況下繼續播放
         const token = Symbol('playToken');
         _currentPlayToken = token;
 
         try {
-            // 載入（或從快取取得）AudioBuffer
             const buffer = await _loadBuffer(src);
 
-            // BUG-A02 修正：載入完成後檢查 token，若已被 stop() 重置則放棄播放
+            // BUG-A02 修正：載入完成後檢查 token
             if (_currentPlayToken !== token) {
                 console.log('[WebAudioEngine] Playback cancelled (stop() was called during load).');
                 return;
             }
 
-            // 邊界檢查：確保 start/end 不超出音檔長度
-            const safeStart = Math.max(0, Math.min(start, buffer.duration - 0.01));
-            const safeEnd   = Math.max(safeStart + 0.01, Math.min(end, buffer.duration));
+            // ── 動態 Tail Padding 計算 ──────────────────────────
+            // 根據下一句的 start 決定安全的 padding，避免播到下一句
+            const tailPadding = _calcTailPadding(end, nextStart);
+
+            const safeStart    = Math.max(0, Math.min(start, buffer.duration - 0.01));
+            const paddedEnd    = Math.min(end + tailPadding, buffer.duration);
+            const safeEnd      = Math.max(safeStart + 0.01, paddedEnd);
             const safeDuration = safeEnd - safeStart;
 
-            // 建立播放節點
-            const source = ctx.createBufferSource();
-            source.buffer = buffer;
-            source.connect(ctx.destination);
+            // ── 建立音訊節點（source → gain → destination）──────
+            // 使用 GainNode 在播放結尾做 80ms 線性淡出，
+            // 讓截斷感更自然，避免音量突然歸零的「咔」聲
+            const source    = ctx.createBufferSource();
+            const gainNode  = ctx.createGain();
+            source.buffer   = buffer;
+            source.connect(gainNode);
+            gainNode.connect(ctx.destination);
+
+            // 設定淡出時程（在 safeDuration 結束前 FADE_DURATION 秒開始淡出）
+            const fadeStart = ctx.currentTime + safeDuration - FADE_DURATION;
+            const fadeEnd   = ctx.currentTime + safeDuration;
+            if (fadeStart > ctx.currentTime) {
+                gainNode.gain.setValueAtTime(1.0, fadeStart);
+                gainNode.gain.linearRampToValueAtTime(0.0, fadeEnd);
+            }
 
             // 儲存目前播放的 source
             _currentSource = source;
             _currentOnEnd  = onEnd || null;
             _stopScheduled = false;
 
-            // onended：由引擎自然停止時觸發
-            // BUG-03 修正：加入 Guard 確認是同一個 source 才執行 callback，
-            // 防止 stop() 之後瀏覽器仍觸發 onended 造成 callback 誤觸發（競態條件）
+            // onended guard（BUG-03 修正保留）
             source.onended = () => {
-                if (_currentSource !== source) return; // Guard：已被外部 stop() 停止
+                if (_currentSource !== source) return;
                 _currentSource = null;
                 _stopScheduled = true;
                 if (_currentOnEnd) {
@@ -185,14 +231,12 @@ var WebAudioEngine = (() => {
                 }
             };
 
-            // 開始播放
-            // AudioBufferSourceNode.start(when, offset, duration)
-            // when=0 → 立刻播放
-            // offset → 從 buffer 的第幾秒開始
-            // duration → 播放幾秒
             source.start(0, safeStart, safeDuration);
 
-            console.log(`[WebAudioEngine] Playing: ${src} [${safeStart.toFixed(3)}s → ${safeEnd.toFixed(3)}s] (${safeDuration.toFixed(3)}s)`);
+            const gapInfo = nextStart !== undefined
+                ? `gap=${((nextStart - end)*1000).toFixed(0)}ms`
+                : 'gap=unknown';
+            console.log(`[WebAudioEngine] Playing: ${src} [${safeStart.toFixed(3)}s → ${safeEnd.toFixed(3)}s] tail=+${(tailPadding*1000).toFixed(0)}ms fade=${(FADE_DURATION*1000).toFixed(0)}ms (${gapInfo})`);
 
             if (onStart) onStart();
 
