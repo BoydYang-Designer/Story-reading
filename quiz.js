@@ -194,12 +194,50 @@ function weightedSample(pool, n, keyFn, categoryName, titleName, itemType) {
     // 讀取 itemScores（熟悉度的真正來源）
     let itemScores = {};
     try { itemScores = JSON.parse(localStorage.getItem('readingChallengeItemScores') || '{}'); } catch (e) {}
-    const storeKey = `${categoryName}||${titleName}`;
-    const typeData = (itemScores[storeKey] && itemType) ? (itemScores[storeKey][itemType] || {}) : {};
+
+    // BUG-06 修正：scope='all' 時 categoryName/titleName 皆為 null，
+    // 用 "null||null" 查不到任何分數。改為：若有明確 key 就用單一 key 查；
+    // 若 categoryName 或 titleName 為 null，則合併所有 key 的分數到一個暫存 map。
+    let typeDataMap = {}; // text -> rec
+    const isAllScope = !categoryName || !titleName;
+    if (!isAllScope) {
+        const storeKey = `${categoryName}||${titleName}`;
+        const td = (itemScores[storeKey] && itemType) ? (itemScores[storeKey][itemType] || {}) : {};
+        typeDataMap = td;
+    } else {
+        // scope='all'：遍歷所有 key，合併同名 item 的 rec（後來的覆蓋前面，取最新）
+        for (const key in itemScores) {
+            const td = itemType ? (itemScores[key][itemType] || {}) : {};
+            for (const text in td) {
+                if (!typeDataMap[text]) {
+                    typeDataMap[text] = td[text];
+                } else {
+                    // 合併：累加 correct/wrong，取較新的 lastSeen
+                    const existing = typeDataMap[text];
+                    const incoming = td[text];
+                    // 新格式：各 source 子物件
+                    const sources = ['fc','fcplus','dictation','reorder','articleListen'];
+                    sources.forEach(s => {
+                        if (incoming[s]) {
+                            if (!existing[s]) {
+                                existing[s] = { ...incoming[s] };
+                            } else {
+                                existing[s].correct = (existing[s].correct || 0) + (incoming[s].correct || 0);
+                                existing[s].wrong   = (existing[s].wrong   || 0) + (incoming[s].wrong   || 0);
+                                if (incoming[s].lastSeen > (existing[s].lastSeen || 0)) {
+                                    existing[s].lastSeen = incoming[s].lastSeen;
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+        }
+    }
 
     const weighted = pool.map(item => {
         const text = keyFn ? keyFn(item) : String(item);
-        const rec  = typeData[text] || null;
+        const rec  = typeDataMap[text] || null;
 
         let fam = null;
         if (rec) {

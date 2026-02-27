@@ -526,3 +526,135 @@ if (exportAllNotesJsonBtn) {
         exportAllNotes();
     });
 }
+
+// ============================================================
+//  儲存空間檢視器
+// ============================================================
+
+/**
+ * 計算 localStorage 中所有 key 的用量
+ * UTF-16 編碼：每個字元 2 bytes
+ * @returns {{ total: number, items: Array<{key, label, bytes}> }}
+ */
+function calcStorageUsage() {
+    // 友善名稱對照表
+    const LABELS = {
+        'readingChallengeSavedWordsV2':      '📝 Note 單字資料',
+        'readingChallengeLastSession':        '▶ 最後播放記錄',
+        'readingChallengeSubCategorySessions':'📂 子分類進度',
+        'readingChallengeCustomArticles':     '📄 自訂文章',
+        'readingChallengeQuizScores':         '🎯 Quiz 分數（舊格式）',
+        'readingChallengeItemScores':         '📊 熟悉度分數',
+        'readingChallengeAudioAdjustments':   '🎛 音檔時間調整',
+    };
+
+    const items = [];
+    let total = 0;
+
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (!key) continue;
+        const val = localStorage.getItem(key) || '';
+        // UTF-16: (key.length + val.length) * 2 bytes
+        const bytes = (key.length + val.length) * 2;
+        total += bytes;
+        items.push({
+            key,
+            label: LABELS[key] || key,
+            bytes
+        });
+    }
+
+    // 依大小降序排列
+    items.sort((a, b) => b.bytes - a.bytes);
+
+    return { total, items };
+}
+
+function formatBytes(bytes) {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / 1024 / 1024).toFixed(2) + ' MB';
+}
+
+function renderStorageViewer() {
+    const { total, items } = calcStorageUsage();
+    const LIMIT = 5 * 1024 * 1024; // 5 MB
+    const pct   = Math.min(100, (total / LIMIT) * 100);
+
+    // 總用量
+    const totalEl = document.getElementById('storage-total-value');
+    const barFill = document.getElementById('storage-bar-fill');
+    const usedLabel = document.getElementById('storage-used-label');
+
+    if (totalEl) totalEl.textContent = formatBytes(total);
+    if (usedLabel) usedLabel.textContent = `${formatBytes(total)} 已用`;
+
+    if (barFill) {
+        barFill.style.width = pct + '%';
+        barFill.classList.remove('warn', 'danger');
+        if (pct >= 90) barFill.classList.add('danger');
+        else if (pct >= 70) barFill.classList.add('warn');
+    }
+
+    // 明細列表
+    const listEl = document.getElementById('storage-detail-list');
+    if (!listEl) return;
+    listEl.innerHTML = '';
+
+    if (items.length === 0) {
+        listEl.innerHTML = '<div class="storage-empty-msg">localStorage 目前沒有任何資料。</div>';
+        return;
+    }
+
+    items.forEach(({ label, bytes }) => {
+        const itemPct = total > 0 ? Math.min(100, (bytes / total) * 100) : 0;
+
+        const row = document.createElement('div');
+        row.className = 'storage-detail-item';
+        row.innerHTML = `
+            <span class="storage-detail-name" title="${label}">${label}</span>
+            <div class="storage-detail-bar-wrap">
+                <div class="storage-detail-bar" style="width:${itemPct.toFixed(1)}%"></div>
+            </div>
+            <span class="storage-detail-size">${formatBytes(bytes)}</span>
+        `;
+        listEl.appendChild(row);
+    });
+}
+
+function openStorageViewer() {
+    const modal = document.getElementById('storage-viewer-modal');
+    if (!modal) return;
+    renderStorageViewer();
+    modal.classList.remove('is-hidden');
+}
+
+function closeStorageViewer() {
+    const modal = document.getElementById('storage-viewer-modal');
+    if (modal) modal.classList.add('is-hidden');
+}
+
+// 綁定事件
+const storageViewerBtn = document.getElementById('storage-viewer-btn');
+if (storageViewerBtn) {
+    storageViewerBtn.addEventListener('click', openStorageViewer);
+}
+
+const storageViewerClose = document.getElementById('storage-viewer-close');
+if (storageViewerClose) {
+    storageViewerClose.addEventListener('click', closeStorageViewer);
+}
+
+const storageViewerRefresh = document.getElementById('storage-viewer-refresh');
+if (storageViewerRefresh) {
+    storageViewerRefresh.addEventListener('click', renderStorageViewer);
+}
+
+// 點擊背景關閉
+const storageViewerOverlay = document.getElementById('storage-viewer-modal');
+if (storageViewerOverlay) {
+    storageViewerOverlay.addEventListener('click', (e) => {
+        if (e.target === storageViewerOverlay) closeStorageViewer();
+    });
+}

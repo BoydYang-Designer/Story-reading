@@ -101,6 +101,9 @@ let currentSnippetTimeout = null;
 // --- New Timestamp State Variables ---
 let isTimestampMode = true;  // Always timestamp mode — plain text removed
 let timestampData = [];
+
+// BUG-02 修正：模組層級儲存 canplaythrough handler，防止快速切換文章時重複累積監聽器
+let _canplaythroughHandler = null;
 let hasTimestampFile = false;
 let lastHighlightedSentence = null;
 let timestampUpdateRafId = null; // For smooth scrolling animation
@@ -499,8 +502,16 @@ function loadWordsFromStorage() {
 
 function saveWordsToStorage() {
     const serializableWords = serializeDataForStorage(savedWords);
-    localStorage.setItem(SAVED_WORDS_KEY, JSON.stringify(serializableWords));
-    console.log("Notes saved to Local Storage.");
+    // BUG-03 修正：localStorage 滿額時會拋出 QuotaExceededError，加 try/catch 通知使用者
+    try {
+        localStorage.setItem(SAVED_WORDS_KEY, JSON.stringify(serializableWords));
+        console.log("Notes saved to Local Storage.");
+    } catch (e) {
+        console.error("Failed to save notes to localStorage:", e);
+        if (typeof showNotification === 'function') {
+            showNotification('⚠️ 儲存失敗：裝置空間不足，請至 Data Manager 匯出並清理資料。', 'error');
+        }
+    }
 }
 
 // === NEW UNIFIED SAVE FUNCTION ===
@@ -523,8 +534,12 @@ function saveLastPlaybackState() {
             majorCategory: story['大類'] || 'Uncategorized'
         };
         
-        // 1. Save globally (最新的播放記錄)
-        localStorage.setItem(LAST_SESSION_KEY, JSON.stringify(state));
+        // 1. Save globally (最新的播放記錄) — BUG-03 修正：加 try/catch
+        try {
+            localStorage.setItem(LAST_SESSION_KEY, JSON.stringify(state));
+        } catch (e) {
+            console.error("Failed to save last session to localStorage:", e);
+        }
 
         // 2. 儲存到該子分類的專屬記錄
         try {
@@ -2341,7 +2356,8 @@ function resumeLastPlayback(title, time) {
     if (!story) {
         alert("Could not find the story from your last session.");
         clearLastPlaybackState();
-        renderCategories();
+        renderMajorCategories();
+        showView(homeView);
         return;
     }
     const category = story['分類']?.[0];
@@ -2435,8 +2451,14 @@ async function showPlayback(index, startTime = 0, maintainTimestampMode = false)
   // 設定音訊來源
   setAudioSourceWithFallback(currentStoryTitle);
 
+  // BUG-02 修正：先清除上一個尚未觸發的 handler，再掛新的，防止快速切換文章時累積
+  if (_canplaythroughHandler) {
+    audio.removeEventListener('canplaythrough', _canplaythroughHandler);
+    _canplaythroughHandler = null;
+  }
   const onLoaded = () => {
-    audio.removeEventListener('canplaythrough', onLoaded); // 立即移除監聽器
+    audio.removeEventListener('canplaythrough', onLoaded);
+    _canplaythroughHandler = null;
     if (isFinite(audio.duration)) {
         if (startTime > 0) {
             audio.currentTime = Math.min(startTime, audio.duration);
@@ -2449,6 +2471,7 @@ async function showPlayback(index, startTime = 0, maintainTimestampMode = false)
         }
     }
   };
+  _canplaythroughHandler = onLoaded;
   audio.addEventListener('canplaythrough', onLoaded);
 
   showView(playbackView);
@@ -2963,6 +2986,10 @@ function deleteCustomArticle(idx) {
     if (editingArticleIdx === idx) closeEditorPanel();
     const arts = loadCustomArticles();
     arts.splice(idx, 1);
+    // BUG-04 修正：刪除後 idx 之後的所有索引往前移，editingArticleIdx 需同步更新
+    if (editingArticleIdx > idx) {
+        editingArticleIdx--;
+    }
     saveCustomArticles(arts);
     renderCustomArticlesList();
     showNotification('文章已刪除');
