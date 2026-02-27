@@ -3143,6 +3143,7 @@ firebase.auth().onAuthStateChanged(async (user) => {
             await loadCustomArticlesFromFirestore();
             await loadAudioAdjustmentsFromFirestore();
             await loadQuizScoresFromFirestore();
+            await loadItemScoresFromFirestore();
             if (guestNotesRaw) {
                 console.log("Found guest notes in local storage. Merging...");
                 const guestNotesParsed = JSON.parse(guestNotesRaw);
