@@ -2294,6 +2294,9 @@ function _dragEnd(e) {
         _drag.ghost = null;
         _drag.active = false;
 
+        // 清除鍵盤 highlight，避免重繪後殘留藍框
+        _reorderClearHighlight();
+
         if (_drag.source === 'pool') {
             const idx = _drag.poolIdx;
             if (reorderAnswer.some(a => a.idx === idx)) return;
@@ -2430,6 +2433,12 @@ function renderReorderPool() {
         .map((word, idx) => ({ word, idx }))
         .sort((a, b) => a.word.toLowerCase().localeCompare(b.word.toLowerCase()));
 
+    const nf = reorderFirstWord.toLowerCase().replace(/[.,?!'`“”‘’]/g, '');
+    const nl = reorderLastWord.toLowerCase().replace(/[.,?!'`“”‘’]/g, '');
+    const sameHint = nf === nl;
+    let firstHintUsed = false;
+    let lastHintUsed  = false;
+
     sortedEntries.forEach(({ word, idx }) => {
         const isUsed = reorderAnswer.some(a => a.idx === idx);
         const btn = document.createElement('button');
@@ -2437,12 +2446,22 @@ function renderReorderPool() {
         if (isUsed) btn.classList.add('is-used');
 
         const nw = word.toLowerCase().replace(/[.,?!'"`“”‘’]/g, '');
-        const nf = reorderFirstWord.toLowerCase().replace(/[.,?!'"`“”‘’]/g, '');
-        const nl = reorderLastWord.toLowerCase().replace(/[.,?!'"`“”‘’]/g, '');
-        if (nw === nf || nw === nl) btn.classList.add('is-hint-word');
+        let isHint = false;
+        if (nw === nf && !firstHintUsed) {
+            isHint = true;
+            firstHintUsed = true;
+        } else if (nw === nl && !lastHintUsed && (!sameHint || firstHintUsed)) {
+            isHint = true;
+            lastHintUsed = true;
+        }
+        if (isHint) btn.classList.add('is-hint-word');
 
         btn.textContent = word;
         btn.dataset.idx = idx;
+        // 同步鍵盤 highlight 狀態，避免重繪後遺留在錯誤的按鈕上
+        if (_reorderKeyHighlightIdx !== null && idx === _reorderKeyHighlightIdx && !isUsed) {
+            btn.classList.add('is-key-highlight');
+        }
         btn.addEventListener('pointerdown', (e) => {
             if (reorderChecked || isUsed) return;
             e.currentTarget.setPointerCapture(e.pointerId);
