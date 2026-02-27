@@ -730,7 +730,7 @@ document.getElementById('dash-sort-fam-btn')?.addEventListener('click', () => {
 
 // Clear All button
 document.getElementById('scores-clear-all-btn')?.addEventListener('click', () => {
-    if (!confirm('清除所有學習記錄？此操作無法還原。')) return;
+    if (!confirm('⚠️ 清除所有學習記錄？\n\n此操作無法還原，建議先「匯出學習資料」備份。')) return;
     localStorage.removeItem(ITEM_SCORES_KEY);
     if (typeof QUIZ_SCORES_KEY !== 'undefined') localStorage.removeItem(QUIZ_SCORES_KEY);
     if (typeof currentUser !== 'undefined' && currentUser) {
@@ -741,28 +741,138 @@ document.getElementById('scores-clear-all-btn')?.addEventListener('click', () =>
     renderScoresDashboard();
 });
 
-// Clear Old Format Data button（清除舊格式 { correct, wrong } 資料）
-document.getElementById('scores-clear-legacy-btn')?.addEventListener('click', () => {
-    if (!confirm('清除舊格式學習記錄？\n\n只會刪除使用舊版系統記錄的資料（不含新版加權資料），此操作無法還原。')) return;
-    const data = loadItemScores();
-    let cleared = 0;
-    Object.keys(data).forEach(key => {
-        ['noteWords','noteSentences','articleWords','articleSentences'].forEach(itype => {
-            if (!data[key][itype]) return;
-            Object.keys(data[key][itype]).forEach(text => {
-                const rec = data[key][itype][text];
-                const hasNewFormat = ['fc','fcplus','dictation','reorder','articleListen'].some(s => rec[s]);
-                if (!hasNewFormat) {
-                    delete data[key][itype][text];
-                    cleared++;
-                }
-            });
-        });
-    });
-    saveItemScores(data);
-    renderScoresDashboard();
-    alert(`已清除 ${cleared} 筆舊格式記錄。`);
+// ── 匯出學習資料 ─────────────────────────────────────────────
+
+document.getElementById('scores-export-btn')?.addEventListener('click', () => {
+    exportItemScores();
 });
+
+function exportItemScores() {
+    const data = loadItemScores();
+    const artSentTotals = (() => {
+        try { return JSON.parse(localStorage.getItem(ART_SENT_TOTAL_KEY) || '{}'); } catch(e) { return {}; }
+    })();
+
+    const exportObj = {
+        version: '2.0',
+        exportDate: new Date().toISOString(),
+        exportedBy: (typeof currentUser !== 'undefined' && currentUser)
+            ? (currentUser.email || currentUser.uid) : 'unknown',
+        itemScores: data,
+        articleSentTotals: artSentTotals
+    };
+
+    const json = JSON.stringify(exportObj, null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = `learning-scores-${new Date().toISOString().slice(0,10)}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    const total = Object.keys(data).length;
+    alert(`✅ 匯出成功！\n共 ${total} 篇文章的學習記錄已存檔。`);
+}
+
+// ── 匯入學習資料 ─────────────────────────────────────────────
+
+document.getElementById('scores-import-btn')?.addEventListener('click', () => {
+    document.getElementById('scores-import-input')?.click();
+});
+
+document.getElementById('scores-import-input')?.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    importItemScores(file);
+    e.target.value = '';
+});
+
+function importItemScores(file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        try {
+            const obj = JSON.parse(e.target.result);
+
+            // 基本格式驗證
+            if (!obj.itemScores || typeof obj.itemScores !== 'object') {
+                alert('❌ 檔案格式錯誤：找不到 itemScores 欄位。\n請確認是否匯入正確的學習資料檔案。');
+                return;
+            }
+
+            const incoming  = obj.itemScores;
+            const incomingKeys = Object.keys(incoming).length;
+
+            const confirmMsg =
+                `📥 確認匯入學習資料？\n\n` +
+                `檔案資訊：\n` +
+                `  • 匯出日期：${obj.exportDate ? obj.exportDate.slice(0,10) : '不明'}\n` +
+                `  • 文章筆數：${incomingKeys} 篇\n\n` +
+                `匯入方式：合併（相同文章取較高熟悉度的記錄，不覆蓋現有進度）\n\n` +
+                `繼續？`;
+
+            if (!confirm(confirmMsg)) return;
+
+            // 合併：逐層深合併，同一個 item 同一個 source 累加 correct/wrong
+            const current = loadItemScores();
+
+            Object.keys(incoming).forEach(articleKey => {
+                if (!current[articleKey]) {
+                    current[articleKey] = incoming[articleKey];
+                    return;
+                }
+                ['noteWords','noteSentences','articleWords','articleSentences'].forEach(itype => {
+                    if (!incoming[articleKey][itype]) return;
+                    if (!current[articleKey][itype]) {
+                        current[articleKey][itype] = incoming[articleKey][itype];
+                        return;
+                    }
+                    Object.keys(incoming[articleKey][itype]).forEach(text => {
+                        const inc = incoming[articleKey][itype][text];
+                        const cur = current[articleKey][itype][text];
+                        if (!cur) {
+                            current[articleKey][itype][text] = inc;
+                            return;
+                        }
+                        // 合併各 source
+                        ['fc','fcplus','dictation','reorder','articleListen'].forEach(src => {
+                            if (!inc[src]) return;
+                            if (!cur[src]) { cur[src] = inc[src]; return; }
+                            cur[src].correct = (cur[src].correct || 0) + (inc[src].correct || 0);
+                            cur[src].wrong   = (cur[src].wrong   || 0) + (inc[src].wrong   || 0);
+                        });
+                        // 保留較早的 firstSeen，較晚的 lastSeen
+                        if (inc.firstSeen && (!cur.firstSeen || inc.firstSeen < cur.firstSeen)) {
+                            cur.firstSeen = inc.firstSeen;
+                        }
+                        if (inc.lastSeen && (!cur.lastSeen || inc.lastSeen > cur.lastSeen)) {
+                            cur.lastSeen = inc.lastSeen;
+                        }
+                    });
+                });
+            });
+
+            saveItemScores(current);
+
+            // 若有 articleSentTotals 也一併合併
+            if (obj.articleSentTotals && typeof obj.articleSentTotals === 'object') {
+                const curTotals = loadArticleSentTotals();
+                Object.assign(curTotals, obj.articleSentTotals);
+                saveArticleSentTotals(curTotals);
+            }
+
+            renderScoresDashboard();
+            alert(`✅ 匯入成功！\n已合併 ${incomingKeys} 篇文章的學習記錄。`);
+
+        } catch (err) {
+            alert('❌ 匯入失敗：' + err.message);
+            console.error('Import error:', err);
+        }
+    };
+    reader.readAsText(file);
+}
 
 // Home review badge（保留相容）
 function renderHomeReviewBadge() {}
