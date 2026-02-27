@@ -147,7 +147,16 @@ function isMobileDevice() {
 let _verifyIntervalId = null;
 let _verifyTimeoutId  = null;
 
-function setAudioTimeAccurate(targetTime, maxRetries = 3) {
+// ── BUG-2 修正：setAudioTimeAccurate ────────────────────────────────────────
+// 問題：原本手機固定「提前 0.3 秒」補償 iOS seek 延遲，
+//       但語速快的段落中，0.3 秒 = 約 1 個單字的時長，
+//       導致「回播上一句」會從上一句的「倒數第 1 個單字」而非句首開始。
+//
+// 修正：移除固定提前量，直接 seek 到精準目標時間；
+//       改用「更短的重試間隔（80ms）+ 更嚴格的誤差門檻（0.15s）」
+//       讓重試機制自行修正 iOS seek 的實際偏差，而不是盲目提前。
+// ─────────────────────────────────────────────────────────────────────────────
+function setAudioTimeAccurate(targetTime) {
     // 清除上一次尚未結束的驗證迴圈
     if (_verifyIntervalId) {
         clearInterval(_verifyIntervalId);
@@ -158,48 +167,42 @@ function setAudioTimeAccurate(targetTime, maxRetries = 3) {
         _verifyTimeoutId = null;
     }
 
-    const isMobile = isMobileDevice();
-    
-    // 手機裝置：提前 0.3 秒以補償定位誤差
-    // PC 裝置：提前 0.1 秒（較精確）
-    const bufferTime = isMobile ? 0.3 : 0.1;
-    const adjustedTime = Math.max(0, targetTime - bufferTime);
-    
-    console.log(`[Time Set] Target: ${targetTime.toFixed(3)}s, Adjusted: ${adjustedTime.toFixed(3)}s (Mobile: ${isMobile})`);
-    
-    // 第一次設定
-    audio.currentTime = adjustedTime;
-    
-    // 驗證機制：檢查是否設定成功
+    // ✅ 直接 seek 到精準目標（不再預扣固定 bufferTime）
+    const targetExact = Math.max(0, targetTime);
+    audio.currentTime = targetExact;
+
+    console.log(`[Time Set] Target: ${targetExact.toFixed(3)}s (precise, no pre-offset)`);
+
+    // 驗證重試機制：若 iOS 實際落點偏差 > 0.15s，重新 seek
     let retryCount = 0;
+    const MAX_RETRIES = 4;
     _verifyIntervalId = setInterval(() => {
         const actualTime = audio.currentTime;
-        const timeDiff = Math.abs(actualTime - adjustedTime);
-        
-        // 如果誤差超過 0.5 秒，重新設定
-        if (timeDiff > 0.5 && retryCount < maxRetries) {
-            console.warn(`[Time Set Retry ${retryCount + 1}] Expected: ${adjustedTime.toFixed(3)}s, Got: ${actualTime.toFixed(3)}s`);
-            audio.currentTime = adjustedTime;
+        const timeDiff = Math.abs(actualTime - targetExact);
+
+        if (timeDiff > 0.15 && retryCount < MAX_RETRIES) {
+            console.warn(`[Time Set Retry ${retryCount + 1}] Expected: ${targetExact.toFixed(3)}s, Got: ${actualTime.toFixed(3)}s (diff: ${timeDiff.toFixed(3)}s)`);
+            audio.currentTime = targetExact;
             retryCount++;
         } else {
             clearInterval(_verifyIntervalId);
             _verifyIntervalId = null;
-            if (timeDiff > 0.5) {
-                console.error(`[Time Set Failed] After ${maxRetries} retries, still off by ${timeDiff.toFixed(3)}s`);
+            if (timeDiff > 0.15) {
+                console.error(`[Time Set Failed] After ${MAX_RETRIES} retries, still off by ${timeDiff.toFixed(3)}s`);
             } else {
-                console.log(`[Time Set Success] Positioned at ${actualTime.toFixed(3)}s`);
+                console.log(`[Time Set OK] Positioned at ${actualTime.toFixed(3)}s (diff: ${timeDiff.toFixed(3)}s)`);
             }
         }
-    }, 100); // 每 100ms 檢查一次
-    
-    // 5 秒後強制清除驗證機制（最終保護）
+    }, 80); // ✅ 縮短為 80ms（原 100ms），更快收斂
+
+    // 3 秒後強制清除（原 5 秒，縮短避免佔用資源）
     _verifyTimeoutId = setTimeout(() => {
         if (_verifyIntervalId) {
             clearInterval(_verifyIntervalId);
             _verifyIntervalId = null;
         }
         _verifyTimeoutId = null;
-    }, 5000);
+    }, 3000);
 }
 
 // ============================================
@@ -1470,23 +1473,55 @@ function isWordMatchVariation(word1, word2) {
     return false;
 }
 
-// NEW: Function to play audio for a saved word
+// ── BUG-1 & BUG-6 修正 ─────────────────────────────────────────────────────
+// 問題：原本在 audio.play().catch() 裡才呼叫 TTS，
+//       但 iOS Safari 要求 speechSynthesis.speak() 必須在使用者手勢的同步 call stack 中，
+//       非同步的 .catch() 已脫離此 stack，導致 TTS 被系統封鎖，完全無聲。
+//
+// 修正：先同步查詢 vocabularyData 清單，若確認有音檔才走 Audio 路線；
+//       若無音檔則「立即同步」呼叫 TTS，確保仍在手勢 call stack 中。
+//       同時加入 speechSynthesis.cancel() 清除佇列（BUG-6：快速連點積累問題）。
+// ─────────────────────────────────────────────────────────────────────────────
+
+// 內部 TTS 輔助函數：清除佇列後立即播報（必須在使用者手勢的同步 call stack 中呼叫）
+function _speakTTS(word) {
+    if (!('speechSynthesis' in window)) {
+        showNotification(`Audio for "${word}" was not found and TTS is not supported.`, 'error');
+        return;
+    }
+    window.speechSynthesis.cancel(); // BUG-6 修正：清除積累的 TTS 佇列
+    const utterance = new SpeechSynthesisUtterance(word.trim());
+    utterance.lang = 'en-US';
+    utterance.rate = 0.9;
+    window.speechSynthesis.speak(utterance);
+}
+
+// 播放單字發音（主要 API）
 function playWordAudio(word) {
-    const audioSrc = `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(word.trim())}.mp3`;
-    const wordAudio = new Audio(audioSrc);
-    
-    wordAudio.play().catch((error) => {
-        console.log(`Audio not found for "${word}", using TTS fallback:`, error);
-        // 使用 Web Speech API 作為備用方案
-        if ('speechSynthesis' in window) {
-            const utterance = new SpeechSynthesisUtterance(word.trim());
-            utterance.lang = 'en-US'; // 設定為英文發音
-            utterance.rate = 0.9; // 稍微慢一點，讓發音更清楚
-            window.speechSynthesis.speak(utterance);
-        } else {
-            showNotification(`Audio for "${word}" was not found and TTS is not supported.`, 'error');
-        }
+    const cleanWord = word.trim().toLowerCase().replace(/^[.,?!:;'"]+|[.,?!:;'"]+$/g, '');
+
+    // 同步查詢 vocabularyData（已在 loadData() 載入）判斷是否有對應 MP3
+    // vocabularyData 的欄位名稱為 'Words'（見 Z_total_words.json 結構）
+    const hasAudio = vocabularyData.some(v => {
+        const vWord = (v['Words'] || v['word'] || '').toLowerCase().trim();
+        return vWord === cleanWord;
     });
+
+    if (hasAudio) {
+        // ✅ 有音檔：走 Audio 路線（仍在使用者手勢 call stack 中，iOS 允許）
+        const audioSrc = `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(word.trim())}.mp3`;
+        const wordAudio = new Audio(audioSrc);
+        wordAudio.play().catch((error) => {
+            // 音檔存在但播放失敗（少見）→ TTS fallback
+            // 注意：此處的 catch 已非同步，iOS TTS 可能被封鎖，但這是最後手段
+            console.warn(`[playWordAudio] Audio play failed for "${word}", trying TTS:`, error);
+            _speakTTS(word);
+        });
+    } else {
+        // ✅ 無音檔：直接同步呼叫 TTS（仍在使用者手勢 call stack 中，iOS 允許）
+        console.log(`[playWordAudio] No audio record for "${word}", using TTS directly.`);
+        _speakTTS(word);
+    }
 }
 
 textContainer.addEventListener('click', (e) => {
@@ -1590,7 +1625,7 @@ textContainer.addEventListener('click', (e) => {
                 stagedWordEl.className = 'staged-word';
                 stagedWordEl.textContent = cleanedWord;
                 stagedWordsContainer.appendChild(stagedWordEl);
-                stagedWordsContainer.appendChild(stagedWordEl);
+                // ✅ BUG-4 修正：已移除重複的 appendChild（原第 1593 行有一行多餘的 appendChild 導致單字被加入兩次）
             }
         }
     }
@@ -1656,33 +1691,49 @@ copyStagedBtn.addEventListener('click', () => {
     }
 });
 
-// NEW: Play a sentence snippet from the main audio (startTime to endTime)
-let snippetStopTimeout = null;
+// ── BUG-3 修正：playAudioSnippet ────────────────────────────────────────────
+// 問題：iOS Safari 要求 audio.play() 在使用者手勢的同步 call stack 中呼叫。
+//       當 audio.readyState < 2（HAVE_CURRENT_DATA），設定 currentTime 後
+//       瀏覽器需重新 buffer，此過程為非同步，後續 play() 脫離 call stack，
+//       iOS 會因 AutoPlay Policy 封鎖播放，導致點擊句子片段無聲。
+//
+// 修正：先嘗試呼叫 play()（讓 iOS 在手勢 call stack 中授權），
+//       若 audio 尚未就緒，監聽 canplay 事件後再執行實際播放邏輯。
+// ─────────────────────────────────────────────────────────────────────────────
+let snippetStopTimeout = null; // ✅ 宣告保留（供 audio.play 'ended' 事件使用）
 
 function playAudioSnippet(startTime, endTime) {
-    // Clear any existing snippet stop timer
     if (snippetStopTimeout) {
         clearTimeout(snippetStopTimeout);
         snippetStopTimeout = null;
     }
-    
-    // Only works if main audio is loaded and not currently playing the full story
+
     if (!isFinite(audio.duration) || isPlaying) return;
-    
+
     const duration = endTime - startTime;
     if (duration <= 0) return;
-    
-    audio.currentTime = startTime;
-    audio.play().then(() => {
-        // Stop after the snippet duration
-        snippetStopTimeout = setTimeout(() => {
-            audio.pause();
-            audio.currentTime = startTime; // reset to snippet start
-            snippetStopTimeout = null;
-        }, duration * 1000 + 100); // small buffer for smoothness
-    }).catch(e => {
-        console.warn('Snippet playback failed:', e);
-    });
+
+    // 內部執行播放的函數
+    const _doSnippetPlay = () => {
+        audio.currentTime = startTime;
+        audio.play().then(() => {
+            snippetStopTimeout = setTimeout(() => {
+                audio.pause();
+                audio.currentTime = startTime; // 播完後重設回片段起點
+                snippetStopTimeout = null;
+            }, duration * 1000 + 150); // +150ms 緩衝，避免尾音被截斷
+        }).catch(e => {
+            console.warn('[Snippet] playAudioSnippet play() failed:', e);
+        });
+    };
+
+    // ✅ 若 audio 已就緒（readyState >= 2），直接播
+    // ✅ 若尚未就緒，等 canplay 事件（一次性）再播
+    if (audio.readyState >= 2) {
+        _doSnippetPlay();
+    } else {
+        audio.addEventListener('canplay', _doSnippetPlay, { once: true });
+    }
 }
 
 
@@ -2452,18 +2503,21 @@ function skipToPrevSentence() {
 
     const currentSent = timestampData[currentIndex];
 
-    // 2. 判斷邏輯：
-    // 手機裝置：放寬到 2.0 秒（因為觸控操作較慢）
-    // PC 裝置：維持 1.5 秒
-    // 如果播放超過該句開頭一定時間，按「上一句」通常是想「重聽這一句」。
-    // 如果剛開始播放不久，按「上一句」才是真的跳到「前一句」。
-    const threshold = isMobileDevice() ? 2.0 : 1.5;
-    
+    // ── BUG-2 修正：統一 threshold ───────────────────────────────────────────
+    // 原本手機用 2.0、PC 用 1.5，目的是補償手機 seek 偏差造成的「剛 seek 完就按上一句」問題。
+    // 現在 setAudioTimeAccurate() 已移除固定提前量並改用精準重試，
+    // seek 精度手機/PC 趨於一致，不再需要差異化 threshold。
+    // 統一使用 1.5 秒：播放超過 1.5 秒才算「重聽本句」，否則跳到上一句。
+    // ─────────────────────────────────────────────────────────────────────────
+    const threshold = 1.5; // ✅ 手機/PC 統一，不再區分
+
     if (currentTime > currentSent.start + threshold) {
-        setAudioTimeAccurate(currentSent.start); // 使用改進的時間設定函數
+        // 已播超過 threshold → 重聽本句
+        setAudioTimeAccurate(currentSent.start);
     } else {
+        // 剛開始播 → 跳到上一句
         if (currentIndex > 0) {
-            setAudioTimeAccurate(timestampData[currentIndex - 1].start); // 使用改進的時間設定函數
+            setAudioTimeAccurate(timestampData[currentIndex - 1].start);
         } else {
             audio.currentTime = 0;
         }

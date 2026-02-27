@@ -36,10 +36,25 @@ var WebAudioEngine = (() => {
     /**
      * 取得（或建立）AudioContext
      * iOS Safari 需要在使用者互動後建立，此處採用延遲初始化
+     *
+     * ── BUG-5 修正 ──────────────────────────────────────────────────────────
+     * 問題：iOS 接電話或切換 App 後，AudioContext 可能進入 'closed' 狀態。
+     *       原本雖然會重新建立 context，但舊的 _bufferCache 裡的 AudioBuffer
+     *       是屬於前一個 context 的，新 context 無法直接使用這些舊 buffer，
+     *       導致返回 App 後播放靜音或報錯。
+     * 修正：偵測到 context 是 'closed' 時，重建前先清除整個 buffer cache，
+     *       確保下次播放時重新解碼，使用新 context 的 buffer。
+     * ────────────────────────────────────────────────────────────────────────
      */
     function _getContext() {
         if (_ctx && _ctx.state !== 'closed') {
             return _ctx;
+        }
+        // ✅ BUG-5 修正：context 重建時清除舊 buffer（屬於舊 context，不可複用）
+        if (_ctx && _ctx.state === 'closed') {
+            Object.keys(_bufferCache).forEach(k => delete _bufferCache[k]);
+            _cacheOrder.length = 0;
+            console.warn('[WebAudioEngine] AudioContext was closed (e.g. phone call / app switch). Cache cleared, rebuilding context.');
         }
         const AudioCtx = window.AudioContext || window.webkitAudioContext;
         if (!AudioCtx) {
