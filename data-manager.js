@@ -145,6 +145,8 @@ function categorizeWords(words) {
     
     words.forEach((word, index) => {
         const trimmed = word.trim();
+        // BUG-08 修正：過濾空字串，避免空白 Note 被誤計入統計
+        if (!trimmed) return;
         const wordCount = trimmed.split(/\s+/).length;
         
         if (wordCount === 1) {
@@ -351,7 +353,11 @@ function importData(file) {
                 throw new Error('Invalid data format: missing version');
             }
             
-            const confirmMsg = `Import data from ${data.exportDate}?\n\nThis will:\n- Merge saved words\n- Replace reading progress\n- Replace last session\n\nContinue?`;
+            // BUG-07 修正：exportDate 可能不存在，避免顯示 "undefined"
+            const dateStr = data.exportDate
+                ? new Date(data.exportDate).toLocaleString()
+                : '（未知日期）';
+            const confirmMsg = `Import data from ${dateStr}?\n\nThis will:\n- Merge saved words\n- Replace reading progress\n- Replace last session\n\nContinue?`;
             
             if (!confirm(confirmMsg)) {
                 return;

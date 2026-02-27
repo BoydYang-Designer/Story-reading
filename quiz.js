@@ -544,9 +544,22 @@ document.getElementById('back-to-note-from-quiz').addEventListener('click', () =
         quizMenu.classList.remove('is-hidden');
         renderQuizStatsBar(quizState.categoryName, quizState.titleName);
     } else {
-        // 在選單頁，← Back 依來源決定：首頁 or note-view
+        // 在選單頁，← Back 依來源決定
         if (quizState.source === 'note') {
             showView(document.getElementById('note-view'));
+        } else if (quizState.source === 'scores') {
+            // 從 Scores Dashboard 進來：回到 Detail View（若有文章），否則回 Dashboard
+            if (quizState.categoryName && quizState.titleName) {
+                if (typeof openDetailView === 'function') {
+                    openDetailView(quizState.categoryName, quizState.titleName);
+                } else {
+                    showView(document.getElementById('scores-dashboard-view'));
+                }
+            } else {
+                showView(document.getElementById('scores-dashboard-view'));
+            }
+        } else if (quizState.source === 'story') {
+            showView(document.getElementById('playback-view'));
         } else {
             showView(document.getElementById('home-view'));
         }

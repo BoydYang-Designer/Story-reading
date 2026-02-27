@@ -177,12 +177,12 @@ var WebAudioEngine = (() => {
             _stopScheduled = false;
 
             // onended：由引擎自然停止時觸發
+            // BUG-03 修正：加入 Guard 確認是同一個 source 才執行 callback，
+            // 防止 stop() 之後瀏覽器仍觸發 onended 造成 callback 誤觸發（競態條件）
             source.onended = () => {
-                // 確認是同一個 source（避免 stop() 後的殘留事件）
-                if (_currentSource === source) {
-                    _currentSource = null;
-                    _stopScheduled = true;
-                }
+                if (_currentSource !== source) return; // Guard：已被外部 stop() 停止
+                _currentSource = null;
+                _stopScheduled = true;
                 if (_currentOnEnd) {
                     const cb = _currentOnEnd;
                     _currentOnEnd = null;
@@ -217,7 +217,12 @@ var WebAudioEngine = (() => {
      * @param {string} src  音檔路徑
      * @returns {Promise<void>}
      */
+    // BUG-09 修正：先檢查瀏覽器支援性再嘗試載入，避免靜默失敗
     async function preload(src) {
+        if (!isSupported()) {
+            console.warn('[WebAudioEngine] preload() skipped: Web Audio API not supported in this browser.');
+            return;
+        }
         if (_bufferCache[src]) {
             console.log(`[WebAudioEngine] Already cached: ${src}`);
             return;

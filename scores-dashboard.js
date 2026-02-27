@@ -636,6 +636,16 @@ function _renderBrowserSection() {
         });
     });
 
+    // Bind quiz buttons in article rows
+    container.querySelectorAll('.browser-quiz-btn').forEach(btn => {
+        btn.addEventListener('click', e => {
+            e.stopPropagation(); // 不觸發 openDetailView
+            if (typeof openQuiz === 'function') {
+                openQuiz(btn.dataset.cat, btn.dataset.title, 'scores');
+            }
+        });
+    });
+
     // Bind cat sort buttons
     _bindCatSortBtns(container);
 }
@@ -694,6 +704,16 @@ function _rebuildCatBody(catGroupEl, cat) {
     // Re-bind article row clicks
     body.querySelectorAll('.browser-article-row').forEach(row => {
         row.addEventListener('click', () => openDetailView(row.dataset.cat, row.dataset.title));
+    });
+
+    // Re-bind quiz buttons
+    body.querySelectorAll('.browser-quiz-btn').forEach(btn => {
+        btn.addEventListener('click', e => {
+            e.stopPropagation();
+            if (typeof openQuiz === 'function') {
+                openQuiz(btn.dataset.cat, btn.dataset.title, 'scores');
+            }
+        });
     });
 
     // Re-bind sort buttons
@@ -768,7 +788,10 @@ function _buildArticleRowHtml(article) {
             ${famChip(artWordAvg, '🃏 單字')}
             ${famChip(artSentAvg, '🎧 句子',  sentInfo)}
         </div>
-        <div class="browser-article-arrow">→</div>
+        <div class="browser-article-actions">
+            <button class="browser-quiz-btn" data-title="${_escHtml(title)}" data-cat="${_escHtml(cat)}" title="進入 Quiz">🎯 Quiz</button>
+            <div class="browser-article-arrow">→</div>
+        </div>
     </div>`;
 }
 
@@ -1189,6 +1212,13 @@ document.getElementById('back-from-detail-view')?.addEventListener('click', () =
         showView(document.getElementById('note-view'));
     } else {
         showView(document.getElementById('scores-dashboard-view'));
+    }
+});
+
+document.getElementById('detail-view-quiz-btn')?.addEventListener('click', () => {
+    const { categoryName, titleName } = detailViewState;
+    if (categoryName && titleName && typeof openQuiz === 'function') {
+        openQuiz(categoryName, titleName, 'scores');
     }
 });
 

@@ -142,7 +142,22 @@ function isMobileDevice() {
 }
 
 // 改進的音訊時間設定函數 - 加入緩衝和重試機制
+// BUG-04 修正：以模組層級變數儲存 intervalId，每次呼叫前清除前一個 interval，
+// 防止快速連續呼叫時產生多個並行 setInterval 實例相互干擾（記憶體洩漏）
+let _verifyIntervalId = null;
+let _verifyTimeoutId  = null;
+
 function setAudioTimeAccurate(targetTime, maxRetries = 3) {
+    // 清除上一次尚未結束的驗證迴圈
+    if (_verifyIntervalId) {
+        clearInterval(_verifyIntervalId);
+        _verifyIntervalId = null;
+    }
+    if (_verifyTimeoutId) {
+        clearTimeout(_verifyTimeoutId);
+        _verifyTimeoutId = null;
+    }
+
     const isMobile = isMobileDevice();
     
     // 手機裝置：提前 0.3 秒以補償定位誤差
@@ -157,7 +172,7 @@ function setAudioTimeAccurate(targetTime, maxRetries = 3) {
     
     // 驗證機制：檢查是否設定成功
     let retryCount = 0;
-    const verifyInterval = setInterval(() => {
+    _verifyIntervalId = setInterval(() => {
         const actualTime = audio.currentTime;
         const timeDiff = Math.abs(actualTime - adjustedTime);
         
@@ -167,7 +182,8 @@ function setAudioTimeAccurate(targetTime, maxRetries = 3) {
             audio.currentTime = adjustedTime;
             retryCount++;
         } else {
-            clearInterval(verifyInterval);
+            clearInterval(_verifyIntervalId);
+            _verifyIntervalId = null;
             if (timeDiff > 0.5) {
                 console.error(`[Time Set Failed] After ${maxRetries} retries, still off by ${timeDiff.toFixed(3)}s`);
             } else {
@@ -176,8 +192,14 @@ function setAudioTimeAccurate(targetTime, maxRetries = 3) {
         }
     }, 100); // 每 100ms 檢查一次
     
-    // 5 秒後清除驗證機制（避免永久運行）
-    setTimeout(() => clearInterval(verifyInterval), 5000);
+    // 5 秒後強制清除驗證機制（最終保護）
+    _verifyTimeoutId = setTimeout(() => {
+        if (_verifyIntervalId) {
+            clearInterval(_verifyIntervalId);
+            _verifyIntervalId = null;
+        }
+        _verifyTimeoutId = null;
+    }, 5000);
 }
 
 // ============================================
@@ -2521,6 +2543,16 @@ goToStoryNoteBtn.addEventListener('click', () => {
         showView(noteView);
     }
 });
+
+const goToStoryQuizBtn = document.getElementById('go-to-story-quiz-btn');
+if (goToStoryQuizBtn) {
+    goToStoryQuizBtn.addEventListener('click', () => {
+        if (currentCategoryName && currentStoryTitle && typeof openQuiz === 'function') {
+            if (isPlaying) pauseAudio();
+            openQuiz(currentCategoryName, currentStoryTitle, 'story');
+        }
+    });
+}
 
 backToStoryFromNoteBtn.addEventListener('click', () => {
     if (noteViewCategory && noteViewTitle) {

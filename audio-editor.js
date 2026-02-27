@@ -55,7 +55,7 @@ function setAudioAdjustment(title, sentence, newStart, newEnd, originalStart, or
         end:   Math.round(newEnd   * 10) / 10,
         originalStart,
         originalEnd,
-        updatedAt: new Date().toLocaleDateString()
+        updatedAt: new Date().toISOString().slice(0, 10) // BUG-06 修正：固定 ISO 格式 YYYY-MM-DD，避免跨裝置顯示不一致
     };
     saveAudioAdjustments(adj);
 }
@@ -157,8 +157,17 @@ function _stopEditorPreview() {
 }
 
 function _renderEditorModal() {
+    // BUG-05 修正：加入 null 檢查，避免 DOM 不存在時拋出 TypeError
     const modal = document.getElementById('audio-editor-modal');
-    const box   = modal.querySelector('.audio-editor-box');
+    if (!modal) {
+        console.error('[AudioEditor] audio-editor-modal DOM not found.');
+        return;
+    }
+    const box = modal.querySelector('.audio-editor-box');
+    if (!box) {
+        console.error('[AudioEditor] .audio-editor-box not found inside modal.');
+        return;
+    }
 
     // 截短句子顯示
     const shortSentence = _editorState.sentence.length > 60
@@ -172,7 +181,7 @@ function _renderEditorModal() {
             <button class="audio-editor-close-btn" id="audio-editor-close">✕</button>
         </div>
 
-        <div class="audio-editor-sentence">"${shortSentence}"</div>
+        <div class="audio-editor-sentence">"${escapeHtml(shortSentence)}"</div>
 
         <div class="audio-editor-row">
             <span class="audio-editor-label">START</span>
@@ -252,13 +261,17 @@ function _renderEditorModal() {
         );
         showNotification('✓ 音檔時間已儲存', 'success');
 
-        // 存檔後自動試聽一次，然後呼叫 onSave
-        const onSaveCb = _editorState.onSave;
+        // 存檔後呼叫 onSave
+        // BUG-01 修正：先快取 start/end 與 callback，避免 closeAudioEditor 後
+        // _editorState 被新的編輯器覆蓋，導致 callback 傳入錯誤數值
+        const onSaveCb   = _editorState.onSave;
+        const savedStart = _editorState.start;
+        const savedEnd   = _editorState.end;
         closeAudioEditor();
 
-        // 延遲 200ms 讓 modal 關閉動畫完成，再自動試聽並呼叫 callback
+        // 延遲 200ms 讓 modal 關閉動畫完成，再呼叫 callback
         setTimeout(() => {
-            if (onSaveCb) onSaveCb(_editorState.start, _editorState.end);
+            if (onSaveCb) onSaveCb(savedStart, savedEnd);
         }, 200);
     });
 }
@@ -504,7 +517,7 @@ function renderAudioEditorManager() {
                 <div class="aem-article-group">
                     <div class="aem-article-title aem-collapsible">
                         <span class="aem-collapse-arrow">▾</span>
-                        ${title}
+                        ${escapeHtml(title)}
                         <span class="aem-count-badge">${sentences.length}</span>
                     </div>
                     <div class="aem-article-body is-collapsed">`;
@@ -518,7 +531,7 @@ function renderAudioEditorManager() {
                     const shortSent = sentence.length > 55 ? sentence.substring(0, 55) + '…' : sentence;
 
                     html += `<div class="aem-row" data-title="${escapeAttr(title)}" data-sentence="${escapeAttr(sentence)}">
-                        <div class="aem-row-sentence" title="${escapeAttr(sentence)}">${shortSent}</div>
+                        <div class="aem-row-sentence" title="${escapeAttr(sentence)}">${escapeHtml(shortSent)}</div>
                         <div class="aem-row-meta">
                             <span class="aem-timing">
                                 START ${startSign}${startDiff}s &nbsp;|&nbsp; END ${endSign}${endDiff}s
@@ -592,7 +605,20 @@ function renderAudioEditorManager() {
 }
 
 function escapeAttr(str) {
-    return str.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    return String(str).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+/**
+ * BUG-02 修正：HTML 內容轉義，防止 XSS 與 HTML 結構破壞
+ * escapeAttr 僅保護屬性值，innerHTML 內容插入須使用本函數
+ */
+function escapeHtml(str) {
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
 }
 
 // ── 匯出 / 匯入 ───────────────────────────────────────────────

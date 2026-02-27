@@ -4258,3 +4258,44 @@ textarea:focus-visible {
 #fcplus-front-result .fcplus-result-next-btn {
     margin-top: 32px;
 }
+/* ══════════════════════════════════════════════════════════
+   SCORES DASHBOARD — Quick Quiz Button
+   ══════════════════════════════════════════════════════════ */
+
+.browser-article-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.browser-quiz-btn {
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 4px 9px;
+    border-radius: 8px;
+    border: 1.5px solid var(--color-accent, #5b8cff);
+    background: transparent;
+    color: var(--color-accent, #5b8cff);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.browser-quiz-btn:hover {
+    background: var(--color-accent, #5b8cff);
+    color: #fff;
+}
+
+/* Detail view top-nav Quiz 按鈕 */
+#detail-view-quiz-btn {
+    margin-left: auto;
+    font-size: 0.8rem;
+    padding: 5px 12px;
+}
+
+/* Playback view Quiz 按鈕（與 Note 按鈕一致） */
+#go-to-story-quiz-btn {
+    /* inherits .secondary button styles */
+}

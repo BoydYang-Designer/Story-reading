@@ -1,0 +1,786 @@
+{
+  "version": "2.0",
+  "exportDate": "2026-02-27T06:26:14.643Z",
+  "exportedBy": "youngboy7326@gmail.com",
+  "itemScores": {
+    "The Alchemist||The Alchemist of 2-Prologue": {
+      "articleSentences": {
+        "What a lovely story, the alchemist thought.": {
+          "articleListen": null,
+          "fcplus": null,
+          "dictation": null,
+          "firstSeen": "2026/2/26",
+          "reorder": {
+            "wrong": 1,
+            "correct": 1
+          },
+          "fc": null,
+          "lastSeen": "2026/2/26"
+        },
+        "Ah, it is no surprise that you weep for Narcissus.": {
+          "reorder": {
+            "wrong": 3,
+            "correct": 1
+          },
+          "fc": null,
+          "lastSeen": "2026/2/26",
+          "articleListen": null,
+          "fcplus": null,
+          "dictation": null,
+          "firstSeen": "2026/2/26"
+        },
+        "Who better than you to know that?": {
+          "firstSeen": "2026/2/26",
+          "fcplus": null,
+          "dictation": null,
+          "articleListen": null,
+          "lastSeen": "2026/2/26",
+          "fc": null,
+          "reorder": {
+            "wrong": 0,
+            "correct": 1
+          }
+        },
+        "The alchemist knew the legend of Narcissus, a youth who knelt daily beside a lake to contemplate his own beauty.": {
+          "fcplus": null,
+          "dictation": null,
+          "articleListen": null,
+          "firstSeen": "2026/2/26",
+          "fc": null,
+          "reorder": {
+            "wrong": 1,
+            "correct": 0
+          },
+          "lastSeen": "2026/2/26"
+        },
+        "After all, it was by your banks that he knelt each day to contemplate himself.": {
+          "fcplus": null,
+          "dictation": null,
+          "articleListen": null,
+          "firstSeen": "2026/2/26",
+          "fc": null,
+          "reorder": {
+            "wrong": 6,
+            "correct": 1
+          },
+          "lastSeen": "2026/2/26"
+        },
+        "The lake was silent for some time.": {
+          "lastSeen": "2026/2/26",
+          "reorder": {
+            "wrong": 1,
+            "correct": 0
+          },
+          "fc": null,
+          "firstSeen": "2026/2/26",
+          "articleListen": null,
+          "fcplus": null,
+          "dictation": null
+        },
+        "A flower was born, which was called the Narcissus.": {
+          "firstSeen": "2026/2/26",
+          "articleListen": null,
+          "dictation": null,
+          "fcplus": null,
+          "lastSeen": "2026/2/26",
+          "reorder": {
+            "wrong": 2,
+            "correct": 1
+          },
+          "fc": null
+        },
+        "The lake asked.": {
+          "reorder": null,
+          "fc": null,
+          "lastSeen": "2026/2/26",
+          "articleListen": {
+            "wrong": 1,
+            "correct": 1
+          },
+          "fcplus": null,
+          "dictation": null,
+          "firstSeen": "2026/2/26"
+        },
+        "Why do you weep?": {
+          "articleListen": null,
+          "fcplus": null,
+          "dictation": null,
+          "firstSeen": "2026/2/26",
+          "reorder": {
+            "wrong": 3,
+            "correct": 1
+          },
+          "fc": null,
+          "lastSeen": "2026/2/26"
+        },
+        "They said, for though we always pursued him in the forest, you alone could contemplate his beauty close at hand.": {
+          "fcplus": null,
+          "dictation": null,
+          "articleListen": null,
+          "firstSeen": "2026/2/26",
+          "fc": null,
+          "reorder": {
+            "wrong": 1,
+            "correct": 0
+          },
+          "lastSeen": "2026/2/26"
+        },
+        "I weep for Narcissus.": {
+          "fc": null,
+          "reorder": null,
+          "lastSeen": "2026/2/26",
+          "fcplus": null,
+          "dictation": null,
+          "articleListen": {
+            "wrong": 0,
+            "correct": 1
+          },
+          "firstSeen": "2026/2/26"
+        },
+        "The goddesses said in wonder.": {
+          "reorder": {
+            "wrong": 0,
+            "correct": 1
+          },
+          "fc": null,
+          "lastSeen": "2026/2/26",
+          "articleListen": null,
+          "fcplus": null,
+          "dictation": null,
+          "firstSeen": "2026/2/26"
+        }
+      },
+      "articleWords": {},
+      "noteSentences": {},
+      "noteWords": {
+        "caravan": {
+          "dictation": null,
+          "fcplus": {
+            "wrong": 1,
+            "correct": 1
+          },
+          "articleListen": null,
+          "firstSeen": "2026/2/26",
+          "fc": {
+            "wrong": 0,
+            "correct": 1
+          },
+          "reorder": null,
+          "lastSeen": "2026/2/26"
+        },
+        "After-all": {
+          "firstSeen": "2026/2/26",
+          "fcplus": null,
+          "dictation": null,
+          "articleListen": null,
+          "lastSeen": "2026/2/26",
+          "fc": {
+            "wrong": 0,
+            "correct": 1
+          },
+          "reorder": null
+        },
+        "Leaf": {
+          "firstSeen": "2026/2/26",
+          "dictation": null,
+          "fcplus": {
+            "wrong": 0,
+            "correct": 1
+          },
+          "articleListen": null,
+          "lastSeen": "2026/2/26",
+          "fc": {
+            "wrong": 0,
+            "correct": 1
+          },
+          "reorder": null
+        },
+        "weep": {
+          "dictation": null,
+          "fcplus": null,
+          "articleListen": null,
+          "firstSeen": "2026/2/26",
+          "fc": {
+            "wrong": 0,
+            "correct": 1
+          },
+          "reorder": null,
+          "lastSeen": "2026/2/26"
+        },
+        "appear": {
+          "firstSeen": "2026/2/26",
+          "articleListen": null,
+          "dictation": null,
+          "fcplus": {
+            "wrong": 0,
+            "correct": 1
+          },
+          "lastSeen": "2026/2/26",
+          "reorder": null,
+          "fc": null
+        },
+        "goddesses-of-the-forest": {
+          "fc": {
+            "wrong": 0,
+            "correct": 1
+          },
+          "reorder": null,
+          "lastSeen": "2026/2/26",
+          "dictation": null,
+          "fcplus": null,
+          "articleListen": null,
+          "firstSeen": "2026/2/26"
+        }
+      }
+    },
+    "The Alchemist||The Alchemist of Part 1-01": {
+      "noteWords": {},
+      "articleWords": {},
+      "noteSentences": {},
+      "articleSentences": {
+        "There were no wolves in the region, but once an animal had strayed during the night, and the boy had had to spend the entire next day searching for it.": {
+          "fcplus": null,
+          "dictation": null,
+          "articleListen": null,
+          "firstSeen": "2026/2/26",
+          "fc": null,
+          "reorder": {
+            "wrong": 1,
+            "correct": 0
+          },
+          "lastSeen": "2026/2/26"
+        },
+        "They are so used to me that they know my schedule, he muttered.": {
+          "firstSeen": "2026/2/26",
+          "fcplus": null,
+          "dictation": null,
+          "articleListen": null,
+          "lastSeen": "2026/2/26",
+          "fc": null,
+          "reorder": {
+            "wrong": 2,
+            "correct": 1
+          }
+        },
+        "He decided to spend the night there.": {
+          "fcplus": null,
+          "dictation": null,
+          "articleListen": null,
+          "firstSeen": "2026/2/26",
+          "fc": null,
+          "reorder": {
+            "wrong": 0,
+            "correct": 1
+          },
+          "lastSeen": "2026/2/26"
+        },
+        "The merchant was the proprietor of a dry goods shop, and he always demanded that the sheep be sheared in his presence so that he would not be cheated.": {
+          "lastSeen": "2026/2/26",
+          "reorder": {
+            "wrong": 1,
+            "correct": 0
+          },
+          "fc": null,
+          "firstSeen": "2026/2/26",
+          "articleListen": null,
+          "dictation": null,
+          "fcplus": null
+        },
+        "He told himself that he would have to start reading thicker books.": {
+          "lastSeen": "2026/2/26",
+          "reorder": {
+            "wrong": 1,
+            "correct": 1
+          },
+          "fc": null,
+          "firstSeen": "2026/2/26",
+          "articleListen": null,
+          "dictation": null,
+          "fcplus": null
+        },
+        "Part 1 Dash 1.": {
+          "lastSeen": "2026/2/27",
+          "reorder": {
+            "wrong": 2,
+            "correct": 1
+          },
+          "fc": null,
+          "firstSeen": "2026/2/27",
+          "articleListen": null,
+          "dictation": null,
+          "fcplus": null
+        }
+      }
+    },
+    "The Alchemist||The Alchemist of 1 Foreword": {
+      "articleSentences": {
+        "When I read about clashes around the world, political clashes, economic clashes, cultural clashes, I am reminded that it is within our power to build a bridge to be crossed.": {
+          "firstSeen": "2026/2/26",
+          "dictation": null,
+          "fcplus": null,
+          "articleListen": null,
+          "lastSeen": "2026/2/26",
+          "fc": null,
+          "reorder": {
+            "wrong": 5,
+            "correct": 1
+          }
+        },
+        "The Alchemist became a spontaneous and organic phenomenon.": {
+          "lastSeen": "2026/2/25",
+          "reorder": {
+            "wrong": 0,
+            "correct": 1
+          },
+          "fc": null,
+          "firstSeen": "2026/2/25",
+          "articleListen": null,
+          "fcplus": null,
+          "dictation": null
+        },
+        "Just as you are Santiago the Shepherd boy in search of your own.": {
+          "dictation": null,
+          "fcplus": null,
+          "articleListen": null,
+          "firstSeen": "2026/2/27",
+          "fc": null,
+          "reorder": {
+            "wrong": 2,
+            "correct": 1
+          },
+          "lastSeen": "2026/2/27"
+        },
+        "Then Madonna raved about the book to Vanity Fair, and people from different walks of life, from Rush Limbaugh and Will Smith to college students and soccer moms were suddenly talking about it.": {
+          "wrong": 8,
+          "firstSeen": "2026/2/25",
+          "correct": 1,
+          "lastSeen": "2026/2/25"
+        },
+        "He wanted to translate the book and helped me find a publisher in the United States.": {
+          "lastSeen": "2026/2/27",
+          "reorder": {
+            "wrong": 2,
+            "correct": 1
+          },
+          "fc": null,
+          "firstSeen": "2026/2/27",
+          "articleListen": null,
+          "dictation": null,
+          "fcplus": null
+        },
+        "By the end of the year, it was clear to everyone that the Alchemist wasn't working.": {
+          "firstSeen": "2026/2/25",
+          "articleListen": null,
+          "dictation": null,
+          "fcplus": null,
+          "lastSeen": "2026/2/26",
+          "reorder": {
+            "wrong": 2,
+            "correct": 1
+          },
+          "fc": null
+        },
+        "And here is what I feel.": {
+          "wrong": 1,
+          "lastSeen": "2026/2/26",
+          "reorder": {
+            "wrong": 0,
+            "correct": 1
+          },
+          "firstSeen": "2026/2/25",
+          "correct": 1
+        },
+        "Ads in the New York Times and influential news magazines, radio and television interviews.": {
+          "firstSeen": "2026/2/25",
+          "correct": 0,
+          "reorder": {
+            "correct": 2,
+            "wrong": 3
+          },
+          "lastSeen": "2026/2/27",
+          "wrong": 1
+        },
+        "One opened, and the publisher on the other side believed in me and my book and agreed to give the Alchemist a second chance.": {
+          "firstSeen": "2026/2/25",
+          "dictation": null,
+          "fcplus": null,
+          "articleListen": null,
+          "lastSeen": "2026/2/27",
+          "fc": null,
+          "reorder": {
+            "wrong": 2,
+            "correct": 0
+          }
+        },
+        "I was living my own metaphor.": {
+          "reorder": {
+            "wrong": 1,
+            "correct": 1
+          },
+          "wrong": 1,
+          "dictation": null,
+          "fcplus": null,
+          "firstSeen": "2026/2/27",
+          "fc": null,
+          "lastSeen": "2026/2/27",
+          "articleListen": null,
+          "correct": 2
+        },
+        "And one man's quest is the quest of all of humanity.": {
+          "dictation": null,
+          "fcplus": null,
+          "articleListen": null,
+          "firstSeen": "2026/2/25",
+          "fc": null,
+          "reorder": {
+            "wrong": 1,
+            "correct": 1
+          },
+          "lastSeen": "2026/2/25"
+        },
+        "I was following my personal legend, and my treasure was my capacity to write.": {
+          "firstSeen": "2026/2/26",
+          "articleListen": {
+            "wrong": 0,
+            "correct": 1
+          },
+          "fcplus": null,
+          "dictation": null,
+          "lastSeen": "2026/2/26",
+          "reorder": null,
+          "fc": null
+        },
+        "A man sets out on a journey, dreaming of a beautiful or magical place, in pursuit of some unknown treasure.": {
+          "firstSeen": "2026/2/25",
+          "correct": 1,
+          "wrong": 3,
+          "lastSeen": "2026/2/26",
+          "reorder": {
+            "wrong": 1,
+            "correct": 0
+          }
+        },
+        "When the Alchemist was first published 25 years ago in my native Brazil, no one noticed.": {
+          "fcplus": null,
+          "dictation": null,
+          "firstSeen": "2026/2/27",
+          "reorder": {
+            "correct": 1,
+            "wrong": 0
+          },
+          "wrong": 0,
+          "articleListen": null,
+          "correct": 1,
+          "fc": null,
+          "lastSeen": "2026/2/27"
+        },
+        "I reread The Alchemist regularly and every time I do I experience the same sensations I felt when I wrote it.": {
+          "reorder": {
+            "wrong": 5,
+            "correct": 1
+          },
+          "fc": null,
+          "lastSeen": "2026/2/27",
+          "articleListen": null,
+          "dictation": null,
+          "fcplus": null,
+          "firstSeen": "2026/2/27"
+        },
+        "I feel happiness too, because I know I can never be alone.": {
+          "lastSeen": "2026/2/26",
+          "wrong": 0,
+          "reorder": {
+            "wrong": 2,
+            "correct": 1
+          },
+          "correct": 1,
+          "firstSeen": "2026/2/25",
+          "articleListen": {
+            "wrong": 0,
+            "correct": 1
+          }
+        },
+        "Which is why I believe the Alchemist continues all these years later to resonate with people from different cultures all around the world, touching them emotionally and spiritually, equally without prejudice.": {
+          "dictation": null,
+          "fcplus": null,
+          "articleListen": null,
+          "firstSeen": "2026/2/25",
+          "fc": null,
+          "reorder": {
+            "wrong": 1,
+            "correct": 0
+          },
+          "lastSeen": "2026/2/25"
+        },
+        "My original publisher decided to cut me loose and cancelled our contract.": {
+          "firstSeen": "2026/2/25",
+          "fcplus": null,
+          "dictation": null,
+          "articleListen": null,
+          "lastSeen": "2026/2/27",
+          "fc": null,
+          "reorder": {
+            "correct": 2,
+            "wrong": 0
+          }
+        },
+        "And I wanted to share this treasure with the world.": {
+          "fc": null,
+          "reorder": null,
+          "lastSeen": "2026/2/26",
+          "fcplus": null,
+          "dictation": null,
+          "articleListen": {
+            "wrong": 0,
+            "correct": 1
+          },
+          "firstSeen": "2026/2/26"
+        },
+        "Wherever I go, people understand me.": {
+          "wrong": 0,
+          "firstSeen": "2026/2/25",
+          "correct": 1,
+          "lastSeen": "2026/2/25"
+        },
+        "But I never lost faith in the book or ever wavered in my vision.": {
+          "lastSeen": "2026/2/27",
+          "fc": null,
+          "reorder": {
+            "wrong": 1,
+            "correct": 1
+          },
+          "firstSeen": "2026/2/27",
+          "fcplus": null,
+          "dictation": null,
+          "articleListen": null
+        },
+        "I am Santiago the Shepherd boy in search of my treasure.": {
+          "firstSeen": "2026/2/25",
+          "correct": 1,
+          "reorder": {
+            "wrong": 3,
+            "correct": 1
+          },
+          "lastSeen": "2026/2/27",
+          "wrong": 0
+        },
+        "They understand my soul.": {
+          "dictation": null,
+          "fcplus": null,
+          "firstSeen": "2026/2/27",
+          "reorder": {
+            "wrong": 1,
+            "correct": 1
+          },
+          "wrong": 1,
+          "articleListen": null,
+          "correct": 2,
+          "fc": null,
+          "lastSeen": "2026/2/27"
+        },
+        "When I sat down to write The Alchemist, all I knew is that I wanted to write about my soul.": {
+          "reorder": null,
+          "fc": null,
+          "lastSeen": "2026/2/26",
+          "articleListen": {
+            "wrong": 1,
+            "correct": 1
+          },
+          "fcplus": null,
+          "dictation": null,
+          "firstSeen": "2026/2/26"
+        },
+        "There is always a chance for reconciliation, a chance that one day he and I will sit around a table together and put an end to our history of clashes.": {
+          "fcplus": null,
+          "dictation": null,
+          "articleListen": null,
+          "firstSeen": "2026/2/27",
+          "fc": null,
+          "reorder": {
+            "wrong": 8,
+            "correct": 1
+          },
+          "lastSeen": "2026/2/27"
+        },
+        "And who knows how long it took to sell the third.": {
+          "lastSeen": "2026/2/25",
+          "fc": null,
+          "reorder": {
+            "wrong": 2,
+            "correct": 1
+          },
+          "firstSeen": "2026/2/25",
+          "dictation": null,
+          "fcplus": null,
+          "articleListen": null
+        },
+        "The story of one person is the story of everyone.": {
+          "wrong": 0,
+          "firstSeen": "2026/2/25",
+          "correct": 1,
+          "lastSeen": "2026/2/25"
+        },
+        "I started knocking on the doors of other publishers.": {
+          "wrong": 1,
+          "firstSeen": "2026/2/25",
+          "correct": 1,
+          "lastSeen": "2026/2/25"
+        },
+        "They wiped their hands of the project and let me take the book with me.": {
+          "fc": null,
+          "reorder": {
+            "wrong": 0,
+            "correct": 1
+          },
+          "lastSeen": "2026/2/27",
+          "fcplus": null,
+          "dictation": null,
+          "articleListen": null,
+          "firstSeen": "2026/2/27"
+        },
+        "The book is still very much alive.": {
+          "lastSeen": "2026/2/26",
+          "wrong": 2,
+          "reorder": {
+            "wrong": 0,
+            "correct": 1
+          },
+          "firstSeen": "2026/2/25",
+          "correct": 1
+        },
+        "And on this day, he will tell me his story and I will tell him mine.": {
+          "articleListen": {
+            "wrong": 0,
+            "correct": 1
+          },
+          "dictation": null,
+          "fcplus": null,
+          "firstSeen": "2026/2/26",
+          "reorder": {
+            "wrong": 0,
+            "correct": 1
+          },
+          "fc": null,
+          "lastSeen": "2026/2/26"
+        },
+        "I wanted to follow the omens, because I knew even then that the omens are the language of God.": {
+          "lastSeen": "2026/2/27",
+          "fc": null,
+          "reorder": {
+            "wrong": 2,
+            "correct": 0
+          },
+          "firstSeen": "2026/2/27",
+          "fcplus": null,
+          "dictation": null,
+          "articleListen": null
+        },
+        "I was 41 and desperate.": {
+          "reorder": {
+            "wrong": 2,
+            "correct": 1
+          },
+          "lastSeen": "2026/2/27",
+          "wrong": 0,
+          "firstSeen": "2026/2/25",
+          "correct": 1
+        },
+        "A bookseller in the northeast corner of the country told me that only one person purchased a copy the first week of its release.": {
+          "reorder": null,
+          "fc": null,
+          "lastSeen": "2026/2/26",
+          "articleListen": {
+            "wrong": 0,
+            "correct": 1
+          },
+          "dictation": null,
+          "fcplus": null,
+          "firstSeen": "2026/2/26"
+        },
+        "At the end of his journey, the man realizes the treasure was with him the entire time.": {
+          "lastSeen": "2026/2/25",
+          "fc": null,
+          "reorder": {
+            "wrong": 1,
+            "correct": 0
+          },
+          "firstSeen": "2026/2/25",
+          "dictation": null,
+          "fcplus": null,
+          "articleListen": null
+        },
+        "Harper Collins agreed to bring it to an American audience, publishing it with great fanfare.": {
+          "articleListen": null,
+          "dictation": null,
+          "fcplus": null,
+          "firstSeen": "2026/2/27",
+          "reorder": {
+            "wrong": 4,
+            "correct": 1
+          },
+          "fc": null,
+          "lastSeen": "2026/2/27"
+        },
+        "As I wrote in the Alchemist, when you want something, the whole universe conspires to help you.": {
+          "firstSeen": "2026/2/25",
+          "correct": 1,
+          "articleListen": {
+            "wrong": 0,
+            "correct": 1
+          },
+          "wrong": 4,
+          "lastSeen": "2026/2/27",
+          "reorder": {
+            "wrong": 1,
+            "correct": 2
+          }
+        },
+        "This continues to give me hope.": {
+          "lastSeen": "2026/2/27",
+          "fc": null,
+          "correct": 2,
+          "articleListen": null,
+          "wrong": 1,
+          "reorder": {
+            "wrong": 1,
+            "correct": 1
+          },
+          "firstSeen": "2026/2/27",
+          "dictation": null,
+          "fcplus": null
+        },
+        "The book hit the New York Times bestseller list, an important milestone for any author, and stayed there for more than 300 weeks.": {
+          "lastSeen": "2026/2/27",
+          "reorder": {
+            "wrong": 6,
+            "correct": 2
+          },
+          "fc": null,
+          "firstSeen": "2026/2/26",
+          "articleListen": null,
+          "fcplus": null,
+          "dictation": null
+        },
+        "I had no idea.": {
+          "lastSeen": "2026/2/26",
+          "wrong": 1,
+          "articleListen": {
+            "wrong": 0,
+            "correct": 1
+          },
+          "correct": 1,
+          "firstSeen": "2026/2/25"
+        }
+      },
+      "noteSentences": {},
+      "articleWords": {},
+      "noteWords": {}
+    }
+  },
+  "articleSentTotals": {
+    "The Alchemist||The Alchemist of 1 Foreword": {
+      "total": 60,
+      "updatedAt": "2026/2/27"
+    }
+  }
+}
