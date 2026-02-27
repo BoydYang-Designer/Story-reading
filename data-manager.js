@@ -528,48 +528,56 @@ if (exportAllNotesJsonBtn) {
 }
 
 // ============================================================
-//  儲存空間檢視器
+//  儲存空間檢視器（分組版 + 清除功能）
 // ============================================================
 
 /**
- * 計算 localStorage 中所有 key 的用量
- * UTF-16 編碼：每個字元 2 bytes
- * @returns {{ total: number, items: Array<{key, label, bytes}> }}
+ * 本 App 所有已知的 localStorage key，依分組分類
+ * clearable: true 表示可以安全單獨清除（不影響核心資料）
+ * clearable: false 表示重要資料，清除前需警告
  */
-function calcStorageUsage() {
-    // 友善名稱對照表
-    const LABELS = {
-        'readingChallengeSavedWordsV2':      '📝 Note 單字資料',
-        'readingChallengeLastSession':        '▶ 最後播放記錄',
-        'readingChallengeSubCategorySessions':'📂 子分類進度',
-        'readingChallengeCustomArticles':     '📄 自訂文章',
-        'readingChallengeQuizScores':         '🎯 Quiz 分數（舊格式）',
-        'readingChallengeItemScores':         '📊 熟悉度分數',
-        'readingChallengeAudioAdjustments':   '🎛 音檔時間調整',
-    };
+const STORAGE_GROUPS = [
+    {
+        id: 'note',
+        icon: '📝',
+        title: 'Note 筆記',
+        colorClass: 'storage-group-header--note',
+        desc: '你手動儲存的單字、片語、句子筆記。',
+        keys: [
+            { key: 'readingChallengeSavedWordsV2', label: 'Note 單字資料', clearable: false },
+            { key: 'readingChallengeCustomArticles', label: '自訂文章', clearable: false },
+        ]
+    },
+    {
+        id: 'quiz',
+        icon: '🎯',
+        title: '測驗 & 分數',
+        colorClass: 'storage-group-header--quiz',
+        desc: '各單字的熟悉度、Quiz 作答分數記錄。',
+        keys: [
+            { key: 'readingChallengeItemScores',         label: '熟悉度分數',         clearable: true },
+            { key: 'readingChallengeQuizScores',         label: 'Quiz 分數（舊格式）', clearable: true },
+            { key: 'readingChallengeArticleSentTotals',  label: '文章句子統計',        clearable: true },
+        ]
+    },
+    {
+        id: 'system',
+        icon: '⚙️',
+        title: '系統 & 播放記錄',
+        colorClass: 'storage-group-header--system',
+        desc: '閱讀進度、上次播放位置、音檔調整記錄。',
+        keys: [
+            { key: 'readingChallengeLastSession',         label: '最後播放記錄',   clearable: true },
+            { key: 'readingChallengeSubCategorySessions', label: '子分類進度',     clearable: true },
+            { key: 'audioAdjustments',                    label: '音檔時間調整',   clearable: true },
+        ]
+    },
+];
 
-    const items = [];
-    let total = 0;
-
-    for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (!key) continue;
-        const val = localStorage.getItem(key) || '';
-        // UTF-16: (key.length + val.length) * 2 bytes
-        const bytes = (key.length + val.length) * 2;
-        total += bytes;
-        items.push({
-            key,
-            label: LABELS[key] || key,
-            bytes
-        });
-    }
-
-    // 依大小降序排列
-    items.sort((a, b) => b.bytes - a.bytes);
-
-    return { total, items };
-}
+// 本 App 所有已知 key 的 flat set（用來識別「其他」）
+const APP_KNOWN_KEYS = new Set(
+    STORAGE_GROUPS.flatMap(g => g.keys.map(k => k.key))
+);
 
 function formatBytes(bytes) {
     if (bytes < 1024) return bytes + ' B';
@@ -577,19 +585,110 @@ function formatBytes(bytes) {
     return (bytes / 1024 / 1024).toFixed(2) + ' MB';
 }
 
+/** 讀取所有 localStorage，回傳 { totalBytes, byKey: Map<key, bytes> } */
+function calcStorageUsage() {
+    const byKey = new Map();
+    let totalBytes = 0;
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (!key) continue;
+        const val = localStorage.getItem(key) || '';
+        const bytes = (key.length + val.length) * 2;
+        byKey.set(key, bytes);
+        totalBytes += bytes;
+    }
+    return { totalBytes, byKey };
+}
+
+/** 建立一列明細 DOM */
+function buildDetailRow(label, bytes, totalBytes, key, clearable, canDelete) {
+    const pct = totalBytes > 0 ? Math.min(100, (bytes / totalBytes) * 100) : 0;
+    const row = document.createElement('div');
+    row.className = 'storage-detail-item';
+    row.dataset.key = key;
+
+    row.innerHTML = `
+        <span class="storage-detail-name" title="${key}">${label}</span>
+        <div class="storage-detail-bar-wrap">
+            <div class="storage-detail-bar" style="width:${pct.toFixed(1)}%"></div>
+        </div>
+        <span class="storage-detail-size">${formatBytes(bytes)}</span>
+        ${canDelete ? `<button class="storage-item-clear-btn" data-key="${key}" data-label="${label}" data-clearable="${clearable}">刪除</button>` : '<span></span>'}
+    `;
+    return row;
+}
+
+/** 建立一個分組區塊 DOM */
+function buildGroupSection(group, byKey, totalBytes) {
+    // 只顯示實際存在的 key
+    const existing = group.keys.filter(k => byKey.has(k.key));
+    if (existing.length === 0) return null;
+
+    const groupBytes = existing.reduce((sum, k) => sum + (byKey.get(k.key) || 0), 0);
+
+    const section = document.createElement('div');
+    section.className = 'storage-group';
+    section.dataset.groupId = group.id;
+
+    // Header
+    const header = document.createElement('div');
+    header.className = `storage-group-header ${group.colorClass}`;
+    header.innerHTML = `
+        <div class="storage-group-title">
+            <span class="storage-group-icon">${group.icon}</span>
+            <span>${group.title}</span>
+            <span class="storage-group-total">${formatBytes(groupBytes)}</span>
+        </div>
+    `;
+
+    // 判斷此分組是否有可清除的 key
+    const clearableKeys = existing.filter(k => k.clearable);
+    if (clearableKeys.length > 0) {
+        const clearAllBtn = document.createElement('button');
+        clearAllBtn.className = 'storage-clear-btn';
+        clearAllBtn.textContent = '🗑 清除可刪項目';
+        clearAllBtn.addEventListener('click', () => {
+            const names = clearableKeys.map(k => k.label).join('、');
+            if (!confirm(`確定要清除「${names}」嗎？\n\n⚠️ 這些測驗分數和記錄將無法復原。`)) return;
+            clearableKeys.forEach(k => localStorage.removeItem(k.key));
+            renderStorageViewer();
+            if (typeof showNotification === 'function') showNotification(`已清除 ${group.title} 的可刪項目`, 'info');
+        });
+        header.appendChild(clearAllBtn);
+    }
+
+    section.appendChild(header);
+
+    // 描述
+    const desc = document.createElement('div');
+    desc.className = 'storage-group-desc';
+    desc.textContent = group.desc;
+    section.appendChild(desc);
+
+    // 各項目列
+    const list = document.createElement('div');
+    list.className = 'storage-detail-list';
+    existing.forEach(k => {
+        const bytes = byKey.get(k.key) || 0;
+        const row = buildDetailRow(k.label, bytes, totalBytes, k.key, k.clearable, k.clearable);
+        list.appendChild(row);
+    });
+    section.appendChild(list);
+
+    return section;
+}
+
 function renderStorageViewer() {
-    const { total, items } = calcStorageUsage();
-    const LIMIT = 5 * 1024 * 1024; // 5 MB
-    const pct   = Math.min(100, (total / LIMIT) * 100);
+    const { totalBytes, byKey } = calcStorageUsage();
+    const LIMIT = 5 * 1024 * 1024;
+    const pct   = Math.min(100, (totalBytes / LIMIT) * 100);
 
-    // 總用量
-    const totalEl = document.getElementById('storage-total-value');
-    const barFill = document.getElementById('storage-bar-fill');
+    // 總用量 bar
+    const totalEl   = document.getElementById('storage-total-value');
+    const barFill   = document.getElementById('storage-bar-fill');
     const usedLabel = document.getElementById('storage-used-label');
-
-    if (totalEl) totalEl.textContent = formatBytes(total);
-    if (usedLabel) usedLabel.textContent = `${formatBytes(total)} 已用`;
-
+    if (totalEl)   totalEl.textContent   = formatBytes(totalBytes);
+    if (usedLabel) usedLabel.textContent = `${formatBytes(totalBytes)} 已用`;
     if (barFill) {
         barFill.style.width = pct + '%';
         barFill.classList.remove('warn', 'danger');
@@ -597,30 +696,59 @@ function renderStorageViewer() {
         else if (pct >= 70) barFill.classList.add('warn');
     }
 
-    // 明細列表
-    const listEl = document.getElementById('storage-detail-list');
-    if (!listEl) return;
-    listEl.innerHTML = '';
-
-    if (items.length === 0) {
-        listEl.innerHTML = '<div class="storage-empty-msg">localStorage 目前沒有任何資料。</div>';
-        return;
+    // 本站分組
+    const appSections = document.getElementById('storage-app-sections');
+    if (appSections) {
+        appSections.innerHTML = '';
+        STORAGE_GROUPS.forEach(group => {
+            const el = buildGroupSection(group, byKey, totalBytes);
+            if (el) appSections.appendChild(el);
+        });
+        if (appSections.children.length === 0) {
+            appSections.innerHTML = '<div class="storage-empty-msg">本站目前沒有儲存任何資料。</div>';
+        }
     }
 
-    items.forEach(({ label, bytes }) => {
-        const itemPct = total > 0 ? Math.min(100, (bytes / total) * 100) : 0;
+    // 其他（非本站）
+    const otherKeys = [...byKey.entries()].filter(([k]) => !APP_KNOWN_KEYS.has(k));
+    const otherSection = document.getElementById('storage-other-section');
+    const otherList    = document.getElementById('storage-other-list');
+    const otherTotal   = document.getElementById('storage-other-total');
 
-        const row = document.createElement('div');
-        row.className = 'storage-detail-item';
-        row.innerHTML = `
-            <span class="storage-detail-name" title="${label}">${label}</span>
-            <div class="storage-detail-bar-wrap">
-                <div class="storage-detail-bar" style="width:${itemPct.toFixed(1)}%"></div>
-            </div>
-            <span class="storage-detail-size">${formatBytes(bytes)}</span>
-        `;
-        listEl.appendChild(row);
-    });
+    if (otherSection && otherList) {
+        if (otherKeys.length === 0) {
+            otherSection.classList.add('is-hidden');
+        } else {
+            otherSection.classList.remove('is-hidden');
+            const otherBytes = otherKeys.reduce((s, [, b]) => s + b, 0);
+            if (otherTotal) otherTotal.textContent = formatBytes(otherBytes);
+
+            otherList.innerHTML = '';
+            otherKeys.sort((a, b) => b[1] - a[1]).forEach(([key, bytes]) => {
+                const row = buildDetailRow(key, bytes, totalBytes, key, true, true);
+                otherList.appendChild(row);
+            });
+        }
+    }
+
+    // 個別刪除按鈕（事件委派）
+    const modal = document.getElementById('storage-viewer-modal');
+    if (modal) {
+        // 移除舊的委派再重新綁（避免重複觸發）
+        modal.removeEventListener('click', _storageModalClickHandler);
+        modal.addEventListener('click', _storageModalClickHandler);
+    }
+}
+
+function _storageModalClickHandler(e) {
+    const btn = e.target.closest('.storage-item-clear-btn');
+    if (!btn) return;
+    const key   = btn.dataset.key;
+    const label = btn.dataset.label || key;
+    if (!confirm(`確定要刪除「${label}」嗎？\n\nkey: ${key}`)) return;
+    localStorage.removeItem(key);
+    renderStorageViewer();
+    if (typeof showNotification === 'function') showNotification(`已刪除：${label}`, 'info');
 }
 
 function openStorageViewer() {
@@ -635,20 +763,28 @@ function closeStorageViewer() {
     if (modal) modal.classList.add('is-hidden');
 }
 
-// 綁定事件
+// ── 事件綁定 ─────────────────────────────────────────────────
 const storageViewerBtn = document.getElementById('storage-viewer-btn');
-if (storageViewerBtn) {
-    storageViewerBtn.addEventListener('click', openStorageViewer);
-}
+if (storageViewerBtn) storageViewerBtn.addEventListener('click', openStorageViewer);
 
 const storageViewerClose = document.getElementById('storage-viewer-close');
-if (storageViewerClose) {
-    storageViewerClose.addEventListener('click', closeStorageViewer);
-}
+if (storageViewerClose) storageViewerClose.addEventListener('click', closeStorageViewer);
 
 const storageViewerRefresh = document.getElementById('storage-viewer-refresh');
-if (storageViewerRefresh) {
-    storageViewerRefresh.addEventListener('click', renderStorageViewer);
+if (storageViewerRefresh) storageViewerRefresh.addEventListener('click', renderStorageViewer);
+
+// 「其他」全部清除
+const clearOtherBtn = document.getElementById('storage-clear-other-btn');
+if (clearOtherBtn) {
+    clearOtherBtn.addEventListener('click', () => {
+        const { byKey } = calcStorageUsage();
+        const otherKeys = [...byKey.keys()].filter(k => !APP_KNOWN_KEYS.has(k));
+        if (otherKeys.length === 0) return;
+        if (!confirm(`確定要清除全部 ${otherKeys.length} 個非本站 key 嗎？\n\n這些資料與本 App 無關，可安全刪除。`)) return;
+        otherKeys.forEach(k => localStorage.removeItem(k));
+        renderStorageViewer();
+        if (typeof showNotification === 'function') showNotification(`已清除 ${otherKeys.length} 個非本站項目`, 'info');
+    });
 }
 
 // 點擊背景關閉

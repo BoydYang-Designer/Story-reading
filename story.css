@@ -4340,7 +4340,7 @@ textarea:focus-visible {
   border-radius: 16px;
   box-shadow: 0 8px 40px rgba(0,0,0,0.18);
   width: 100%;
-  max-width: 480px;
+  max-width: 500px;
   max-height: 88vh;
   overflow-y: auto;
   padding: 24px;
@@ -4403,13 +4403,8 @@ textarea:focus-visible {
   width: 0%;
 }
 
-.storage-bar-fill.warn {
-  background: linear-gradient(90deg, #fbbf24, #f59e0b);
-}
-
-.storage-bar-fill.danger {
-  background: linear-gradient(90deg, #f87171, #ef4444);
-}
+.storage-bar-fill.warn   { background: linear-gradient(90deg, #fbbf24, #f59e0b); }
+.storage-bar-fill.danger { background: linear-gradient(90deg, #f87171, #ef4444); }
 
 .storage-bar-caption {
   display: flex;
@@ -4418,36 +4413,106 @@ textarea:focus-visible {
   color: var(--color-text-light, #888);
 }
 
-/* 明細區 */
-.storage-detail-section {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.storage-detail-header {
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: var(--color-text-light, #888);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.storage-detail-list {
+/* ── 分組區塊 ── */
+.storage-group {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+
+.storage-group.is-hidden { display: none; }
+
+.storage-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.storage-group-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--color-text, #333);
+}
+
+.storage-group-icon { font-size: 1rem; }
+
+.storage-group-total {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-text-light, #888);
+  background: var(--color-bg-secondary, #f4f4f5);
+  border-radius: 99px;
+  padding: 2px 8px;
+}
+
+.storage-group-desc {
+  font-size: 0.78rem;
+  color: var(--color-text-light, #999);
+  line-height: 1.4;
+}
+
+/* 分組 header 顏色變體 */
+.storage-group-header--note   .storage-group-title { color: #2563eb; }
+.storage-group-header--quiz   .storage-group-title { color: #7c3aed; }
+.storage-group-header--system .storage-group-title { color: #059669; }
+.storage-group-header--other  .storage-group-title { color: #dc2626; }
+
+/* 清除按鈕 */
+.storage-clear-btn {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 8px;
+  border: 1.5px solid var(--color-border, #e5e7eb);
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  white-space: nowrap;
+  flex-shrink: 0;
+  color: var(--color-text-light, #888);
+}
+
+.storage-clear-btn:hover {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+  color: #374151;
+}
+
+.storage-clear-btn--danger {
+  border-color: #fca5a5;
+  color: #dc2626;
+}
+
+.storage-clear-btn--danger:hover {
+  background: #fef2f2;
+  border-color: #ef4444;
+}
+
+/* 明細列表 */
+.storage-detail-list {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-top: 4px;
 }
 
 .storage-detail-item {
   display: grid;
-  grid-template-columns: 1fr auto auto;
+  grid-template-columns: 1fr auto auto auto;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .storage-detail-name {
-  font-size: 0.875rem;
+  font-size: 0.845rem;
   font-weight: 500;
   color: var(--color-text, #333);
   white-space: nowrap;
@@ -4456,13 +4521,12 @@ textarea:focus-visible {
 }
 
 .storage-detail-bar-wrap {
-  flex: 1;
-  height: 6px;
+  height: 5px;
   background: var(--color-border, #e5e7eb);
   border-radius: 99px;
   overflow: hidden;
-  min-width: 60px;
-  max-width: 140px;
+  width: 80px;
+  flex-shrink: 0;
 }
 
 .storage-detail-bar {
@@ -4473,12 +4537,30 @@ textarea:focus-visible {
 }
 
 .storage-detail-size {
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 600;
   color: var(--color-text-light, #888);
   text-align: right;
   white-space: nowrap;
-  min-width: 52px;
+  min-width: 50px;
+}
+
+/* 各項目的小清除按鈕 */
+.storage-item-clear-btn {
+  font-size: 0.7rem;
+  padding: 2px 7px;
+  border-radius: 6px;
+  border: 1px solid #fca5a5;
+  background: transparent;
+  color: #ef4444;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+
+.storage-item-clear-btn:hover {
+  background: #fef2f2;
 }
 
 .storage-viewer-footer {
@@ -4491,5 +4573,5 @@ textarea:focus-visible {
   text-align: center;
   color: var(--color-text-light, #aaa);
   font-size: 0.875rem;
-  padding: 12px 0;
+  padding: 8px 0;
 }

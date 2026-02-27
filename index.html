@@ -1073,6 +1073,8 @@
 <!-- ===== 儲存空間檢視器 Modal ===== -->
 <div id="storage-viewer-modal" class="storage-viewer-overlay is-hidden">
   <div class="storage-viewer-box">
+
+    <!-- Header -->
     <div class="storage-viewer-header">
       <h2>💾 儲存空間用量</h2>
       <button class="btn-icon-tool" id="storage-viewer-close">
@@ -1095,15 +1097,28 @@
       </div>
     </div>
 
-    <!-- 各項目明細 -->
-    <div class="storage-detail-section">
-      <div class="storage-detail-header">各項目明細</div>
-      <div id="storage-detail-list" class="storage-detail-list"></div>
+    <!-- 本站分區（動態渲染） -->
+    <div id="storage-app-sections"></div>
+
+    <!-- 其他（非本站） -->
+    <div id="storage-other-section" class="storage-group is-hidden">
+      <div class="storage-group-header storage-group-header--other">
+        <div class="storage-group-title">
+          <span class="storage-group-icon">🗂</span>
+          <span>其他（非本網頁）</span>
+          <span class="storage-group-total" id="storage-other-total"></span>
+        </div>
+        <button class="storage-clear-btn storage-clear-btn--danger" id="storage-clear-other-btn">🗑 全部清除</button>
+      </div>
+      <div class="storage-group-desc">這些 key 不屬於本 App，可以安全刪除以釋放空間。</div>
+      <div class="storage-detail-list" id="storage-other-list"></div>
     </div>
 
+    <!-- Footer -->
     <div class="storage-viewer-footer">
       <button class="secondary" id="storage-viewer-refresh">🔄 重新計算</button>
     </div>
+
   </div>
 </div>
 
