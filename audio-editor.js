@@ -624,6 +624,37 @@ function escapeHtml(str) {
 // ── 匯出 / 匯入 ───────────────────────────────────────────────
 
 /**
+ * 清除全部音檔調整記錄（恢復所有句子為原始 timestamp）
+ */
+function clearAllAudioAdjustments() {
+    const adj = loadAudioAdjustments();
+    let totalEntries = 0;
+    Object.values(adj).forEach(t => { totalEntries += Object.keys(t).length; });
+
+    if (totalEntries === 0) {
+        showNotification('目前沒有任何調整記錄', 'info');
+        return;
+    }
+
+    if (!confirm(`確定要清除全部 ${totalEntries} 筆音檔調整記錄嗎？\n\n所有句子將恢復使用原始 timestamp，此操作無法復原。\n（建議先匯出備份再清除）`)) {
+        return;
+    }
+
+    // 清空並儲存
+    saveAudioAdjustments({});
+
+    // 同步清除 Firebase（如已登入）
+    if (typeof currentUser !== 'undefined' && currentUser) {
+        db.collection('userNotes').doc(currentUser.uid)
+          .set({ audioAdjustments: {} }, { merge: true })
+          .catch(err => console.error('[AudioEditor] Firebase clear-all error:', err));
+    }
+
+    showNotification(`✓ 已清除全部 ${totalEntries} 筆調整記錄`, 'success');
+    renderAudioEditorManager();
+}
+
+/**
  * 匯出所有音檔調整記錄為 JSON 備份檔
  */
 function exportAudioAdjustments() {
@@ -763,6 +794,12 @@ function getNoteAdjustedTiming(title, sentence, originalStart, originalEnd) {
 const _aemExportBtn = document.getElementById('aem-export-btn');
 if (_aemExportBtn) {
     _aemExportBtn.addEventListener('click', exportAudioAdjustments);
+}
+
+// 清除全部按鈕
+const _aemClearAllBtn = document.getElementById('aem-clear-all-btn');
+if (_aemClearAllBtn) {
+    _aemClearAllBtn.addEventListener('click', clearAllAudioAdjustments);
 }
 
 // 匯入按鈕 → 觸發隱藏 file input

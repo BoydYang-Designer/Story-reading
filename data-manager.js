@@ -142,23 +142,55 @@ function categorizeWords(words) {
         phrases: [],
         sentences: []
     };
-    
+
     words.forEach((word, index) => {
-        const trimmed = word.trim();
+        // BUG-A08（data-manager）：word 可能為物件（Firestore 格式）
+        const rawWord = typeof word === 'string' ? word : (word?.word || String(word));
+        const trimmed = rawWord.trim();
         // BUG-08 修正：過濾空字串，避免空白 Note 被誤計入統計
         if (!trimmed) return;
-        const wordCount = trimmed.split(/\s+/).length;
-        
-        if (wordCount === 1) {
+
+        // BUG-A16 修正：偵測是否含有 CJK 字元（中文/日文/韓文）
+        // 若有 CJK 字元，以字元數判斷長短；否則以英文空格分詞數判斷
+        const hasCJK = /[\u4e00-\u9fff\u3400-\u4dbf\uff00-\uffef\u3040-\u309f\u30a0-\u30ff\uac00-\ud7af]/.test(trimmed);
+
+        let lengthUnit;
+        if (hasCJK) {
+            // 中文以字元總數判斷（含夾雜英文）
+            // 去除空格後的總字元數
+            lengthUnit = trimmed.replace(/\s+/g, '').length;
+        } else {
+            // 英文以空格分詞數判斷
+            lengthUnit = trimmed.split(/\s+/).length;
+        }
+
+        if (lengthUnit <= 1) {
             categorized.words.push({ word: trimmed, index });
-        } else if (wordCount >= 2 && wordCount <= 5) {
+        } else if (lengthUnit <= 5) {
             categorized.phrases.push({ word: trimmed, index });
         } else {
             categorized.sentences.push({ word: trimmed, index });
         }
     });
-    
+
     return categorized;
+}
+
+/**
+ * BUG-A12 修正：以內容而非物件參考去除重複
+ * 支援字串格式與物件格式（{ word: '...' }）
+ * @param {Array} arr  要去重的陣列
+ * @returns {Array}  去重後的陣列
+ */
+function _deduplicateWords(arr) {
+    const map = new Map();
+    arr.forEach(item => {
+        const key = typeof item === 'string' ? item : (item?.word || JSON.stringify(item));
+        if (!map.has(key)) {
+            map.set(key, item);
+        }
+    });
+    return [...map.values()];
 }
 
 // ============================================
@@ -389,9 +421,10 @@ function importData(file) {
                             return;
                         }
                         
-                        // Merge and remove duplicates
+                        // BUG-A12 修正：改用 _deduplicateWords 以內容去重，
+                        // 修正 Set 對物件型 Note 無法正確去重的問題
                         const combined = [...savedWords[category][story], ...importedWords];
-                        savedWords[category][story] = [...new Set(combined)];
+                        savedWords[category][story] = _deduplicateWords(combined);
                     });
                 });
                 saveWordsToStorage();
@@ -424,8 +457,20 @@ function saveWordsToStorage() {
         // Save to Firestore
         saveWordsToFirestore();
     } else {
-        // Save to localStorage
-        localStorage.setItem(SAVED_WORDS_KEY, JSON.stringify(savedWords));
+        // BUG-A08 修正：localStorage.setItem 可能因空間不足或隱私模式而拋出錯誤
+        try {
+            localStorage.setItem(SAVED_WORDS_KEY, JSON.stringify(savedWords));
+        } catch (e) {
+            if (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED') {
+                if (typeof showNotification === 'function') {
+                    showNotification('儲存空間已滿，筆記未能存入裝置，請匯出備份', 'error');
+                } else {
+                    alert('儲存空間已滿，筆記未能存入裝置，請匯出備份');
+                }
+            } else {
+                console.error('[DataManager] localStorage.setItem error:', e);
+            }
+        }
     }
 }
 
