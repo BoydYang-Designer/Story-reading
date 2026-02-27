@@ -16,29 +16,61 @@ def format_timestamp(seconds: float) -> str:
     return f"{hours:02}:{minutes:02}:{seconds_int:02}.{milliseconds_rem:03}"
 
 
-def smart_sentence_split(segments, max_gap=0.6, max_duration=5.0, max_words=15):
+def smart_sentence_split(segments, max_gap=0.6, max_duration=6.0, max_words=18, min_words=6):
     """
-    智能斷句：根據標點、時間間隔、時長和字數進行分段。
-    同時支援原版 Whisper 和 faster-whisper 的 segment 格式。
+    智能斷句 v3：
+    - 連接詞保護：不在 that/and/but/which/when... 等詞後斷句（僅對時間間隔有效）
+    - 殘句合併：小寫開頭、詞數<6、或以接續介詞開頭的行，自動合併到前一句
+    - 時長/詞數超限時強制斷句（不受連接詞保護影響）
+    - 支援原版 Whisper 和 faster-whisper 格式
     """
     sentence_endings = {'.', '!', '?', '。', '！', '？'}
     pause_punctuations = {',', ';', ':', '，', '；', '：'}
+    joining_words = {
+        'that', 'and', 'but', 'or', 'nor', 'so', 'yet',
+        'which', 'who', 'whom', 'whose', 'when', 'where',
+        'because', 'although', 'though', 'while', 'as',
+        'if', 'unless', 'until', 'since', 'after', 'before',
+    }
+    continuation_starters = {
+        'with', 'to', 'of', 'from', 'in', 'at', 'for', 'on',
+        'about', 'into', 'by', 'than', 'through',
+    }
 
     new_segments = []
-    current_sentence = {'start': None, 'end': None, 'text': '', 'word_count': 0}
+    current_sentence = {'start': None, 'end': None, 'text': '', 'word_count': 0, 'last_word_clean': ''}
+
+    def flush(cs, segs):
+        text = cs['text'].strip()
+        if not text:
+            return
+        words = text.split()
+        first_word = words[0].lower().rstrip('.,!?;:') if words else ''
+        first_char_lower = text[0].islower()
+        # 殘句條件：詞數太少、小寫開頭（表示是接續片段）、或以接續介詞開頭
+        is_fragment = (
+            len(words) < min_words or
+            first_char_lower or
+            first_word in continuation_starters
+        )
+        if is_fragment and segs:
+            prev = segs[-1]
+            segs[-1] = {
+                'start': prev['start'],
+                'end': cs['end'],
+                'text': prev['text'].rstrip() + ' ' + text
+            }
+        else:
+            segs.append({'start': cs['start'], 'end': cs['end'], 'text': text})
 
     for segment in segments:
-        # 取得 words（相容兩種格式）
         words = None
         if hasattr(segment, 'words') and segment.words:
-            # faster-whisper 格式（物件）
             words = [{'word': w.word, 'start': w.start, 'end': w.end} for w in segment.words]
         elif isinstance(segment, dict) and 'words' in segment and segment['words']:
-            # 原版 Whisper 格式（dict）
             words = segment['words']
 
         if not words:
-            # 無詞級時間戳記：按標點分割並均分時間
             if hasattr(segment, 'text'):
                 text = segment.text.strip()
                 seg_start = segment.start
@@ -47,10 +79,8 @@ def smart_sentence_split(segments, max_gap=0.6, max_duration=5.0, max_words=15):
                 text = segment['text'].strip()
                 seg_start = segment['start']
                 seg_end = segment['end']
-
             parts = re.split(r'([.!?,;:])', text)
-            sub_sentences = []
-            temp = ""
+            sub_sentences, temp = [], ""
             for part in parts:
                 temp += part
                 if part in ['.', '!', '?', ',', ';', ':']:
@@ -59,7 +89,6 @@ def smart_sentence_split(segments, max_gap=0.6, max_duration=5.0, max_words=15):
                         temp = ""
             if temp.strip():
                 sub_sentences.append(temp.strip())
-
             duration = seg_end - seg_start
             time_per = duration / max(len(sub_sentences), 1)
             for idx, sub_text in enumerate(sub_sentences):
@@ -74,7 +103,6 @@ def smart_sentence_split(segments, max_gap=0.6, max_duration=5.0, max_words=15):
             word = word_info.get('word', '').strip()
             if not word:
                 continue
-
             word_start = word_info.get('start')
             word_end = word_info.get('end')
             if word_start is None:
@@ -85,78 +113,55 @@ def smart_sentence_split(segments, max_gap=0.6, max_duration=5.0, max_words=15):
                 continue
             if word_end is None:
                 word_end = word_start
+            word_clean = word.lower().rstrip('.,!?;:')
 
             if current_sentence['start'] is None:
                 current_sentence['start'] = word_start
                 current_sentence['end'] = word_end
 
-            # 1. 時間間隔過大 → 強制斷句
+            # 1. 時間間隔過大 → 斷句（連接詞保護有效）
             if current_sentence['text'] and (word_start - current_sentence['end']) > max_gap:
-                new_segments.append({
-                    'start': current_sentence['start'],
-                    'end': current_sentence['end'],
-                    'text': current_sentence['text'].strip()
-                })
-                current_sentence = {'start': word_start, 'end': word_end, 'text': word, 'word_count': 1}
-                continue
+                if current_sentence['last_word_clean'] not in joining_words:
+                    flush(current_sentence, new_segments)
+                    current_sentence = {'start': word_start, 'end': word_end, 'text': word, 'word_count': 1, 'last_word_clean': word_clean}
+                    continue
 
-            # 2. 句子總時長過長 → 遇標點斷句，否則強制斷
+            # 2. 時長過長 → 遇標點強制斷句（連接詞保護無效）
             if (word_end - current_sentence['start']) > max_duration:
                 if word[-1] in sentence_endings | pause_punctuations:
                     current_sentence['end'] = word_end
                     current_sentence['text'] += ' ' + word
-                    new_segments.append({
-                        'start': current_sentence['start'],
-                        'end': current_sentence['end'],
-                        'text': current_sentence['text'].strip()
-                    })
-                    current_sentence = {'start': None, 'end': None, 'text': '', 'word_count': 0}
-                    continue
-                else:
-                    new_segments.append({
-                        'start': current_sentence['start'],
-                        'end': current_sentence['end'],
-                        'text': current_sentence['text'].strip()
-                    })
-                    current_sentence = {'start': word_start, 'end': word_end, 'text': word, 'word_count': 1}
+                    current_sentence['last_word_clean'] = word_clean
+                    flush(current_sentence, new_segments)
+                    current_sentence = {'start': None, 'end': None, 'text': '', 'word_count': 0, 'last_word_clean': ''}
                     continue
 
-            # 3. 詞數過多 → 遇標點斷句
+            # 3. 詞數過多 → 遇標點強制斷句（連接詞保護無效）
             if current_sentence['word_count'] >= max_words:
                 if word[-1] in sentence_endings | pause_punctuations:
                     current_sentence['end'] = word_end
                     current_sentence['text'] += ' ' + word
-                    new_segments.append({
-                        'start': current_sentence['start'],
-                        'end': current_sentence['end'],
-                        'text': current_sentence['text'].strip()
-                    })
-                    current_sentence = {'start': None, 'end': None, 'text': '', 'word_count': 0}
+                    current_sentence['last_word_clean'] = word_clean
+                    flush(current_sentence, new_segments)
+                    current_sentence = {'start': None, 'end': None, 'text': '', 'word_count': 0, 'last_word_clean': ''}
                     continue
 
             # 正常加入詞
             current_sentence['end'] = word_end
             current_sentence['text'] += ' ' + word
             current_sentence['word_count'] += 1
+            current_sentence['last_word_clean'] = word_clean
 
-            # 遇句尾標點 → 斷句
+            # 遇句尾標點 → 斷句（連接詞保護有效）
             if word[-1] in sentence_endings:
-                new_segments.append({
-                    'start': current_sentence['start'],
-                    'end': current_sentence['end'],
-                    'text': current_sentence['text'].strip()
-                })
-                current_sentence = {'start': None, 'end': None, 'text': '', 'word_count': 0}
+                if current_sentence['last_word_clean'] not in joining_words:
+                    flush(current_sentence, new_segments)
+                    current_sentence = {'start': None, 'end': None, 'text': '', 'word_count': 0, 'last_word_clean': ''}
 
     if current_sentence['text'].strip():
-        new_segments.append({
-            'start': current_sentence['start'],
-            'end': current_sentence['end'],
-            'text': current_sentence['text'].strip()
-        })
+        flush(current_sentence, new_segments)
 
     return new_segments
-
 
 def scan_folder_for_mp3(folder_path):
     audio_extensions = ['.mp3', '.wav', '.m4a']

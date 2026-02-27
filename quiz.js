@@ -28,7 +28,7 @@ let quizState = {
     articleSubMode: 'listen',  // 'listen' | 'cloze'
     // difficulty & question count — shared across ALL modes
     difficulty: 'mix',         // 'easy' | 'medium' | 'hard' | 'mix'
-    questionCount: 10,         // 5 | 10 | 15
+    questionCount: 10,         // 5 | 10 (UI 支援的選項)
 };
 
 let quizAudioPlayer = new Audio();
@@ -1752,7 +1752,9 @@ function showArticleListenQuestion() {
     });
 }
 
-// Cache for timestamp data to avoid re-fetching
+// Cache for timestamp data to avoid re-fetching within same quiz session
+// BUG FIX: 不再永久快取，改為呼叫 story.js 的 getTimestampForStory（已有 cache-busting）
+// tsDataCache 只做 session 內的暫存（加快同一場 quiz 的重複查詢）
 const tsDataCache = {};
 
 async function getTimestampForStoryWithCache(title) {
@@ -2080,12 +2082,6 @@ async function startReorder(source) {
             showNotification(`No ${diff === 'mix' ? '' : diff + ' '}sentences in your notes.`, 'warning');
             return;
         }
-        const raw = shuffle(filteredNoteSents).slice(0, quizState.questionCount || 10);
-
-        if (raw.length === 0) {
-            showNotification('No sentences saved yet. Add sentences to your note first.', 'warning');
-            return;
-        }
 
         // Try to match each note sentence against timestamp data
         let tsData = null;
@@ -2093,17 +2089,29 @@ async function startReorder(source) {
             tsData = await getTimestampForStory(title);
         }
 
-        sentences = raw.map(s => {
+        // BUG FIX: 先把所有句子 map 成 question 物件，再用 weightedSample 依熟悉度加權抽題
+        // 原本用純 shuffle().slice()，導致熟悉/不熟的句子等機率出題，與其他模式不一致
+        const allMapped = filteredNoteSents.map(s => {
             const trimmed = s.trim();
+            const _norm = t => t.trim().replace(/[.,?!'"`\u201c\u201d\u2018\u2019]/g, '').toLowerCase();
             let start = null, end = null, matchTitle = null;
             if (tsData) {
                 const match = tsData.find(l =>
-                    l.sentence && l.sentence.trim().toLowerCase() === trimmed.toLowerCase()
+                    l.sentence && _norm(l.sentence) === _norm(trimmed)
                 );
                 if (match) { start = match.start; end = match.end; matchTitle = title; }
             }
             return { sentence: trimmed, start, end, title: matchTitle };
         });
+
+        sentences = weightedSample(
+            allMapped,
+            quizState.questionCount || 10,
+            item => item.sentence,
+            quizState.categoryName,
+            quizState.titleName || quizState.scope,
+            'noteSentences'
+        );
 
         // Preload audio if we have a title
         if (title) {

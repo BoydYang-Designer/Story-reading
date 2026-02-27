@@ -764,11 +764,14 @@ function showNotification(message, type = 'info') {
 
 // --- NEW: Functions for Sentence Playback ---
 async function getTimestampForStory(title) {
-    if (timestampCache[title]) {
+    // BUG FIX: 原本用 if (timestampCache[title]) 判斷，
+    // 當快取值為 null（查詢失敗）時會被當成 false，導致每次都重複發出失敗的網路請求。
+    // 改為 !== undefined，讓成功(data)和失敗(null)都能被正確快取。
+    if (timestampCache[title] !== undefined) {
         return timestampCache[title];
     }
-    
-const url = `https://raw.githubusercontent.com/BoydYang-Designer/Story-reading/main/audio/${encodeURIComponent(title.trim())} Timestamp.txt`;
+
+    const url = `https://raw.githubusercontent.com/BoydYang-Designer/Story-reading/main/audio/${encodeURIComponent(title.trim())} Timestamp.txt`;
     try {
         const response = await fetch(url);
         if (response.ok) {
@@ -785,6 +788,24 @@ const url = `https://raw.githubusercontent.com/BoydYang-Designer/Story-reading/m
         console.error(`Error fetching timestamp for ${title}:`, error);
         timestampCache[title] = null;
         return null;
+    }
+}
+
+/**
+ * 強制清除指定文章（或全部）的 timestamp 記憶體快取。
+ * 當你更新了 GitHub 上的 Timestamp.txt，在不重整頁面的情況下，
+ * 可在瀏覽器 console 輸入 clearTimestampCache(null) 強制重新載入全部，
+ * 或 clearTimestampCache("文章標題") 只清除特定文章。
+ * @param {string|null} title  文章標題；傳 null 清除全部
+ */
+function clearTimestampCache(title) {
+    if (title) {
+        delete timestampCache[title];
+        console.log(`[Timestamp] Cache cleared for "${title}"`);
+    } else {
+        const count = Object.keys(timestampCache).length;
+        timestampCache = {};
+        console.log(`[Timestamp] All cache cleared (${count} entries)`);
     }
 }
 
