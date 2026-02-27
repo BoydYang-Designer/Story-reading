@@ -764,77 +764,85 @@ const url = `https://raw.githubusercontent.com/BoydYang-Designer/Story-reading/m
 }
 
 async function playSentenceSnippet(sentenceText, storyTitle) {
-    // Stop any currently playing snippet from this feature
+    // ── 停止任何正在播放的片段 ──────────────────────────────
+    // 停止 Web Audio Engine 的播放
+    if (typeof WebAudioEngine !== 'undefined') {
+        WebAudioEngine.stop();
+    }
+    // 相容性保留：停止舊的 noteAudioPlayer（不再用於播放，但仍用於主播放列）
     if (currentSnippetTimeout) {
         clearTimeout(currentSnippetTimeout);
         currentSnippetTimeout = null;
     }
-    
-    // Remove any existing timeupdate listener
     if (noteAudioPlayer._snippetTimeUpdateHandler) {
         noteAudioPlayer.removeEventListener('timeupdate', noteAudioPlayer._snippetTimeUpdateHandler);
         noteAudioPlayer._snippetTimeUpdateHandler = null;
     }
-    
     noteAudioPlayer.pause();
 
-    // Also pause the main player if it's running
+    // 暫停主播放器
     if (isPlaying) {
         pauseAudio();
     }
 
-    const timestampData = await getTimestampForStory(storyTitle);
-    if (!timestampData || timestampData.length === 0) {
+    // ── 查找 Timestamp ───────────────────────────────────────
+    const tsData = await getTimestampForStory(storyTitle);
+    if (!tsData || tsData.length === 0) {
         showNotification(`Timestamp data not found for "${storyTitle}".`, 'error');
         return;
     }
 
-    // Normalize sentence for better matching by removing punctuation and making it lowercase
-    const normalize = (text) => text.trim().replace(/[.,?!'"`""'']/g, '').toLowerCase();
+    const normalize = (text) => text.trim().replace(/[.,?!'"`\u201c\u201d\u2018\u2019]/g, '').toLowerCase();
     const normalizedSentence = normalize(sentenceText);
-
-    const match = timestampData.find(line => normalize(line.sentence) === normalizedSentence);
+    const match = tsData.find(line => normalize(line.sentence) === normalizedSentence);
 
     if (!match) {
         showNotification('Could not find the exact sentence in the story timestamp.', 'warning');
-        console.warn(`No match found for: "${normalizedSentence}"`);
+        console.warn(`[Snippet] No match found for: "${normalizedSentence}"`);
         return;
     }
 
-    // 套用已調整的時間（若有 audioAdjustments 記錄則使用，否則用原始值）
+    // 套用已調整的時間
     const adjusted = (typeof getNoteAdjustedTiming === 'function')
         ? getNoteAdjustedTiming(storyTitle, sentenceText, match.start, match.end)
         : { start: match.start, end: match.end };
     const { start, end } = adjusted;
-    const duration = (end - start) * 1000;
 
-    // Check for invalid duration
-    if (duration <= 0) {
+    if (end - start <= 0) {
         showNotification('Invalid timestamp duration for this sentence.', 'error');
         return;
     }
-    
-    // Set audio source — 只有在 src 不同時才重新載入，避免每次點擊都重新請求 MP3
+
     const audioSrc = `audio/${encodeURIComponent(storyTitle.trim())}.mp3`;
+
+    // ── 優先使用 Web Audio Engine（精確，手機/PC 一致）──────
+    if (typeof WebAudioEngine !== 'undefined' && WebAudioEngine.isSupported()) {
+        await WebAudioEngine.playSnippet({
+            src:     audioSrc,
+            start:   start,
+            end:     end,
+            onStart: () => console.log(`[Snippet] Playing: "${sentenceText.substring(0, 40)}…"`),
+            onEnd:   () => console.log('[Snippet] Playback ended.'),
+            onError: (err) => {
+                console.error('[Snippet] WebAudioEngine error:', err);
+                showNotification('Could not play audio for this sentence.', 'error');
+            }
+        });
+        return;
+    }
+
+    // ── Fallback：舊的 HTMLAudioElement 方式（瀏覽器不支援 Web Audio API 時）──
+    console.warn('[Snippet] Web Audio API not supported, falling back to HTMLAudioElement.');
     const currentSrcFilename = decodeURIComponent(noteAudioPlayer.src.split('/').pop() || '');
     const targetFilename = `${storyTitle.trim()}.mp3`;
-
     if (currentSrcFilename !== targetFilename) {
-        console.log(`[Note] src changed, reloading: ${targetFilename}`);
         noteAudioPlayer.src = audioSrc;
         noteAudioPlayer.load();
     }
-
-    // 使用 setAudioTimeAccurate 補償手機定位誤差（手機 -0.3s，PC -0.1s）
     const isMobile = isMobileDevice();
     const bufferTime = isMobile ? 0.3 : 0.1;
-    const adjustedStart = Math.max(0, start - bufferTime);
-    // 結束點：手機 timeupdate 頻率低（~500ms），需要延後停止避免截斷句尾
-    // 增加更多緩衝以確保完整播放
     const stopBuffer = isMobile ? 0.6 : 0.2;
-    noteAudioPlayer.currentTime = adjustedStart;
-    
-    // Use timeupdate event for more precise playback control
+    noteAudioPlayer.currentTime = Math.max(0, start - bufferTime);
     const timeUpdateHandler = function() {
         if (noteAudioPlayer.currentTime >= end + stopBuffer) {
             noteAudioPlayer.pause();
@@ -842,23 +850,17 @@ async function playSentenceSnippet(sentenceText, storyTitle) {
             noteAudioPlayer._snippetTimeUpdateHandler = null;
         }
     };
-    
     noteAudioPlayer._snippetTimeUpdateHandler = timeUpdateHandler;
     noteAudioPlayer.addEventListener('timeupdate', timeUpdateHandler);
-    
     noteAudioPlayer.play().catch(e => {
-        console.error("Snippet play failed:", e);
+        console.error('[Snippet] Fallback play failed:', e);
         showNotification('Could not play audio for this sentence.', 'error');
         noteAudioPlayer.removeEventListener('timeupdate', timeUpdateHandler);
         noteAudioPlayer._snippetTimeUpdateHandler = null;
     });
-
-    // backup timeout：以實際結束點 + stopBuffer 為基準計算
-    const actualDuration = (end + stopBuffer - adjustedStart) * 1000;
+    const actualDuration = (end + stopBuffer - Math.max(0, start - bufferTime)) * 1000;
     currentSnippetTimeout = setTimeout(() => {
-        if (!noteAudioPlayer.paused) {
-            noteAudioPlayer.pause();
-        }
+        if (!noteAudioPlayer.paused) noteAudioPlayer.pause();
         if (noteAudioPlayer._snippetTimeUpdateHandler) {
             noteAudioPlayer.removeEventListener('timeupdate', noteAudioPlayer._snippetTimeUpdateHandler);
             noteAudioPlayer._snippetTimeUpdateHandler = null;
@@ -998,14 +1000,20 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
         noteViewCategory = categoryName;
         noteViewTitle = titleName;
 
-        // 預載對應文章的 MP3，讓句子播放時直接跳轉，不需等待網路
+        // 預載對應文章的 MP3（Web Audio Engine 背景解碼，讓句子播放時能即時回應）
         const preloadSrc = `audio/${encodeURIComponent(titleName.trim())}.mp3`;
-        if (!noteAudioPlayer.src.endsWith(encodeURIComponent(titleName.trim()) + '.mp3')) {
-            noteAudioPlayer.pause();
-            noteAudioPlayer.src = preloadSrc;
-            noteAudioPlayer.preload = 'auto';
-            noteAudioPlayer.load();
-            console.log(`[Note] Preloading audio for: ${titleName}`);
+        if (typeof WebAudioEngine !== 'undefined' && WebAudioEngine.isSupported()) {
+            WebAudioEngine.preload(preloadSrc);
+            console.log(`[Note] WebAudioEngine preloading: ${titleName}`);
+        } else {
+            // Fallback：舊的 HTMLAudioElement 預載
+            if (!noteAudioPlayer.src.endsWith(encodeURIComponent(titleName.trim()) + '.mp3')) {
+                noteAudioPlayer.pause();
+                noteAudioPlayer.src = preloadSrc;
+                noteAudioPlayer.preload = 'auto';
+                noteAudioPlayer.load();
+                console.log(`[Note] Preloading audio (fallback) for: ${titleName}`);
+            }
         }
 
         backToStoryFromNoteBtn.hidden = false;

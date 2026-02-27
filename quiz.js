@@ -33,6 +33,27 @@ let quizState = {
 
 let quizAudioPlayer = new Audio();
 
+/**
+ * 設定 Quiz 的音檔來源，並同時：
+ *  1. 設定 quizAudioPlayer.src（供單字發音播放用）
+ *  2. 呼叫 WebAudioEngine.preload（供句子片段播放用）
+ * @param {string} audioSrc  完整的音檔路徑，e.g. "audio/The Alchemist.mp3"
+ */
+function _setQuizAudioSrc(audioSrc) {
+    // 供 review 單字發音（HTMLAudioElement）使用
+    if (!quizAudioPlayer.src.endsWith(encodeURIComponent(audioSrc.split('/').pop()))) {
+        quizAudioPlayer.src = audioSrc;
+        quizAudioPlayer.preload = 'auto';
+        quizAudioPlayer.load();
+    }
+    // 儲存 src 供 playSnippet 使用（Web Audio Engine 路徑）
+    quizAudioPlayer._webaudio_src = audioSrc;
+    // 背景預載到 Web Audio Engine（解碼並快取）
+    if (typeof WebAudioEngine !== 'undefined' && WebAudioEngine.isSupported()) {
+        WebAudioEngine.preload(audioSrc);
+    }
+}
+
 // ── Replay 計數（用於評分）────────────────────────────────────
 // _quizReplayCount : 當前題目手動重播次數（自動播放不算）
 // _quizAutoPlayed  : 目前題目是否已完成自動播放（第一次不計）
@@ -60,14 +81,13 @@ function _trackReplay() {
 }
 
 // ── Unified snippet player ────────────────────────────────────
-// Plays a time-bounded segment of quizAudioPlayer.
-// Uses setTimeout as primary stop mechanism (more reliable than timeupdate).
+// Plays a time-bounded segment using Web Audio Engine（精確，手機/PC 一致）
 // onStart / onEnd are optional callbacks to update UI.
 let _snippetStopTimer = null;
 let _snippetTimeUpdateHandler = null;
 
 function playSnippet({ start, end, onStart, onEnd }) {
-    // Cancel any running snippet
+    // ── 停止任何正在播放的片段 ──────────────────────────────
     if (_snippetStopTimer) {
         clearTimeout(_snippetStopTimer);
         _snippetStopTimer = null;
@@ -76,15 +96,42 @@ function playSnippet({ start, end, onStart, onEnd }) {
         quizAudioPlayer.removeEventListener('timeupdate', _snippetTimeUpdateHandler);
         _snippetTimeUpdateHandler = null;
     }
-    quizAudioPlayer.pause();
 
+    // ── 優先使用 Web Audio Engine ───────────────────────────
+    if (typeof WebAudioEngine !== 'undefined' && WebAudioEngine.isSupported()) {
+        WebAudioEngine.stop();
+
+        // 取得目前 quiz 的音檔 src（從 quizAudioPlayer.src 讀取，維持相容性）
+        // quiz.js 各處在 playSnippet 前都會先設定好 quizAudioPlayer.src
+        const src = quizAudioPlayer._webaudio_src || quizAudioPlayer.src;
+        if (!src) {
+            console.warn('[Quiz] playSnippet: no audio src set');
+            if (onEnd) onEnd();
+            return;
+        }
+
+        if (onStart) onStart();
+        WebAudioEngine.playSnippet({
+            src,
+            start,
+            end,
+            onEnd:  onEnd  || undefined,
+            onError: (err) => {
+                console.error('[Quiz] WebAudioEngine error:', err);
+                if (onEnd) onEnd();
+            }
+        });
+        return;
+    }
+
+    // ── Fallback：舊的 HTMLAudioElement 方式 ────────────────
+    quizAudioPlayer.pause();
     const isMobile = isMobileDevice();
     const bufStart = isMobile ? 0.25 : 0.1;
-    const bufEnd   = isMobile ? 1.0  : 0.8;   // timeupdate backup threshold
-    const trailMs  = isMobile ? 1000 : 800;    // setTimeout primary stop
-
-    const seekTo  = Math.max(0, start - bufStart);
-    const playMs  = (end - start) * 1000 + trailMs;
+    const bufEnd   = isMobile ? 1.0  : 0.8;
+    const trailMs  = isMobile ? 1000 : 800;
+    const seekTo   = Math.max(0, start - bufStart);
+    const playMs   = (end - start) * 1000 + trailMs;
 
     const stopAll = () => {
         if (_snippetStopTimer) { clearTimeout(_snippetStopTimer); _snippetStopTimer = null; }
@@ -97,16 +144,12 @@ function playSnippet({ start, end, onStart, onEnd }) {
     };
 
     if (onStart) onStart();
-
-    // Backup: timeupdate — catches cases where seek lands slightly off
     _snippetTimeUpdateHandler = () => {
         if (quizAudioPlayer.currentTime >= end + bufEnd) stopAll();
     };
     quizAudioPlayer.addEventListener('timeupdate', _snippetTimeUpdateHandler);
-
     quizAudioPlayer.currentTime = seekTo;
     quizAudioPlayer.play().then(() => {
-        // Primary: setTimeout based on calculated duration
         _snippetStopTimer = setTimeout(stopAll, playMs);
     }).catch(() => {
         if (_snippetTimeUpdateHandler) {
@@ -899,10 +942,7 @@ function showQuizResult(mode, correct, total, wrongItems) {
 
                     // Make sure audio src matches
                     const targetSrc = `audio/${encodeURIComponent(title.trim())}.mp3`;
-                    if (!quizAudioPlayer.src.endsWith(encodeURIComponent(title.trim()) + '.mp3')) {
-                        quizAudioPlayer.src = targetSrc;
-                        quizAudioPlayer.load();
-                    }
+                    _setQuizAudioSrc(targetSrc);
 
                     playSnippet({
                         start, end,
@@ -1029,13 +1069,9 @@ async function startFlashcardFromArticle() {
     }
     deck = deck.slice(0, quizState.questionCount || 10);
 
-    // 預載音檔
+    // 預載音檔（同時設定 HTMLAudioElement 與 WebAudioEngine）
     const audioSrc = `audio/${encodeURIComponent(title.trim())}.mp3`;
-    if (!quizAudioPlayer.src.endsWith(encodeURIComponent(title.trim()) + '.mp3')) {
-        quizAudioPlayer.src = audioSrc;
-        quizAudioPlayer.preload = 'auto';
-        quizAudioPlayer.load();
-    }
+    _setQuizAudioSrc(audioSrc);
 
     quizState.mode        = 'flashcard';
     quizState.flashSource = 'article';
@@ -1213,12 +1249,8 @@ function showFlashcard() {
     if (_flashTitle && _ctxText) {
         const _audioSrc = `audio/${encodeURIComponent(_flashTitle.trim())}.mp3`;
 
-        // 確保 quizAudioPlayer 指向正確 src
-        const _targetFile = encodeURIComponent(_flashTitle.trim()) + '.mp3';
-        if (!quizAudioPlayer.src.endsWith(_targetFile)) {
-            quizAudioPlayer.src = _audioSrc;
-            quizAudioPlayer.load();
-        }
+        // 確保 quizAudioPlayer 與 WebAudioEngine 指向正確 src
+        _setQuizAudioSrc(_audioSrc);
 
         getTimestampForStory(_flashTitle).then(tsData => {
             if (!tsData || !backAudioBtn) return;
@@ -1366,9 +1398,7 @@ async function startDictation() {
 
     // Preload audio
     if (title) {
-        quizAudioPlayer.src = `audio/${encodeURIComponent(title.trim())}.mp3`;
-        quizAudioPlayer.preload = 'auto';
-        quizAudioPlayer.load();
+        _setQuizAudioSrc(`audio/${encodeURIComponent(title.trim())}.mp3`);
     }
 
     showQuizSession('dictation');
@@ -1591,9 +1621,7 @@ async function startArticleQuiz() {
     quizState.answeredQuestions = [];
 
     // Preload audio
-    quizAudioPlayer.src = `audio/${encodeURIComponent(title.trim())}.mp3`;
-    quizAudioPlayer.preload = 'auto';
-    quizAudioPlayer.load();
+    _setQuizAudioSrc(`audio/${encodeURIComponent(title.trim())}.mp3`);
 
     // Close subpanels
     closeAllSubpanels();
@@ -1988,9 +2016,7 @@ async function startReorder(source) {
         }));
 
         // Preload audio
-        quizAudioPlayer.src = `audio/${encodeURIComponent(title.trim())}.mp3`;
-        quizAudioPlayer.preload = 'auto';
-        quizAudioPlayer.load();
+        _setQuizAudioSrc(`audio/${encodeURIComponent(title.trim())}.mp3`);
     } else {
         // From Note — 用 titleName 抓 timestamp，比對句子找 start/end
         const title = quizState.titleName;
@@ -2033,9 +2059,7 @@ async function startReorder(source) {
 
         // Preload audio if we have a title
         if (title) {
-            quizAudioPlayer.src = `audio/${encodeURIComponent(title.trim())}.mp3`;
-            quizAudioPlayer.preload = 'auto';
-            quizAudioPlayer.load();
+            _setQuizAudioSrc(`audio/${encodeURIComponent(title.trim())}.mp3`);
         }
     }
 
@@ -2840,11 +2864,7 @@ async function startFcplusFromArticle() {
     }
 
     const audioSrc = `audio/${encodeURIComponent(title.trim())}.mp3`;
-    if (!quizAudioPlayer.src.endsWith(encodeURIComponent(title.trim()) + '.mp3')) {
-        quizAudioPlayer.src = audioSrc;
-        quizAudioPlayer.preload = 'auto';
-        quizAudioPlayer.load();
-    }
+    _setQuizAudioSrc(audioSrc);
 
     quizState.mode        = 'fcplus';
     quizState.flashSource = 'article';
@@ -2926,11 +2946,7 @@ async function showFcplusCard() {
     const flashTitle = quizState.scope === 'this' ? quizState.titleName : null;
     if (flashTitle && ctx) {
         const audioSrc   = `audio/${encodeURIComponent(flashTitle.trim())}.mp3`;
-        const targetFile = encodeURIComponent(flashTitle.trim()) + '.mp3';
-        if (!quizAudioPlayer.src.endsWith(targetFile)) {
-            quizAudioPlayer.src = audioSrc;
-            quizAudioPlayer.load();
-        }
+        _setQuizAudioSrc(audioSrc);
         try {
             const tsData = await getTimestampForStory(flashTitle);
             if (tsData) {

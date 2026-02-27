@@ -146,6 +146,11 @@ function _stopEditorPreview() {
         clearTimeout(_editorSnippetTimer);
         _editorSnippetTimer = null;
     }
+    // 停止 Web Audio Engine 播放
+    if (typeof WebAudioEngine !== 'undefined') {
+        WebAudioEngine.stop();
+    }
+    // Fallback：停止 HTMLAudioElement
     if (_editorState.player) {
         _editorState.player.pause();
     }
@@ -304,7 +309,6 @@ function _updateEditorDisplay() {
 function _playEditorPreview() {
     _stopEditorPreview();
 
-    const player  = _editorState.player;
     const src     = _editorState.audioSrc;
     const start   = _editorState.start;
     const end     = _editorState.end;
@@ -315,8 +319,42 @@ function _playEditorPreview() {
         return;
     }
 
-    // 確保 src 正確
-    const targetFilename = src.split('/').pop();
+    if (previewBtn) {
+        previewBtn.textContent = '⏸ 播放中…';
+        previewBtn.disabled = true;
+    }
+
+    const onEnd = () => {
+        if (previewBtn) {
+            previewBtn.textContent = '▶ 試聽';
+            previewBtn.disabled = false;
+        }
+        _editorSnippetTimer = null;
+    };
+
+    // ── 優先使用 Web Audio Engine（精確，手機/PC 一致）──────
+    if (typeof WebAudioEngine !== 'undefined' && WebAudioEngine.isSupported()) {
+        WebAudioEngine.playSnippet({
+            src,
+            start,
+            end,
+            onStart: () => console.log(`[AudioEditor] Preview: ${start}s → ${end}s`),
+            onEnd,
+            onError: (err) => {
+                console.error('[AudioEditor] Preview error:', err);
+                showNotification('試聽失敗，請檢查音檔路徑', 'error');
+                if (previewBtn) {
+                    previewBtn.textContent = '▶ 試聽';
+                    previewBtn.disabled = false;
+                }
+            }
+        });
+        return;
+    }
+
+    // ── Fallback：舊的 HTMLAudioElement 方式 ────────────────
+    const player = _editorState.player;
+    const targetFilename  = src.split('/').pop();
     const currentFilename = decodeURIComponent(player.src.split('/').pop() || '');
     if (currentFilename !== decodeURIComponent(targetFilename)) {
         player.src = src;
@@ -329,20 +367,11 @@ function _playEditorPreview() {
 
     player.currentTime = Math.max(0, start - bufStart);
 
-    if (previewBtn) {
-        previewBtn.textContent = '⏸ 播放中…';
-        previewBtn.disabled = true;
-    }
-
     player.play().then(() => {
         const playMs = (end - start) * 1000 + trailMs;
         _editorSnippetTimer = setTimeout(() => {
             player.pause();
-            if (previewBtn) {
-                previewBtn.textContent = '▶ 試聽';
-                previewBtn.disabled = false;
-            }
-            _editorSnippetTimer = null;
+            onEnd();
         }, playMs);
     }).catch(() => {
         if (previewBtn) {
