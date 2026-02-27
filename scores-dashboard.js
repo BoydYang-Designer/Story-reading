@@ -646,6 +646,14 @@ function _renderBrowserSection() {
         });
     });
 
+    // Bind read buttons in article rows
+    container.querySelectorAll('.browser-read-btn').forEach(btn => {
+        btn.addEventListener('click', e => {
+            e.stopPropagation(); // 不觸發 openDetailView
+            _navigateToArticle(btn.dataset.cat, btn.dataset.title);
+        });
+    });
+
     // Bind cat sort buttons
     _bindCatSortBtns(container);
 }
@@ -713,6 +721,14 @@ function _rebuildCatBody(catGroupEl, cat) {
             if (typeof openQuiz === 'function') {
                 openQuiz(btn.dataset.cat, btn.dataset.title, 'scores');
             }
+        });
+    });
+
+    // Re-bind read buttons
+    body.querySelectorAll('.browser-read-btn').forEach(btn => {
+        btn.addEventListener('click', e => {
+            e.stopPropagation();
+            _navigateToArticle(btn.dataset.cat, btn.dataset.title);
         });
     });
 
@@ -790,6 +806,7 @@ function _buildArticleRowHtml(article) {
         </div>
         <div class="browser-article-actions">
             <button class="browser-quiz-btn" data-title="${_escHtml(title)}" data-cat="${_escHtml(cat)}" title="進入 Quiz">🎯 Quiz</button>
+            <button class="browser-read-btn" data-title="${_escHtml(title)}" data-cat="${_escHtml(cat)}" title="前往文章">📖 閱讀</button>
             <div class="browser-article-arrow">→</div>
         </div>
     </div>`;
@@ -991,6 +1008,52 @@ let detailViewState = {
     sortDir:      'asc',      // for fam: asc = 低熟悉度優先（需練習）
     fromNote:     false,
 };
+
+/**
+ * 從 Scores Dashboard / Detail View 導航到文章閱讀頁
+ * 邏輯與 resumeLastPlayback 相同，但來源為 scores，不帶 resume time
+ */
+function _navigateToArticle(categoryName, titleName) {
+    if (typeof stories === 'undefined' || !stories.length) {
+        if (typeof showNotification === 'function') showNotification('文章資料尚未載入，請稍後再試。', 'warning');
+        return;
+    }
+
+    const story = stories.find(s => s['標題'] === titleName);
+    if (!story) {
+        if (typeof showNotification === 'function') showNotification(`找不到文章「${titleName}」。`, 'error');
+        return;
+    }
+
+    const category = story['分類']?.[0] || categoryName;
+    const major    = story['大類'] || 'Uncategorized';
+
+    // ✅ 直接賦值給 story.js 的全域變數（let 宣告，window. 無法修改它）
+    // showCategory() 內部用 currentMajorCategory 做大類過濾，必須在呼叫前設好
+    currentMajorCategory = major;
+
+    // ✅ 完全複製 showCategory() 內的過濾條件（大類 + 分類雙重過濾 + 排序）
+    // 確保算出的 indexInList 與 showCategory() 重建的 currentStoryList index 完全一致
+    const storyListForCat = stories
+        .filter(item => {
+            const matchMajor = (item['大類'] || 'Uncategorized') === major;
+            const matchSub   = item['分類']?.map(c => c.trim()).includes(category);
+            return matchMajor && matchSub;
+        })
+        .sort((a, b) => String(a['標題']).localeCompare(String(b['標題'])));
+
+    const indexInList = storyListForCat.findIndex(s => s['標題'] === titleName);
+    if (indexInList === -1) {
+        if (typeof showNotification === 'function') showNotification(`無法定位文章「${titleName}」在分類中的位置。`, 'error');
+        return;
+    }
+
+    // showCategory() 重建 currentStoryList 後，showPlayback(index) 才能正確找到文章
+    if (typeof showCategory === 'function' && typeof showPlayback === 'function') {
+        showCategory(category);
+        showPlayback(indexInList, 0);
+    }
+}
 
 async function openDetailView(categoryName, titleName) {
     detailViewState.categoryName = categoryName;
@@ -1219,6 +1282,14 @@ document.getElementById('detail-view-quiz-btn')?.addEventListener('click', () =>
     const { categoryName, titleName } = detailViewState;
     if (categoryName && titleName && typeof openQuiz === 'function') {
         openQuiz(categoryName, titleName, 'scores');
+    }
+});
+
+document.getElementById('detail-view-read-btn')?.addEventListener('click', () => {
+    const { categoryName, titleName } = detailViewState;
+    if (!categoryName || !titleName) return;
+    if (typeof _navigateToArticle === 'function') {
+        _navigateToArticle(categoryName, titleName);
     }
 });
 

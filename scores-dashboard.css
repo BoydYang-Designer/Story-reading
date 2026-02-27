@@ -359,6 +359,51 @@
     flex-shrink: 0;
 }
 
+/* ── 文章 Row 操作按鈕區 ──────────────────────────────────── */
+
+.browser-article-actions {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-shrink: 0;
+}
+
+.browser-quiz-btn,
+.browser-read-btn {
+    padding: 4px 9px;
+    border-radius: 14px;
+    border: 1.5px solid transparent;
+    font-size: 0.72rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s, border-color 0.15s, opacity 0.15s;
+    line-height: 1.4;
+}
+
+.browser-quiz-btn {
+    background: rgba(99, 149, 255, 0.1);
+    border-color: rgba(99, 149, 255, 0.35);
+    color: #3a6fd8;
+}
+
+.browser-quiz-btn:hover {
+    background: rgba(99, 149, 255, 0.22);
+    border-color: #3a6fd8;
+}
+
+.browser-read-btn {
+    background: rgba(80, 184, 108, 0.1);
+    border-color: rgba(80, 184, 108, 0.35);
+    color: #2d8a50;
+}
+
+.browser-read-btn:hover {
+    background: rgba(80, 184, 108, 0.22);
+    border-color: #2d8a50;
+}
+
 .browser-article-arrow {
     color: var(--color-text-light);
     font-size: 0.82rem;
