@@ -103,7 +103,7 @@ function playSnippet({ start, end, onStart, onEnd }) {
 
         // 取得目前 quiz 的音檔 src（從 quizAudioPlayer.src 讀取，維持相容性）
         // quiz.js 各處在 playSnippet 前都會先設定好 quizAudioPlayer.src
-        const src = quizAudioPlayer._webaudio_src || quizAudioPlayer.src;
+        const src = quizAudioPlayer._webaudio_src;
         if (!src) {
             console.warn('[Quiz] playSnippet: no audio src set');
             if (onEnd) onEnd();
