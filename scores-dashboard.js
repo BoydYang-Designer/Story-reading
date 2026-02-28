@@ -1357,3 +1357,15 @@ document.getElementById('scoring-info-close')?.addEventListener('click', closeSc
 document.getElementById('scoring-info-modal')?.addEventListener('click', (e) => {
     if (e.target === e.currentTarget) closeScoringInfoModal();
 });
+
+// ── Quiz 結果頁的 Scores 按鈕 ───────────────────────────────
+// 若有文章 context，直接跳到該文章的 Detail View；否則開 Dashboard
+document.getElementById('quiz-goto-scores-btn')?.addEventListener('click', () => {
+    const cat   = (typeof quizState !== 'undefined') ? quizState.categoryName : null;
+    const title = (typeof quizState !== 'undefined') ? quizState.titleName    : null;
+    if (cat && title && typeof openDetailView === 'function') {
+        openDetailView(cat, title);
+    } else {
+        openScoresDashboard();
+    }
+});
