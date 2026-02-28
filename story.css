@@ -998,28 +998,42 @@ button.secondary:hover {
 
 /* Saved word highlighting in text — 綠色螢光筆 */
 .clickable-word.is-saved-word {
-    background: rgba(72, 199, 116, 0.28);
-    border-radius: 3px;
-    padding: 0 1px;
-    font-weight: 600;
+    font-weight: 700;
+    color: #2a9a5a;
+    text-decoration-line: underline;
+    text-decoration-style: dotted;
+    text-decoration-color: rgba(42, 154, 90, 0.6);
+    text-underline-offset: 3px;
+    background: none;
+    border-radius: 0;
+    padding: 0;
 }
 
 /* Saved phrase highlighting — 藍色螢光筆，整個 phrase 連成一條 */
 .is-saved-phrase {
-    background: rgba(66, 153, 225, 0.22);
-    border-radius: 4px;
+    font-weight: 700;
+    color: #3a72c8;
+    text-decoration-line: underline;
+    text-decoration-style: solid;
+    text-decoration-color: rgba(58, 114, 200, 0.45);
+    text-underline-offset: 3px;
+    background: none;
+    border-radius: 0;
     padding: 0 2px;
     cursor: pointer;
     display: inline;
 }
 .is-saved-phrase:hover {
-    background: rgba(66, 153, 225, 0.40);
+    color: #2558a8;
+    text-decoration-color: rgba(37, 88, 168, 0.7);
+    background: none;
 }
 /* phrase 內的單字取消自己的背景，由外層統一呈現 */
 .is-saved-phrase .clickable-word {
     background: none !important;
     padding: 0;
-    font-weight: 600;
+    font-weight: 700;
+    color: inherit;
 }
 
 /* 11. Data Manager Styles
