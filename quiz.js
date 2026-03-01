@@ -1810,15 +1810,8 @@ function showArticleListenQuestion() {
     // Auto-play first time
     setTimeout(() => playArticleAudio(q, playBtn), 300);
 
-    // Build options: correct + 3 distractors from same pool
-    const allSentences = quizState.questions.map(q => q.sentence);
-    const extras = tsDataCache[q.title] || [];
-    const distPool = shuffle([
-        ...allSentences.filter(s => s !== q.sentence),
-        ...extras.filter(l => l.sentence && l.sentence.trim() !== q.sentence)
-                 .map(l => l.sentence.trim())
-    ]);
-    const distractors = distPool.slice(0, 3);
+    // Build options: correct + 3 smart distractors
+    const distractors = generateSmartDistractors(q.sentence, 3);
     const options = shuffle([q.sentence, ...distractors]);
 
     const optEl = document.getElementById('article-listen-options');
@@ -1864,6 +1857,326 @@ function playArticleAudio(q, btn) {
             btn.querySelector('span').textContent = '▶ Play Again';
         }
     });
+}
+
+// ── Smart Distractor Engine ───────────────────────────────────
+// Generates n distractors for a sentence using local rules (no API needed).
+// Each distractor applies ONE random mutation so the difference is subtle.
+
+const _SOUND_ALIKES = {
+    // verb confusions
+    'walked': ['woke','worked','talked'], 'runs': ['ruins','rains','runs'],
+    'said': ['set','sad','stayed'], 'told': ['tolled','tall','toiled'],
+    'went': ['bent','meant','sent'], 'came': ['game','name','same'],
+    'made': ['paid','laid','fade'], 'took': ['look','book','cook'],
+    'gave': ['cave','save','wave'], 'found': ['sound','bound','round'],
+    'left': ['loft','lift','lest'], 'felt': ['belt','melt','dealt'],
+    'knew': ['new','true','through'], 'saw': ['raw','law','draw'],
+    'kept': ['crept','swept','wept'], 'stood': ['should','would','could'],
+    'heard': ['herd','hard','hurt'], 'thought': ['taught','bought','sought'],
+    'brought': ['taught','bought','sought'], 'caught': ['taught','bought','sought'],
+    'lost': ['last','lust','list'], 'met': ['set','bet','net'],
+    'held': ['help','helm','belt'], 'read': ['lead','dead','head'],
+    'told': ['cold','bold','fold'], 'sold': ['cold','bold','fold'],
+    // prepositions / particles
+    'into': ['onto','unto','out of'], 'onto': ['into','out of','up to'],
+    'through': ['throughout','thorough','threw'], 'across': ['around','along','above'],
+    'beside': ['besides','behind','below'], 'between': ['beneath','beyond','before'],
+    'toward': ['towards','backward','forward'], 'against': ['along','across','about'],
+    'within': ['without','beneath','beyond'], 'beyond': ['behind','below','beside'],
+    'along': ['alone','aloft','among'], 'among': ['along','above','around'],
+    'despite': ['because of','instead of','in spite'], 'except': ['expect','accept','effect'],
+    // articles / determiners
+    'the': ['a','this','that'], 'a': ['the','an','any'], 'an': ['a','the','any'],
+    'this': ['the','that','these'], 'that': ['this','those','the'],
+    'these': ['those','this','the'], 'those': ['these','that','the'],
+    'some': ['any','much','many'], 'any': ['some','every','no'],
+    'every': ['each','any','some'], 'each': ['every','any','some'],
+    'many': ['much','some','more'], 'much': ['many','more','most'],
+    'more': ['most','less','fewer'], 'most': ['more','least','many'],
+    'few': ['some','little','less'], 'little': ['few','less','small'],
+    'both': ['all','each','either'], 'either': ['neither','both','any'],
+    // adjective/adverb pairs
+    'slowly': ['quickly','softly','surely'], 'quickly': ['slowly','quietly','firmly'],
+    'quietly': ['quickly','loudly','softly'], 'loudly': ['quietly','proudly','clearly'],
+    'carefully': ['carlessly','carelessly','casually'], 'suddenly': ['already','finally','usually'],
+    'finally': ['suddenly','usually','already'], 'already': ['still','always','finally'],
+    'always': ['never','often','still'], 'never': ['always','often','ever'],
+    'often': ['always','rarely','seldom'], 'usually': ['sometimes','rarely','always'],
+    'still': ['yet','already','again'], 'just': ['only','even','still'],
+    'only': ['just','even','also'], 'even': ['only','just','still'],
+    'very': ['quite','rather','fairly'], 'quite': ['very','rather','fairly'],
+    'rather': ['quite','very','fairly'], 'really': ['truly','very','quite'],
+    // common nouns (sound-alike or near)
+    'their': ['there','they\'re','the'], 'there': ['their','they\'re','here'],
+    'its': ['it\'s','his','our'], 'your': ['you\'re','our','their'],
+    'one': ['once','own','on'], 'two': ['too','to','through'],
+    'new': ['knew','now','not'], 'here': ['there','hear','were'],
+    'hear': ['here','near','dear'], 'where': ['were','wear','there'],
+    'were': ['where','we\'re','here'], 'buy': ['by','bye','but'],
+    'right': ['write','light','might'], 'write': ['right','white','quite'],
+    'whole': ['hole','hold','sole'], 'hole': ['whole','hold','mole'],
+    'high': ['hire','hide','hike'], 'see': ['say','sea','seem'],
+    'know': ['now','show','low'], 'show': ['know','slow','flow'],
+    'people': ['person','pupil','purple'], 'world': ['word','would','worse'],
+    'place': ['face','pace','space'], 'time': ['dime','lime','rhyme'],
+    'life': ['wife','like','line'], 'hand': ['band','land','sand'],
+    'part': ['past','path','park'], 'side': ['hide','ride','wide'],
+    'face': ['place','race','base'], 'night': ['light','might','sight'],
+    'day': ['say','way','pay'], 'way': ['day','say','pay'],
+    'man': ['can','ran','tan'], 'woman': ['woolen','woken','woven'],
+    'child': ['mild','wild','filed'], 'back': ['pack','rack','lack'],
+    'old': ['told','cold','bold'], 'long': ['song','gong','tong'],
+    'great': ['grey','grade','greet'], 'good': ['food','mood','wood'],
+    'little': ['litter','lithe','title'], 'own': ['one','down','town'],
+    'same': ['some','came','game'], 'name': ['same','game','came'],
+};
+
+// Tense / morphological variants
+const _MORPH_MAP = {
+    // irregular past → base / present
+    'was': ['is','were','be'], 'were': ['was','are','be'],
+    'had': ['has','have','having'], 'has': ['had','have','having'],
+    'did': ['does','do','doing'], 'went': ['go','goes','going'],
+    'came': ['come','comes','coming'], 'took': ['take','takes','taking'],
+    'gave': ['give','gives','giving'], 'found': ['find','finds','finding'],
+    'made': ['make','makes','making'], 'told': ['tell','tells','telling'],
+    'said': ['say','says','saying'], 'left': ['leave','leaves','leaving'],
+    'felt': ['feel','feels','feeling'], 'knew': ['know','knows','knowing'],
+    'saw': ['see','sees','seeing'], 'stood': ['stand','stands','standing'],
+    'heard': ['hear','hears','hearing'], 'thought': ['think','thinks','thinking'],
+    'brought': ['bring','brings','bringing'], 'caught': ['catch','catches','catching'],
+    'bought': ['buy','buys','buying'], 'taught': ['teach','teaches','teaching'],
+    'sought': ['seek','seeks','seeking'], 'kept': ['keep','keeps','keeping'],
+    'held': ['hold','holds','holding'], 'met': ['meet','meets','meeting'],
+    'lost': ['lose','loses','losing'], 'paid': ['pay','pays','paying'],
+    'read': ['read','reads','reading'],  // note: past/present homograph
+    'led': ['lead','leads','leading'], 'built': ['build','builds','building'],
+    'spent': ['spend','spends','spending'], 'sent': ['send','sends','sending'],
+    'bent': ['bend','bends','bending'], 'lent': ['lend','lends','lending'],
+    'meant': ['mean','means','meaning'], 'dealt': ['deal','deals','dealing'],
+};
+
+// Prepositions & conjunctions swap pool
+const _PREP_ALTS = ['in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 'from',
+                    'into', 'onto', 'up', 'down', 'over', 'under', 'through',
+                    'about', 'between', 'among', 'behind', 'before', 'after',
+                    'above', 'below', 'around', 'along', 'across', 'toward'];
+const _PREPS_SET  = new Set(_PREP_ALTS);
+const _CONJ_SET   = new Set(['and','but','or','so','yet','nor','for',
+                              'although','though','because','since','if',
+                              'when','while','until','unless','after','before']);
+
+/**
+ * Given a sentence, return `n` distractor sentences using local rules.
+ * Each distractor applies exactly ONE mutation from a randomly chosen strategy.
+ */
+function generateSmartDistractors(sentence, n) {
+    const tokens = sentence.match(/\S+/g) || [];
+    if (tokens.length < 3) {
+        // Too short — fall back to simple character swap
+        return _fallbackDistractors(sentence, n);
+    }
+
+    // Strategy functions: each returns a mutated sentence or null if not applicable
+    const strategies = [
+        _mutSoundAlike,
+        _mutMorph,
+        _mutSwapPrep,
+        _mutDropWord,
+        _mutAddWord,
+        _mutSwapAdjacentWords,
+    ];
+
+    const results = [];
+    const seen = new Set([sentence.toLowerCase()]);
+    const maxAttempts = n * 20;
+    let attempts = 0;
+
+    while (results.length < n && attempts < maxAttempts) {
+        attempts++;
+        // Pick a random strategy
+        const strategy = strategies[Math.floor(Math.random() * strategies.length)];
+        const candidate = strategy(tokens, sentence);
+        if (!candidate) continue;
+        const key = candidate.toLowerCase().trim();
+        if (seen.has(key)) continue;
+        seen.add(key);
+        results.push(candidate);
+    }
+
+    // If still not enough, pad with classic "other sentence" fallback
+    if (results.length < n) {
+        const allSentences = quizState.questions.map(q => q.sentence);
+        const extras = (tsDataCache[quizState.titleName] || []).map(l => l.sentence?.trim()).filter(Boolean);
+        const fallbackPool = shuffle([...allSentences, ...extras].filter(s => {
+            const k = s?.toLowerCase().trim();
+            return k && !seen.has(k) && s !== sentence;
+        }));
+        for (const s of fallbackPool) {
+            if (results.length >= n) break;
+            results.push(s);
+            seen.add(s.toLowerCase().trim());
+        }
+    }
+
+    return results.slice(0, n);
+}
+
+/** Rebuild sentence from (possibly modified) token array, preserving original spacing style */
+function _rebuildSentence(origSentence, newTokens) {
+    // Simple: join with spaces. Preserve trailing punctuation if original had it.
+    const origTokens = origSentence.match(/\S+/g) || [];
+    const lastOrig = origTokens[origTokens.length - 1] || '';
+    const lastNew  = newTokens[newTokens.length - 1] || '';
+    // If original ends with punctuation and the last token differs, transfer punctuation
+    const trailingPunct = lastOrig.match(/[.!?,;:]+$/)?.[0] || '';
+    let joined = newTokens.join(' ');
+    if (trailingPunct && !lastNew.endsWith(trailingPunct)) {
+        // Remove trailing punct from last token if it already has one, then add correct
+        joined = newTokens.slice(0, -1).join(' ') + ' ' +
+                 lastNew.replace(/[.!?,;:]+$/, '') + trailingPunct;
+    }
+    return joined;
+}
+
+/** Strip punctuation from token for lookup, return [clean, suffix] */
+function _stripPunct(token) {
+    const m = token.match(/^([a-zA-Z''-]+)([^a-zA-Z]*)$/);
+    if (m) return [m[1], m[2]];
+    return [token, ''];
+}
+
+// ── Mutation strategies ───────────────────────────────────────
+
+/** Replace one word with a sound-alike */
+function _mutSoundAlike(tokens) {
+    const candidates = [];
+    tokens.forEach((tok, i) => {
+        const [word, punct] = _stripPunct(tok);
+        const alts = _SOUND_ALIKES[word.toLowerCase()];
+        if (alts) candidates.push({ i, word, punct, alts });
+    });
+    if (candidates.length === 0) return null;
+    const pick = candidates[Math.floor(Math.random() * candidates.length)];
+    const alt  = pick.alts[Math.floor(Math.random() * pick.alts.length)];
+    // Preserve original capitalisation
+    const altWord = (pick.word[0] === pick.word[0].toUpperCase() && pick.word[0] !== pick.word[0].toLowerCase())
+        ? alt.charAt(0).toUpperCase() + alt.slice(1)
+        : alt;
+    const newTokens = [...tokens];
+    newTokens[pick.i] = altWord + pick.punct;
+    return newTokens.join(' ');
+}
+
+/** Replace an irregular-form word with a different tense/form */
+function _mutMorph(tokens) {
+    const candidates = [];
+    tokens.forEach((tok, i) => {
+        const [word, punct] = _stripPunct(tok);
+        const alts = _MORPH_MAP[word.toLowerCase()];
+        if (alts) candidates.push({ i, word, punct, alts });
+    });
+    if (candidates.length === 0) return null;
+    const pick = candidates[Math.floor(Math.random() * candidates.length)];
+    const alt  = pick.alts[Math.floor(Math.random() * pick.alts.length)];
+    const altWord = (pick.word[0] === pick.word[0].toUpperCase() && pick.word[0] !== pick.word[0].toLowerCase())
+        ? alt.charAt(0).toUpperCase() + alt.slice(1)
+        : alt;
+    const newTokens = [...tokens];
+    newTokens[pick.i] = altWord + pick.punct;
+    return newTokens.join(' ');
+}
+
+/** Swap a preposition with a different one */
+function _mutSwapPrep(tokens) {
+    const candidates = [];
+    tokens.forEach((tok, i) => {
+        const [word] = _stripPunct(tok);
+        if (_PREPS_SET.has(word.toLowerCase())) candidates.push(i);
+    });
+    if (candidates.length === 0) return null;
+    const idx   = candidates[Math.floor(Math.random() * candidates.length)];
+    const [word, punct] = _stripPunct(tokens[idx]);
+    const pool  = _PREP_ALTS.filter(p => p !== word.toLowerCase());
+    const alt   = pool[Math.floor(Math.random() * pool.length)];
+    const newTokens = [...tokens];
+    newTokens[idx] = alt + punct;
+    return newTokens.join(' ');
+}
+
+/** Drop one non-critical word (not first/last, not verb-of-sentence heuristic) */
+function _mutDropWord(tokens) {
+    if (tokens.length < 5) return null;
+    // Can drop articles, prepositions, adverbs (not first/last 2 tokens)
+    const droppable = [];
+    const dropSet = new Set([..._PREPS_SET, ..._CONJ_SET,
+        'a','an','the','very','quite','rather','just','only','even',
+        'also','too','already','still','yet','so','really','truly']);
+    for (let i = 1; i < tokens.length - 1; i++) {
+        const [w] = _stripPunct(tokens[i]);
+        if (dropSet.has(w.toLowerCase())) droppable.push(i);
+    }
+    if (droppable.length === 0) return null;
+    const idx = droppable[Math.floor(Math.random() * droppable.length)];
+    const newTokens = [...tokens.slice(0, idx), ...tokens.slice(idx + 1)];
+    return newTokens.join(' ');
+}
+
+/** Insert an extra small word right after an article/preposition (natural position) */
+function _mutAddWord(tokens) {
+    if (tokens.length < 3) return null;
+    const insertWords = ['very','just','still','already','quite','also','even','really'];
+    // Find positions after a verb or adjective (not before first/last token)
+    const goodPositions = [];
+    for (let i = 1; i < tokens.length - 1; i++) {
+        const [w] = _stripPunct(tokens[i]);
+        // Insert after verbs ending in -ed/-ing, or before nouns/adjectives
+        if (/ed$|ing$|ly$/.test(w.toLowerCase())) goodPositions.push(i + 1);
+    }
+    const pos = goodPositions.length > 0
+        ? goodPositions[Math.floor(Math.random() * goodPositions.length)]
+        : 1 + Math.floor(Math.random() * (tokens.length - 2));
+    const word = insertWords[Math.floor(Math.random() * insertWords.length)];
+    const newTokens = [...tokens.slice(0, pos), word, ...tokens.slice(pos)];
+    return newTokens.join(' ');
+}
+
+/** Swap two adjacent (non-first, non-last) content words */
+function _mutSwapAdjacentWords(tokens) {
+    if (tokens.length < 4) return null;
+    // Find pairs where both are content words (not articles/preps)
+    const skipSet = new Set([..._PREPS_SET, ..._CONJ_SET,
+        'a','an','the','is','are','was','were','be','been','being',
+        'i','he','she','it','we','they','you','me','him','her','us','them']);
+    const pairs = [];
+    for (let i = 1; i < tokens.length - 2; i++) {
+        const [w1] = _stripPunct(tokens[i]);
+        const [w2] = _stripPunct(tokens[i + 1]);
+        if (!skipSet.has(w1.toLowerCase()) && !skipSet.has(w2.toLowerCase())) {
+            pairs.push(i);
+        }
+    }
+    if (pairs.length === 0) return null;
+    const idx = pairs[Math.floor(Math.random() * pairs.length)];
+    const newTokens = [...tokens];
+    [newTokens[idx], newTokens[idx + 1]] = [newTokens[idx + 1], newTokens[idx]];
+    return newTokens.join(' ');
+}
+
+/** Last-resort: minor character-level tweak */
+function _fallbackDistractors(sentence, n) {
+    const results = [];
+    const words = sentence.split(' ');
+    for (let i = 0; i < n; i++) {
+        // shift one word to different position
+        const idx = 1 + (i % Math.max(1, words.length - 2));
+        const shifted = [...words];
+        const w = shifted.splice(idx, 1)[0];
+        shifted.splice(Math.max(0, idx - 1), 0, w);
+        results.push(shifted.join(' '));
+    }
+    return results;
 }
 
 function handleArticleListenAnswer(selected, q, btn) {
