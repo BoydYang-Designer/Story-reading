@@ -948,12 +948,49 @@ function showQuizResult(mode, correct, total, wrongItems) {
     reviewEl.innerHTML = '';
 
     if (quizState.answeredQuestions.length === 0) {
-        // Flashcard mode — just show wrong items
+        // Flashcard mode — show wrong items with word audio button
         if (wrongItems.length === 0) {
             reviewEl.innerHTML = `<div class="quiz-review-title">Perfect! 🎊</div>`;
         } else {
-            reviewEl.innerHTML = `<div class="quiz-review-title">Review these:</div>` +
-                wrongItems.map(w => `<div class="quiz-review-item quiz-review-wrong">✗ ${w}</div>`).join('');
+            reviewEl.innerHTML = `<div class="quiz-review-title">Review these:</div>`;
+            wrongItems.forEach(w => {
+                const div = document.createElement('div');
+                div.className = 'quiz-review-item quiz-review-wrong quiz-review-fc-wrong';
+                div.innerHTML = `
+                    <span class="quiz-review-fc-word">✗ ${w}</span>
+                    <button class="quiz-review-play-btn quiz-review-play-word" data-word="${w}" title="Play pronunciation">▶</button>
+                `;
+                reviewEl.appendChild(div);
+            });
+            // Bind word audio buttons
+            reviewEl.querySelectorAll('.quiz-review-play-word').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const word = btn.dataset.word;
+                    btn.textContent = '⏸';
+                    const src = `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(word.trim())}.mp3`;
+                    const aud = new Audio(src);
+                    aud.play().catch(() => {
+                        if ('speechSynthesis' in window) {
+                            window.speechSynthesis.cancel();
+                            const u = new SpeechSynthesisUtterance(word);
+                            u.lang = 'en-US';
+                            window.speechSynthesis.speak(u);
+                        }
+                    });
+                    aud.addEventListener('ended', () => { btn.textContent = '▶'; }, { once: true });
+                    aud.addEventListener('error', () => {
+                        btn.textContent = '▶';
+                        if ('speechSynthesis' in window) {
+                            window.speechSynthesis.cancel();
+                            const u = new SpeechSynthesisUtterance(word);
+                            u.lang = 'en-US';
+                            u.onend = () => { btn.textContent = '▶'; };
+                            window.speechSynthesis.speak(u);
+                        }
+                    }, { once: true });
+                });
+            });
         }
     } else {
         // Cloze / Dictation — show full per-question review
@@ -1175,8 +1212,8 @@ async function startFlashcardFromArticle() {
 function startFlashcard() {
     const items = getAllNoteItems(quizState.scope, quizState.categoryName, quizState.titleName);
     let allItems = [
-        ...items.words.map(w => ({ text: w, type: 'word' })),
-        ...items.phrases.map(p => ({ text: p, type: 'phrase' }))
+        ...items.words.map(w => typeof w === 'string' ? { text: w, type: 'word' } : { ...w, type: 'word' }),
+        ...items.phrases.map(p => typeof p === 'string' ? { text: p, type: 'phrase' } : { ...p, type: 'phrase' })
     ];
 
     // 排除字母數少於 4 的純單字（phrases 不過濾，因含空格）
@@ -1240,12 +1277,15 @@ function showFlashcard() {
 
     // Find context — article 模式直接用 item.sentence；note 模式從 story 內文找
     const contextEl = document.getElementById('flashcard-context');
+    // 決定背面音檔要用的文章 title：
+    //   article 模式 → quizState.titleName（固定來自同一篇）
+    //   note 模式 → item.noteTitle（各 item 帶來源文章）或 scope=this 時用 titleName
+    const _ctxTitle = quizState.flashSource === 'article'
+        ? quizState.titleName
+        : (item.noteTitle || (quizState.scope === 'this' ? quizState.titleName : null));
     const ctx = (quizState.flashSource === 'article' && item.sentence)
         ? item.sentence
-        : findContextForWord(
-            item.text.replace(/-/g, ' '),
-            quizState.scope === 'this' ? quizState.titleName : null
-          );
+        : findContextForWord(item.text.replace(/-/g, ' '), _ctxTitle);
     if (ctx) {
         // Highlight the word in context
         const highlighted = ctx.replace(
@@ -1319,7 +1359,7 @@ function showFlashcard() {
             }
         });
 
-    // ── 背面：整句音檔 + ✏️（async 查 timestamp）────────────
+    // ── 背面：整句音檔 + ✏️ ────────────────────────────────────
     const backAudioBtn      = document.getElementById('flashcard-back-audio-btn');
     const backEditContainer = document.getElementById('flashcard-back-edit-container');
     if (backAudioBtn) {
@@ -1329,28 +1369,22 @@ function showFlashcard() {
     }
     if (backEditContainer) backEditContainer.innerHTML = '';
 
-    const _flashTitle = _ctxTitle; // 已考慮 note item.noteTitle 與 scope
-    const _ctxText    = ctx; // findContextForWord 的結果（純文字句子）
+    const _flashTitle = _ctxTitle; // 已考慮 article/note/scope
+    const _ctxText    = ctx;
 
     if (_flashTitle && _ctxText) {
         const _audioSrc = `audio/${encodeURIComponent(_flashTitle.trim())}.mp3`;
-
-        // 確保 quizAudioPlayer 與 WebAudioEngine 指向正確 src
         _setQuizAudioSrc(_audioSrc);
 
-        getTimestampForStory(_flashTitle).then(tsData => {
-            if (!tsData || !backAudioBtn) return;
-            const _norm = t => t.trim().replace(/[.,?!'"`\u201c\u201d\u2018\u2019]/g, '').toLowerCase();
-            const _match = tsData.find(l => _norm(l.sentence) === _norm(_ctxText));
-            if (!_match) return;
-
-            // 套用調整後的時間（優先使用已調整記錄）
+        const _setupBackAudio = (rawStart, rawEnd) => {
+            if (rawStart == null) return;
             const _timing = (typeof getAdjustedTiming === 'function')
-                ? getAdjustedTiming(_flashTitle, _ctxText, _match.start, _match.end)
-                : { start: _match.start, end: _match.end };
+                ? getAdjustedTiming(_flashTitle, _ctxText, rawStart, rawEnd)
+                : { start: rawStart, end: rawEnd };
 
             backAudioBtn.disabled = false;
             backAudioBtn.onclick = () => {
+                _trackReplay();
                 playSnippet({
                     start: _timing.start, end: _timing.end,
                     onStart: () => backAudioBtn.classList.add('is-playing-voice'),
@@ -1358,28 +1392,38 @@ function showFlashcard() {
                 });
             };
 
-            // ✏️ 編輯鈕
             if (backEditContainer && typeof createAudioEditBtn === 'function') {
                 backEditContainer.innerHTML = '';
                 const _editBtn = createAudioEditBtn({
                     title:    _flashTitle,
                     sentence: _ctxText,
-                    start:    _match.start,
-                    end:      _match.end,
+                    start:    rawStart,
+                    end:      rawEnd,
                     audioSrc: _audioSrc,
                     player:   quizAudioPlayer,
                     onSave:   (ns, ne) => {
-                        _timing.start = ns;
-                        _timing.end   = ne;
-                        // 更新編輯鈕狀態
-                        _editBtn.innerHTML  = '✏️✓';
-                        _editBtn.title      = '已調整（點擊再編輯）';
+                        _timing.start = ns; _timing.end = ne;
+                        _editBtn.innerHTML = '✏️✓';
+                        _editBtn.title     = '已調整（點擊再編輯）';
                         _editBtn.classList.add('is-adjusted');
                     }
                 });
                 backEditContainer.appendChild(_editBtn);
             }
-        }).catch(() => {});
+        };
+
+        // Article 模式：item 直接帶 start/end，無需再查 timestamp
+        if (quizState.flashSource === 'article' && item.start != null) {
+            _setupBackAudio(item.start, item.end);
+        } else {
+            // Note 模式：查 timestamp 找句子對應時間
+            getTimestampForStory(_flashTitle).then(tsData => {
+                if (!tsData || !backAudioBtn) return;
+                const _norm = t => t.trim().replace(/[.,?!'"`“”‘’]/g, '').toLowerCase();
+                const _match = tsData.find(l => _norm(l.sentence) === _norm(_ctxText));
+                if (_match) _setupBackAudio(_match.start, _match.end);
+            }).catch(() => {});
+        }
     }
 
     // Hide action buttons until flipped
@@ -2040,12 +2084,23 @@ function startReorderRetryWrong() {
     const wrongQs = quizState.answeredQuestions.filter(q => !q.isCorrect);
     if (wrongQs.length === 0) return;
 
-    quizState.questions        = shuffle(wrongQs.map(q => ({ sentence: q.correct })));
+    // 保留 start/end/title，讓 retry 時音檔可以正常播放
+    const retryTitle = wrongQs.find(q => q.title)?.title || quizState.titleName || null;
+    quizState.questions = shuffle(wrongQs.map(q => ({
+        sentence: q.correct,
+        start: q.start ?? null,
+        end:   q.end   ?? null,
+        title: q.title ?? retryTitle,
+    })));
     quizState.currentIndex     = 0;
     quizState.correct          = 0;
     quizState.wrong            = 0;
     quizState.wrongItems       = [];
     quizState.answeredQuestions = [];
+
+    // 重新設定音源（取第一題的 title）
+    const firstTitle = quizState.questions[0]?.title;
+    if (firstTitle) _setQuizAudioSrc(`audio/${encodeURIComponent(firstTitle.trim())}.mp3`);
 
     showQuizSession('reorder');
     showReorderQuestion();
@@ -2239,7 +2294,8 @@ function showReorderQuestion() {
     const playBtn = document.getElementById('reorder-play-btn');
     playBtn.classList.remove('is-hidden');
     playBtn.classList.remove('is-playing-voice');
-    playBtn.querySelector('span:last-child').textContent = 'Play Sentence';
+    const _playLabelEl = playBtn.querySelector('.reorder-ctrl-label');
+    if (_playLabelEl) _playLabelEl.textContent = 'Play';
 
 if (q.start != null) {
         playBtn.disabled = false;
@@ -2283,9 +2339,11 @@ if (q.start != null) {
     const checkBtn = document.getElementById('reorder-check-btn');
     checkBtn.textContent = 'Check ✓';
     checkBtn.classList.remove('quiz-btn-next-mode');
-    checkBtn.classList.add('quiz-btn-correct');
+    checkBtn.classList.add('quiz-btn-correct', 'reorder-check-full');
     checkBtn.disabled = false;
     document.getElementById('reorder-clear-btn').disabled = false;
+    const _backBtn = document.getElementById('reorder-back-btn');
+    if (_backBtn) _backBtn.disabled = false;
 
     renderReorderPool();
     renderReorderAnswer();
@@ -2303,15 +2361,16 @@ function playReorderAudio(q) {
     const playBtn = document.getElementById('reorder-play-btn');
     // 套用使用者調整後的時間（若無調整則使用原始值）
     const timing = getQuizTiming(q.title, q.sentence, q.start, q.end);
+    const _pLabel = playBtn.querySelector('.reorder-ctrl-label');
     playSnippet({
         start: timing.start, end: timing.end,
         onStart: () => {
             playBtn.classList.add('is-playing-voice');
-            playBtn.querySelector('span:last-child').textContent = 'Playing…';
+            if (_pLabel) _pLabel.textContent = 'Playing…';
         },
         onEnd: () => {
             playBtn.classList.remove('is-playing-voice');
-            playBtn.querySelector('span:last-child').textContent = 'Play Sentence';
+            if (_pLabel) _pLabel.textContent = 'Play';
         }
     });
 }
@@ -2601,6 +2660,14 @@ document.getElementById('reorder-clear-btn').addEventListener('click', () => {
     renderReorderAnswer();
 });
 
+// Back 按鈕：移除最後一個放入的單字
+document.getElementById('reorder-back-btn').addEventListener('click', () => {
+    if (reorderChecked || reorderAnswer.length === 0) return;
+    reorderAnswer.pop();
+    renderReorderPool();
+    renderReorderAnswer();
+});
+
 document.getElementById('reorder-check-btn').addEventListener('click', () => {
     if (reorderChecked) {
         // Button has become "Next →" — advance to next question
@@ -2618,7 +2685,9 @@ document.getElementById('reorder-check-btn').addEventListener('click', () => {
     }
 
     reorderChecked = true;
-    document.getElementById('reorder-clear-btn').disabled  = true;
+    document.getElementById('reorder-clear-btn').disabled = true;
+    const _backBtnCheck = document.getElementById('reorder-back-btn');
+    if (_backBtnCheck) _backBtnCheck.disabled = true;
 
     const userStr    = normalizeForCheck(reorderAnswer.map(a => a.word));
     const correctStr = normalizeForCheck(tokens);
@@ -2683,7 +2752,10 @@ document.getElementById('reorder-check-btn').addEventListener('click', () => {
         question: q.sentence,
         selected: reorderAnswer.map(a => a.word).join(' '),
         correct: q.sentence,
-        isCorrect
+        isCorrect,
+        start: q.start ?? null,
+        end:   q.end   ?? null,
+        title: q.title ?? null,
     });
     if (typeof recordItemResult === 'function') {
         const _rtype = (typeof subpanelSource !== 'undefined' && subpanelSource.reorder === 'article') ? 'articleSentences' : 'noteSentences';
@@ -2693,8 +2765,8 @@ document.getElementById('reorder-check-btn').addEventListener('click', () => {
     // Transform Check button → Next button
     const checkBtn = document.getElementById('reorder-check-btn');
     checkBtn.textContent = 'Next →';
-    checkBtn.classList.remove('quiz-btn-correct');
-    checkBtn.classList.add('quiz-btn-next-mode');
+    checkBtn.classList.remove('quiz-btn-correct', 'reorder-check-full');
+    checkBtn.classList.add('quiz-btn-next-mode', 'reorder-check-full');
     checkBtn.disabled = false;
     checkBtn.dataset.mode = 'next';
 });
@@ -3028,11 +3100,13 @@ async function showFcplusCard() {
     // Build letter inputs
     _buildFcplusLetters(item.text);
 
-    // Sentence display
+    // Sentence display — note 模式用 item.noteTitle，支援 All Notes
+    const _fcplusCtxTitle = quizState.flashSource === 'article'
+        ? quizState.titleName
+        : (item.noteTitle || (quizState.scope === 'this' ? quizState.titleName : null));
     const ctx = (quizState.flashSource === 'article' && item.sentence)
         ? item.sentence
-        : findContextForWord(item.text.replace(/-/g, ' '),
-            quizState.scope === 'this' ? quizState.titleName : null);
+        : findContextForWord(item.text.replace(/-/g, ' '), _fcplusCtxTitle);
 
     const sentEl = document.getElementById('fcplus-sentence');
     if (ctx) {

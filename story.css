@@ -2658,6 +2658,35 @@ button.secondary:hover {
 
 .quiz-review-item:last-child { border-bottom: none; }
 
+/* Flashcard wrong item with audio button */
+.quiz-review-fc-wrong {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.quiz-review-fc-word {
+    flex: 1;
+}
+
+.quiz-review-play-word {
+    flex-shrink: 0;
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid rgba(80,184,200,0.4);
+    background: rgba(80,184,200,0.1);
+    color: #3ab8c8;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.13s;
+}
+
+.quiz-review-play-word:hover {
+    background: rgba(80,184,200,0.22);
+}
+
 .quiz-result-actions {
     display: flex;
     gap: 12px;
@@ -3162,6 +3191,115 @@ button.secondary:hover {
 
 .reorder-actions .quiz-btn {
     flex: 1;
+}
+
+/* ── 新版 Reorder 控制列 ────────────────────────────────────── */
+
+.reorder-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+    justify-content: center;
+}
+
+.reorder-ctrl-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    min-width: 60px;
+    padding: 8px 10px;
+    border-radius: 12px;
+    border: 1.5px solid var(--color-border, rgba(255,255,255,0.18));
+    background: var(--color-surface, #2a2520);
+    color: var(--color-text, #f0ebe4);
+    font-family: inherit;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.13s, transform 0.1s, opacity 0.15s;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.reorder-ctrl-btn:hover {
+    background: rgba(255,255,255,0.1);
+    transform: translateY(-1px);
+}
+
+.reorder-ctrl-btn:active {
+    transform: scale(0.94);
+}
+
+.reorder-ctrl-btn:disabled {
+    opacity: 0.35;
+    pointer-events: none;
+}
+
+.reorder-ctrl-icon {
+    font-size: 1.1rem;
+    line-height: 1;
+}
+
+.reorder-ctrl-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.02em;
+    opacity: 0.85;
+}
+
+/* Clear — 紅色調 */
+.reorder-ctrl-clear {
+    border-color: rgba(224,92,92,0.35);
+    color: #e05c5c;
+    background: rgba(224,92,92,0.08);
+}
+.reorder-ctrl-clear:hover {
+    background: rgba(224,92,92,0.16);
+}
+
+/* Back — 橘色調 */
+.reorder-ctrl-back {
+    border-color: rgba(220,150,60,0.35);
+    color: #e09430;
+    background: rgba(220,150,60,0.08);
+}
+.reorder-ctrl-back:hover {
+    background: rgba(220,150,60,0.16);
+}
+
+/* Play — 藍綠色調 */
+.reorder-ctrl-play {
+    border-color: rgba(80,184,200,0.35);
+    color: #3ab8c8;
+    background: rgba(80,184,200,0.08);
+}
+.reorder-ctrl-play:hover {
+    background: rgba(80,184,200,0.16);
+}
+.reorder-ctrl-play.is-playing-voice {
+    color: #50b8c8;
+    animation: pulse-play 1s ease-in-out infinite;
+}
+
+@keyframes pulse-play {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.55; }
+}
+
+/* Submit 行（Check / Next 按鈕獨佔一列） */
+.reorder-submit-row {
+    margin-top: 10px;
+}
+
+.reorder-check-full {
+    width: 100%;
+    padding: 13px 0;
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: 12px;
+    letter-spacing: 0.03em;
 }
 
 /* ── Scores Entry Button ─────────────────────────────────────── */

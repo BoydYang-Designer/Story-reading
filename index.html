@@ -617,21 +617,32 @@
         <!-- Reorder Mode -->
         <div id="quiz-reorder-area" class="is-hidden">
             <div class="quiz-card">
-                <div class="reorder-hint">Arrange the words in the correct order</div>
+                <div class="reorder-hint" id="reorder-hint"></div>
                 <div class="reorder-answer-area" id="reorder-answer-area"></div>
             </div>
             <div class="reorder-word-pool" id="reorder-word-pool"></div>
-            <div class="reorder-actions">
-                <button class="quiz-btn quiz-btn-wrong" id="reorder-clear-btn">↺ Clear</button>
-                <button class="quiz-btn quiz-btn-correct" id="reorder-check-btn">Check ✓</button>
-            </div>
-            <div class="quiz-feedback" id="reorder-feedback"></div>
-            <div class="reorder-play-row">
-                <button class="dictation-play-btn is-hidden reorder-play-bottom" id="reorder-play-btn">
-                    <span class="reorder-play-icon">▶</span>
-                    <span>Play Sentence</span>
+
+            <!-- 控制列：Clear / Back / Play -->
+            <div class="reorder-controls">
+                <button class="reorder-ctrl-btn reorder-ctrl-clear" id="reorder-clear-btn" title="清除全部">
+                    <span class="reorder-ctrl-icon">↺</span>
+                    <span class="reorder-ctrl-label">Clear</span>
+                </button>
+                <button class="reorder-ctrl-btn reorder-ctrl-back" id="reorder-back-btn" title="退一格">
+                    <span class="reorder-ctrl-icon">⌫</span>
+                    <span class="reorder-ctrl-label">Back</span>
+                </button>
+                <button class="reorder-ctrl-btn reorder-ctrl-play is-hidden" id="reorder-play-btn">
+                    <span class="reorder-ctrl-icon reorder-play-icon">▶</span>
+                    <span class="reorder-ctrl-label">Play</span>
                 </button>
                 <span id="reorder-edit-btn-container"></span>
+            </div>
+
+            <!-- 反饋 + Check/Next -->
+            <div class="quiz-feedback" id="reorder-feedback"></div>
+            <div class="reorder-submit-row">
+                <button class="quiz-btn quiz-btn-correct reorder-check-full" id="reorder-check-btn">Check ✓</button>
             </div>
         </div>
     </div>
