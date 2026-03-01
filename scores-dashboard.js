@@ -658,10 +658,10 @@ function _buildCatSortBtns(cat) {
     const arrow = dir === 'asc' ? ' ↓' : ' ↑';
 
     const btns = [
-        { k: 'noteWord', label: '📝 Note 單字',    title: 'Note 單字熟悉度（低→高）' },
-        { k: 'noteSent', label: '📝 Note 句子',    title: 'Note 句子熟悉度（低→高）' },
-        { k: 'artWord',  label: '🃏 Article 單字', title: 'Article 單字熟悉度（低→高）' },
-        { k: 'artSent',  label: '🎧 Article 句子', title: 'Article 句子熟悉度（低→高）' },
+        { k: 'noteWord', label: '📝 N 單字',    title: 'Note 單字熟悉度（低→高）' },
+        { k: 'noteSent', label: '📝 N 句子',    title: 'Note 句子熟悉度（低→高）' },
+        { k: 'artWord',  label: '🃏 A 單字', title: 'Article 單字熟悉度（低→高）' },
+        { k: 'artSent',  label: '🎧 A 句子', title: 'Article 句子熟悉度（低→高）' },
     ];
 
     return btns.map(b => {
