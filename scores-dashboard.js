@@ -493,34 +493,28 @@ function _sortArticlesByCat(articles, cat) {
     const { key, dir } = _getCatSort(cat);
 
     return [...articles].sort((a, b) => {
-        const aTested = a.summary.hasPractice;
-        const bTested = b.summary.hasPractice;
+        // 未測驗（null avg）固定排最後，已測驗按熟悉度排列
+        // 對於選定 key：null 表示該維度沒有資料，排在 tested 後、untested 前
+        const _getVal = (summary, k) => {
+            if (k === 'noteWord') return summary.noteWordAvg;
+            if (k === 'noteSent') return summary.noteSentAvg;
+            if (k === 'artWord')  return summary.artWordAvg;
+            if (k === 'artSent')  return summary.artSentAvg;
+            return summary.famAvg;
+        };
 
-        if (key === 'alpha') {
-            const cmp = a.title.localeCompare(b.title);
-            return dir === 'asc' ? cmp : -cmp;
-        }
+        if (!key) return a.title.localeCompare(b.title);
 
-        // 其他 key：未測驗固定排後（字母），已測驗按選定維度
-        if (!aTested && !bTested) return a.title.localeCompare(b.title);
-        if (!aTested) return 1;
-        if (!bTested) return -1;
+        const fa = _getVal(a.summary, key);
+        const fb = _getVal(b.summary, key);
 
-        let fa = 0, fb = 0;
-        if (key === 'note') {
-            fa = a.summary.noteAvg ?? 0;
-            fb = b.summary.noteAvg ?? 0;
-        } else if (key === 'artWord') {
-            fa = a.summary.artWordAvg ?? 0;
-            fb = b.summary.artWordAvg ?? 0;
-        } else if (key === 'artSent') {
-            fa = a.summary.artSentAvg ?? 0;
-            fb = b.summary.artSentAvg ?? 0;
-        } else {
-            // default: overall famAvg
-            fa = a.summary.famAvg ?? 0;
-            fb = b.summary.famAvg ?? 0;
-        }
+        // 兩者都無資料：字母排序
+        if (fa === null && fb === null) return a.title.localeCompare(b.title);
+        // 無資料排後
+        if (fa === null) return 1;
+        if (fb === null) return -1;
+
+        // asc = 低熟悉度（fam-red）在前；desc = 高熟悉度在前
         return dir === 'asc' ? fa - fb : fb - fa;
     });
 }
@@ -660,13 +654,14 @@ function _renderBrowserSection() {
 
 function _buildCatSortBtns(cat) {
     const { key, dir } = _getCatSort(cat);
-    const arrow = dir === 'asc' ? ' ↑' : ' ↓';
+    // asc = 低熟悉度（fam-red）在前；desc = 高熟悉度在前
+    const arrow = dir === 'asc' ? ' ↓' : ' ↑';
 
     const btns = [
-        { k: 'note',    label: '📝 Note',  title: 'Note 整體熟悉度' },
-        { k: 'artWord', label: '🃏 單字',   title: 'Article 單字熟悉度' },
-        { k: 'artSent', label: '🎧 句子',   title: 'Article 句子熟悉度' },
-        { k: 'alpha',   label: 'A–Z',      title: '字母排序' },
+        { k: 'noteWord', label: '📝 Note 單字',    title: 'Note 單字熟悉度（低→高）' },
+        { k: 'noteSent', label: '📝 Note 句子',    title: 'Note 句子熟悉度（低→高）' },
+        { k: 'artWord',  label: '🃏 Article 單字', title: 'Article 單字熟悉度（低→高）' },
+        { k: 'artSent',  label: '🎧 Article 句子', title: 'Article 句子熟悉度（低→高）' },
     ];
 
     return btns.map(b => {
@@ -744,10 +739,12 @@ function _bindCatSortBtns(container) {
             const sortKey = btn.dataset.sortKey;
             const state   = _getCatSort(cat);
             if (state.key === sortKey) {
+                // 同一按鈕再點：升降冪切換（asc=低熟悉度↓ → desc=高熟悉度↑）
                 state.dir = state.dir === 'asc' ? 'desc' : 'asc';
             } else {
+                // 切換新維度：預設 asc（fam-red 最需練習的在最前面）
                 state.key = sortKey;
-                state.dir = 'asc'; // 預設昇冪（低熟悉度在前）
+                state.dir = 'asc';
             }
             // Rebuild this cat's body
             const catGroup = btn.closest('.browser-cat-group');
@@ -766,7 +763,7 @@ function _toggleSection(header) {
 
 function _buildArticleRowHtml(article) {
     const { title, cat, summary } = article;
-    const { noteAvg, artWordAvg, artSentAvg,
+    const { noteAvg, noteWordAvg, noteSentAvg, artWordAvg, artSentAvg,
             noteWordTotal, noteSentTotal, noteTestedWordCount, noteTestedSentCount,
             testedSentCount, untestedSentCount } = summary;
 
@@ -786,28 +783,27 @@ function _buildArticleRowHtml(article) {
         </div>`;
     }
 
-    // Note：已測/總數（單字+句子合計）
-    const noteTotalAll  = (noteWordTotal ?? 0) + (noteSentTotal ?? 0);
-    const noteTestedAll = (noteTestedWordCount ?? 0) + (noteTestedSentCount ?? 0);
-    const noteInfo = noteTotalAll > 0 ? `${noteTestedAll}/${noteTotalAll}項` : '';
-
+    // Note 單字已測/總數
+    const noteWordInfo = noteWordTotal > 0 ? `${noteTestedWordCount}/${noteWordTotal}` : '';
+    // Note 句子已測/總數
+    const noteSentInfo = noteSentTotal > 0 ? `${noteTestedSentCount}/${noteSentTotal}` : '';
     // Article 句子：已測/總數
     const totalSents = (testedSentCount ?? 0) + (untestedSentCount ?? 0);
-    const sentInfo   = totalSents > 0 ? `${testedSentCount ?? 0}/${totalSents}句` : '';
+    const sentInfo   = totalSents > 0 ? `${testedSentCount ?? 0}/${totalSents}` : '';
 
     return `<div class="browser-article-row" data-title="${_escHtml(title)}" data-cat="${_escHtml(cat)}">
         <div class="browser-article-main">
             <div class="browser-article-title">${_escHtml(title)}</div>
         </div>
         <div class="browser-article-chips">
-            ${famChip(noteAvg,    '📝 Note',  noteInfo)}
-            ${famChip(artWordAvg, '🃏 單字')}
-            ${famChip(artSentAvg, '🎧 句子',  sentInfo)}
+            ${famChip(noteWordAvg, '📝 N.單字', noteWordInfo)}
+            ${famChip(noteSentAvg, '📝 N.句子', noteSentInfo)}
+            ${famChip(artWordAvg,  '🃏 A.單字')}
+            ${famChip(artSentAvg,  '🎧 A.句子', sentInfo)}
         </div>
         <div class="browser-article-actions">
             <button class="browser-quiz-btn" data-title="${_escHtml(title)}" data-cat="${_escHtml(cat)}" title="進入 Quiz">🎯 Quiz</button>
             <button class="browser-read-btn" data-title="${_escHtml(title)}" data-cat="${_escHtml(cat)}" title="前往文章">📖 閱讀</button>
-            <div class="browser-article-arrow">→</div>
         </div>
     </div>`;
 }

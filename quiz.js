@@ -288,15 +288,16 @@ function getAllNoteItems(scope, categoryName, titleName) {
 
     if (scope === 'this') {
         const data = getNoteData(categoryName, titleName);
-        items.words    = Array.from(data.words    || []);
-        items.phrases  = Array.from(data.phrases  || []);
+        // 包含 noteTitle，方便 Flashcard 翻卡時查對應文章 mp3
+        items.words    = Array.from(data.words    || []).map(w => typeof w === 'string' ? { text: w, noteTitle: titleName, noteCat: categoryName } : w);
+        items.phrases  = Array.from(data.phrases  || []).map(p => typeof p === 'string' ? { text: p, noteTitle: titleName, noteCat: categoryName } : p);
         items.sentences = Array.from(data.sentences || []);
     } else {
         for (const cat in savedWords) {
             for (const title in savedWords[cat]) {
                 const data = savedWords[cat][title];
-                items.words.push(...Array.from(data.words || []));
-                items.phrases.push(...Array.from(data.phrases || []));
+                items.words.push(...Array.from(data.words || []).map(w => typeof w === 'string' ? { text: w, noteTitle: title, noteCat: cat } : w));
+                items.phrases.push(...Array.from(data.phrases || []).map(p => typeof p === 'string' ? { text: p, noteTitle: title, noteCat: cat } : p));
                 items.sentences.push(...Array.from(data.sentences || []));
             }
         }
@@ -1328,7 +1329,7 @@ function showFlashcard() {
     }
     if (backEditContainer) backEditContainer.innerHTML = '';
 
-    const _flashTitle = quizState.scope === 'this' ? quizState.titleName : null;
+    const _flashTitle = _ctxTitle; // 已考慮 note item.noteTitle 與 scope
     const _ctxText    = ctx; // findContextForWord 的結果（純文字句子）
 
     if (_flashTitle && _ctxText) {
@@ -2181,6 +2182,8 @@ let reorderPool    = [];   // all shuffled tokens for current question
 let reorderChecked = false;
 let reorderFirstWord = '';  // 第一個單字
 let reorderLastWord = '';   // 最後一個單字
+let reorderFirstWordIdx = -1; // shuffle 後 tokens[0] 在 reorderPool 中的索引（避免大小寫重複標記）
+let reorderLastWordIdx  = -1; // shuffle 後 tokens[last] 在 reorderPool 中的索引
 
 function tokenize(sentence) {
     // Split keeping punctuation attached to words (e.g. "Hello," stays together)
@@ -2217,6 +2220,13 @@ function showReorderQuestion() {
     // 記錄第一個和最後一個單字
     reorderFirstWord = tokens[0];
     reorderLastWord = tokens[tokens.length - 1];
+    // 記錄 shuffle 後的精確索引（直接比對字串身份，避免大小寫重複標記）
+    reorderFirstWordIdx = shuffled.indexOf(tokens[0]);
+    reorderLastWordIdx  = shuffled.lastIndexOf(tokens[tokens.length - 1]);
+    // 若 first === last（單詞句），last 用同一個 idx
+    if (tokens[0] === tokens[tokens.length - 1]) {
+        reorderLastWordIdx = reorderFirstWordIdx;
+    }
     
     // 顯示提示
     const hintEl = document.getElementById('reorder-hint');
@@ -2527,9 +2537,8 @@ function renderReorderPool() {
         .map((word, idx) => ({ word, idx }))
         .sort((a, b) => a.word.toLowerCase().localeCompare(b.word.toLowerCase()));
 
-    const nf = reorderFirstWord.toLowerCase().replace(/[.,?!'`“”‘’]/g, '');
-    const nl = reorderLastWord.toLowerCase().replace(/[.,?!'`“”‘’]/g, '');
-    const sameHint = nf === nl;
+    // 精確用 shuffle 後的 idx 判斷 hint，避免大小寫不同的同詞被重複標記
+    const sameHint = (reorderFirstWordIdx === reorderLastWordIdx);
     let firstHintUsed = false;
     let lastHintUsed  = false;
 
@@ -2539,12 +2548,11 @@ function renderReorderPool() {
         btn.className = 'reorder-word';
         if (isUsed) btn.classList.add('is-used');
 
-        const nw = word.toLowerCase().replace(/[.,?!'"`“”‘’]/g, '');
         let isHint = false;
-        if (nw === nf && !firstHintUsed) {
+        if (idx === reorderFirstWordIdx && !firstHintUsed) {
             isHint = true;
             firstHintUsed = true;
-        } else if (nw === nl && !lastHintUsed && (!sameHint || firstHintUsed)) {
+        } else if (idx === reorderLastWordIdx && !lastHintUsed && (!sameHint || firstHintUsed)) {
             isHint = true;
             lastHintUsed = true;
         }
@@ -2894,8 +2902,8 @@ let _fcplusItem       = null;  // 當前題目 item
 function startFcplus() {
     const items = getAllNoteItems(quizState.scope, quizState.categoryName, quizState.titleName);
     let allItems = [
-        ...items.words.map(w => ({ text: w, type: 'word' })),
-        ...items.phrases.map(p => ({ text: p, type: 'phrase' }))
+        ...items.words.map(w => typeof w === 'string' ? { text: w, type: 'word' } : { ...w, type: 'word' }),
+        ...items.phrases.map(p => typeof p === 'string' ? { text: p, type: 'phrase' } : { ...p, type: 'phrase' })
     ].filter(i => {
         // 排除 1 個字母以下、純標點、或含空格超過 1 段（phrase 整體判斷字母數）
         const clean = i.text.replace(/[^a-zA-Z]/g, '');
@@ -3056,7 +3064,7 @@ async function showFcplusCard() {
     backAudioBtn.onclick  = null;
     if (backEditContainer) backEditContainer.innerHTML = '';
 
-    const flashTitle = quizState.scope === 'this' ? quizState.titleName : null;
+    const flashTitle = _fcplusCtxTitle; // 已考慮 note item.noteTitle 與 scope
     if (flashTitle && ctx) {
         const audioSrc   = `audio/${encodeURIComponent(flashTitle.trim())}.mp3`;
         _setQuizAudioSrc(audioSrc);
