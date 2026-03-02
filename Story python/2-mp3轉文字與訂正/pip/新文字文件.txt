@@ -1,0 +1,6 @@
+pip install spacy
+python -m spacy download en_core_web_sm
+
+
+py -m pip install spacy
+py -m spacy download en_core_web_sm
