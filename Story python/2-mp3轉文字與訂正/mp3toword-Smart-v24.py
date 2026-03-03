@@ -335,344 +335,355 @@ def show_diff_dialog(filename, old_text, new_text):
     nt_.insert(tk.END, new_text); nt_.config(state=tk.DISABLED)
 
     # ════════════════════════════════════════════════════════════
-    # Tab 3：斷點編輯器
+    # Tab 3：斷點編輯器（左右雙欄 v22-r2）
     # ════════════════════════════════════════════════════════════
     tab_edit = tk.Frame(nb, bg='#0d1117')
     nb.add(tab_edit, text='  ✂ 斷點編輯  ')
 
-    # ── seg 結構 ──
-    # {
-    #   'start', 'end', 'text',
-    #   'origins': [{'start','end','text'}, ...]  ← 合併歷史，len>1 可恢復
-    #   'split_from': seg_id | None               ← 由哪條拆分出來（顯示藍綠色）
-    #   'id': int
-    # }
-    _seg_id_counter = [0]
+    # ── seg 資料結構 ──
+    # { 'start','end','text',
+    #   'origins': [{'start','end','text'}, ...]  合併歷史
+    #   'split_group': int | None                 同一拆分群組的 id
+    #   'split_first': bool                       是否為群組第一條（顯示還原按鈕）
+    #   'id': int }
+    _seg_id_counter    = [0]
+    _split_group_counter = [0]
+
     def new_id():
         _seg_id_counter[0] += 1
         return _seg_id_counter[0]
 
-    def make_seg(start, end, text, origins=None, split_from=None):
+    def new_group():
+        _split_group_counter[0] += 1
+        return _split_group_counter[0]
+
+    def make_seg(start, end, text, origins=None, split_group=None, split_first=False):
         o = origins if origins is not None else [{'start': start, 'end': end, 'text': text}]
         return {'start': start, 'end': end, 'text': text,
-                'origins': o, 'split_from': split_from, 'id': new_id()}
+                'origins': o, 'split_group': split_group,
+                'split_first': split_first, 'id': new_id()}
 
+    # 左欄快照（固定不變，唯讀參考）
     if new_segs:
-        edited_segs = [make_seg(s, e, t) for s, e, t in new_segs]
+        _origin_segs = [{'start': s, 'end': e, 'text': t} for s, e, t in new_segs]
+        edited_segs  = [make_seg(s, e, t) for s, e, t in new_segs]
     elif old_segs:
-        edited_segs = [make_seg(s, e, t) for s, e, t in old_segs]
+        _origin_segs = [{'start': s, 'end': e, 'text': t} for s, e, t in old_segs]
+        edited_segs  = [make_seg(s, e, t) for s, e, t in old_segs]
     else:
-        edited_segs = []
+        _origin_segs = []
+        edited_segs  = []
+
+    MAX_UNDO = 5
 
     edit_state = {
-        'segs':          edited_segs,
-        'drag_seg':      None,   # 拖曳中的 seg index
-        'drag_word':     None,   # 拖曳中的 word index（從此詞開始帶走後面所有詞）
-        'drag_ghost':    None,   # 浮動 ghost label
-        'drag_drop_idx': None,   # 目前預覽的插入位置（在第幾張卡片之後）
-        'drop_indicator':None,   # 當前的橘色插入線 widget
-        'card_widgets':  [],     # [(card_frame, seg_idx), ...] 供拖曳定位用
-        'focus_seg_id':  None,   # 操作後要捲回的 seg id
+        'segs':           edited_segs,
+        'card_widgets':   [],
+        'hover_seg_idx':  None,
+        'hover_word_idx': None,
+        'undo_stack':     [],
     }
-
-    # ── 說明列 ──
-    info_fr = tk.Frame(tab_edit, bg='#161b22', pady=6)
-    info_fr.pack(fill=tk.X)
-    tk.Label(info_fr,
-             text='✂ 斷點編輯器  —  編輯完成後，按底部「✏️ 使用自訂版本」確認採用',
-             font=('Microsoft JhengHei', 10, 'bold'), bg='#161b22', fg='#e8c44a', padx=12).pack(anchor='w')
-    hint_frame = tk.Frame(info_fr, bg='#161b22')
-    hint_frame.pack(fill=tk.X, padx=12, pady=(2,0))
-    for txt, fg_c in [
-        ('🖱 點擊詞語 → 在該詞後立即切斷', '#79c0ff'),
-        ('   ｜', '#555'),
-        ('✋ 拖曳詞語 → 將該詞＋後半句拖到其他位置', '#56d364'),
-        ('   ｜', '#555'),
-        ('🔗 合併 → 點兩條之間的合併按鈕', '#d4b8f0'),
-        ('   ｜', '#555'),
-        ('↩ 恢復 → 還原合併前的原始斷點', '#ff8c00'),
-    ]:
-        tk.Label(hint_frame, text=txt, bg='#161b22', fg=fg_c,
-                 font=('Microsoft JhengHei', 9)).pack(side=tk.LEFT)
-
-    # ── Canvas + Scrollbar ──
-    edit_outer = tk.Frame(tab_edit, bg='#0d1117')
-    edit_outer.pack(fill=tk.BOTH, expand=True)
-    edit_canvas = tk.Canvas(edit_outer, bg='#0d1117', highlightthickness=0)
-    edit_vsb = tk.Scrollbar(edit_outer, orient=tk.VERTICAL, command=edit_canvas.yview)
-    edit_canvas.configure(yscrollcommand=edit_vsb.set)
-    edit_vsb.pack(side=tk.RIGHT, fill=tk.Y)
-    edit_canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-    edit_inner = tk.Frame(edit_canvas, bg='#0d1117')
-    edit_cwin = edit_canvas.create_window((0, 0), window=edit_inner, anchor='nw')
-    edit_canvas.bind('<Configure>', lambda e: edit_canvas.itemconfig(edit_cwin, width=e.width))
-    edit_inner.bind('<Configure>', lambda e: edit_canvas.configure(scrollregion=edit_canvas.bbox('all')))
-    # 滾輪只在 edit_canvas 上方才作用
-    edit_canvas.bind('<Enter>', lambda e: edit_canvas.bind_all('<MouseWheel>',
-        lambda ev: edit_canvas.yview_scroll(int(-1*(ev.delta/120)), 'units')))
-    edit_canvas.bind('<Leave>', lambda e: edit_canvas.unbind_all('<MouseWheel>'))
 
     def fmt_time(sec):
         m_ = int(sec // 60); s_ = sec % 60
         return f'{m_:02d}:{s_:05.2f}'
 
-    # ── 顏色定義 ──
+    # ── 顏色 ──
     COLOR = {
         'normal': {'card': '#161b22', 'txt_bg': '#1c2129', 'txt_fg': '#e6edf3',
                    'badge_bg': None,      'badge_fg': None,      'badge': ''},
-        'merged': {'card': '#1e1a2e', 'txt_bg': '#1e1a2e', 'txt_fg': '#d4b8f0',
+        'merged': {'card': '#1e1a2e', 'txt_bg': '#231e35', 'txt_fg': '#d4b8f0',
                    'badge_bg': '#3a2060', 'badge_fg': '#c792ea', 'badge': '⊕ 已合併'},
-        'split':  {'card': '#0a1e30', 'txt_bg': '#0a1e30', 'txt_fg': '#7dd8f0',
+        'split':  {'card': '#0a1e30', 'txt_bg': '#0d2438', 'txt_fg': '#7dd8f0',
                    'badge_bg': '#0a3a50', 'badge_fg': '#56c8ea', 'badge': '✂ 已拆分'},
     }
 
     def seg_kind(seg):
         if len(seg.get('origins', [])) > 1: return 'merged'
-        if seg.get('split_from') is not None: return 'split'
+        if seg.get('split_group') is not None: return 'split'
         return 'normal'
 
-    # ─────────────────────────────────────────────
-    # 捲動到指定 seg
-    # ─────────────────────────────────────────────
-    def scroll_to_seg_id(seg_id):
-        """在 rebuild 後，把畫面捲到包含 seg_id 的卡片。"""
-        if seg_id is None:
-            return
-        def _do():
-            for card_w, s_idx in edit_state['card_widgets']:
-                segs = edit_state['segs']
-                if s_idx < len(segs) and segs[s_idx]['id'] == seg_id:
-                    try:
-                        edit_canvas.update_idletasks()
-                        card_y = card_w.winfo_y()
-                        canvas_h = edit_canvas.winfo_height()
-                        total_h  = edit_inner.winfo_height()
-                        if total_h > 0:
-                            # 把目標卡片置於畫面中央偏上（1/3 處）
-                            target = max(0.0, min(1.0, (card_y - canvas_h // 3) / total_h))
-                            edit_canvas.yview_moveto(target)
-                    except Exception:
-                        pass
-                    break
-        edit_canvas.after(50, _do)
+    # ── 說明列 ──
+    info_fr = tk.Frame(tab_edit, bg='#161b22', pady=5)
+    info_fr.pack(fill=tk.X)
+    tk.Label(info_fr,
+             text='✂ 斷點編輯器  —  左側原始對照（唯讀），右側可編輯。完成後按底部「✏️ 使用自訂版本」',
+             font=('Microsoft JhengHei', 10, 'bold'),
+             bg='#161b22', fg='#e8c44a', padx=12).pack(anchor='w')
+    hint_fr = tk.Frame(info_fr, bg='#161b22')
+    hint_fr.pack(fill=tk.X, padx=12, pady=(1, 3))
+    for txt, fg_c in [
+        ('滑鼠移到詞語間隙出現 ✂，按 Enter 或點擊切斷', '#79c0ff'),
+        ('  ｜  ', '#444'),
+        ('🔗 合併：點兩條之間的合併按鈕', '#d4b8f0'),
+        ('  ｜  ', '#444'),
+        ('↩ 還原拆分 / 還原合併：卡片內按鈕', '#ff8c00'),
+    ]:
+        tk.Label(hint_fr, text=txt, bg='#161b22', fg=fg_c,
+                 font=('Microsoft JhengHei', 9)).pack(side=tk.LEFT)
 
-    def get_scroll_fraction():
-        """取得目前捲動位置（0~1）。"""
-        try:
-            return edit_canvas.yview()[0]
-        except Exception:
-            return 0.0
+    # ── 工具列（undo / reset） ──
+    toolbar = tk.Frame(tab_edit, bg='#21262d', pady=3)
+    toolbar.pack(fill=tk.X)
 
-    def restore_scroll(frac):
-        """在 rebuild 後恢復捲動位置。"""
+    undo_btn = tk.Button(toolbar, text='⬅ 上一步',
+                         font=('Microsoft JhengHei', 9, 'bold'),
+                         bg='#2d333b', fg='#cdd9e5',
+                         activebackground='#444c56', activeforeground='white',
+                         bd=0, padx=12, pady=4, cursor='hand2',
+                         state=tk.DISABLED)
+    undo_btn.pack(side=tk.LEFT, padx=(8, 4))
+
+    reset_btn = tk.Button(toolbar, text='🔄 重新編輯',
+                          font=('Microsoft JhengHei', 9, 'bold'),
+                          bg='#2d333b', fg='#cdd9e5',
+                          activebackground='#444c56', activeforeground='white',
+                          bd=0, padx=12, pady=4, cursor='hand2')
+    reset_btn.pack(side=tk.LEFT, padx=4)
+
+    seg_count_var = tk.StringVar(value='')
+    tk.Label(toolbar, textvariable=seg_count_var,
+             bg='#21262d', fg='#8b949e',
+             font=('Microsoft JhengHei', 9)).pack(side=tk.RIGHT, padx=12)
+
+    # ── 左右 PanedWindow ──
+    edit_paned = tk.PanedWindow(tab_edit, orient=tk.HORIZONTAL,
+                                sashwidth=5, bg='#30363d', sashrelief=tk.FLAT)
+    edit_paned.pack(fill=tk.BOTH, expand=True)
+
+    # ─── 左側（唯讀） ──────────────────────────────
+    left_outer = tk.Frame(edit_paned, bg='#0d1117')
+    edit_paned.add(left_outer, minsize=180)
+
+    tk.Label(left_outer,
+             text=f'  📄 新版轉錄（{len(_origin_segs)} 條）— 唯讀參考',
+             font=('Microsoft JhengHei', 10, 'bold'),
+             bg='#1c2f1c', fg='#56d364', pady=4).pack(fill=tk.X)
+
+    left_canvas = tk.Canvas(left_outer, bg='#0d1117', highlightthickness=0)
+    left_vsb    = tk.Scrollbar(left_outer, orient=tk.VERTICAL, command=left_canvas.yview)
+    left_canvas.configure(yscrollcommand=left_vsb.set)
+    left_vsb.pack(side=tk.RIGHT, fill=tk.Y)
+    left_canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+    left_inner = tk.Frame(left_canvas, bg='#0d1117')
+    _lcw = left_canvas.create_window((0, 0), window=left_inner, anchor='nw')
+    left_canvas.bind('<Configure>',  lambda e: left_canvas.itemconfig(_lcw, width=e.width))
+    left_inner.bind('<Configure>',   lambda e: left_canvas.configure(
+                                         scrollregion=left_canvas.bbox('all')))
+
+    # ─── 右側（編輯） ──────────────────────────────
+    right_outer = tk.Frame(edit_paned, bg='#0d1117')
+    edit_paned.add(right_outer, minsize=220)
+
+    right_title_var = tk.StringVar()
+    tk.Label(right_outer,
+             textvariable=right_title_var,
+             font=('Microsoft JhengHei', 10, 'bold'),
+             bg='#1a1a2e', fg='#79c0ff', pady=4).pack(fill=tk.X)
+
+    right_canvas = tk.Canvas(right_outer, bg='#0d1117', highlightthickness=0)
+    right_vsb    = tk.Scrollbar(right_outer, orient=tk.VERTICAL, command=right_canvas.yview)
+    right_canvas.configure(yscrollcommand=right_vsb.set)
+    right_vsb.pack(side=tk.RIGHT, fill=tk.Y)
+    right_canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+    right_inner = tk.Frame(right_canvas, bg='#0d1117')
+    _rcw = right_canvas.create_window((0, 0), window=right_inner, anchor='nw')
+    right_canvas.bind('<Configure>', lambda e: right_canvas.itemconfig(_rcw, width=e.width))
+    right_inner.bind('<Configure>',  lambda e: right_canvas.configure(
+                                         scrollregion=right_canvas.bbox('all')))
+
+    # 滾輪各自作用
+    def _bind_wheel(c):
+        c.bind('<Enter>', lambda e, cv=c: cv.bind_all('<MouseWheel>',
+               lambda ev, cv2=c: cv2.yview_scroll(int(-1*(ev.delta/120)), 'units')))
+        c.bind('<Leave>', lambda e, cv=c: cv.unbind_all('<MouseWheel>'))
+    _bind_wheel(left_canvas)
+    _bind_wheel(right_canvas)
+
+    # ── Snapshot / Undo ──
+    def _snapshot():
+        import copy
+        stack = edit_state['undo_stack']
+        stack.append(copy.deepcopy(edit_state['segs']))
+        if len(stack) > MAX_UNDO:
+            stack.pop(0)
+
+    def _update_undo_btn():
+        undo_btn.config(state=tk.NORMAL if edit_state['undo_stack'] else tk.DISABLED)
+
+    # ── 捲動輔助 ──
+    def _get_right_scroll():
+        try: return right_canvas.yview()[0]
+        except: return 0.0
+
+    def _restore_right_scroll(frac):
         def _do():
             try:
-                edit_canvas.update_idletasks()
-                edit_canvas.yview_moveto(frac)
-            except Exception:
-                pass
-        edit_canvas.after(30, _do)
-
-    # ─────────────────────────────────────────────
-    # 拖曳邏輯
-    # ─────────────────────────────────────────────
-    def _clear_drop_indicator():
-        ind = edit_state.get('drop_indicator')
-        if ind:
-            try: ind.destroy()
+                right_canvas.update_idletasks()
+                right_canvas.yview_moveto(frac)
             except: pass
-        edit_state['drop_indicator'] = None
-        edit_state['drag_drop_idx']  = None
+        right_canvas.after(40, _do)
 
-    def _get_drop_position(wy_root):
-        """根據滑鼠 y（螢幕座標），判斷要插入在第幾張卡片之後（回傳 0..N）。
-        0 = 插到最前面；N = 插到最後面。
-        """
-        best_idx = 0
-        for card_w, s_idx in edit_state['card_widgets']:
-            try:
-                cy = card_w.winfo_rooty() + card_w.winfo_height() // 2
-                if wy_root > cy:
-                    best_idx = s_idx + 1
-            except Exception:
-                pass
-        return best_idx
+    def _scroll_to_seg_id(seg_id):
+        if seg_id is None: return
+        def _do():
+            for cw, si in edit_state['card_widgets']:
+                segs = edit_state['segs']
+                if si < len(segs) and segs[si]['id'] == seg_id:
+                    try:
+                        right_canvas.update_idletasks()
+                        cy = cw.winfo_y()
+                        ch = right_canvas.winfo_height()
+                        th = right_inner.winfo_height()
+                        if th > 0:
+                            right_canvas.yview_moveto(
+                                max(0.0, min(1.0, (cy - ch // 3) / th)))
+                    except: pass
+                    break
+        right_canvas.after(50, _do)
 
-    def _show_drop_indicator(drop_idx):
-        """在 drop_idx 位置（第 drop_idx 張卡片之後）畫橘色插入線。"""
-        _clear_drop_indicator()
-        cards = edit_state['card_widgets']
-        if not cards:
-            return
-        edit_state['drag_drop_idx'] = drop_idx
-
-        # 找參考 widget
-        if drop_idx == 0:
-            ref_w = cards[0][0]
-            anchor_y = ref_w.winfo_y() - 4
-        elif drop_idx >= len(cards):
-            ref_w = cards[-1][0]
-            anchor_y = ref_w.winfo_y() + ref_w.winfo_height() + 2
-        else:
-            ref_w = cards[drop_idx][0]
-            anchor_y = ref_w.winfo_y() - 4
-
-        ind = tk.Frame(edit_inner, bg='#ff8c00', height=3)
-        ind.place(x=10, y=anchor_y, relwidth=1.0, width=-20, height=3)
-        edit_state['drop_indicator'] = ind
-
-    def on_drag_start(event, seg_idx, word_idx):
-        """
-        開始拖曳 word_idx 這個詞：
-        ghost 顯示「該詞 + 後面所有詞」（整個後半句）。
-        """
-        edit_state['drag_seg']  = seg_idx
-        edit_state['drag_word'] = word_idx
-        segs  = edit_state['segs']
-        words = segs[seg_idx]['text'].split()
-        tail_text = ' '.join(words[word_idx:])   # 從這個詞起整段後半
-
-        ghost = tk.Label(win,
-                         text=f'  {tail_text}  ',
-                         bg='#f0a000', fg='#1a1a1a',
-                         font=('Microsoft JhengHei', 10, 'bold'),
-                         padx=8, pady=4,
-                         relief=tk.RAISED, bd=2,
-                         wraplength=600, justify=tk.LEFT)
-        ghost.place(x=event.x_root - win.winfo_rootx() + 12,
-                    y=event.y_root - win.winfo_rooty() - 10)
-        edit_state['drag_ghost'] = ghost
-
-    def on_drag_motion(event):
-        ghost = edit_state.get('drag_ghost')
-        if not ghost:
-            return
-        ghost.place(x=event.x_root - win.winfo_rootx() + 12,
-                    y=event.y_root - win.winfo_rooty() - 10)
-        drop_idx = _get_drop_position(event.y_root)
-        if drop_idx != edit_state.get('drag_drop_idx'):
-            _show_drop_indicator(drop_idx)
-
-    def on_drag_release(event):
-        ghost = edit_state.get('drag_ghost')
-        if not ghost:
-            return
-        try: ghost.destroy()
-        except: pass
-        edit_state['drag_ghost'] = None
-        _clear_drop_indicator()
-
-        seg_idx  = edit_state.get('drag_seg')
-        word_idx = edit_state.get('drag_word')
-        drop_idx = _get_drop_position(event.y_root)
-
-        edit_state['drag_seg']  = None
-        edit_state['drag_word'] = None
-
-        if seg_idx is None or word_idx is None:
-            return
-
-        do_drag_split_and_insert(seg_idx, word_idx, drop_idx)
-
-    # ─────────────────────────────────────────────
-    # 資料操作
-    # ─────────────────────────────────────────────
-    def do_drag_split_and_insert(seg_idx, word_idx, drop_idx):
-        """
-        把 seg[seg_idx] 在 word_idx 處切開：
-          前半留在原位，後半（tail）插入到 drop_idx 位置。
-        若 drop_idx == seg_idx+1（就是原來位置的下一格）等同於普通 split。
-        若 word_idx == 0 表示整條被拖走，不切割只移動。
-        """
-        segs  = edit_state['segs']
-        seg   = segs[seg_idx]
-        words = seg['text'].split()
-        parent_id = seg['id']
-
-        if word_idx == 0:
-            # 整條移動
-            tail_seg = make_seg(seg['start'], seg['end'], seg['text'],
-                                split_from=parent_id)
-            new_segs = [s for i, s in enumerate(segs) if i != seg_idx]
-            # 計算調整後的 drop_idx
-            adj = drop_idx if drop_idx <= seg_idx else drop_idx - 1
-            adj = max(0, min(adj, len(new_segs)))
-            new_segs = new_segs[:adj] + [tail_seg] + new_segs[adj:]
-        else:
-            text_head = ' '.join(words[:word_idx])
-            text_tail = ' '.join(words[word_idx:])
-            ratio     = word_idx / len(words)
-            mid       = seg['start'] + (seg['end'] - seg['start']) * ratio
-
-            head_seg = make_seg(seg['start'], mid,       text_head, split_from=parent_id)
-            tail_seg = make_seg(mid,          seg['end'], text_tail, split_from=parent_id)
-
-            # 先把原本的 seg 換成 head
-            new_segs = segs[:seg_idx] + [head_seg] + segs[seg_idx + 1:]
-            # 再把 tail 插到 drop_idx（已調整）
-            adj = drop_idx if drop_idx <= seg_idx else drop_idx
-            adj = max(0, min(adj, len(new_segs)))
-            new_segs = new_segs[:adj] + [tail_seg] + new_segs[adj:]
-
-        edit_state['segs']        = new_segs
-        edit_state['focus_seg_id'] = tail_seg['id']
-        rebuild_edit_ui(target_seg_id=tail_seg['id'])
-
+    # ── 資料操作 ──
     def do_split(seg_idx, word_idx):
-        """點擊切斷：在 word_idx 後切，兩條留在原位。"""
+        """在 word_idx 後切開，產生帶同一 split_group 的兩條。"""
         segs  = edit_state['segs']
         seg   = segs[seg_idx]
         words = seg['text'].split()
         if word_idx < 0 or word_idx >= len(words) - 1:
             return
-        text_a = ' '.join(words[:word_idx + 1])
-        text_b = ' '.join(words[word_idx + 1:])
-        ratio  = (word_idx + 1) / len(words)
-        mid    = seg['start'] + (seg['end'] - seg['start']) * ratio
-        pid    = seg['id']
-        seg_a  = make_seg(seg['start'], mid,        text_a, split_from=pid)
-        seg_b  = make_seg(mid,          seg['end'],  text_b, split_from=pid)
+        _snapshot()
+        grp      = seg.get('split_group') or new_group()
+        is_first = seg.get('split_first', False) or (seg.get('split_group') is None)
+        text_a   = ' '.join(words[:word_idx + 1])
+        text_b   = ' '.join(words[word_idx + 1:])
+        ratio    = (word_idx + 1) / len(words)
+        mid      = seg['start'] + (seg['end'] - seg['start']) * ratio
+        orig_origins = seg.get('origins') or [{'start': seg['start'],
+                                                'end':   seg['end'],
+                                                'text':  seg['text']}]
+        seg_a = make_seg(seg['start'], mid,       text_a,
+                         origins=orig_origins, split_group=grp, split_first=is_first)
+        seg_b = make_seg(mid,          seg['end'], text_b,
+                         origins=orig_origins, split_group=grp, split_first=False)
         edit_state['segs'] = segs[:seg_idx] + [seg_a, seg_b] + segs[seg_idx + 1:]
-        edit_state['focus_seg_id'] = seg_b['id']
+        edit_state['hover_seg_idx']  = None
+        edit_state['hover_word_idx'] = None
+        _update_undo_btn()
         rebuild_edit_ui(target_seg_id=seg_b['id'])
 
     def do_merge(idx):
         segs = edit_state['segs']
-        if idx + 1 >= len(segs):
-            return
+        if idx + 1 >= len(segs): return
+        _snapshot()
         a, b = segs[idx], segs[idx + 1]
-        merged_origins = a.get('origins', [{'start':a['start'],'end':a['end'],'text':a['text']}]) + \
-                         b.get('origins', [{'start':b['start'],'end':b['end'],'text':b['text']}])
+        merged_origins = (a.get('origins') or [{'start':a['start'],'end':a['end'],'text':a['text']}]) + \
+                         (b.get('origins') or [{'start':b['start'],'end':b['end'],'text':b['text']}])
         merged = make_seg(a['start'], b['end'],
                           a['text'].rstrip() + ' ' + b['text'].lstrip(),
                           origins=merged_origins)
         edit_state['segs'] = segs[:idx] + [merged] + segs[idx + 2:]
-        edit_state['focus_seg_id'] = merged['id']
+        _update_undo_btn()
         rebuild_edit_ui(target_seg_id=merged['id'])
 
-    def do_restore(seg_idx):
+    def do_restore_split(seg_idx):
+        """還原整個拆分群組 → 合回最原始那一條。"""
+        segs = edit_state['segs']
+        seg  = segs[seg_idx]
+        grp  = seg.get('split_group')
+        if grp is None: return
+        _snapshot()
+        group_indices = [i for i, s in enumerate(segs) if s.get('split_group') == grp]
+        if not group_indices: return
+        first    = segs[group_indices[0]]
+        orig     = first.get('origins') or [{'start': first['start'],
+                                              'end':   first['end'],
+                                              'text':  first['text']}]
+        restored_text = orig[0]['text']
+        restored_seg  = make_seg(segs[group_indices[0]]['start'],
+                                 segs[group_indices[-1]]['end'],
+                                 restored_text)
+        new_list = [s for i, s in enumerate(segs) if i not in group_indices]
+        insert_at = group_indices[0]
+        new_list  = new_list[:insert_at] + [restored_seg] + new_list[insert_at:]
+        edit_state['segs'] = new_list
+        _update_undo_btn()
+        rebuild_edit_ui(target_seg_id=restored_seg['id'])
+
+    def do_restore_merge(seg_idx):
+        """還原合併 → 拆回合併前所有條。"""
         segs    = edit_state['segs']
         seg     = segs[seg_idx]
         origins = seg.get('origins', [])
-        if len(origins) <= 1:
-            return
+        if len(origins) <= 1: return
+        _snapshot()
         restored = [make_seg(o['start'], o['end'], o['text']) for o in origins]
         edit_state['segs'] = segs[:seg_idx] + restored + segs[seg_idx + 1:]
-        edit_state['focus_seg_id'] = restored[0]['id']
+        _update_undo_btn()
         rebuild_edit_ui(target_seg_id=restored[0]['id'])
 
-    # ─────────────────────────────────────────────
-    # UI 渲染
-    # ─────────────────────────────────────────────
-    def rebuild_edit_ui(preserve_scroll=False, target_seg_id=None):
-        # 記錄目前捲動位置（若不需要跳到特定 seg）
-        scroll_frac = get_scroll_fraction() if preserve_scroll else None
+    def do_undo():
+        stack = edit_state['undo_stack']
+        if not stack: return
+        edit_state['segs'] = stack.pop()
+        edit_state['hover_seg_idx']  = None
+        edit_state['hover_word_idx'] = None
+        _update_undo_btn()
+        rebuild_edit_ui()
 
-        for w in edit_inner.winfo_children():
+    def do_reset():
+        if not messagebox.askyesno('重新編輯',
+                                   '確定要放棄所有編輯，重置為初始狀態嗎？',
+                                   icon='warning'):
+            return
+        import copy
+        edit_state['segs']           = [make_seg(s['start'], s['end'], s['text'])
+                                        for s in _origin_segs]
+        edit_state['undo_stack']     = []
+        edit_state['hover_seg_idx']  = None
+        edit_state['hover_word_idx'] = None
+        _update_undo_btn()
+        rebuild_edit_ui()
+
+    undo_btn.config(command=do_undo)
+    reset_btn.config(command=do_reset)
+
+    # ── 左側渲染（只建一次） ──
+    def build_left_panel():
+        for w in left_inner.winfo_children():
+            w.destroy()
+        for i, seg in enumerate(_origin_segs):
+            row_bg = '#161b22' if i % 2 == 0 else '#12191f'
+            row = tk.Frame(left_inner, bg=row_bg, padx=8, pady=5,
+                           bd=1, relief=tk.SOLID)
+            row.pack(fill=tk.X, padx=6, pady=(4, 0))
+            tk.Label(row,
+                     text=f"[{fmt_time(seg['start'])} → {fmt_time(seg['end'])}]",
+                     bg=row_bg, fg='#3a7fba',
+                     font=('Consolas', 8)).pack(anchor='w')
+            tk.Label(row, text=seg['text'],
+                     bg=row_bg, fg='#8b949e',
+                     font=('Microsoft JhengHei', 10),
+                     wraplength=380, justify=tk.LEFT, anchor='w').pack(
+                         fill=tk.X, padx=4, pady=(2, 0))
+        tk.Frame(left_inner, bg='#0d1117', height=16).pack()
+        def _refresh_left():
+            try:
+                left_inner.update_idletasks()
+                left_canvas.configure(scrollregion=left_canvas.bbox('all'))
+            except: pass
+        left_canvas.after(50, _refresh_left)
+
+    # ── 右側渲染 ──
+    def rebuild_edit_ui(preserve_scroll=False, target_seg_id=None):
+        scroll_frac = _get_right_scroll() if preserve_scroll else None
+
+        for w in right_inner.winfo_children():
             w.destroy()
         edit_state['card_widgets'] = []
 
         segs = edit_state['segs']
+        right_title_var.set(f'  ✏️ 編輯中（{len(segs)} 條）')
+        seg_count_var.set(f'共 {len(segs)} 條  |  原始 {len(_origin_segs)} 條'
+                          f'  |  undo {len(edit_state["undo_stack"])}/{MAX_UNDO}')
 
         for idx, seg in enumerate(segs):
             kind    = seg_kind(seg)
@@ -681,11 +692,12 @@ def show_diff_dialog(filename, old_text, new_text):
             txt_bg  = C['txt_bg']
             txt_fg  = C['txt_fg']
 
-            card = tk.Frame(edit_inner, bg=card_bg, bd=1, relief=tk.SOLID, padx=8, pady=6)
-            card.pack(fill=tk.X, padx=10, pady=(6, 0))
+            card = tk.Frame(right_inner, bg=card_bg, bd=1,
+                            relief=tk.SOLID, padx=6, pady=4)
+            card.pack(fill=tk.X, padx=6, pady=(4, 0))
             edit_state['card_widgets'].append((card, idx))
 
-            # ── 標頭：時間戳記 + 徽章 ──
+            # ── 標頭 ──
             hdr = tk.Frame(card, bg=card_bg)
             hdr.pack(fill=tk.X)
             tk.Label(hdr,
@@ -694,120 +706,172 @@ def show_diff_dialog(filename, old_text, new_text):
                      font=('Consolas', 9), anchor='w').pack(side=tk.LEFT)
             if C['badge']:
                 origins = seg.get('origins', [])
-                n_lbl   = f' {len(origins)} 條' if kind == 'merged' else ''
+                n_lbl = f' {len(origins)} 條' if kind == 'merged' else ''
                 tk.Label(hdr,
                          text=f" {C['badge']}{n_lbl} ",
                          bg=C['badge_bg'], fg=C['badge_fg'],
                          font=('Microsoft JhengHei', 8, 'bold'),
                          padx=4, pady=1).pack(side=tk.LEFT, padx=6)
 
-            # ── 詞語列 ──
-            txt_frame = tk.Frame(card, bg=txt_bg, padx=6, pady=6)
-            txt_frame.pack(fill=tk.X, pady=(4, 0))
-
+            # ── 文字區：tk.Text，詞語間隙 hover ✂ + Enter/點擊切斷 ──
             words = seg['text'].split()
+            txt_w = tk.Text(card,
+                            bg=txt_bg, fg=txt_fg,
+                            font=('Microsoft JhengHei', 11),
+                            wrap=tk.WORD,
+                            relief=tk.FLAT,
+                            cursor='arrow',
+                            padx=8, pady=6,
+                            height=1,
+                            state=tk.NORMAL,
+                            exportselection=False,
+                            takefocus=False)
+            txt_w.pack(fill=tk.X, pady=(3, 0))
+
             for wi, word in enumerate(words):
                 is_last = (wi == len(words) - 1)
-
-                w_lbl = tk.Label(txt_frame,
-                                 text=word + ' ',
-                                 bg=txt_bg, fg=txt_fg,
-                                 font=('Microsoft JhengHei', 11),
-                                 cursor='fleur' if not is_last else 'arrow',
-                                 padx=2, pady=2)
-                w_lbl.pack(side=tk.LEFT)
-
+                wtag = f'w{idx}_{wi}'
+                txt_w.insert(tk.END, word, wtag)
                 if not is_last:
-                    hover_bg = '#223322'
-                    # 懸停：橘色提示「點擊＝切斷」
-                    def _enter(e, lbl=w_lbl, orig_bg=txt_bg, word=word):
-                        lbl.config(bg='#3a2800', fg='#ffb340', relief=tk.GROOVE,
-                                   text=f' {word} ✂')
-                    def _leave(e, lbl=w_lbl, orig_bg=txt_bg, orig_fg=txt_fg, word=word):
-                        lbl.config(bg=orig_bg, fg=orig_fg, relief=tk.FLAT,
-                                   text=word + ' ')
-                    w_lbl.bind('<Enter>', _enter)
-                    w_lbl.bind('<Leave>', _leave)
+                    gtag = f'g{idx}_{wi}'
+                    txt_w.insert(tk.END, ' ', gtag)
+                else:
+                    txt_w.insert(tk.END, ' ')
 
-                    # 點擊 = 直接切斷（在此詞之後）
-                    w_lbl.bind('<Button-1>',
-                               lambda e, si=idx, wi_=wi: do_split(si, wi_))
+            txt_w.config(state=tk.DISABLED)
 
-                    # 拖曳開始（移動超過 3px 才算拖曳，避免誤觸）
-                    drag_origin = [None, None]
+            # 同步調整行高
+            def _fit(tw=txt_w):
+                try:
+                    tw.update_idletasks()
+                    lines = int(tw.index('end-1c').split('.')[0])
+                    tw.config(height=max(1, lines))
+                except: pass
+            _fit()
 
-                    def _motion_start(e, si=idx, wi_=wi, dorg=drag_origin):
-                        if dorg[0] is None:
-                            dorg[0] = e.x_root
-                            dorg[1] = e.y_root
-                        elif (abs(e.x_root - dorg[0]) > 3 or abs(e.y_root - dorg[1]) > 3):
-                            if edit_state.get('drag_ghost') is None:
-                                on_drag_start(e, si, wi_)
-                            else:
-                                on_drag_motion(e)
-                        else:
-                            on_drag_motion(e)
+            # 間隙 hover 事件
+            for wi in range(len(words) - 1):
+                gtag = f'g{idx}_{wi}'
+                wtag = f'w{idx}_{wi}'
 
-                    w_lbl.bind('<B1-Motion>', _motion_start)
+                def _genter(e, tw=txt_w, gt=gtag, wt=wtag, si=idx, wi_=wi,
+                            obg=txt_bg, ofg=txt_fg):
+                    tw.tag_config(wt, background='#2a1e00', foreground='#ffb340')
+                    tw.tag_config(gt, background='#b85c00', foreground='#fff',
+                                  font=('Microsoft JhengHei', 10, 'bold'))
+                    tw.config(state=tk.NORMAL)
+                    r = tw.tag_ranges(gt)
+                    if r:
+                        tw.delete(r[0], r[1])
+                        tw.insert(r[0], '✂', gt)
+                    tw.config(state=tk.DISABLED)
+                    edit_state['hover_seg_idx']  = si
+                    edit_state['hover_word_idx'] = wi_
 
-            # ── 底部操作列 ──
-            act = tk.Frame(card, bg=card_bg)
-            act.pack(fill=tk.X, pady=(3, 0))
-            if len(words) > 1:
-                tk.Label(act,
-                         text='↑ 點擊詞語切斷  ｜  拖曳詞語帶走後半句',
-                         bg=card_bg, fg='#484f58',
-                         font=('Microsoft JhengHei', 8)).pack(side=tk.LEFT)
+                def _gleave(e, tw=txt_w, gt=gtag, wt=wtag, obg=txt_bg, ofg=txt_fg):
+                    tw.tag_config(wt, background=obg, foreground=ofg)
+                    tw.tag_config(gt, background=obg, foreground=ofg,
+                                  font=('Microsoft JhengHei', 11))
+                    tw.config(state=tk.NORMAL)
+                    r = tw.tag_ranges(gt)
+                    if r:
+                        tw.delete(r[0], r[1])
+                        tw.insert(r[0], ' ', gt)
+                    tw.config(state=tk.DISABLED)
 
-            # 恢復按鈕（合併過才顯示）
+                def _gclick(e, si=idx, wi_=wi):
+                    do_split(si, wi_)
+
+                txt_w.tag_bind(gtag, '<Enter>',    _genter)
+                txt_w.tag_bind(gtag, '<Leave>',    _gleave)
+                txt_w.tag_bind(gtag, '<Button-1>', _gclick)
+                txt_w.tag_config(gtag, cursor='sb_h_double_arrow')
+
+            # ── 還原拆分（只在群組第一條顯示） ──
+            if kind == 'split' and seg.get('split_first', False):
+                grp       = seg['split_group']
+                grp_count = sum(1 for s in segs if s.get('split_group') == grp)
+                orig_text = (seg.get('origins') or [{}])[0].get('text', '')
+                preview   = orig_text[:40] + ('…' if len(orig_text) > 40 else '')
+                sp_fr = tk.Frame(card, bg='#0a2a40', padx=6, pady=3)
+                sp_fr.pack(fill=tk.X, pady=(4, 0))
+                tk.Label(sp_fr,
+                         text=f'原始（共拆成 {grp_count} 條）：「{preview}」',
+                         bg='#0a2a40', fg='#56c8ea',
+                         font=('Microsoft JhengHei', 8),
+                         wraplength=500, justify=tk.LEFT).pack(
+                             side=tk.LEFT, fill=tk.X, expand=True)
+                tk.Button(sp_fr, text='↩ 還原拆分',
+                          font=('Microsoft JhengHei', 9, 'bold'),
+                          bg='#0a3a50', fg='#7dd8f0',
+                          activebackground='#0e5070', activeforeground='white',
+                          bd=0, padx=8, pady=2, cursor='hand2',
+                          command=lambda si=idx: do_restore_split(si)).pack(
+                              side=tk.RIGHT, padx=4)
+
+            # ── 還原合併 ──
             if kind == 'merged':
                 origins = seg.get('origins', [])
-                preview = '　/　'.join(
-                    f'「{o["text"][:26]}{"…" if len(o["text"])>26 else ""}」'
+                preview = '  /  '.join(
+                    f'「{o["text"][:20]}{"…" if len(o["text"])>20 else ""}」'
                     for o in origins[:3])
                 if len(origins) > 3:
-                    preview += f'　…共 {len(origins)} 條'
-                rst_fr = tk.Frame(card, bg='#2a1e40', padx=6, pady=4)
-                rst_fr.pack(fill=tk.X, pady=(4, 0))
-                tk.Label(rst_fr, text=f'原始：{preview}',
+                    preview += f'  …共{len(origins)}條'
+                mg_fr = tk.Frame(card, bg='#2a1e40', padx=6, pady=3)
+                mg_fr.pack(fill=tk.X, pady=(4, 0))
+                tk.Label(mg_fr, text=f'原始：{preview}',
                          bg='#2a1e40', fg='#9e7ac7',
                          font=('Microsoft JhengHei', 8),
-                         wraplength=900, justify=tk.LEFT).pack(side=tk.LEFT, fill=tk.X, expand=True)
-                tk.Button(rst_fr, text='↩ 恢復原始斷點',
+                         wraplength=500, justify=tk.LEFT).pack(
+                             side=tk.LEFT, fill=tk.X, expand=True)
+                tk.Button(mg_fr, text='↩ 還原合併',
                           font=('Microsoft JhengHei', 9, 'bold'),
                           bg='#5a3a80', fg='#e0c9ff',
                           activebackground='#7a4aaa', activeforeground='white',
-                          bd=0, padx=10, pady=3, cursor='hand2',
-                          command=lambda si=idx: do_restore(si)).pack(side=tk.RIGHT, padx=4)
+                          bd=0, padx=8, pady=2, cursor='hand2',
+                          command=lambda si=idx: do_restore_merge(si)).pack(
+                              side=tk.RIGHT, padx=4)
 
             # ── 卡片間合併按鈕 ──
             if idx < len(segs) - 1:
-                mr = tk.Frame(edit_inner, bg='#0d1117', pady=1)
-                mr.pack(fill=tk.X, padx=10)
-                tk.Frame(mr, bg='#30363d', height=1).pack(side=tk.LEFT, fill=tk.X, expand=True, pady=7)
+                mr = tk.Frame(right_inner, bg='#0d1117')
+                mr.pack(fill=tk.X, padx=6)
+                tk.Frame(mr, bg='#21262d', height=1).pack(
+                    side=tk.LEFT, fill=tk.X, expand=True, pady=4)
                 tk.Button(mr, text='🔗 合併這兩條',
-                          font=('Microsoft JhengHei', 9),
+                          font=('Microsoft JhengHei', 8),
                           bg='#1f3a5f', fg='#79c0ff',
                           activebackground='#2d5986', activeforeground='white',
-                          bd=0, padx=10, pady=3, cursor='hand2',
-                          command=lambda mi=idx: do_merge(mi)).pack(side=tk.LEFT, padx=8)
-                tk.Frame(mr, bg='#30363d', height=1).pack(side=tk.LEFT, fill=tk.X, expand=True, pady=7)
+                          bd=0, padx=8, pady=2, cursor='hand2',
+                          command=lambda mi=idx: do_merge(mi)).pack(
+                              side=tk.LEFT, padx=6)
+                tk.Frame(mr, bg='#21262d', height=1).pack(
+                    side=tk.LEFT, fill=tk.X, expand=True, pady=4)
 
-        # 段落總數
-        cf = tk.Frame(edit_inner, bg='#161b22', pady=4)
-        cf.pack(fill=tk.X, padx=10, pady=(8, 4))
-        tk.Label(cf, text=f'  📊 目前共 {len(segs)} 條段落',
-                 bg='#161b22', fg='#8b949e',
-                 font=('Microsoft JhengHei', 9)).pack(anchor='w')
+        # 底部佔位
+        tk.Frame(right_inner, bg='#0d1117', height=20).pack()
 
-        # 滾動位置恢復
+        # 強制刷新 scrollregion
+        def _refresh_right():
+            try:
+                right_inner.update_idletasks()
+                right_canvas.configure(scrollregion=right_canvas.bbox('all'))
+            except: pass
+        right_canvas.after(50, _refresh_right)
+
+        # 捲動恢復
         if target_seg_id is not None:
-            scroll_to_seg_id(target_seg_id)
+            _scroll_to_seg_id(target_seg_id)
         elif scroll_frac is not None:
-            restore_scroll(scroll_frac)
+            _restore_right_scroll(scroll_frac)
 
-    # 全域放開事件（拖曳結束）
-    win.bind('<ButtonRelease-1>', lambda e: on_drag_release(e))
+    # ── Enter 鍵切斷 ──
+    def _on_enter_key(event):
+        si = edit_state.get('hover_seg_idx')
+        wi = edit_state.get('hover_word_idx')
+        if si is not None and wi is not None:
+            do_split(si, wi)
+    tab_edit.bind_all('<Return>', _on_enter_key)
 
     # ── 預設顯示智慧比對 ──
     nb.select(0)
@@ -954,11 +1018,264 @@ def show_diff_dialog(filename, old_text, new_text):
 
     win.protocol("WM_DELETE_WINDOW", lambda: choose('skip'))
 
-    # 初始渲染（放在按鈕設定之後，避免渲染順序問題）
+    # 初始渲染
+    build_left_panel()
     rebuild_edit_ui()
 
     win.wait_window()
     return result['choice'], result.get('custom_segs')
+
+def build_word_index(segments):
+    """
+    從 Whisper segments 中把所有詞的時間資料提取成一個平坦列表。
+    回傳 list of {'word': str, 'start': float, 'end': float}
+    這份列表在模式4使用，用來為使用者自訂的斷句找精準時間。
+    """
+    words = []
+    for seg in segments:
+        ws = None
+        if hasattr(seg, 'words') and seg.words:
+            ws = [{'word': w.word.strip(), 'start': w.start, 'end': w.end}
+                  for w in seg.words if w.word.strip()]
+        elif isinstance(seg, dict) and seg.get('words'):
+            ws = [{'word': w.get('word','').strip(),
+                   'start': w.get('start', 0),
+                   'end':   w.get('end', 0)}
+                  for w in seg['words'] if w.get('word','').strip()]
+        if ws:
+            words.extend(ws)
+    return words
+
+
+def show_edit4_dialog(filename, initial_lines):
+    """
+    模式4 純文字斷句編輯器。
+    initial_lines: list of str  (smart_sentence_split 已斷好的各句文字)
+
+    介面：純文字，每句一行，不顯示時間。
+    操作：
+      · 游標定位後按 Enter → 在游標位置切斷成兩行
+      · 行首按 Backspace  → 與上一行合併
+      · 行尾按 Delete     → 與下一行合併
+    完成後回傳 list of str（每個元素是一行文字），或 None（取消）。
+    """
+    result = {'lines': None}
+
+    win = tk.Toplevel()
+    win.title(f"✂ 模式4 斷句編輯 — {filename}")
+    win.geometry("860x680")
+    win.resizable(True, True)
+    win.grab_set()
+
+    # ── 標題 ──
+    hdr = tk.Frame(win, bg='#1a252f', pady=8)
+    hdr.pack(fill=tk.X)
+    tk.Label(hdr, text=f"✂  {filename}",
+             font=('Microsoft JhengHei', 13, 'bold'),
+             fg='white', bg='#1a252f').pack()
+    tk.Label(hdr,
+             text='在句子中間點一下定位游標，按 Enter 切斷成兩句  ／  行首 Backspace 與上一句合併  ／  行尾 Delete 與下一句合併',
+             font=('Microsoft JhengHei', 10), fg='#95a5a6', bg='#1a252f').pack()
+
+    # ── 工具列 ──
+    toolbar = tk.Frame(win, bg='#21262d', pady=4)
+    toolbar.pack(fill=tk.X)
+
+    line_count_var = tk.StringVar(value='')
+    tk.Label(toolbar, textvariable=line_count_var,
+             bg='#21262d', fg='#8b949e',
+             font=('Microsoft JhengHei', 10)).pack(side=tk.LEFT, padx=12)
+
+    undo_stack = []   # 每個元素是當時的完整文字快照（字串）
+
+    # ── 主編輯區 ──
+    edit_frame = tk.Frame(win, bg='#0d1117')
+    edit_frame.pack(fill=tk.BOTH, expand=True, padx=12, pady=8)
+
+    txt = tk.Text(edit_frame,
+                  wrap=tk.WORD,
+                  font=('Microsoft JhengHei', 14),
+                  bg='#1c2129', fg='#e6edf3',
+                  insertbackground='white',
+                  selectbackground='#2d4a6e',
+                  relief=tk.FLAT,
+                  padx=16, pady=12,
+                  spacing1=4, spacing3=4,
+                  undo=False)   # 自己管 undo
+    vsb = tk.Scrollbar(edit_frame, orient=tk.VERTICAL, command=txt.yview)
+    txt.configure(yscrollcommand=vsb.set)
+    vsb.pack(side=tk.RIGHT, fill=tk.Y)
+    txt.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+    def _update_count():
+        n = txt.get('1.0', tk.END).count('\n')
+        # 最後一行若空不算
+        content = txt.get('1.0', tk.END).rstrip('\n')
+        n = len(content.split('\n')) if content.strip() else 0
+        line_count_var.set(f'共 {n} 條斷句')
+
+    def _snapshot():
+        undo_stack.append(txt.get('1.0', tk.END))
+        if len(undo_stack) > 20:
+            undo_stack.pop(0)
+        undo_btn.config(state=tk.NORMAL)
+
+    def do_undo():
+        if not undo_stack:
+            return
+        snap = undo_stack.pop()
+        txt.delete('1.0', tk.END)
+        txt.insert('1.0', snap.rstrip('\n'))
+        if not undo_stack:
+            undo_btn.config(state=tk.DISABLED)
+        _update_count()
+
+    undo_btn = tk.Button(toolbar, text='⬅ 上一步',
+                         font=('Microsoft JhengHei', 9, 'bold'),
+                         bg='#2d333b', fg='#cdd9e5',
+                         activebackground='#444c56', activeforeground='white',
+                         bd=0, padx=12, pady=3, cursor='hand2',
+                         state=tk.DISABLED, command=do_undo)
+    undo_btn.pack(side=tk.LEFT, padx=4)
+
+    # 初始填入
+    txt.insert('1.0', '\n'.join(initial_lines))
+    _update_count()
+
+    # ── 鍵盤攔截 ──
+    def on_enter(event):
+        """在游標位置插入換行（切斷）。"""
+        _snapshot()
+        # 取得游標前的文字位置
+        idx = txt.index('insert')
+        # 直接插入 \n，讓 Text widget 自己處理
+        txt.insert('insert', '\n')
+        _update_count()
+        return 'break'
+
+    def on_backspace(event):
+        """行首按 Backspace：刪掉行首的 \n，即與上一行合併。"""
+        idx      = txt.index('insert')
+        col      = int(idx.split('.')[1])
+        row      = int(idx.split('.')[0])
+        if col == 0 and row > 1:
+            _snapshot()
+            # 刪掉這行前面的 \n（即上一行末尾的換行符）
+            prev_end = f'{row - 1}.end'
+            txt.delete(prev_end, f'{prev_end}+1c')
+            _update_count()
+            return 'break'
+        # 其他情況走正常刪除
+        return
+
+    def on_delete(event):
+        """行尾按 Delete：刪掉行尾的 \n，即與下一行合併。"""
+        idx     = txt.index('insert')
+        eol     = txt.index(f'{idx} lineend')
+        if txt.index('insert') == eol:
+            _snapshot()
+            # 刪掉這行末尾的 \n
+            txt.delete(eol, f'{eol}+1c')
+            _update_count()
+            return 'break'
+        return
+
+    def on_ctrl_z(event):
+        do_undo()
+        return 'break'
+
+    txt.bind('<Return>',    on_enter)
+    txt.bind('<BackSpace>', on_backspace)
+    txt.bind('<Delete>',    on_delete)
+    txt.bind('<Control-z>', on_ctrl_z)
+    txt.bind('<Control-Z>', on_ctrl_z)
+    # 任何輸入都更新計數
+    txt.bind('<KeyRelease>', lambda e: _update_count())
+
+    # ── 底部按鈕 ──
+    btn_frame = tk.Frame(win, bg='#f0f0f0', pady=10)
+    btn_frame.pack(fill=tk.X)
+
+    def on_save():
+        raw     = txt.get('1.0', tk.END).rstrip('\n')
+        lines   = [ln.strip() for ln in raw.split('\n') if ln.strip()]
+        result['lines'] = lines
+        win.destroy()
+
+    def on_cancel():
+        result['lines'] = None
+        win.destroy()
+
+    tk.Button(btn_frame,
+              text='💾 完成編輯，套用精準時間戳記',
+              font=('Microsoft JhengHei', 11, 'bold'),
+              bg='#27ae60', fg='white', padx=20, pady=6,
+              command=on_save).pack(side=tk.LEFT, padx=20)
+    tk.Button(btn_frame,
+              text='❌ 取消，不儲存',
+              font=('Microsoft JhengHei', 11),
+              bg='#7f8c8d', fg='white', padx=16, pady=6,
+              command=on_cancel).pack(side=tk.LEFT, padx=4)
+
+    win.protocol('WM_DELETE_WINDOW', on_cancel)
+    txt.focus_set()
+    win.wait_window()
+    return result['lines']
+
+
+def assign_timestamps(edited_lines, word_index):
+    """
+    根據使用者編輯的斷句（edited_lines，純文字列表）
+    和詞級時間索引（word_index，build_word_index 的輸出）
+    回傳帶精準時間的段落列表：
+    [{'text': str, 'start': float, 'end': float}, ...]
+
+    配對策略：
+    - 把 word_index 展平成一個指針序列
+    - 依序掃描 edited_lines 的每個詞，在 word_index 裡找最近匹配
+    - 每行的 start = 該行第一個詞的 start；end = 最後一個詞的 end
+    """
+    if not word_index:
+        return [{'text': ln, 'start': 0.0, 'end': 0.0} for ln in edited_lines]
+
+    ptr = 0
+    N   = len(word_index)
+    out = []
+
+    for line_text in edited_lines:
+        line_text = line_text.strip()
+        if not line_text:
+            continue
+        words_in_line = line_text.split()
+        matched = []
+
+        for wt in words_in_line:
+            wt_clean = wt.lower().strip('.,!?;:\'"')
+            # 在 word_index 從 ptr 往前找最近匹配（最多往前搜尋 8 個）
+            best_offset = None
+            for offset in range(min(8, N - ptr)):
+                cand = word_index[ptr + offset]['word'].lower().strip('.,!?;:\'"')
+                if cand == wt_clean:
+                    best_offset = offset
+                    break
+            if best_offset is not None:
+                matched.append(word_index[ptr + best_offset])
+                ptr += best_offset + 1
+            else:
+                # 找不到：沿用上一個詞的 end 估算
+                prev_end = matched[-1]['end'] if matched else \
+                           (word_index[ptr - 1]['end'] if ptr > 0 else 0.0)
+                matched.append({'word': wt, 'start': prev_end, 'end': prev_end + 0.25})
+
+        if matched:
+            out.append({
+                'text':  line_text,
+                'start': matched[0]['start'],
+                'end':   matched[-1]['end'],
+            })
+
+    return out
+
 
 def format_timestamp(seconds: float) -> str:
     assert seconds >= 0, "non-negative timestamp expected"
@@ -1243,15 +1560,15 @@ def backup_file(path):
 
 
 def process_audio_file(file_path, model, engine, save_plain, save_timestamp,
-                       recheck=False, auto_mode=False):
+                       recheck=False, auto_mode=False, edit_only=False):
     WHISPER_SAMPLE_RATE = 16000
     try:
         directory = os.path.dirname(file_path)
         clean_filename = os.path.splitext(os.path.basename(file_path))[0].strip()
         base_path = os.path.join(directory, clean_filename)
 
-        # 跳過已存在的檔案（recheck 模式下不跳過）
-        if not recheck:
+        # 跳過已存在的檔案（recheck / edit_only 模式下不跳過）
+        if not recheck and not edit_only:
             files_to_check = []
             if save_plain:
                 files_to_check.append(base_path + ".txt")
@@ -1260,6 +1577,80 @@ def process_audio_file(file_path, model, engine, save_plain, save_timestamp,
             if files_to_check and all(os.path.exists(f) for f in files_to_check):
                 print(f"  [跳過] 檔案已存在: {clean_filename}")
                 return 'skip_exist'
+
+        # ── 模式4：轉錄 → 純文字斷句編輯 → 精準timestamp ──
+        if edit_only:
+            # 永遠重新轉錄，取得詞級時間（不讀取舊文檔，不做比對）
+            if engine == "whisper":
+                import whisper as whisper_lib
+                audio    = whisper_lib.load_audio(file_path)
+                duration = audio.shape[0] / WHISPER_SAMPLE_RATE
+                if duration < 10:
+                    print(f"  [跳過] 檔案長度 ({duration:.2f}s) 小於 10 秒。")
+                    return 'skip_short'
+                print(f"  [模式4] 長度 {duration:.1f}s，開始轉錄...")
+                result_w = model.transcribe(
+                    audio, language="en", verbose=False,
+                    word_timestamps=True, beam_size=5, best_of=5,
+                    temperature=0.0, condition_on_previous_text=True,
+                    compression_ratio_threshold=2.4, no_speech_threshold=0.6,
+                )
+                segments = result_w["segments"]
+            else:
+                try:
+                    import soundfile as sf
+                    info = sf.info(file_path)
+                    duration = info.duration
+                except Exception:
+                    duration = 99
+                if duration < 10:
+                    print(f"  [跳過] 檔案長度 ({duration:.2f}s) 小於 10 秒。")
+                    return 'skip_short'
+                print(f"  [模式4] 長度 {duration:.1f}s，開始轉錄...")
+                segments_gen, _ = model.transcribe(
+                    file_path, language="en", word_timestamps=True,
+                    beam_size=5, best_of=5, temperature=0.0,
+                    condition_on_previous_text=True,
+                    compression_ratio_threshold=2.4, no_speech_threshold=0.6,
+                    vad_filter=True,
+                )
+                segments = list(segments_gen)
+
+            print("  [模式4] 轉錄完成，建立詞索引...")
+            word_idx      = build_word_index(segments)
+            smart_segs    = smart_sentence_split(segments, max_gap=0.6,
+                                                 max_duration=5.0, max_words=15)
+            initial_lines = [s['text'].strip() for s in smart_segs if s['text'].strip()]
+
+            print(f"  [模式4] 共 {len(initial_lines)} 條初始斷句，開啟編輯器...")
+            edited = show_edit4_dialog(os.path.basename(file_path), initial_lines)
+
+            if edited is None:
+                print(f"  [略過] 使用者取消編輯: {clean_filename}")
+                return 'success'
+
+            # 用詞索引分配精準時間
+            final_segs = assign_timestamps(edited, word_idx)
+            print(f"  [模式4] 編輯完成，共 {len(final_segs)} 條斷句，寫入檔案...")
+
+            if save_timestamp:
+                ts_path = base_path + " Timestamp.txt"
+                ts_lines = []
+                for seg in final_segs:
+                    s = format_timestamp(seg['start'])
+                    e = format_timestamp(seg['end'])
+                    ts_lines.append(f"[{s} --> {e}] {seg['text'].strip()}")
+                with open(ts_path, "w", encoding="utf-8") as f:
+                    f.write('\n'.join(ts_lines))
+                print(f"  [✓] 時間戳記已儲存: {os.path.basename(ts_path)}")
+
+            if save_plain:
+                txt_path = base_path + ".txt"
+                with open(txt_path, "w", encoding="utf-8") as f:
+                    f.write('\n'.join(seg['text'].strip() for seg in final_segs))
+                print(f"  [✓] 純文字已儲存: {os.path.basename(txt_path)}")
+
+            return 'success'
 
         # 取得音訊時長
         if engine == "whisper":
@@ -1443,15 +1834,31 @@ if not save_plain and not save_timestamp:
     exit()
 
 # 步驟 2.5：是否啟用重新轉錄並比對差異 / 全自動模式
-recheck_mode = False
-auto_mode    = False
+recheck_mode  = False
+auto_mode     = False
+edit_only_mode = False
 
 mode_choice = simpledialog.askstring(
-    "重新轉錄模式",
-    "選擇處理模式（輸入數字）：\n\n"
-    "  1  一般模式（已有文檔的檔案直接跳過）\n"
-    "  2  重新轉錄比對模式（手動決定覆蓋/保留）\n"
-    "  3  全自動模式（自動覆蓋，舊檔備份為「原檔」）\n",
+    "選擇處理模式",
+    "請輸入模式編號（直接按 Enter 預設選 1）：\n\n"
+    "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+    "  模式 1  ▶  一般轉錄\n"
+    "          已有文檔的檔案直接跳過，只處理全新的 MP3。\n"
+    "          適合：第一次批量轉錄整個資料夾。\n\n"
+    "  模式 2  ▶  重新轉錄＋手動比對\n"
+    "          所有檔案都重新轉錄，完成後開啟視覺化比對視窗，\n"
+    "          讓你手動選擇「保留舊版 / 使用新版 / 自訂斷點」。\n"
+    "          適合：想確認新轉錄有沒有改善，手動審閱每個檔案。\n\n"
+    "  模式 3  ▶  重新轉錄＋全自動覆蓋\n"
+    "          所有檔案都重新轉錄，舊文檔自動備份為「原檔」，\n"
+    "          新版直接覆蓋，全程無需手動確認。\n"
+    "          適合：確定要更新全部，不需要逐檔審閱。\n\n"
+    "  模式 4  ▶  轉錄＋純文字斷句編輯\n"
+    "          重新轉錄取得精準詞級時間，然後進入簡潔編輯器：\n"
+    "          每句獨立一行，在想切斷的位置點滑鼠後按 Enter 切斷，\n"
+    "          行首 Backspace 合併上一行，完成後自動計算精準時間戳記。\n"
+    "          適合：想完全掌控斷句位置，不比對舊版。\n"
+    "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n",
     initialvalue="1"
 )
 mode_choice = (mode_choice or "1").strip()
@@ -1460,6 +1867,8 @@ if mode_choice == "2":
 elif mode_choice == "3":
     recheck_mode = True
     auto_mode    = True
+elif mode_choice == "4":
+    edit_only_mode = True   # 模式4：轉錄後進入純文字斷句編輯，不比對舊檔
 
 # 步驟 3：篩選需要處理的檔案
 files_to_process, files_done = [], []
@@ -1469,8 +1878,8 @@ for fp in file_paths:
     if save_plain: checks.append(base + ".txt")
     if save_timestamp: checks.append(base + " Timestamp.txt")
     if checks and all(os.path.exists(c) for c in checks):
-        if recheck_mode:
-            files_to_process.append(fp)  # recheck 模式：已有文檔也要重新處理
+        if recheck_mode or edit_only_mode:
+            files_to_process.append(fp)  # 模式2/3/4：已有文檔也要重新處理
         else:
             files_done.append(os.path.basename(fp))
     else:
@@ -1481,10 +1890,10 @@ recheck_count = sum(
     if any(os.path.exists(
         os.path.join(os.path.dirname(fp), os.path.splitext(os.path.basename(fp))[0].strip()) + ext
     ) for ext in ([".txt"] if save_plain else []) + ([" Timestamp.txt"] if save_timestamp else []))
-) if recheck_mode else 0
+) if (recheck_mode or edit_only_mode) else 0
 
 print(f"\n總計: {len(file_paths)} 個 | 已完成: {len(files_done)} 個 | 需處理: {len(files_to_process)} 個"
-      + (f" (其中 {recheck_count} 個將進行差異比對)" if recheck_mode and recheck_count else ""))
+      + (f" (其中 {recheck_count} 個已有舊文檔，將重新轉錄並覆蓋)" if (recheck_mode or edit_only_mode) and recheck_count else ""))
 
 if not files_to_process:
     messagebox.showinfo("完成", "所有檔案都已有對應的文本檔！")
@@ -1494,7 +1903,7 @@ if not messagebox.askyesno("確認", f"將處理 {len(files_to_process)} 個檔�
     print("使用者取消。程式結束。")
     exit()
 
-# 步驟 4：選擇引擎 + 模型（合併為單一列表）
+# 步驟 4：選擇引擎 + 模型
 combo_choice = simpledialog.askstring(
     "選擇引擎與模型",
     "請輸入編號（直接按 Enter 預設選 1）：\n\n"
@@ -1569,8 +1978,8 @@ else:
 def show_split_logic_info():
     info_win = tk.Toplevel()
     info_win.title("📖 智慧斷句邏輯說明（v7）— mp3toword-Smart v22")
-    info_win.geometry("700x540")
-    info_win.resizable(False, False)
+    info_win.geometry("700x620")
+    info_win.resizable(True, True)
     info_win.grab_set()
     info_win.configure(bg='#1a252f')
 
@@ -1579,7 +1988,7 @@ def show_split_logic_info():
              bg='#1a252f', fg='white', pady=12).pack()
 
     text_area = scrolledtext.ScrolledText(
-        info_win, wrap=tk.WORD, width=82, height=24,
+        info_win, wrap=tk.WORD, width=82, height=20,
         font=('Microsoft JhengHei', 10),
         bg='#0d1117', fg='#c9d1d9',
         insertbackground='white', relief=tk.FLAT, padx=12, pady=8)
@@ -1631,7 +2040,8 @@ def show_split_logic_info():
     text_area.config(state=tk.DISABLED)
 
     mode_lbl = "全自動模式（自動備份+覆蓋）" if auto_mode else \
-               "重新轉錄比對模式（手動確認）" if recheck_mode else \
+               "模式4：轉錄＋純文字斷句編輯（不比對舊版）" if edit_only_mode else \
+               "重新轉錄＋手動比對模式" if recheck_mode else \
                "一般模式（跳過已有文檔）"
     tk.Label(info_win,
              text=f"  目前模式：{mode_lbl}",
@@ -1653,7 +2063,8 @@ for i, fp in enumerate(files_to_process):
     print(f"處理 {i+1}/{len(files_to_process)}: {os.path.basename(fp)}")
     print('='*50)
     result = process_audio_file(fp, model, engine, save_plain, save_timestamp,
-                                recheck=recheck_mode, auto_mode=auto_mode)
+                                recheck=recheck_mode, auto_mode=auto_mode,
+                                edit_only=edit_only_mode)
     stats[result] += 1
 
 print(f"\n{'='*50}")

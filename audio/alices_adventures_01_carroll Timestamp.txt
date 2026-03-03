@@ -8,9 +8,8 @@
 [00:00:51.360 --> 00:00:54.040] Oh dear, oh dear, I shall be late.
 [00:00:54.820 --> 00:00:59.740] When she thought it over afterwards, it occurred to her that she ought to have wondered at this,
 [00:00:59.920 --> 00:01:02.020] but at the time it all seemed quite natural.
-[00:01:03.480 --> 00:01:09.000] But when the rabbit actually took a watch out of its waistcoat pocket and looked at it,
-[00:01:09.160 --> 00:01:19.420] and then hurried on, Alice started to her feet, for it flashed across her mind that she had never before seen a rabbit with either a waistcoat pocket or a watch to take out of it,
-[00:01:19.580 --> 00:01:29.460] and, burning with curiosity, she ran across the field after it, and fortunately was just in time to see it pop down a large rabbit hole under the hedge.
+[00:01:03.480 --> 00:01:10.400] But when the rabbit actually took a watch out of its waistcoat pocket and looked at it, and then hurried on,
+[00:01:10.660 --> 00:01:29.460] Alice started to her feet, for it flashed across her mind that she had never before seen a rabbit with either a waistcoat pocket or a watch to take out of it, and, burning with curiosity, she ran across the field after it, and fortunately was just in time to see it pop down a large rabbit hole under the hedge.
 [00:01:31.000 --> 00:01:37.640] In another moment down went Alice after it, never once considering how in the world she was to get out again.
 [00:01:38.840 --> 00:01:43.740] The rabbit hole went straight on like a tunnel for some way, and then dipped suddenly down,
 [00:01:43.980 --> 00:01:50.840] so suddenly that Alice had not a moment to think about stopping herself, before she found herself falling down a very deep well.
@@ -19,8 +18,7 @@
 [00:02:03.630 --> 00:02:09.390] First she tried to look down, and make out what she was coming to, but it was too dark to see anything.
 [00:02:10.150 --> 00:02:15.090] Then she looked at the sides of the well, and noticed that they were filled with cupboards and bookshelves.
 [00:02:15.550 --> 00:02:18.950] Here and there she saw maps and pictures hung upon pegs.
-[00:02:19.570 --> 00:02:25.030] She took down a jar from one of the shelves as she passed. It was labelled Orange Marmalade,
-[00:02:25.690 --> 00:02:27.790] but to her great disappointment it was empty.
+[00:02:19.570 --> 00:02:27.790] She took down a jar from one of the shelves as she passed. It was labelled Orange Marmalade, but to her great disappointment it was empty.
 [00:02:28.150 --> 00:02:34.990] She did not like to drop the jar for fear of killing somebody, so managed to put it into one of the cupboards as she fell past it.
 [00:02:36.900 --> 00:02:43.580] Well, thought Alice to herself, after such a fall as this, I shall think nothing of tumbling downstairs.
 [00:02:44.360 --> 00:02:46.620] How brave they'll all think me at home!
