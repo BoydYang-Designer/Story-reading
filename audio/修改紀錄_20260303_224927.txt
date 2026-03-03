@@ -1,0 +1,12 @@
+【文本校對修正紀錄 V7】
+參考：The Power of Implementation Intentions.txt  （TXT）
+時間：2026-03-03 22:49:27
+============================================================
+
+📄 Essay – Implementation Intentions Timestamp.txt  （套用 1 項）
+   [Galwitzer] → [Gollwitzer]
+   TXT: Psychologist Peter Galwitzer introduced a powerful idea called implementation intentions.
+   REF: Psychologist Peter Gollwitzer introduced a powerful idea called implementation intentions.
+
+============================================================
+總計套用 1 項修正。
