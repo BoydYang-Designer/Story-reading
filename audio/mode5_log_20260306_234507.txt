@@ -1,0 +1,877 @@
+模式 5 — 斷句違規修正紀錄
+執行時間：2026-03-06 22:22:49
+規則：詞數 < 6 或 > 25 視為違規
+引擎：faster-whisper / 模型：large-v3-turbo
+掃描文本數：44　自動轉錄：44 個　精準化手動編輯：0 個
+======================================================================
+
+[更新] The Alchemist of Summary Timestamp.txt
+       MP3：The Alchemist of Summary.mp3
+       段落數：144 條 → 126 條
+       備份：The Alchemist of Summary Timestamp（原檔2）.txt
+       純文字同步更新：The Alchemist of Summary.txt
+       違規詳情（共 40 條）：
+         第6行 太短（2 詞 < 6）：「It's ours.」
+         第11行 太短（2 詞 < 6）：「Part 1.」
+         第12行 太短（5 詞 < 6）：「The Boy in the Dream.」
+         第20行 太短（3 詞 < 6）：「It feels important.」
+         第21行 太短（1 詞 < 6）：「Prophetic.」
+         第24行 太短（5 詞 < 6）：「He must go to Egypt.」
+         第25行 太短（4 詞 < 6）：「The treasure is real.」
+         第34行 太短（1 詞 < 6）：「Lesson.」
+         第37行 太短（2 詞 < 6）：「Part 2.」
+         第40行 太短（5 詞 < 6）：「He feels alone and overwhelmed.」
+         第51行 太短（4 詞 < 6）：「Slowly the shop thrives.」
+         第57行 太短（5 詞 < 6）：「But the soul never forgets.」
+         第60行 太短（2 詞 < 6）：「Part 3.」
+         第61行 太短（5 詞 < 6）：「The caravan across the desert.」
+         第82行 太短（4 詞 < 6）：「Instead it supports it.」
+         第86行 太短（3 詞 < 6）：「Fatima understands this.」
+         第91行 太短（3 詞 < 6）：「Love is trust.」
+         第97行 太短（3 詞 < 6）：「He poses questions.」
+         第100行 太短（3 詞 < 6）：「It's through action.」
+         第106行 太短（3 詞 < 6）：「The desert listens.」
+         第107行 太短（3 詞 < 6）：「The wind responds.」
+         第117行 太短（2 詞 < 6）：「It's mystical.」
+         第118行 太短（1 詞 < 6）：「Lesson.」
+         第120行 太短（5 詞 < 6）：「The journey is the alchemy.」
+         第121行 太短（2 詞 < 6）：「Part 6.」
+         第124行 太短（4 詞 < 6）：「He weeps with joy.」
+         第129行 太短（5 詞 < 6）：「I had a dream once.」
+         第131行 太短（5 詞 < 6）：「In that moment everything clicks.」
+         第133行 太短（5 詞 < 6）：「That's where his journey began.」
+         第135行 太短（3 詞 < 6）：「Was always there.」
+         第137行 太短（4 詞 < 6）：「The treasure is real.」
+         第138行 太短（5 詞 < 6）：「And so is the journey.」
+         第139行 太短（1 詞 < 6）：「Lesson.」
+         第147行 太短（2 詞 < 6）：「They settle.」
+         第155行 太短（5 詞 < 6）：「Yes there will be fear.」
+         第156行 太短（5 詞 < 6）：「Yes there will be loss.」
+         第158行 太短（1 詞 < 6）：「Connection.」
+         第159行 太短（1 詞 < 6）：「Revelation.」
+         第164行 太短（5 詞 < 6）：「What does your heart say?」
+         第165行 太短（5 詞 < 6）：「That is the real treasure.」
+
+[更新] The Alchemist of Part 5 Warrior of About the Author Timestamp.txt
+       MP3：The Alchemist of Part 5 Warrior of About the Author.mp3
+       段落數：21 條 → 22 條
+       備份：The Alchemist of Part 5 Warrior of About the Author Timestamp（原檔）.txt
+       純文字同步更新：The Alchemist of Part 5 Warrior of About the Author.txt
+       違規詳情（共 3 條）：
+         第1行 太短（3 詞 < 6）：「about the author.」
+         第5行 太長（34 詞 > 25）：「His own dream to be a writer, met with frustration…」
+         第13行 太長（40 詞 > 25）：「On this ancient highway used for centuries by pilg…」
+
+[更新] The Alchemist of Part 4 Warrior of the Light PROLOGUE Timestamp.txt
+       MP3：The Alchemist of Part 4 Warrior of the Light PROLOGUE.mp3
+       段落數：71 條 → 68 條
+       備份：The Alchemist of Part 4 Warrior of the Light PROLOGUE Timestamp（原檔）.txt
+       純文字同步更新：The Alchemist of Part 4 Warrior of the Light PROLOGUE.txt
+       違規詳情（共 16 條）：
+         第1行 太短（5 詞 < 6）：「Warrior of the Light Prologue.」
+         第2行 太長（26 詞 > 25）：「Just off the beach to the west of the village lies…」
+         第6行 太短（2 詞 < 6）：「She asked.」
+         第19行 太長（30 詞 > 25）：「If she ever returned, he could tell her that, alth…」
+         第31行 太長（31 詞 > 25）：「Six months after his first conversation with the w…」
+         第33行 太短（5 詞 < 6）：「But the boy never did.」
+         第39行 太長（26 詞 > 25）：「I would do better to grow up and become a fisherma…」
+         第43行 太長（44 詞 > 25）：「He looked once more at the natural world around hi…」
+         第47行 太長（32 詞 > 25）：「Then because he was listening to the sea, the seag…」
+         第50行 太長（39 詞 > 25）：「He no longer dreamed of finding treasure at the bo…」
+         第51行 太長（27 詞 > 25）：「Even so, he decided to walk for a while along the …」
+         第54行 太短（5 詞 < 6）：「What are you doing here?」
+         第55行 太短（2 詞 < 6）：「He asked.」
+         第60行 太短（1 詞 < 6）：「Right?」
+         第65行 太長（33 詞 > 25）：「He is someone capable of understanding the miracle…」
+         第70行 太短（4 詞 < 6）：「The woman smiled again.」
+
+[更新] The Alchemist of Part 3-Epilogue Timestamp.txt
+       MP3：The Alchemist of Part 3-Epilogue.mp3
+       段落數：44 條 → 42 條
+       備份：The Alchemist of Part 3-Epilogue Timestamp（原檔）.txt
+       純文字同步更新：The Alchemist of Part 3-Epilogue.txt
+       違規詳情（共 10 條）：
+         第5行 太短（4 詞 < 6）：「Except for the dream.」
+         第11行 太長（28 詞 > 25）：「If he hadn't believed in the significance of recur…」
+         第16行 太短（5 詞 < 6）：「You knew the whole story.」
+         第21行 太短（4 詞 < 6）：「They're beautiful, aren't they?」
+         第33行 太長（27 詞 > 25）：「Then he remembered that he had to get to Tarifa so…」
+         第39行 太長（32 詞 > 25）：「Instead, it brought the scent of a perfume he knew…」
+         第40行 太短（3 詞 < 6）：「The boy smiled.」
+         第42行 太短（5 詞 < 6）：「I'm coming, Fatima, he said.」
+         第43行 太長（29 詞 > 25）：「An inspirational companion to the alchemist that i…」
+         第44行 太長（31 詞 > 25）：「In his inimitable style, Paolo Quallo presents a c…」
+
+[更新] The Alchemist of Part 2-26 Timestamp.txt
+       MP3：The Alchemist of Part 2-26.mp3
+       段落數：72 條 → 66 條
+       備份：The Alchemist of Part 2-26 Timestamp（原檔）.txt
+       純文字同步更新：The Alchemist of Part 2-26.txt
+       違規詳情（共 18 條）：
+         第1行 太短（3 詞 < 6）：「Part 2 -26.」
+         第5行 太長（31 詞 > 25）：「It told of personal legend, and of the many men wh…」
+         第18行 太長（26 詞 > 25）：「He thanked God for making him believe in his perso…」
+         第19行 太長（27 詞 > 25）：「And above all, for his having met a woman of the d…」
+         第21行 太長（27 詞 > 25）：「After all, the alchemist continued to live in the …」
+         第23行 太長（31 詞 > 25）：「The boy told himself that on the way toward realiz…」
+         第24行 太長（26 詞 > 25）：「But here he was at the point of finding his treasu…」
+         第27行 太短（2 詞 < 6）：「Another omen.」
+         第37行 太短（4 詞 < 6）：「Several figures approached him.」
+         第39行 太短（5 詞 < 6）：「What are you doing here?」
+         第40行 太短（5 詞 < 6）：「One of the figures demanded.」
+         第44行 太短（5 詞 < 6）：「What are you hiding there?」
+         第47行 太短（5 詞 < 6）：「There's gold here, he said.」
+         第56行 太長（26 詞 > 25）：「And although his mouth was bleeding and swollen, h…」
+         第58行 太短（2 詞 < 6）：「Leave him.」
+         第59行 太短（5 詞 < 6）：「He doesn't have anything else.」
+         第67行 太長（35 詞 > 25）：「In my dream, there was a sycamore growing out of t…」
+         第69行 太短（3 詞 < 6）：「And they disappeared.」
+
+[更新] The Alchemist of Part 2-25 Timestamp.txt
+       MP3：The Alchemist of Part 2-25.mp3
+       段落數：68 條 → 61 條
+       備份：The Alchemist of Part 2-25 Timestamp（原檔）.txt
+       純文字同步更新：The Alchemist of Part 2-25.txt
+       違規詳情（共 17 條）：
+         第8行 太短（5 詞 < 6）：「This is for the boy.」
+         第9行 太短（5 詞 < 6）：「If he ever needs it.」
+         第13行 太短（3 詞 < 6）：「Then why this?」
+         第19行 太短（4 詞 < 6）：「They mounted their horses.」
+         第26行 太長（29 詞 > 25）：「An angel appeared to him and told him that the wor…」
+         第27行 太長（26 詞 > 25）：「The father woke from his dream grateful and crying…」
+         第29行 太長（31 詞 > 25）：「Since he had lived his entire life in a manner tha…」
+         第34行 太長（28 詞 > 25）：「When you appeared in my dream, I felt that all my …」
+         第36行 太長（26 詞 > 25）：「But any father would be proud of the fame achieved…」
+         第40行 太短（5 詞 < 6）：「The man wept with happiness.」
+         第50行 太短（5 詞 < 6）：「He was just in good.」
+         第52行 太長（26 詞 > 25）：「Your son had heard of a rabbi who was able to cure…」
+         第58行 太長（30 詞 > 25）：「But the centurion was a man of faith and looking i…」
+         第62行 太長（28 詞 > 25）：「The alchemist said, no matter what he does, every …」
+         第63行 太短（3 詞 < 6）：「The boy smiled.」
+         第65行 太短（5 詞 < 6）：「Good -bye, the alchemist said.」
+         第66行 太短（5 詞 < 6）：「Good -bye, said the boy.」
+
+[更新] The Alchemist of Part 2-24 Timestamp.txt
+       MP3：The Alchemist of Part 2-24.mp3
+       段落數：72 條 → 70 條
+       備份：The Alchemist of Part 2-24 Timestamp（原檔）.txt
+       純文字同步更新：The Alchemist of Part 2-24.txt
+       違規詳情（共 18 條）：
+         第2行 太短（3 詞 < 6）：「The sun asked.」
+         第4行 太短（3 詞 < 6）：「The boy answered.」
+         第7行 太短（5 詞 < 6）：「Then whom should I ask?」
+         第20行 太長（27 詞 > 25）：「It didn't ask that the boy be able to sell more cr…」
+         第21行 太長（43 詞 > 25）：「In the silence, the boy understood that the desert…」
+         第24行 太長（26 詞 > 25）：「But that the hand had a reason for all of this, an…」
+         第25行 太長（36 詞 > 25）：「Or a man into the wind, because only the hand unde…」
+         第26行 太長（42 詞 > 25）：「The boy reached through to the soul of the world a…」
+         第28行 太長（33 詞 > 25）：「For generations thereafter, the Arabs recounted th…」
+         第33行 太長（29 詞 > 25）：「But there were two people who were smiling, the al…」
+         第34行 太長（27 詞 > 25）：「The following day the general bade the boy and the…」
+         第40行 太短（5 詞 < 6）：「Thank you, said the boy.」
+         第50行 太長（27 詞 > 25）：「He scraped from it a sliver as thin as a hair, wra…」
+         第55行 太短（4 詞 < 6）：「The monk was irritated.」
+         第58行 太短（4 詞 < 6）：「Exactly, answered the alchemist.」
+         第61行 太短（3 詞 < 6）：「It was gold.」
+         第63行 太短（3 詞 < 6）：「The boy asked.」
+         第71行 太短（4 詞 < 6）：「Don't say that again.」
+
+[更新] The Alchemist of Part 2-23 Timestamp.txt
+       MP3：The Alchemist of Part 2-23.mp3
+       段落數：62 條 → 62 條
+       備份：The Alchemist of Part 2-23 Timestamp（原檔）.txt
+       純文字同步更新：The Alchemist of Part 2-23.txt
+       違規詳情（共 8 條）：
+         第3行 太長（27 詞 > 25）：「When you are loved, there's no need at all to unde…」
+         第34行 太長（28 詞 > 25）：「I know that if I came even a little bit closer to …」
+         第40行 太長（33 詞 > 25）：「Each performs its own exact function as a unique b…」
+         第47行 太長（28 詞 > 25）：「So each thing has to transform itself into somethi…」
+         第50行 太長（31 詞 > 25）：「This is why alchemy exists, the boy said, so that …」
+         第52行 太短（4 詞 < 6）：「That's what alchemists do.」
+         第55行 太長（26 詞 > 25）：「The sun asked the boy, because it's not love to be…」
+         第60行 太長（30 詞 > 25）：「It is we who nourish the soul of the world and the…」
+
+[更新] The Alchemist of Part 2-22 Timestamp.txt
+       MP3：The Alchemist of Part 2-22.mp3
+       段落數：81 條 → 71 條
+       備份：The Alchemist of Part 2-22 Timestamp（原檔）.txt
+       純文字同步更新：The Alchemist of Part 2-22.txt
+       違規詳情（共 15 條）：
+         第10行 太短（4 詞 < 6）：「Let's, the alchemist answered.」
+         第22行 太短（4 詞 < 6）：「The desert asked him.」
+         第27行 太短（3 詞 < 6）：「What is love?」
+         第28行 太短（3 詞 < 6）：「The desert asked.」
+         第34行 太長（28 詞 > 25）：「And one day as I enjoy the fact that his game thri…」
+         第38行 太短（5 詞 < 6）：「That's how the world goes.」
+         第40行 太短（5 詞 < 6）：「Yes, that's what love is.」
+         第49行 太短（5 詞 < 6）：「A breeze began to blow.」
+         第51行 太短（3 詞 < 6）：「The alchemist smiled.」
+         第55行 太短（5 詞 < 6）：「Help me, the boy said.」
+         第58行 太短（5 詞 < 6）：「Pie heart, the boy answered.」
+         第59行 太短（5 詞 < 6）：「The wind has many names.」
+         第61行 太長（33 詞 > 25）：「In the distant land the boy came from they called …」
+         第67行 太短（5 詞 < 6）：「We're two very different things.」
+         第72行 太長（34 詞 > 25）：「I want to be like you, able to reach every corner …」
+
+[更新] The Alchemist of Part 2-21 Timestamp.txt
+       MP3：The Alchemist of Part 2-21.mp3
+       段落數：100 條 → 82 條
+       備份：The Alchemist of Part 2-21 Timestamp（原檔）.txt
+       純文字同步更新：The Alchemist of Part 2-21.txt
+       違規詳情（共 16 條）：
+         第1行 太短（3 詞 < 6）：「Part 2 -21.」
+         第26行 太短（4 詞 < 6）：「Who is your friend?」
+         第27行 太短（3 詞 < 6）：「The chief asked.」
+         第28行 太短（5 詞 < 6）：「An alchemist, said the alchemist.」
+         第32行 太短（5 詞 < 6）：「Asked another of the men.」
+         第37行 太短（4 詞 < 6）：「What is an alchemist?」
+         第38行 太短（3 詞 < 6）：「He asked finally.」
+         第41行 太短（3 詞 < 6）：「The men laughed.」
+         第63行 太短（3 詞 < 6）：「The alchemist answered.」
+         第68行 太短（4 詞 < 6）：「He wasn't an alchemist.」
+         第76行 太短（5 詞 < 6）：「I'm not afraid of failing.」
+         第79行 太短（5 詞 < 6）：「But what if I can't?」
+         第84行 太短（4 詞 < 6）：「The first day passed.」
+         第95行 太短（4 詞 < 6）：「What are you doing?」
+         第96行 太短（3 詞 < 6）：「Feeding my falcon.」
+         第98行 太短（4 詞 < 6）：「Why feed your falcon?」
+
+[更新] The Alchemist of Part 2-20 Timestamp.txt
+       MP3：The Alchemist of Part 2-20.mp3
+       段落數：84 條 → 75 條
+       備份：The Alchemist of Part 2-20 Timestamp（原檔）.txt
+       純文字同步更新：The Alchemist of Part 2-20.txt
+       違規詳情（共 16 條）：
+         第1行 太短（3 詞 < 6）：「Part 2 -20.」
+         第7行 太短（3 詞 < 6）：「Are you crazy?」
+         第12行 太短（5 詞 < 6）：「They continued across the desert.」
+         第17行 太長（31 詞 > 25）：「When his heart spoke to him, it was to provide a s…」
+         第19行 太長（43 詞 > 25）：「His courage in having given up his sheep and in tr…」
+         第21行 太長（28 詞 > 25）：「His heart said that one time it had hidden the rif…」
+         第22行 太長（28 詞 > 25）：「And it reminded the boy of the day when he had bee…」
+         第26行 太短（5 詞 < 6）：「The boy asked the alchemist.」
+         第47行 太短（5 詞 < 6）：「That's true, the boy thought.」
+         第48行 太長（27 詞 > 25）：「He had noticed that in the midst of the multitude …」
+         第51行 太長（26 詞 > 25）：「Finally, when they had crossed the mountain range …」
+         第53行 太短（5 詞 < 6）：「You already know about alchemy.」
+         第68行 太短（4 詞 < 6）：「But then he stopped.」
+         第75行 太短（4 詞 < 6）：「But they don't count.」
+         第76行 太短（3 詞 < 6）：「They're quite rare.」
+         第78行 太短（5 詞 < 6）：「They never found the secret.」
+
+[更新] The Alchemist of Part 2-19 Timestamp.txt
+       MP3：The Alchemist of Part 2-19.mp3
+       段落數：62 條 → 59 條
+       備份：The Alchemist of Part 2-19 Timestamp（原檔）.txt
+       純文字同步更新：The Alchemist of Part 2-19.txt
+       違規詳情（共 15 條）：
+         第5行 太長（26 詞 > 25）：「He lost his fear and forgot about his need to go b…」
+         第8行 太長（39 詞 > 25）：「We, their hearts, become fearful just thinking of …」
+         第11行 太長（44 詞 > 25）：「Tell your heart that the fear of suffering is wors…」
+         第13行 太長（31 詞 > 25）：「When I have been truly searching for my treasure, …」
+         第14行 太長（38 詞 > 25）：「When I have been truly searching for my treasure, …」
+         第30行 太短（5 詞 < 6）：「The boy asked the alchemist.」
+         第36行 太長（26 詞 > 25）：「That night he told all of this to the alchemist, a…」
+         第38行 太短（3 詞 < 6）：「The boy asked.」
+         第43行 太短（4 詞 < 6）：「No, the alchemist answered.」
+         第46行 太長（30 詞 > 25）：「It does this not because it is evil, but so that w…」
+         第48行 太長（28 詞 > 25）：「It's the point at which, as we say in the language…」
+         第57行 太短（5 詞 < 6）：「Why are you carrying money?」
+         第60行 太長（30 詞 > 25）：「The tribesman who was searching the alchemist's be…」
+         第61行 太短（4 詞 < 6）：「What are these things?」
+         第62行 太短（2 詞 < 6）：「he asked.」
+
+[更新] The Alchemist of Part 2-18 Timestamp.txt
+       MP3：The Alchemist of Part 2-18.mp3
+       段落數：84 條 → 76 條
+       備份：The Alchemist of Part 2-18 Timestamp（原檔）.txt
+       純文字同步更新：The Alchemist of Part 2-18.txt
+       違規詳情（共 13 條）：
+         第5行 太長（30 詞 > 25）：「Battles had been fought nearby and the wind remind…」
+         第14行 太短（3 詞 < 6）：「It's through action.」
+         第19行 太短（5 詞 < 6）：「Because that's what I am.」
+         第24行 太短（3 詞 < 6）：「The boy asked.」
+         第35行 太短（5 詞 < 6）：「The boy wanted to know.」
+         第43行 太短（4 詞 < 6）：「No, the alchemist answered.」
+         第52行 太短（3 詞 < 6）：「The boy asked.」
+         第55行 太短（5 詞 < 6）：「So immerse yourself in it.」
+         第61行 太短（4 詞 < 6）：「Listen to your heart.」
+         第68行 太長（33 詞 > 25）：「There had been times when his heart spent hours te…」
+         第69行 太長（28 詞 > 25）：「His heart beat fastest when it spoke to the boy of…」
+         第76行 太短（3 詞 < 6）：「Well, that's good.」
+         第77行 太短（4 詞 < 6）：「Your heart is alive.」
+
+[更新] The Alchemist of Part 2-17 Timestamp.txt
+       MP3：The Alchemist of Part 2-17.mp3
+       段落數：71 條 → 67 條
+       備份：The Alchemist of Part 2-17 Timestamp（原檔）.txt
+       純文字同步更新：The Alchemist of Part 2-17.txt
+       違規詳情（共 11 條）：
+         第6行 太長（27 詞 > 25）：「He thought of the woman who had trusted in the des…」
+         第9行 太長（38 詞 > 25）：「But that night as he had watched the cobra within …」
+         第16行 太長（26 詞 > 25）：「Then he asked his friend to go into the tent where…」
+         第19行 太長（28 詞 > 25）：「The Arab returned to his tent to sleep, proud to h…」
+         第23行 太短（5 詞 < 6）：「I'm going away, he said.」
+         第32行 太短（3 詞 < 6）：「The two embraced.」
+         第38行 太短（4 詞 < 6）：「They said nothing else.」
+         第42行 太短（2 詞 < 6）：「You're crying.」
+         第46行 太短（4 詞 < 6）：「But everything had changed.」
+         第48行 太長（27 詞 > 25）：「It would no longer be a place with 50 ,000 palm tr…」
+         第52行 太長（27 詞 > 25）：「She would have to send her kisses on the wind, hop…」
+
+[更新] The Alchemist of Part 2-16 Timestamp.txt
+       MP3：The Alchemist of Part 2-16.mp3
+       段落數：90 條 → 84 條
+       備份：The Alchemist of Part 2-16 Timestamp（原檔）.txt
+       純文字同步更新：The Alchemist of Part 2-16.txt
+       違規詳情（共 8 條）：
+         第6行 太短（3 詞 < 6）：「Camels are traitorous.」
+         第23行 太短（5 詞 < 6）：「And then the boy understood.」
+         第26行 太長（26 詞 > 25）：「They could no longer see the palms of the oasis, o…」
+         第48行 太短（4 詞 < 6）：「The serpent relaxed immediately.」
+         第50行 太短（5 詞 < 6）：「He won't leave the circle.」
+         第52行 太短（5 詞 < 6）：「Why was that so important?」
+         第63行 太短（2 詞 < 6）：「It's you.」
+         第82行 太短（5 詞 < 6）：「So you won't blame her.」
+
+[更新] The Alchemist of Part 2-15 Timestamp.txt
+       MP3：The Alchemist of Part 2-15.mp3
+       段落數：89 條 → 78 條
+       備份：The Alchemist of Part 2-15 Timestamp（原檔）.txt
+       純文字同步更新：The Alchemist of Part 2-15.txt
+       違規詳情（共 15 條）：
+         第1行 太短（3 詞 < 6）：「Part 2 -15.」
+         第5行 太短（4 詞 < 6）：「The boy was surprised.」
+         第15行 太短（4 詞 < 6）：「Where do you live?」
+         第31行 太長（34 詞 > 25）：「The commander said that his men had been starving …」
+         第34行 太長（26 詞 > 25）：「Rather than being killed by a blade or a bullet, h…」
+         第46行 太短（5 詞 < 6）：「So I have come here.」
+         第51行 太短（2 詞 < 6）：「Sit down.」
+         第57行 太短（3 詞 < 6）：「The boy asked.」
+         第65行 太短（4 詞 < 6）：「And what about me?」
+         第66行 太長（28 詞 > 25）：「When a person really desires something, all the un…」
+         第67行 太短（3 詞 < 6）：「The boy understood.」
+         第78行 太短（4 詞 < 6）：「I also have Fatima.」
+         第81行 太短（4 詞 < 6）：「They ate in silence.」
+         第84行 太短（4 詞 < 6）：「Isn't wine prohibited here?」
+         第85行 太短（3 詞 < 6）：「The boy asked.」
+
+[更新] The Alchemist of Part 2-14 Timestamp.txt
+       MP3：The Alchemist of Part 2-14.mp3
+       段落數：78 條 → 75 條
+       備份：The Alchemist of Part 2-14 Timestamp（原檔）.txt
+       純文字同步更新：The Alchemist of Part 2-14.txt
+       違規詳情（共 5 條）：
+         第8行 太短（4 詞 < 6）：「The meeting was over.」
+         第22行 太長（26 詞 > 25）：「It was a frightening bet but he had been making ri…」
+         第28行 太長（30 詞 > 25）：「He would at least have died after having crossed t…」
+         第47行 太短（4 詞 < 6）：「The sword didn't fall.」
+         第69行 太短（5 詞 < 6）：「But he still couldn't flee.」
+
+[更新] The Alchemist of Part 2-13 Timestamp.txt
+       MP3：The Alchemist of Part 2-13.mp3
+       段落數：81 條 → 75 條
+       備份：The Alchemist of Part 2-13 Timestamp（原檔）.txt
+       純文字同步更新：The Alchemist of Part 2-13.txt
+       違規詳情（共 10 條）：
+         第20行 太短（4 詞 < 6）：「They'll laugh at me.」
+         第34行 太短（5 詞 < 6）：「He disappeared into the tent.」
+         第42行 太長（32 詞 > 25）：「The ground was covered with the most beautiful car…」
+         第47行 太長（32 詞 > 25）：「There were eight chieftains, but the boy could see…」
+         第53行 太短（5 詞 < 6）：「said another of the chieftains.」
+         第54行 太長（26 詞 > 25）：「Because my eyes are not yet accustomed to the dese…」
+         第56行 太短（5 詞 < 6）：「The oasis is neutral ground.」
+         第62行 太短（4 詞 < 6）：「The boy became fearful.」
+         第69行 太短（3 詞 < 6）：「The discussion ended.」
+         第79行 太短（4 詞 < 6）：「His name was Joseph.」
+
+[更新] The Alchemist of Part 2-12 Timestamp.txt
+       MP3：The Alchemist of Part 2-12.mp3
+       段落數：74 條 → 71 條
+       備份：The Alchemist of Part 2-12 Timestamp（原檔）.txt
+       純文字同步更新：The Alchemist of Part 2-12.txt
+       違規詳情（共 7 條）：
+         第16行 太短（3 詞 < 6）：「He felt sleepy.」
+         第39行 太短（4 詞 < 6）：「I had a vision.」
+         第41行 太長（29 詞 > 25）：「But the boy told him about the hawks, that he had …」
+         第51行 太長（26 詞 > 25）：「Tribesmen were also wary of consulting them, becau…」
+         第55行 太短（5 詞 < 6）：「Where was the enemy's sword?」
+         第56行 太短（4 詞 < 6）：「Where was his horse?」
+         第60行 太長（30 詞 > 25）：「Then one day the oldest seer he had ever sought ou…」
+
+[更新] The Alchemist of Part 2-11 Timestamp.txt
+       MP3：The Alchemist of Part 2-11.mp3
+       段落數：81 條 → 81 條
+       備份：The Alchemist of Part 2-11 Timestamp（原檔）.txt
+       純文字同步更新：The Alchemist of Part 2-11.txt
+       違規詳情（共 14 條）：
+         第1行 太短（3 詞 < 6）：「Part 2 -11.」
+         第7行 太短（4 詞 < 6）：「That's all he said.」
+         第8行 太短（3 詞 < 6）：「Go and try.」
+         第9行 太短（5 詞 < 6）：「The boy didn't say anything.」
+         第13行 太短（5 詞 < 6）：「I'm going to start now.」
+         第17行 太短（3 詞 < 6）：「I love you.」
+         第32行 太長（27 詞 > 25）：「When he had been at the oasis for almost a month, …」
+         第37行 太長（31 詞 > 25）：「It's a war between forces that are fighting for th…」
+         第40行 太長（29 詞 > 25）：「The day after we met, Fatima said, you told me tha…」
+         第42行 太長（26 詞 > 25）：「The boy listened to the sound of her voice and tho…」
+         第49行 太長（33 詞 > 25）：「So now I fear nothing because it was those omens t…」
+         第62行 太長（29 詞 > 25）：「Those who don't return become a part of the clouds…」
+         第65行 太短（4 詞 < 6）：「Some do come back.」
+         第71行 太長（28 詞 > 25）：「And if I have to, I will accept the fact that he h…」
+
+[更新] The Alchemist of Part 2-10 Timestamp.txt
+       MP3：The Alchemist of Part 2-10.mp3
+       段落數：87 條 → 67 條
+       備份：The Alchemist of Part 2-10 Timestamp（原檔）.txt
+       純文字同步更新：The Alchemist of Part 2-10.txt
+       違規詳情（共 28 條）：
+         第6行 太短（4 詞 < 6）：「Good afternoon, ma 'am.」
+         第9行 太長（28 詞 > 25）：「But before she fled, she advised the boy that he h…」
+         第10行 太短（4 詞 < 6）：「He should respect tradition.」
+         第11行 太短（4 詞 < 6）：「The Englishman was disappointed.」
+         第13行 太短（5 詞 < 6）：「The boy was also saddened.」
+         第17行 太短（5 詞 < 6）：「He couldn't have been wrong.」
+         第20行 太短（5 詞 < 6）：「The Englishman's eyes lit up.」
+         第21行 太短（2 詞 < 6）：「That's it.」
+         第25行 太短（4 詞 < 6）：「Then a man approached.」
+         第27行 太短（3 詞 < 6）：「The boy asked.」
+         第29行 太短（5 詞 < 6）：「You're looking for which doctors?」
+         第31行 太短（3 詞 < 6）：「Another man appeared.」
+         第33行 太短（5 詞 < 6）：「The boy repeated his question.」
+         第35行 太短（3 詞 < 6）：「The Arab asked.」
+         第37行 太長（26 詞 > 25）：「If such a man is here at the oasis, he must be the…」
+         第39行 太短（4 詞 < 6）：「Only when he consents.」
+         第41行 太短（5 詞 < 6）：「Then leave with the caravan.」
+         第43行 太短（5 詞 < 6）：「But the Englishman was exultant.」
+         第49行 太長（46 詞 > 25）：「When he looked into her dark eyes and saw that her…」
+         第50行 太短（1 詞 < 6）：「Buzzlove.」
+         第57行 太長（33 詞 > 25）：「What the boy felt at that moment was that he was i…」
+         第61行 太長（30 詞 > 25）：「Because when you know that language, it's easy to …」
+         第66行 太短（4 詞 < 6）：「Makhtab thought the boy.」
+         第67行 太短（5 詞 < 6）：「The Englishman shook the boy.」
+         第68行 太短（4 詞 < 6）：「Come on, ask her.」
+         第70行 太短（3 詞 < 6）：「What's your name?」
+         第71行 太短（2 詞 < 6）：「he asked.」
+         第84行 太長（42 詞 > 25）：「And the boy sat there by the well for a long time,…」
+
+[更新] The Alchemist of Part 2-09 Timestamp.txt
+       MP3：The Alchemist of Part 2-09.mp3
+       段落數：65 條 → 65 條
+       備份：The Alchemist of Part 2-09 Timestamp（原檔）.txt
+       純文字同步更新：The Alchemist of Part 2-09.txt
+       違規詳情（共 13 條）：
+         第1行 太長（28 詞 > 25）：「Part 2 -9 The times rush past and so do the carava…」
+         第2行 太長（28 詞 > 25）：「People were shouting at the new arrivals, dust obs…」
+         第8行 太長（28 詞 > 25）：「He always enjoyed seeing the happiness that the tr…」
+         第19行 太長（28 詞 > 25）：「Things have to be transmitted this way because the…」
+         第21行 太長（41 詞 > 25）：「The boy couldn t believe what he was seeing, the o…」
+         第25行 太長（33 詞 > 25）：「The men of the oasis wanted to know if they had se…」
+         第27行 太長（30 詞 > 25）：「The travelers in the caravan were talking incessan…」
+         第28行 太短（5 詞 < 6）：「They were relieved and happy.」
+         第29行 太長（36 詞 > 25）：「They had been taking careful precautions in the de…」
+         第38行 太長（26 詞 > 25）：「To the boy's surprise, the Englishman took a chrom…」
+         第39行 太短（5 詞 < 6）：「Why a revolver, he asked.」
+         第58行 太長（30 詞 > 25）：「The boy told them about his life as a shepherd, an…」
+         第65行 太短（5 詞 < 6）：「There were hundreds of tents.」
+
+[更新] The Alchemist of Part 2-08 Timestamp.txt
+       MP3：The Alchemist of Part 2-08.mp3
+       段落數：77 條 → 68 條
+       備份：The Alchemist of Part 2-08 Timestamp（原檔）.txt
+       純文字同步更新：The Alchemist of Part 2-08.txt
+       違規詳情（共 16 條）：
+         第6行 太短（4 詞 < 6）：「They were fascinating stories.」
+         第16行 太短（5 詞 < 6）：「Gold would lose its value.」
+         第20行 太短（5 詞 < 6）：「When were these books written?」
+         第21行 太短（3 詞 < 6）：「The boy asked.」
+         第22行 太短（3 詞 < 6）：「Many centuries ago.」
+         第30行 太短（4 詞 < 6）：「Did you learn anything?」
+         第34行 太長（26 詞 > 25）：「I learned that many alchemists realized their pers…」
+         第36行 太短（4 詞 < 6）：「The Englishman was disappointed.」
+         第48行 太長（31 詞 > 25）：「The hooded Bedouins reappeared more and more frequ…」
+         第51行 太長（36 詞 > 25）：「The silence was the worst aspect of the night, whe…」
+         第60行 太長（28 詞 > 25）：「You'll see that there is life in the desert, that …」
+         第66行 太短（3 詞 < 6）：「The boy asked.」
+         第67行 太短（5 詞 < 6）：「Because we have to sleep.」
+         第69行 太長（26 詞 > 25）：「There in front of him where the small stars had be…」
+         第71行 太短（5 詞 < 6）：「But the boy was quiet.」
+         第74行 太長（33 詞 > 25）：「But this was the present moment the party the came…」
+
+[更新] The Alchemist of Part 2-07 Timestamp.txt
+       MP3：The Alchemist of Part 2-07.mp3
+       段落數：80 條 → 75 條
+       備份：The Alchemist of Part 2-07 Timestamp（原檔）.txt
+       純文字同步更新：The Alchemist of Part 2-07.txt
+       違規詳情（共 15 條）：
+         第1行 太短（3 詞 < 6）：「Part 2 -7.」
+         第11行 太短（4 詞 < 6）：「The three fell silent.」
+         第14行 太短（3 詞 < 6）：「The universal language.」
+         第26行 太長（28 詞 > 25）：「And one day the leader of the caravan made the dec…」
+         第36行 太短（5 詞 < 6）：「It's always a positive force.」
+         第37行 太長（33 詞 > 25）：「He also said that this was not just a human gift, …」
+         第39行 太短（5 詞 < 6）：「And it has a soul.」
+         第46行 太長（26 詞 > 25）：「If either of us had joined this caravan based only…」
+         第52行 太短（4 詞 < 6）：「They were strange books.」
+         第56行 太長（32 詞 > 25）：「In one of the books he learned that the most impor…」
+         第62行 太長（31 詞 > 25）：「They believed that if a metal were heated for many…」
+         第63行 太長（26 詞 > 25）：「This soul of the world allowed them to understand …」
+         第67行 太短（3 詞 < 6）：「The boy asked.」
+         第69行 太短（5 詞 < 6）：「Alchemy is a serious discipline.」
+         第79行 太長（26 詞 > 25）：「He had said that it was a good thing for the boy t…」
+
+[更新] The Alchemist of Part 2-06 Timestamp.txt
+       MP3：The Alchemist of Part 2-06.mp3
+       段落數：65 條 → 64 條
+       備份：The Alchemist of Part 2-06 Timestamp（原檔）.txt
+       純文字同步更新：The Alchemist of Part 2-06.txt
+       違規詳情（共 8 條）：
+         第6行 太長（28 詞 > 25）：「Then there had been confusion and shouting, the cr…」
+         第15行 太短（5 詞 < 6）：「It seems old and wise.」
+         第16行 太長（26 詞 > 25）：「The wind never stopped, and the boy remembered the…」
+         第21行 太短（3 詞 < 6）：「That is good.」
+         第27行 太短（1 詞 < 6）：「Hunches.」
+         第29行 太長（42 詞 > 25）：「The boy was beginning to understand that intuition…」
+         第42行 太長（27 詞 > 25）：「When the people saw that star shining in the morni…」
+         第48行 太長（26 詞 > 25）：「Although the boy had developed a superstition that…」
+
+[更新] The Alchemist of Part 2-05 Timestamp.txt
+       MP3：The Alchemist of Part 2-05.mp3
+       段落數：74 條 → 67 條
+       備份：The Alchemist of Part 2-05 Timestamp（原檔）.txt
+       純文字同步更新：The Alchemist of Part 2-05.txt
+       違規詳情（共 10 條）：
+         第12行 太短（4 詞 < 6）：「The stranger didn't answer.」
+         第14行 太短（5 詞 < 6）：「Did you say a king?」
+         第15行 太短（2 詞 < 6）：「he asked.」
+         第17行 太短（3 詞 < 6）：「Not at all.」
+         第21行 太短（4 詞 < 6）：「It's in the bible.」
+         第27行 太短（5 詞 < 6）：「Who told you about omens?」
+         第32行 太短（4 詞 < 6）：「That's why I'm here.」
+         第57行 太長（28 詞 > 25）：「But the only god I serve is Allah and in his name …」
+         第58行 太長（26 詞 > 25）：「But I want each and every one of you to swear by t…」
+         第73行 太長（42 詞 > 25）：「The same chain that had caused him to become a she…」
+
+[更新] The Alchemist of Part 2-04 Timestamp.txt
+       MP3：The Alchemist of Part 2-04.mp3
+       段落數：74 條 → 69 條
+       備份：The Alchemist of Part 2-04 Timestamp（原檔）.txt
+       純文字同步更新：The Alchemist of Part 2-04.txt
+       違規詳情（共 12 條）：
+         第12行 太長（27 詞 > 25）：「On the other hand, I don't know if the desert can …」
+         第15行 太短（2 詞 < 6）：「Why not?」
+         第16行 太短（5 詞 < 6）：「He suddenly felt tremendously happy.」
+         第33行 太短（4 詞 < 6）：「He believed in omens.」
+         第43行 太長（26 詞 > 25）：「He had spent enormous amounts of time at the great…」
+         第47行 太長（37 詞 > 25）：「But he would never have thought it more than just …」
+         第48行 太長（28 詞 > 25）：「He lives at the Alfam Oasis, his friend had said, …」
+         第54行 太短（4 詞 < 6）：「Where are you bound?」
+         第55行 太短（4 詞 < 6）：「asked the young Arab.」
+         第61行 太短（5 詞 < 6）：「That's good, thought the Englishman.」
+         第62行 太長（30 詞 > 25）：「He spoke Spanish better than Arabic, and if this b…」
+         第69行 太長（30 詞 > 25）：「When someone makes a decision, he is really diving…」
+
+[更新] The Alchemist of Part 2-03 Timestamp.txt
+       MP3：The Alchemist of Part 2-03.mp3
+       段落數：72 條 → 63 條
+       備份：The Alchemist of Part 2-03 Timestamp（原檔）.txt
+       純文字同步更新：The Alchemist of Part 2-03.txt
+       違規詳情（共 17 條）：
+         第6行 太短（5 詞 < 6）：「The city was still sleeping.」
+         第17行 太短（5 詞 < 6）：「The old man said nothing.」
+         第19行 太短（3 詞 < 6）：「asked the boy.」
+         第20行 太短（4 詞 < 6）：「You have helped me.」
+         第26行 太短（4 詞 < 6）：「Who told you that?」
+         第27行 太短（4 詞 < 6）：「asked the boy, startled.」
+         第31行 太短（4 詞 < 6）：「They filled three sacks.」
+         第35行 太短（3 詞 < 6）：「Urim and Thummim.」
+         第36行 太長（26 詞 > 25）：「It made the boy think of the old king, and it star…」
+         第39行 太短（3 詞 < 6）：「Follow the omens.」
+         第44行 太長（40 詞 > 25）：「But the sheep had taught him something even more i…」
+         第48行 太長（29 詞 > 25）：「But the old king hadn't said anything about being …」
+         第50行 太長（27 詞 > 25）：「And he had forgotten to mention that when you have…」
+         第52行 太長（27 詞 > 25）：「He went down the stairs and found the merchant wai…」
+         第55行 太長（45 詞 > 25）：「He remembered the smile of the candy seller on his…」
+         第56行 太短（2 詞 < 6）：「he thought.」
+         第67行 太短（2 詞 < 6）：「Who knows.」
+
+[更新] The Alchemist of Part 2-02 Timestamp.txt
+       MP3：The Alchemist of Part 2-02.mp3
+       段落數：69 條 → 64 條
+       備份：The Alchemist of Part 2-02 Timestamp（原檔）.txt
+       純文字同步更新：The Alchemist of Part 2-02.txt
+       違規詳情（共 16 條）：
+         第1行 太短（4 詞 < 6）：「Part 2 Dash 2.」
+         第4行 太長（32 詞 > 25）：「In less than a year he would have doubled his floc…」
+         第5行 太長（33 詞 > 25）：「Since that morning in the marketplace he had never…」
+         第6行 太長（26 詞 > 25）：「Anyway the boy had become happy in his work and th…」
+         第9行 太長（28 詞 > 25）：「Maybe it was his treasure to have wound up in that…」
+         第10行 太短（5 詞 < 6）：「He was proud of himself.」
+         第12行 太長（32 詞 > 25）：「One afternoon he had seen a man at the top of the …」
+         第19行 太長（34 詞 > 25）：「The merchant didn't respond but that afternoon aft…」
+         第21行 太短（4 詞 < 6）：「asked the old merchant.」
+         第22行 太短（4 詞 < 6）：「I've already told you.」
+         第29行 太短（4 詞 < 6）：「Well isn't that good?」
+         第31行 太長（34 詞 > 25）：「Before you came I was thinking about how much time…」
+         第32行 太短（4 詞 < 6）：「Made me very depressed.」
+         第43行 太長（27 詞 > 25）：「Now that I have seen them and now that I see how i…」
+         第65行 太長（31 詞 > 25）：「Before long the news spread and a great many peopl…」
+         第68行 太長（28 詞 > 25）：「He began to import enormous quantities of tea alon…」
+
+[更新] The Alchemist of Part 2-01 Timestamp.txt
+       MP3：The Alchemist of Part 2-01.mp3
+       段落數：79 條 → 76 條
+       備份：The Alchemist of Part 2-01 Timestamp（原檔）.txt
+       純文字同步更新：The Alchemist of Part 2-01.txt
+       違規詳情（共 10 條）：
+         第1行 太長（35 詞 > 25）：「The alchemist part two dash one boy had been worki…」
+         第26行 太長（28 詞 > 25）：「The boy was being paid more money than he deserved…」
+         第50行 太短（3 詞 < 6）：「He stopped there.」
+         第53行 太短（4 詞 < 6）：「What's the fifth obligation?」
+         第54行 太短（3 詞 < 6）：「The boy asked.」
+         第62行 太短（5 詞 < 6）：「The crystals are delicate things.」
+         第67行 太長（42 詞 > 25）：「One of them, a cobbler who made his living mending…」
+         第69行 太短（3 詞 < 6）：「asked the boy.」
+         第71行 太長（27 詞 > 25）：「That's what helps me face these days that are all …」
+         第75行 太長（30 詞 > 25）：「I've already imagined a thousand times crossing th…」
+
+[更新] The Alchemist of Part 1-12 Timestamp.txt
+       MP3：The Alchemist of Part 1-12.mp3
+       段落數：109 條 → 101 條
+       備份：The Alchemist of Part 1-12 Timestamp（原檔）.txt
+       純文字同步更新：The Alchemist of Part 1-12.txt
+       違規詳情（共 14 條）：
+         第1行 太短（3 詞 < 6）：「Part 1 -12.」
+         第8行 太長（29 詞 > 25）：「Although his new world at the moment was just an e…」
+         第9行 太短（4 詞 < 6）：「He remembered the sword.」
+         第11行 太長（33 詞 > 25）：「As he mused about these things, he realized that h…」
+         第28行 太長（27 詞 > 25）：「He realized that he could do the same thing the ol…」
+         第29行 太短（5 詞 < 6）：「Just by looking at them.」
+         第33行 太長（27 詞 > 25）：「When he had gone only a short distance, he realize…」
+         第51行 太長（31 詞 > 25）：「In those days it had been wonderful to be selling …」
+         第82行 太短（3 詞 < 6）：「The boy asked.」
+         第90行 太短（3 詞 < 6）：「The merchant asked.」
+         第94行 太短（3 詞 < 6）：「The merchant laughed.」
+         第99行 太長（28 詞 > 25）：「No sound from the bazaars, no arguments among the …」
+         第100行 太短（5 詞 < 6）：「no treasure and no pyramids.」
+         第106行 太短（4 詞 < 6）：「The boy said nothing.」
+
+[更新] The Alchemist of Part 1-11 Timestamp.txt
+       MP3：The Alchemist of Part 1-11.mp3
+       段落數：70 條 → 66 條
+       備份：The Alchemist of Part 1-11 Timestamp（原檔）.txt
+       純文字同步更新：The Alchemist of Part 1-11.txt
+       違規詳情（共 7 條）：
+         第15行 太長（29 詞 > 25）：「He recalled that when the sun had risen that morni…」
+         第17行 太長（27 詞 > 25）：「But now as the sun began to set, he was in a diffe…」
+         第43行 太短（4 詞 < 6）：「They were his treasure.」
+         第55行 太短（3 詞 < 6）：「It was yes.」
+         第57行 太短（2 詞 < 6）：「He asked.」
+         第64行 太短（2 詞 < 6）：「An omen.」
+         第65行 太短（5 詞 < 6）：「The boy smiled to himself.」
+
+[更新] The Alchemist of Part 1-10 Timestamp.txt
+       MP3：The Alchemist of Part 1-10.mp3
+       段落數：82 條 → 74 條
+       備份：The Alchemist of Part 1-10 Timestamp（原檔）.txt
+       純文字同步更新：The Alchemist of Part 1-10.txt
+       違規詳情（共 19 條）：
+         第1行 太短（3 詞 < 6）：「Part 1 -10.」
+         第2行 太長（27 詞 > 25）：「How Strange Africa's Thought the Boy He was sittin…」
+         第4行 太長（42 詞 > 25）：「In just a few hours he had seen men walking hand i…」
+         第6行 太長（32 詞 > 25）：「As a child in church he had always looked at the i…」
+         第9行 太長（27 詞 > 25）：「Besides this, in the rush of his travels he had fo…」
+         第21行 太長（30 詞 > 25）：「During the time the boy had spent in the fields of…」
+         第22行 太長（31 詞 > 25）：「He had discovered that the presence of a certain b…」
+         第25行 太短（5 詞 < 6）：「The tea seemed less bitter.」
+         第26行 太短（3 詞 < 6）：「Who are you?」
+         第28行 太短（4 詞 < 6）：「The boy was relieved.」
+         第30行 太短（5 詞 < 6）：「How come you speak Spanish?」
+         第31行 太短（2 詞 < 6）：「He asked.」
+         第34行 太短（5 詞 < 6）：「Almost everyone here speaks Spanish.」
+         第37行 太短（4 詞 < 6）：「I hate this tea.」
+         第39行 太短（5 詞 < 6）：「The religion here forbids it.」
+         第47行 太短（3 詞 < 6）：「The newcomer asked.」
+         第52行 太長（30 詞 > 25）：「The boy thought it a strange question, but he trus…」
+         第57行 太短（5 詞 < 6）：「He wants us to leave.」
+         第58行 太短（4 詞 < 6）：「The boy was relieved.」
+
+[更新] The Alchemist of Part 1-09 Timestamp.txt
+       MP3：The Alchemist of Part 1-09.mp3
+       段落數：51 條 → 49 條
+       備份：The Alchemist of Part 1-09 Timestamp（原檔）.txt
+       純文字同步更新：The Alchemist of Part 1-09.txt
+       違規詳情（共 7 條）：
+         第9行 太長（36 詞 > 25）：「Tradesmen came and went, people were conversing in…」
+         第10行 太長（26 詞 > 25）：「The wise man conversed with everyone, and the boy …」
+         第11行 太長（30 詞 > 25）：「The wise man listened attentively to the boy's exp…」
+         第24行 太長（30 詞 > 25）：「Relieved, the boy picked up the spoon and returned…」
+         第28行 太短（4 詞 < 6）：「asked the wise man.」
+         第32行 太短（4 詞 < 6）：「The shepherd said nothing.」
+         第44行 太短（4 詞 < 6）：「That was his work.」
+
+[更新] The Alchemist of Part 1-08 Timestamp.txt
+       MP3：The Alchemist of Part 1-08.mp3
+       段落數：81 條 → 73 條
+       備份：The Alchemist of Part 1-08 Timestamp（原檔）.txt
+       純文字同步更新：The Alchemist of Part 1-08.txt
+       違規詳情（共 14 條）：
+         第15行 太短（4 詞 < 6）：「He knew that wind.」
+         第17行 太短（5 詞 < 6）：「The Levanter increased in intensity.」
+         第23行 太長（37 詞 > 25）：「For her, every day was the same and when each day …」
+         第33行 太長（30 詞 > 25）：「It had brought with it the sweat and the dreams of…」
+         第39行 太短（5 詞 < 6）：「I'm surprised, the boy said.」
+         第45行 太短（2 詞 < 6）：「Beginner's luck.」
+         第46行 太短（3 詞 < 6）：「Why is that?」
+         第51行 太短（4 詞 < 6）：「Where is the treasure?」
+         第52行 太短（2 詞 < 6）：「he asked.」
+         第54行 太短（4 詞 < 6）：「The boy was startled.」
+         第63行 太短（5 詞 < 6）：「Like crickets and like grasshoppers.」
+         第67行 太短（4 詞 < 6）：「These are good omens.」
+         第71行 太短（5 詞 < 6）：「He really was a king.」
+         第77行 太短（5 詞 < 6）：「Always ask an objective question.」
+
+[更新] The Alchemist of Part 1-07 Timestamp.txt
+       MP3：The Alchemist of Part 1-07.mp3
+       段落數：62 條 → 57 條
+       備份：The Alchemist of Part 1-07 Timestamp（原檔）.txt
+       純文字同步更新：The Alchemist of Part 1-07.txt
+       違規詳情（共 8 條）：
+         第1行 太短（3 詞 < 6）：「Part 1 -7.」
+         第21行 太長（31 詞 > 25）：「The miner was about to give it all up, right at th…」
+         第33行 太短（5 詞 < 6）：「The old man looked disappointed.」
+         第41行 太短（2 詞 < 6）：「Good afternoon.」
+         第45行 太長（30 詞 > 25）：「He went over to the bakery and bought a loaf of br…」
+         第47行 太長（29 詞 > 25）：「If he were to say anything, the baker would spend …」
+         第51行 太短（4 詞 < 6）：「Can I help you?」
+         第55行 太短（4 詞 < 6）：「The idea frightened him.」
+
+[更新] The Alchemist of Part 1-06 Timestamp.txt
+       MP3：The Alchemist of Part 1-06.mp3
+       段落數：87 條 → 74 條
+       備份：The Alchemist of Part 1-06 Timestamp（原檔）.txt
+       純文字同步更新：The Alchemist of Part 1-06.txt
+       違規詳情（共 18 條）：
+         第7行 太短（4 詞 < 6）：「Where are you from?」
+         第8行 太短（3 詞 < 6）：「the boy asked.」
+         第9行 太短（3 詞 < 6）：「From many places.」
+         第12行 太短（5 詞 < 6）：「That's where I was born.」
+         第17行 太短（5 詞 < 6）：「So what is Salem like?」
+         第23行 太短（2 詞 < 6）：「he insisted.」
+         第25行 太短（4 詞 < 6）：「The old man laughed.」
+         第34行 太短（4 詞 < 6）：「enough, said the boy.」
+         第38行 太短（5 詞 < 6）：「The boy was getting irritated.」
+         第39行 太短（5 詞 < 6）：「He wasn't asking for help.」
+         第47行 太長（30 詞 > 25）：「But the old man, maybe he was her husband, was goi…」
+         第49行 太長（26 詞 > 25）：「But before the boy could say anything, the old man…」
+         第53行 太長（31 詞 > 25）：「There in the sand of the plaza of that small city,…」
+         第58行 太短（3 詞 < 6）：「For several reasons.」
+         第71行 太長（26 詞 > 25）：「Whoever you are or whatever it is that you do when…」
+         第72行 太短（5 詞 < 6）：「It's your mission on earth.」
+         第76行 太短（4 詞 < 6）：「All things are one.」
+         第81行 太短（5 詞 < 6）：「Because I like to travel.」
+
+[更新] The Alchemist of Part 1-05 Timestamp.txt
+       MP3：The Alchemist of Part 1-05.mp3
+       段落數：56 條 → 48 條
+       備份：The Alchemist of Part 1-05 Timestamp（原檔）.txt
+       純文字同步更新：The Alchemist of Part 1-05.txt
+       違規詳情（共 12 條）：
+         第1行 太短（3 詞 < 6）：「Part 1 -5.」
+         第2行 太短（5 詞 < 6）：「So the boy was disappointed.」
+         第6行 太長（27 詞 > 25）：「He traded his book for one that was thicker, and h…」
+         第12行 太長（26 詞 > 25）：「When someone sees the same people every day as had…」
+         第21行 太長（30 詞 > 25）：「If he ever wrote a book, he thought he would prese…」
+         第25行 太短（4 詞 < 6）：「What are they doing?」
+         第28行 太長（30 詞 > 25）：「Actually, he was thinking about shearing his sheep…」
+         第41行 太長（26 詞 > 25）：「And second, that if the old man didn't know how to…」
+         第44行 太短（4 詞 < 6）：「The boy was shocked.」
+         第50行 太短（5 詞 < 6）：「What's the world's greatest lie?」
+         第51行 太短（5 詞 < 6）：「The boy asked, completely surprised.」
+         第53行 太短（5 詞 < 6）：「That's the world's greatest lie.」
+
+[更新] The Alchemist of Part 1-04 Timestamp.txt
+       MP3：The Alchemist of Part 1-04.mp3
+       段落數：78 條 → 69 條
+       備份：The Alchemist of Part 1-04 Timestamp（原檔）.txt
+       純文字同步更新：The Alchemist of Part 1-04.txt
+       違規詳情（共 10 條）：
+         第10行 太長（29 詞 > 25）：「It was also said that they had a pact with the dev…」
+         第11行 太長（32 詞 > 25）：「As a child, the boy had always been frightened to …」
+         第16行 太短（5 詞 < 6）：「The boy was becoming nervous.」
+         第21行 太長（31 詞 > 25）：「He thought for a moment that it would be better to…」
+         第27行 太短（5 詞 < 6）：「Another trick the boy thought.」
+         第35行 太短（4 詞 < 6）：「I don't know why.」
+         第42行 太短（4 詞 < 6）：「But she said nothing.」
+         第59行 太短（5 詞 < 6）：「And this is my interpretation.」
+         第72行 太短（4 詞 < 6）：「I only interpret dreams.」
+         第76行 太短（5 詞 < 6）：「Then I don't get paid.」
+
+[更新] The Alchemist of Part 1-03 Timestamp.txt
+       MP3：The Alchemist of Part 1-03.mp3
+       段落數：43 條 → 43 條
+       備份：The Alchemist of Part 1-03 Timestamp（原檔）.txt
+       純文字同步更新：The Alchemist of Part 1-03.txt
+       違規詳情（共 5 條）：
+         第1行 太短（3 詞 < 6）：「Part 1 -3.」
+         第12行 太短（5 詞 < 6）：「His father said no more.」
+         第19行 太長（35 詞 > 25）：「Himself to travel the world, a desire that was sti…」
+         第41行 太長（40 詞 > 25）：「He had to prepare himself for his meeting with the…」
+         第42行 太長（29 詞 > 25）：「It's the possibility of having a dream come true t…」
+
+[更新] The Alchemist of Part 1-02 Timestamp.txt
+       MP3：The Alchemist of Part 1-02.mp3
+       段落數：50 條 → 52 條
+       備份：The Alchemist of Part 1-02 Timestamp（原檔）.txt
+       違規詳情（共 11 條）：
+         第1行 太短（3 詞 < 6）：「Part 1 -2.」
+         第3行 太長（30 詞 > 25）：「During the two hours that they talked, she told hi…」
+         第11行 太長（28 詞 > 25）：「As the time passed, the boy found himself wishing …」
+         第12行 太長（35 詞 > 25）：「He recognized that he was feeling something he had…」
+         第22行 太長（29 詞 > 25）：「And he knew that shepherds, like seamen and like t…」
+         第30行 太長（26 詞 > 25）：「They were content with just food and water and in …」
+         第31行 太長（30 詞 > 25）：「If I became a monster today and decided to kill th…」
+         第37行 太長（33 詞 > 25）：「He knew that a few hours from now with the sun at …」
+         第40行 太長（28 詞 > 25）：「But when he thought to complain about the burden o…」
+         第49行 太長（31 詞 > 25）：「But ever since he had been a child he had wanted t…」
+         第50行 太長（31 詞 > 25）：「One afternoon, on a visit to his family, he had su…」
+
+[更新] The Alchemist of Part 1-01 Timestamp.txt
+       MP3：The Alchemist of Part 1-01.mp3
+       段落數：33 條 → 31 條
+       備份：The Alchemist of Part 1-01 Timestamp（原檔）.txt
+       純文字同步更新：The Alchemist of Part 1-01.txt
+       違規詳情（共 5 條）：
+         第5行 太長（30 詞 > 25）：「He saw to it that all the sheep entered through th…」
+         第16行 太長（35 詞 > 25）：「It was as if some mysterious energy bound his life…」
+         第18行 太長（27 詞 > 25）：「Thinking about that for a moment he realized that …」
+         第25行 太長（33 詞 > 25）：「But for the past few days he had spoken to them ab…」
+         第27行 太長（29 詞 > 25）：「The merchant was the proprietor of a dry goods sho…」
+
+[更新] The Alchemist of 2-Prologue Timestamp.txt
+       MP3：The Alchemist of 2-Prologue.mp3
+       段落數：19 條 → 16 條
+       備份：The Alchemist of 2-Prologue Timestamp（原檔）.txt
+       純文字同步更新：The Alchemist of 2-Prologue.txt
+       違規詳情（共 1 條）：
+         第14行 太短（5 詞 < 6）：「the goddesses said in wonder.」
+
+[更新] The Alchemist of 1 Foreword Timestamp.txt
+       MP3：The Alchemist of 1 Foreword.mp3
+       段落數：57 條 → 59 條
+       備份：The Alchemist of 1 Foreword Timestamp（原檔2）.txt
+       純文字同步更新：The Alchemist of 1 Foreword.txt
+       違規詳情（共 13 條）：
+         第8行 太短（5 詞 < 6）：「I was 41 and desperate.」
+         第10行 太短（1 詞 < 6）：「Why?」
+         第25行 太長（26 詞 > 25）：「But it still took some time to sell, slowly findin…」
+         第27行 太長（33 詞 > 25）：「Then Madonna raved about the book to Vanity Fair, …」
+         第30行 太長（33 詞 > 25）：「It has since been translated into more than 80 dif…」
+         第32行 太短（4 詞 < 6）：「The answer is no.」
+         第33行 太短（4 詞 < 6）：「I had no idea.」
+         第34行 太短（3 詞 < 6）：「How could I?」
+         第46行 太長（31 詞 > 25）：「Which is why I believe the Alchemist continues all…」
+         第52行 太短（4 詞 < 6）：「They understand my soul.」
+         第54行 太長（30 詞 > 25）：「When I read about clashes around the world, politi…」
+         第58行 太長（30 詞 > 25）：「There is always a chance for reconciliation, a cha…」
+         第60行 太短（3 詞 < 6）：「Palo Collo 2014」

@@ -1,79 +1,76 @@
-[00:00:00.000 --> 00:00:09.400] The alchemist part two dash one boy had been working for the crystal merchant for almost a month and he could see that it wasn't exactly the kind of job that would make him happy.
-[00:00:09.760 --> 00:00:16.540] The merchant spent the entire day mumbling behind the counter telling the boy to be careful with the pieces and not to break anything.
-[00:00:16.960 --> 00:00:22.080] But he stayed with the job because the merchant, although he was an old grouch, treated him fairly.
-[00:00:22.560 --> 00:00:27.840] The boy received a good commission for each piece he sold and had already been able to put some money aside.
-[00:00:28.300 --> 00:00:30.420] That morning he had done some calculating.
-[00:00:31.220 --> 00:00:36.260] If he continued to work every day as he had been, he would need a whole year to be able to buy some sheep.
-[00:00:37.020 --> 00:00:40.960] I'd like to build a display case for the crystal, the boy said to the merchant.
-[00:00:41.760 --> 00:00:45.620] We could place it outside and attract those people who pass at the bottom of the hill.
-[00:00:46.340 --> 00:00:49.120] I've never had one before, the merchant answered.
-[00:00:49.860 --> 00:00:53.020] People will pass by and bump into it and pieces will be broken.
-[00:00:53.860 --> 00:00:58.140] Well, when I took my sheep through the fields some of them might have died if we had come upon a snake.
-[00:00:58.680 --> 00:01:01.280] But that's the way life is with sheep and with shepherds.
-[00:01:01.880 --> 00:01:05.160] The merchant turned to a customer who wanted three crystal glasses.
-[00:01:05.980 --> 00:01:07.320] He was selling better than ever.
-[00:01:08.040 --> 00:01:12.780] As if time had turned back to the old days when the street had been one of 10 years major attractions.
-[00:01:13.680 --> 00:01:17.980] Business has really improved, he said to the boy after the customer had left.
-[00:01:18.600 --> 00:01:21.920] I'm doing much better and soon you'll be able to return to your sheep.
-[00:01:22.360 --> 00:01:23.780] Why ask more out of life?
-[00:01:24.440 --> 00:01:29.060] Because we have to respond to omens, the boy said almost without meaning to.
-[00:01:29.560 --> 00:01:32.960] Then he regretted what he had said because the merchant had never met the king.
-[00:01:33.740 --> 00:01:36.660] It's called the principle of favorability, beginner's luck.
-[00:01:37.260 --> 00:01:41.420] Because life wants you to achieve your personal legend, the old king had said.
-[00:01:42.060 --> 00:01:44.300] But the merchant understood what the boy had said.
-[00:01:45.000 --> 00:01:47.320] The boy's very presence in the shop was an omen.
-[00:01:47.780 --> 00:01:53.120] And as time passed and money was pouring into the cash drawer, he had no regrets about having hired the boy.
-[00:01:53.720 --> 00:02:01.580] The boy was being paid more money than he deserved because the merchant thinking that sales wouldn't amount to much had offered the boy a high commission rate.
-[00:02:02.340 --> 00:02:04.680] He had assumed he would soon return to his sheep.
-[00:02:05.400 --> 00:02:07.220] Why did you want to get to the pyramids?
-[00:02:07.700 --> 00:02:10.160] He asked to get away from the business of the display.
-[00:02:10.820 --> 00:02:15.200] Because I've always heard about them, the boy answered saying nothing about his dream.
-[00:02:15.900 --> 00:02:20.620] The treasure was now nothing but a painful memory and he tried to avoid thinking about it.
-[00:02:21.260 --> 00:02:26.660] I don't know anyone around here who would want to cross the desert just to see the pyramids, said the merchant.
-[00:02:27.420 --> 00:02:28.660] They're just a pile of stones.
-[00:02:29.400 --> 00:02:30.740] You could build one in your backyard.
-[00:02:31.660 --> 00:02:37.260] You've never had dreams of travel, said the boy, turning to wait on a customer who had entered the shop.
-[00:02:37.960 --> 00:02:41.000] Two days later the merchant spoke to the boy about the display.
-[00:02:41.680 --> 00:02:43.740] I don't much like change, he said.
-[00:02:44.500 --> 00:02:46.700] You and I aren't like Hassan that rich merchant.
-[00:02:47.160 --> 00:02:49.760] If he makes a buying mistake it doesn't affect him much.
-[00:02:50.200 --> 00:02:52.060] But we too have to live with our mistakes.
+[00:00:00.000 --> 00:00:09.380] The Alchemist Part 2 -1. Boy had been working for the crystal merchant for almost a month, and he could see that it wasn't exactly the kind of job that would make him happy.
+[00:00:09.740 --> 00:00:16.560] The merchant spent the entire day mumbling behind the counter, telling the boy to be careful with the pieces and not to break anything.
+[00:00:16.960 --> 00:00:22.140] But he stayed with the job because the merchant, although he was an old grouch, treated him fairly.
+[00:00:22.420 --> 00:00:27.860] The boy received a good commission for each piece he sold, and had already been able to put some money aside.
+[00:00:28.320 --> 00:00:30.560] That morning he had done some calculating.
+[00:00:30.980 --> 00:00:36.340] If he continued to work every day as he had been, he would need a whole year to be able to buy some sheep.
+[00:00:36.760 --> 00:00:41.040] I'd like to build a display case for the crystal, the boy said to the merchant.
+[00:00:41.480 --> 00:00:45.640] We could place it outside and attract those people who pass at the bottom of the hill.
+[00:00:46.140 --> 00:00:49.180] I've never had one before, the merchant answered.
+[00:00:49.660 --> 00:00:53.040] People will pass by and bump into it and pieces will be broken.
+[00:00:53.640 --> 00:00:58.240] Well, when I took my sheep through the field some of them might have died if we had come upon a snake.
+[00:00:58.480 --> 00:01:01.260] But that's the way life is with sheep and with shepherds.
+[00:01:01.600 --> 00:01:05.240] The merchant turned to a customer who wanted three crystal glasses.
+[00:01:05.600 --> 00:01:07.320] He was selling better than ever.
+[00:01:07.740 --> 00:01:12.860] As if time had turned back to the old days when the street had been one of Tangier's major attractions.
+[00:01:13.540 --> 00:01:17.980] Business has really improved, he said to the boy after the customer had left.
+[00:01:18.380 --> 00:01:21.960] I'm doing much better and soon you'll be able to return to your sheep.
+[00:01:21.960 --> 00:01:23.880] Why ask more out of life?
+[00:01:24.400 --> 00:01:29.080] Because we have to respond to omens, the boy said almost without meaning to.
+[00:01:29.400 --> 00:01:33.020] Then he regretted what he had said because the merchant had never met the king.
+[00:01:33.420 --> 00:01:36.780] It's called the principle of favorability, beginner's luck.
+[00:01:37.060 --> 00:01:41.460] Because life wants you to achieve your personal legend, the old king had said.
+[00:01:41.840 --> 00:01:44.320] But the merchant understood what the boy had said.
+[00:01:44.700 --> 00:01:47.360] The boy's very presence in the shop was an omen.
+[00:01:47.700 --> 00:01:53.140] And as time passed and money was pouring into the cash drawer, he had no regrets about having hired the boy.
+[00:01:53.420 --> 00:01:56.300] The boy was being paid more money than he deserved.
+[00:01:56.560 --> 00:02:01.600] Because the merchant, thinking that sales wouldn't amount to much, had offered the boy a high commission rate.
+[00:02:02.080 --> 00:02:04.720] He had assumed he would soon return to his sheep.
+[00:02:05.120 --> 00:02:07.260] Why did you want to get to the pyramids?
+[00:02:07.440 --> 00:02:10.240] He asked to get away from the business of the display.
+[00:02:10.640 --> 00:02:15.220] Because I've always heard about them, the boy answered saying nothing about his dream.
+[00:02:15.640 --> 00:02:20.680] The treasure was now nothing but a painful memory, and he tried to avoid thinking about it.
+[00:02:21.060 --> 00:02:26.740] I don't know anyone around here who would want to cross the desert just to see the pyramids, said the merchant.
+[00:02:27.160 --> 00:02:28.820] They're just a pile of stones.
+[00:02:29.200 --> 00:02:30.920] You could build one in your backyard.
+[00:02:31.440 --> 00:02:37.320] You've never had dreams of travel, said the boy, turning to wait on a customer who had entered the shop.
+[00:02:37.800 --> 00:02:41.080] Two days later the merchant spoke to the boy about the display.
+[00:02:41.500 --> 00:02:43.800] I don't much like change, he said.
+[00:02:44.220 --> 00:02:46.700] You and I aren't like Hassan that rich merchant.
+[00:02:46.980 --> 00:02:49.800] If he makes a buying mistake it doesn't affect him much.
+[00:02:50.000 --> 00:02:52.240] But we too have to live with our mistakes.
 [00:02:52.840 --> 00:02:55.000] That's true enough, the boy thought ruefully.
-[00:02:55.740 --> 00:02:57.540] Why did you think we should have the display?
-[00:02:58.300 --> 00:03:00.060] I want to get back to my sheep faster.
-[00:03:00.560 --> 00:03:05.960] We have to take advantage when luck is on our side and do as much to help it as it's doing to help us.
-[00:03:06.500 --> 00:03:10.080] It's called the principle of favorability or beginner's luck.
-[00:03:10.920 --> 00:03:13.000] The merchant was silent for a few moments.
-[00:03:13.720 --> 00:03:20.100] Then he said, the Prophet gave us the Quran and left us just five obligations to satisfy during our lives.
-[00:03:20.660 --> 00:03:23.600] The most important is to believe only in the one true God.
-[00:03:24.200 --> 00:03:29.420] The others are to pray five times a day fast during Ramadan and be charitable to the poor.
-[00:03:30.160 --> 00:03:30.880] He stopped there.
-[00:03:31.460 --> 00:03:34.020] His eyes filled with tears as he spoke of the Prophet.
-[00:03:34.940 --> 00:03:40.760] He was a devout man and even with all his impatience he wanted to live his life in accordance with Muslim law.
-[00:03:41.380 --> 00:03:42.740] What's the fifth obligation?
-[00:03:43.180 --> 00:03:43.920] The boy asked.
-[00:03:44.560 --> 00:03:49.120] Two days ago, you said that I had never dreamed of travel, the merchant answered.
-[00:03:49.900 --> 00:03:52.440] The fifth obligation of every Muslim is a pilgrimage.
-[00:03:53.240 --> 00:03:57.400] We are obliged at least once in our lives to visit the holy city of Mecca.
-[00:03:58.040 --> 00:04:00.360] Mecca is a lot farther away than the pyramids.
-[00:04:01.000 --> 00:04:04.960] When I was young, all I wanted to do was put together enough money to start this shop.
-[00:04:05.580 --> 00:04:08.220] I thought that someday I'd be rich and could go to Mecca.
-[00:04:08.840 --> 00:04:13.320] I began to make some money, but I could never bring myself to leave someone in charge of the shop.
-[00:04:13.880 --> 00:04:15.380] The crystals are delicate things.
-[00:04:16.160 --> 00:04:19.760] At the same time, people were passing my shop all the time heading for Mecca.
-[00:04:20.420 --> 00:04:27.880] Some of them were rich pilgrims, traveling in caravans with servants and camels, but most of the people making the pilgrimage were poorer than I.
-[00:04:28.580 --> 00:04:30.660] All who went there were happy at having done so.
-[00:04:31.360 --> 00:04:34.600] They placed the symbols of the pilgrimage on the doors of their houses.
-[00:04:35.240 --> 00:04:45.960] One of them, a cobbler who made his living mending boots, said that he had traveled for almost a year through the desert, but that he got more tired when he had to walk through the streets of Tangier buying his leather.
-[00:04:46.700 --> 00:04:48.360] Well, why don't you go to Mecca now?
-[00:04:48.740 --> 00:04:49.480] asked the boy.
-[00:04:50.080 --> 00:04:52.220] Because it's the thought of Mecca that keeps me alive.
-[00:04:52.980 --> 00:04:59.640] That's what helps me face these days that are all the same, these mute crystals on the shelves and lunch and dinner at that same horrible cafe.
-[00:05:00.400 --> 00:05:04.220] I'm afraid that if my dream is realized, I'll have no reason to go on living.
-[00:05:04.780 --> 00:05:09.500] You dream about your sheep in the pyramids, but you're different from me because you want to realize your dreams.
-[00:05:10.160 --> 00:05:11.600] I just want to dream about Mecca.
-[00:05:12.280 --> 00:05:21.240] I've already imagined a thousand times crossing the desert, arriving at the plaza of the sacred stone, the seven times I walk around it before allowing myself to touch it.
-[00:05:21.860 --> 00:05:27.700] I've already imagined the people who would be at my side and those in front of me and the conversations and prayers we would share.
-[00:05:28.260 --> 00:05:32.420] But I'm afraid that it would all be a disappointment, so I prefer just to dream about it.
-[00:05:33.140 --> 00:05:36.500] That day, the merchant gave the boy permission to build the display.
-[00:05:37.240 --> 00:05:39.980] Not everyone can see his dreams come true in the same way.
+[00:02:55.540 --> 00:02:57.600] Why did you think we should have the display?
+[00:02:58.060 --> 00:03:00.100] I want to get back to my sheep faster.
+[00:03:00.360 --> 00:03:06.000] We have to take advantage when luck is on our side, and do as much to help it as it's doing to help us.
+[00:03:06.000 --> 00:03:10.180] It's called the principle of favorability, or beginner's luck.
+[00:03:10.680 --> 00:03:13.080] The merchant was silent for a few moments.
+[00:03:13.560 --> 00:03:20.140] Then he said, the prophet gave us the Quran, and left us just five obligations to satisfy during our lives.
+[00:03:20.500 --> 00:03:23.660] The most important is to believe only in the one true God.
+[00:03:24.000 --> 00:03:30.880] The others are to pray five times a day fast during Ramadan, and be charitable to the poor. He stopped there.
+[00:03:31.160 --> 00:03:34.020] His eyes filled with tears as he spoke of the prophet.
+[00:03:34.560 --> 00:03:43.980] He was a devout man, and even with all his impatience he wanted to live his life in accordance with Muslim law. What's the fifth obligation? the boy asked.
+[00:03:44.580 --> 00:03:49.160] Two days ago, you said that I had never dreamed of travel, the merchant answered.
+[00:03:49.520 --> 00:03:52.580] The fifth obligation of every Muslim is a pilgrimage.
+[00:03:52.940 --> 00:03:57.420] We are obliged at least once in our lives to visit the holy city of Mecca.
+[00:03:57.900 --> 00:04:00.380] Mecca is a lot farther away than the pyramids.
+[00:04:00.780 --> 00:04:05.000] When I was young all I wanted to do was put together enough money to start this shop.
+[00:04:05.380 --> 00:04:08.220] I thought that someday I'd be rich and could go to Mecca.
+[00:04:08.620 --> 00:04:15.520] I began to make some money but I could never bring myself to leave someone in charge of the shop. The crystals are delicate things.
+[00:04:15.820 --> 00:04:19.780] At the same time people were passing my shop all the time heading for Mecca.
+[00:04:20.300 --> 00:04:27.900] Some of them were rich pilgrims traveling in caravans with servants and camels, but most of the people making the pilgrimage were poorer than I.
+[00:04:28.340 --> 00:04:30.720] All who went there were happy at having done so.
+[00:04:31.080 --> 00:04:34.660] They placed the symbols of the pilgrimage on the doors of their houses.
+[00:04:35.280 --> 00:04:41.360] One of them, a cobbler who made his living mending boots, said that he had traveled for almost a year through the desert,
+[00:04:41.540 --> 00:04:46.020] but that he got more tired when he had to walk through the streets of Tangier buying his leather.
+[00:04:46.540 --> 00:04:49.460] Well why don't you go to Mecca now? asked the boy.
+[00:04:49.880 --> 00:04:52.320] Because it's the thought of Mecca that keeps me alive.
+[00:04:52.780 --> 00:04:59.640] That's what helps me face these days that are all the same, these mute crystals on the shelves and lunch and dinner at that same horrible cafe.
+[00:05:00.200 --> 00:05:04.300] I'm afraid that if my dream is realized I'll have no reason to go on living.
+[00:05:04.740 --> 00:05:09.560] You dream about your sheep and the pyramids but you're different from me because you want to realize your dreams.
+[00:05:09.880 --> 00:05:11.620] I just want to dream about Mecca.
+[00:05:12.020 --> 00:05:21.260] I've already imagined a thousand times crossing the desert, arriving at the plaza of the sacred stone, the seven times I walk around it before allowing myself to touch it.
+[00:05:21.760 --> 00:05:27.720] I've already imagined the people who would be at my side and those in front of me and the conversations and prayers we would share.
+[00:05:28.060 --> 00:05:32.500] But I'm afraid that it would all be a disappointment so I prefer just to dream about it.
+[00:05:33.280 --> 00:05:36.560] That day the merchant gave the boy permission to build the display.
+[00:05:37.040 --> 00:05:40.000] Not everyone can see his dreams come true in the same way.
