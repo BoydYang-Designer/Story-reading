@@ -1498,55 +1498,92 @@ function isWordMatchVariation(word1, word2) {
     return false;
 }
 
-// ── BUG-1 & BUG-6 修正 ─────────────────────────────────────────────────────
-// 問題：原本在 audio.play().catch() 裡才呼叫 TTS，
-//       但 iOS Safari 要求 speechSynthesis.speak() 必須在使用者手勢的同步 call stack 中，
-//       非同步的 .catch() 已脫離此 stack，導致 TTS 被系統封鎖，完全無聲。
-//
-// 修正：先同步查詢 vocabularyData 清單，若確認有音檔才走 Audio 路線；
-//       若無音檔則「立即同步」呼叫 TTS，確保仍在手勢 call stack 中。
-//       同時加入 speechSynthesis.cancel() 清除佇列（BUG-6：快速連點積累問題）。
+// ── 發音系統（三層降級）───────────────────────────────────────────────────
+// 層級一：GitHub audio_files MP3（自有字典，最快最穩）
+// 層級二：FreeDictionary API MP3（真人發音，免費，覆蓋更廣，有快取）
+// 層級三：Web Speech API（瀏覽器合成語音，最後保底）
 // ─────────────────────────────────────────────────────────────────────────────
 
-// 內部 TTS 輔助函數：清除佇列後立即播報（必須在使用者手勢的同步 call stack 中呼叫）
+// FreeDictionary API 快取（避免重複請求同一個字）
+const _freeDictCache = {};
+
+// 層級三：Web Speech TTS
 function _speakTTS(word) {
     if (!('speechSynthesis' in window)) {
         showNotification(`Audio for "${word}" was not found and TTS is not supported.`, 'error');
         return;
     }
-    window.speechSynthesis.cancel(); // BUG-6 修正：清除積累的 TTS 佇列
+    window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(word.trim());
     utterance.lang = 'en-US';
     utterance.rate = 0.9;
     window.speechSynthesis.speak(utterance);
 }
 
-// 播放單字發音（主要 API）
-function playWordAudio(word) {
-    const cleanWord = word.trim().toLowerCase().replace(/^[.,?!:;'"]+|[.,?!:;'"]+$/g, '');
+// 層級二：FreeDictionary API → 取得真人 MP3 URL（優先美式）
+// 回傳 Promise<string|null>，有快取直接回傳，避免重複 fetch
+async function _getFreeDictAudioUrl(word) {
+    const key = word.toLowerCase().trim();
+    if (_freeDictCache[key] !== undefined) return _freeDictCache[key];
 
-    // 同步查詢 vocabularyData（已在 loadData() 載入）判斷是否有對應 MP3
-    // vocabularyData 的欄位名稱為 'Words'（見 Z_total_words.json 結構）
-    const hasAudio = vocabularyData.some(v => {
+    try {
+        const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(key)}`);
+        if (!res.ok) { _freeDictCache[key] = null; return null; }
+        const json = await res.json();
+        if (!Array.isArray(json) || json.length === 0) { _freeDictCache[key] = null; return null; }
+
+        const allPhonetics = json.flatMap(entry => entry.phonetics || []);
+        const audioUrls = allPhonetics.map(p => p.audio).filter(Boolean);
+        // 優先美式（URL 含 '-us'），沒有才用第一個
+        const chosen = audioUrls.find(u => u.includes('-us')) || audioUrls[0] || null;
+        _freeDictCache[key] = chosen;
+        return chosen;
+    } catch (e) {
+        _freeDictCache[key] = null;
+        return null;
+    }
+}
+
+// 播放單字發音（主要 API）— 三層降級
+async function playWordAudio(word) {
+    const cleanWord = word.trim().toLowerCase().replace(/^[.,?!:;'"]+|[.,?!:;'"]+$/g, '');
+    if (!cleanWord) return;
+
+    // ── 層級一：GitHub audio_files（vocabularyData 預先判斷有無 MP3）──────
+    const hasGithubAudio = vocabularyData.some(v => {
         const vWord = (v['Words'] || v['word'] || '').toLowerCase().trim();
         return vWord === cleanWord;
     });
 
-    if (hasAudio) {
-        // ✅ 有音檔：走 Audio 路線（仍在使用者手勢 call stack 中，iOS 允許）
-        const audioSrc = `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(word.trim())}.mp3`;
-        const wordAudio = new Audio(audioSrc);
-        wordAudio.play().catch((error) => {
-            // 音檔存在但播放失敗（少見）→ TTS fallback
-            // 注意：此處的 catch 已非同步，iOS TTS 可能被封鎖，但這是最後手段
-            console.warn(`[playWordAudio] Audio play failed for "${word}", trying TTS:`, error);
+    if (hasGithubAudio) {
+        const src = `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(word.trim())}.mp3`;
+        const au = new Audio(src);
+        au.play().catch(async () => {
+            console.warn(`[playWordAudio] GitHub MP3 failed for "${word}", trying FreeDictionary...`);
+            const fdUrl = await _getFreeDictAudioUrl(cleanWord);
+            if (fdUrl) {
+                new Audio(fdUrl).play().catch(() => _speakTTS(word));
+            } else {
+                _speakTTS(word);
+            }
+        });
+        return;
+    }
+
+    // ── 層級二：FreeDictionary API MP3 ────────────────────────────────────
+    const fdUrl = await _getFreeDictAudioUrl(cleanWord);
+    if (fdUrl) {
+        const au = new Audio(fdUrl);
+        au.play().catch(() => {
+            console.warn(`[playWordAudio] FreeDictionary MP3 failed for "${word}", using TTS.`);
             _speakTTS(word);
         });
-    } else {
-        // ✅ 無音檔：直接同步呼叫 TTS（仍在使用者手勢 call stack 中，iOS 允許）
-        console.log(`[playWordAudio] No audio record for "${word}", using TTS directly.`);
-        _speakTTS(word);
+        return;
     }
+
+    // ── 層級三：Web Speech API ─────────────────────────────────────────────
+    console.log(`[playWordAudio] No MP3 found for "${word}", using TTS.`);
+    _speakTTS(word);
 }
 
 textContainer.addEventListener('click', (e) => {
