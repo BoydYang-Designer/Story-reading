@@ -1,0 +1,86 @@
+[00:00:00.000 --> 00:00:03.340] You often decide what to do next based on what you have just finished doing.
+[00:00:03.820 --> 00:00:12.220] Going to the bathroom leads to washing and drying your hands, which reminds you that you need to put dirty towels in the laundry, and so you add laundry detergent to the shopping list, and so on.
+[00:00:13.120 --> 00:00:14.580] No behavior happens in isolation.
+[00:00:15.540 --> 00:00:18.420] Each action becomes a cue that triggers the next behavior.
+[00:00:19.560 --> 00:00:20.720] Alright, why is this important?
+[00:00:21.380 --> 00:00:26.460] Well, when it comes to building new habits, you can use the connectedness of behavior to your advantage.
+[00:00:26.460 --> 00:00:34.500] One of the best ways to build a new habit is to identify a current habit that you already do each day, and then stack your new behavior on top.
+[00:00:35.280 --> 00:00:36.560] This is what I call habit stacking.
+[00:00:37.360 --> 00:00:40.440] Habit stacking is a special form of an implementation intention.
+[00:00:41.060 --> 00:00:46.100] Rather than pairing your new habit with a particular time and location, you pair it with a current habit.
+[00:00:46.580 --> 00:00:54.160] This method, which again was created by BJ Fogg as part of his tiny habits program, can be used to design an obvious cue for nearly any habit.
+[00:00:54.780 --> 00:01:00.460] So the habit stacking formula is, after current habit, I will new habit.
+[00:01:01.380 --> 00:01:03.200] For example, meditation.
+[00:01:04.120 --> 00:01:07.400] After I pour my cup of coffee each morning, I will meditate for one minute.
+[00:01:08.480 --> 00:01:08.820] Exercise.
+[00:01:09.640 --> 00:01:13.240] After I take off my work shoes, I will immediately change into my workout clothes.
+[00:01:14.300 --> 00:01:14.820] Gratitude.
+[00:01:15.380 --> 00:01:19.320] After I sit down to dinner, I will say one thing I'm grateful for that happened today.
+[00:01:20.380 --> 00:01:20.560] Marriage.
+[00:01:21.140 --> 00:01:24.020] After I get into bed at night, I will give my partner a kiss.
+[00:01:25.040 --> 00:01:25.320] Safety.
+[00:01:26.060 --> 00:01:31.300] After I put on my running shoes, I will text a friend or family member where I'm running and how long it will take.
+[00:01:32.540 --> 00:01:36.780] The key is to tie your desired behavior into something you already do each day.
+[00:01:37.180 --> 00:01:42.340] Once you have mastered this basic structure, you can begin to create larger stacks by chaining small habits together.
+[00:01:42.980 --> 00:01:50.240] This allows you to take advantage of the natural momentum that comes from one behavior leading into the next, like a positive version of the dittoro effect.
+[00:01:51.180 --> 00:01:54.760] So for example, your morning routine habit stack might look like this.
+[00:01:55.740 --> 00:01:55.960] One.
+[00:01:56.780 --> 00:02:00.060] After I pour my morning cup of coffee, I will meditate for 60 seconds.
+[00:02:01.140 --> 00:02:01.420] Two.
+[00:02:02.420 --> 00:02:05.800] After I meditate for 60 seconds, I will write my to -do list for the day.
+[00:02:06.580 --> 00:02:07.060] Three.
+[00:02:07.860 --> 00:02:11.600] After I write my to -do list for the day, I will immediately begin my first task.
+[00:02:12.660 --> 00:02:15.460] Or you could consider a habit stack like this in the evening.
+[00:02:16.020 --> 00:02:16.460] One.
+[00:02:17.200 --> 00:02:20.440] After I finish eating dinner, I will put my plate directly into the dishwasher.
+[00:02:21.500 --> 00:02:21.940] Two.
+[00:02:22.500 --> 00:02:25.520] After I put my dishes away, I will immediately wipe down the counter.
+[00:02:26.380 --> 00:02:26.720] Three.
+[00:02:27.220 --> 00:02:30.560] After I wipe down the counter, I will set out my coffee mug for tomorrow morning.
+[00:02:31.800 --> 00:02:35.180] You can also insert new behaviors into the middle of your current routines.
+[00:02:35.640 --> 00:02:39.020] For example, you may already have a morning routine that looks something like this.
+[00:02:39.380 --> 00:02:41.420] Wake up, make my bed, take a shower.
+[00:02:42.200 --> 00:02:44.740] Let's say you want to develop the habit of reading more each night.
+[00:02:44.740 --> 00:02:48.480] Well, you can expand your habit stack and try something like this.
+[00:02:49.100 --> 00:02:53.840] Wake up, make my bed, place a book on my pillow, take a shower.
+[00:02:55.160 --> 00:02:59.120] Now, when you climb into bed each night, a book will be sitting there waiting for you to enjoy.
+[00:03:00.300 --> 00:03:04.680] Overall, habit stacking allows you to create a simple set of rules that guide your future behavior.
+[00:03:05.360 --> 00:03:08.140] It's like you always have a game plan for which action should come next.
+[00:03:08.520 --> 00:03:14.340] And once you get comfortable with this approach, you can develop general habit stacks to guide you whenever the situation is appropriate.
+[00:03:14.340 --> 00:03:16.760] So, for example, exercise.
+[00:03:17.340 --> 00:03:20.620] When I see a set of stairs, I will take them instead of using the elevator.
+[00:03:21.340 --> 00:03:22.380] Or social skills.
+[00:03:22.980 --> 00:03:26.400] When I walk into a party, I will introduce myself to someone I don't know yet.
+[00:03:27.500 --> 00:03:27.940] Finances.
+[00:03:28.460 --> 00:03:33.320] When I want to buy something over $100, I will wait at least 24 hours before purchasing it.
+[00:03:34.280 --> 00:03:34.780] Healthy eating.
+[00:03:35.220 --> 00:03:38.360] When I serve myself a meal, I will always put veggies on my plate first.
+[00:03:39.580 --> 00:03:40.020] Minimalism.
+[00:03:40.500 --> 00:03:43.000] When I buy one new item, I will give something away.
+[00:03:43.380 --> 00:03:44.320] One in, one out.
+[00:03:45.200 --> 00:03:45.640] Mood.
+[00:03:46.040 --> 00:03:50.120] When the phone rings, I will take one deep breath and smile before answering it.
+[00:03:51.200 --> 00:03:51.640] Forgetfulness.
+[00:03:52.400 --> 00:03:56.680] When I leave a public place, I will check the table and chairs to make sure I don't leave anything behind.
+[00:03:57.960 --> 00:04:04.720] No matter how you use this strategy, the secret to creating a successful habit stack is selecting the right cue to kick things off.
+[00:04:05.260 --> 00:04:14.720] Unlike an implementation intention, which specifically states the time and location for a given behavior, habit stacking implicitly has a time and location built into it.
+[00:04:15.440 --> 00:04:19.520] When and where you choose to insert a habit into your daily routine can make a big difference.
+[00:04:20.200 --> 00:04:28.920] If you're trying to add meditation into your morning routine, but mornings are chaotic and your kids keep running into the room, then that may be the wrong place and time to build that habit.
+[00:04:29.540 --> 00:04:31.980] Consider when you are most likely to be successful.
+[00:04:32.420 --> 00:04:37.720] Don't ask yourself to do a habit or try to build a habit stack when you're likely to be occupied with something else.
+[00:04:38.800 --> 00:04:41.920] Your cue should also have the same frequency as your desired habit.
+[00:04:42.260 --> 00:04:48.580] If you want to do a habit every day, but you stack it on top of the habit that only happens on Mondays, well then that's not a good choice.
+[00:04:49.320 --> 00:04:54.220] One way to find the right trigger for your habit stack is by brainstorming a list of your current habits.
+[00:04:54.840 --> 00:04:58.980] You can use your habits scorecard, which we created in the last chapter as a starting point.
+[00:04:59.720 --> 00:05:01.820] Alternatively, you can create a list of two columns.
+[00:05:02.460 --> 00:05:05.960] In the first column, write down the habits that you do each day without fail.
+[00:05:06.520 --> 00:05:15.160] For example, get out of bed, take a shower, brush your teeth, get dressed, brew a cup of coffee, eat breakfast, take the kids to school, and so on.
+[00:05:16.140 --> 00:05:18.180] Your list can be much longer, but you get the idea.
+[00:05:19.300 --> 00:05:23.520] In the second column, write down all of the things that happen to you each day without fail.
+[00:05:24.000 --> 00:05:30.000] For example, the sun rises or you get a text message, the song you're listening to ends, or the sun sets.
+[00:05:31.240 --> 00:05:37.240] Once you're armed with these two lists, you can begin searching for the best place to layer a new habit into your lifestyle.
+[00:05:38.180 --> 00:05:44.460] If you're looking for more examples and guidance on this, you can download a habit stacking template at AtomicHabits .com.
+[00:05:47.260 --> 00:05:52.780] Alright, so habit stacking works best when the queue is highly specific and immediately actionable.
+[00:05:53.300 --> 00:05:55.080] Many people select queues that are too vague.
+[00:05:55.620 --> 00:05:56.700] I made this mistake myself.
+[00:05:57.040 --> 00:06:02.480] When I wanted to start a push -up habit, my habit stack was, when I take a break for lunch, I will do 10 push -ups.

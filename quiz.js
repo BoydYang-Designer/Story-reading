@@ -5,6 +5,7 @@
 // ============================================================
 
 const QUIZ_SCORES_KEY = 'readingChallengeQuizScores';
+const TTS_PREF_KEY    = 'reorderTtsPref'; // 'webspeech' | 'github'
 
 // ── State ────────────────────────────────────────────────────
 let quizState = {
@@ -878,6 +879,68 @@ if (goToQuizBtn) {
         openQuiz(noteViewCategory, noteViewTitle, 'note');
     });
 }
+
+// ── TTS 偏好切換按鈕（插入到儲存空間 icon 左邊）────────────────
+(function initTtsToggleBtn() {
+    const dataManagerBtn = document.getElementById('go-to-data-manager');
+    if (!dataManagerBtn) return;
+
+    const pref = localStorage.getItem(TTS_PREF_KEY) || 'webspeech';
+
+    const btn = document.createElement('button');
+    btn.id = 'tts-pref-btn';
+    btn.className = 'btn-icon-tool';
+    btn.title = pref === 'github' ? '發音：GitHub mp3（點擊切換）' : '發音：Web Speech API（點擊切換）';
+
+    function getIcon(p) {
+        return p === 'github'
+            ? `<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
+               </svg>`
+            : `<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+               </svg>`;
+    }
+
+    function getLabel(p) {
+        return p === 'github' ? 'B' : 'A';
+    }
+
+    function renderBtn(p) {
+        btn.innerHTML = `
+            <span style="display:flex;flex-direction:column;align-items:center;gap:1px;line-height:1;">
+                ${getIcon(p)}
+                <span style="font-size:9px;font-weight:700;letter-spacing:0.02em;">${getLabel(p)}</span>
+            </span>`;
+        btn.title = p === 'github'
+            ? '發音：B（GitHub mp3 真人）— 點擊切換'
+            : '發音：A（Web Speech API）— 點擊切換';
+        // 高亮 B 模式讓使用者容易辨認
+        btn.style.color = p === 'github' ? 'var(--color-primary, #5b6af0)' : '';
+        btn.style.borderColor = p === 'github' ? 'var(--color-primary, #5b6af0)' : '';
+    }
+
+    renderBtn(pref);
+
+    btn.addEventListener('click', () => {
+        const current = localStorage.getItem(TTS_PREF_KEY) || 'webspeech';
+        const next = current === 'webspeech' ? 'github' : 'webspeech';
+        localStorage.setItem(TTS_PREF_KEY, next);
+        renderBtn(next);
+        // 播一個示範音讓使用者立刻感受差異
+        _speakReorderWord('hello');
+        if (typeof showNotification === 'function') {
+            showNotification(
+                next === 'github'
+                    ? '🎵 發音切換為 B：GitHub mp3 真人錄音'
+                    : '🔊 發音切換為 A：Web Speech API',
+                'info'
+            );
+        }
+    });
+
+    dataManagerBtn.parentNode.insertBefore(btn, dataManagerBtn);
+})();
 
 // ── Progress Bar ──────────────────────────────────────────────
 
@@ -2552,11 +2615,27 @@ let reorderFirstWord = '';  // 第一個單字
 let reorderLastWord = '';   // 最後一個單字
 let reorderFirstWordIdx = -1; // shuffle 後 tokens[0] 在 reorderPool 中的索引（避免大小寫重複標記）
 let reorderLastWordIdx  = -1; // shuffle 後 tokens[last] 在 reorderPool 中的索引
-// 重組句專用：直接 TTS，不查 mp3，零延遲適合放入答案區 / 鍵盤 highlight 場景
+// 重組句專用發音：依使用者偏好選擇 GitHub mp3 或 Web Speech API
 function _speakReorderWord(word) {
-    if (!('speechSynthesis' in window)) return;
     const clean = word.replace(/^[^a-zA-Z]+|[^a-zA-Z]+$/g, '').trim();
     if (!clean) return;
+
+    const pref = localStorage.getItem(TTS_PREF_KEY) || 'webspeech';
+
+    if (pref === 'github') {
+        const src = `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(clean)}.mp3`;
+        const au = new Audio(src);
+        au.play().catch(() => {
+            // GitHub mp3 找不到時自動 fallback 到 Web Speech
+            _speakWithWebSpeech(clean);
+        });
+    } else {
+        _speakWithWebSpeech(clean);
+    }
+}
+
+function _speakWithWebSpeech(clean) {
+    if (!('speechSynthesis' in window)) return;
     window.speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(clean);
     u.lang = 'en-US';
