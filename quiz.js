@@ -890,7 +890,6 @@ if (goToQuizBtn) {
     const btn = document.createElement('button');
     btn.id = 'tts-pref-btn';
     btn.className = 'btn-icon-tool';
-    btn.title = pref === 'github' ? '發音：GitHub mp3（點擊切換）' : '發音：Web Speech API（點擊切換）';
 
     function getIcon(p) {
         return p === 'github'
@@ -902,21 +901,16 @@ if (goToQuizBtn) {
                </svg>`;
     }
 
-    function getLabel(p) {
-        return p === 'github' ? 'B' : 'A';
-    }
-
     function renderBtn(p) {
         btn.innerHTML = `
             <span style="display:flex;flex-direction:column;align-items:center;gap:1px;line-height:1;">
                 ${getIcon(p)}
-                <span style="font-size:9px;font-weight:700;letter-spacing:0.02em;">${getLabel(p)}</span>
+                <span style="font-size:9px;font-weight:700;letter-spacing:0.02em;">${p === 'github' ? 'B' : 'A'}</span>
             </span>`;
         btn.title = p === 'github'
-            ? '發音：B（GitHub mp3 真人）— 點擊切換'
-            : '發音：A（Web Speech API）— 點擊切換';
-        // 高亮 B 模式讓使用者容易辨認
-        btn.style.color = p === 'github' ? 'var(--color-primary, #5b6af0)' : '';
+            ? '發音：B — GitHub mp3 真人錄音（點擊切換）'
+            : '發音：A — Web Speech API（點擊切換）';
+        btn.style.color       = p === 'github' ? 'var(--color-primary, #5b6af0)' : '';
         btn.style.borderColor = p === 'github' ? 'var(--color-primary, #5b6af0)' : '';
     }
 
@@ -924,11 +918,15 @@ if (goToQuizBtn) {
 
     btn.addEventListener('click', () => {
         const current = localStorage.getItem(TTS_PREF_KEY) || 'webspeech';
-        const next = current === 'webspeech' ? 'github' : 'webspeech';
+        const next    = current === 'webspeech' ? 'github' : 'webspeech';
         localStorage.setItem(TTS_PREF_KEY, next);
         renderBtn(next);
-        // 播一個示範音讓使用者立刻感受差異
-        _speakReorderWord('hello');
+        // 示範音：兩個模式都念 "hello world"，讓使用者直接比較差異
+        if (next === 'github') {
+            _playGithubMp3('hello world');   // 依序播 Hello.mp3 → World.mp3
+        } else {
+            _speakWithWebSpeech('hello world'); // Web Speech 一口氣念
+        }
         if (typeof showNotification === 'function') {
             showNotification(
                 next === 'github'
@@ -1360,7 +1358,7 @@ function showFlashcard() {
         contextEl.textContent = '(No context found)';
     }
 
-    // ── 正面：單字音檔（依 TTS_PREF_KEY：A=Web Speech / B=GitHub mp3）──
+    // ── 正面：單字音檔（GitHub mp3 → speechSynthesis fallback）──
     const audioBtn = document.getElementById('flashcard-audio-btn');
 
     // 切換卡片時取消上一個 speechSynthesis，避免疊音
@@ -1376,79 +1374,51 @@ function showFlashcard() {
         window.speechSynthesis.speak(u);
     }
 
-    function _playGithubMp3(onFail) {
+    function _playWordAudio() {
+        _trackReplay();
+        audioBtn.classList.remove('needs-tap');
         audioBtn.classList.add('is-playing-voice');
-        const wordSrc = `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(item.text.trim())}.mp3`;
+        const wordSrc   = `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(item.text.trim())}.mp3`;
         const wordAudio = new Audio(wordSrc);
         wordAudio.play().catch(() => {
             audioBtn.classList.remove('is-playing-voice');
-            if (onFail) onFail();
+            _playSpeech();
         });
         wordAudio.addEventListener('ended', () => {
             audioBtn.classList.remove('is-playing-voice');
         }, { once: true });
     }
-
-    function _playWordAudio() {
-        _trackReplay();
-        audioBtn.classList.remove('needs-tap');
-        const tpref = localStorage.getItem(TTS_PREF_KEY) || 'webspeech';
-        if (tpref === 'github') {
-            _playGithubMp3(_playSpeech);
-        } else {
-            _playSpeech();
-        }
-    }
     audioBtn.onclick = _playWordAudio;
 
-    // 自動播放 — 依偏好設定
-    const _tprefAuto = localStorage.getItem(TTS_PREF_KEY) || 'webspeech';
-    if (_tprefAuto === 'github') {
-        const _autoAudio = new Audio(
-            `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(item.text.trim())}.mp3`
-        );
-        _autoAudio.play()
-            .then(() => {
-                audioBtn.classList.add('is-playing-voice');
-                _autoAudio.addEventListener('ended', () => audioBtn.classList.remove('is-playing-voice'), { once: true });
-            })
-            .catch(() => {
-                // GitHub mp3 失敗 → 試 speechSynthesis
-                if ('speechSynthesis' in window) {
-                    window.speechSynthesis.cancel();
-                    const _u = new SpeechSynthesisUtterance(item.text);
-                    _u.lang = 'en-US';
-                    window.speechSynthesis.speak(_u);
-                    setTimeout(() => {
-                        if (window.speechSynthesis.speaking) {
-                            audioBtn.classList.add('is-playing-voice');
-                            _u.onend = () => audioBtn.classList.remove('is-playing-voice');
-                        } else {
-                            audioBtn.classList.add('needs-tap');
-                        }
-                    }, 100);
-                } else {
-                    audioBtn.classList.add('needs-tap');
-                }
-            });
-    } else {
-        // A (webspeech) 模式：自動播放
-        if ('speechSynthesis' in window) {
-            const _u = new SpeechSynthesisUtterance(item.text);
-            _u.lang = 'en-US';
-            window.speechSynthesis.speak(_u);
-            setTimeout(() => {
-                if (window.speechSynthesis.speaking) {
-                    audioBtn.classList.add('is-playing-voice');
-                    _u.onend = () => audioBtn.classList.remove('is-playing-voice');
-                } else {
-                    audioBtn.classList.add('needs-tap');
-                }
-            }, 100);
-        } else {
-            audioBtn.classList.add('needs-tap');
-        }
-    }
+    // 自動播放 — iOS Safari 非手勢觸發可能被封鎖，偵測後改用 pulse 提示
+    const _autoAudio = new Audio(
+        `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(item.text.trim())}.mp3`
+    );
+    _autoAudio.play()
+        .then(() => {
+            audioBtn.classList.add('is-playing-voice');
+            _autoAudio.addEventListener('ended', () => audioBtn.classList.remove('is-playing-voice'), { once: true });
+        })
+        .catch(() => {
+            // GitHub mp3 失敗 → 試 speechSynthesis
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const _u = new SpeechSynthesisUtterance(item.text);
+                _u.lang = 'en-US';
+                window.speechSynthesis.speak(_u);
+                setTimeout(() => {
+                    if (window.speechSynthesis.speaking) {
+                        audioBtn.classList.add('is-playing-voice');
+                        _u.onend = () => audioBtn.classList.remove('is-playing-voice');
+                    } else {
+                        // iOS 封鎖 → pulse 提示點擊
+                        audioBtn.classList.add('needs-tap');
+                    }
+                }, 100);
+            } else {
+                audioBtn.classList.add('needs-tap');
+            }
+        });
 
     // ── 背面：整句音檔 + ✏️ ────────────────────────────────────
     const backAudioBtn      = document.getElementById('flashcard-back-audio-btn');
@@ -2651,15 +2621,95 @@ function _speakReorderWord(word) {
     const pref = localStorage.getItem(TTS_PREF_KEY) || 'webspeech';
 
     if (pref === 'github') {
-        const src = `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(clean)}.mp3`;
-        const au = new Audio(src);
-        au.play().catch(() => {
-            // GitHub mp3 找不到時自動 fallback 到 Web Speech
-            _speakWithWebSpeech(clean);
-        });
+        _playGithubMp3(clean);
     } else {
         _speakWithWebSpeech(clean);
     }
+}
+
+function _playGithubMp3(clean) {
+    // 若輸入含空格（多個單字），拆開依序播放
+    const words = clean.trim().split(/\s+/).filter(Boolean);
+    if (words.length > 1) {
+        _playGithubMp3Sequence(words, 0);
+        return;
+    }
+
+    // 單字：首字大寫 → 全小寫 → fallback Web Speech
+    const BASE        = 'https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/';
+    const capitalized = clean.charAt(0).toUpperCase() + clean.slice(1).toLowerCase();
+    const lower       = clean.toLowerCase();
+    const candidates  = [capitalized, lower];
+    let tried = 0;
+
+    function attempt() {
+        if (tried >= candidates.length) {
+            _speakWithWebSpeech(clean);
+            return;
+        }
+        const filename = candidates[tried++];
+        const src = BASE + encodeURIComponent(filename) + '.mp3';
+        const au = new Audio(src);
+        let settled = false;
+
+        const onFail = () => {
+            if (settled) return;
+            settled = true;
+            attempt();
+        };
+
+        au.onerror   = onFail;
+        au.oncanplay = () => { settled = true; };
+        au.play().catch(onFail);
+        // 播完後不需要特別處理，單字很短會自然結束
+    }
+
+    attempt();
+}
+
+function _playGithubMp3Sequence(words, index) {
+    if (index >= words.length) return;
+    const word  = words[index];
+    const clean = word.replace(/^[^a-zA-Z]+|[^a-zA-Z]+$/g, '').trim();
+    if (!clean) { _playGithubMp3Sequence(words, index + 1); return; }
+
+    const BASE        = 'https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/';
+    const capitalized = clean.charAt(0).toUpperCase() + clean.slice(1).toLowerCase();
+    const lower       = clean.toLowerCase();
+    const candidates  = [capitalized, lower];
+    let tried = 0;
+
+    function attempt() {
+        if (tried >= candidates.length) {
+            // 這個字找不到 mp3，用 Web Speech 念這個字，然後繼續播下一個
+            const u = new SpeechSynthesisUtterance(clean);
+            u.lang = 'en-US';
+            u.rate = 0.9;
+            u.onend = () => _playGithubMp3Sequence(words, index + 1);
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                window.speechSynthesis.speak(u);
+            }
+            return;
+        }
+        const filename = candidates[tried++];
+        const src = BASE + encodeURIComponent(filename) + '.mp3';
+        const au  = new Audio(src);
+        let settled = false;
+
+        const onFail = () => {
+            if (settled) return;
+            settled = true;
+            attempt();
+        };
+
+        au.onerror   = onFail;
+        au.oncanplay = () => { settled = true; };
+        au.onended   = () => _playGithubMp3Sequence(words, index + 1); // 播完接下一個字
+        au.play().catch(onFail);
+    }
+
+    attempt();
 }
 
 function _speakWithWebSpeech(clean) {
@@ -3534,9 +3584,6 @@ async function showFcplusCard() {
     // Reset card state
     const card = document.getElementById('fcplus-card');
     card.classList.remove('is-flipped', 'fcplus-flipped-back');
-    // 清除上一題的 inline 正確答案提示
-    const _prevInline = document.getElementById('fcplus-inline-answer');
-    if (_prevInline) _prevInline.remove();
     _showFcplusFront();
 
     // Build letter inputs
@@ -3731,22 +3778,13 @@ function _setupFcplusFrontAudio(item) {
         window.speechSynthesis.speak(u);
     }
 
-    function _playGithubMp3() {
-        audioBtn.classList.add('is-playing-voice');
-        const src = `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(item.text.trim())}.mp3`;
-        const au  = new Audio(src);
-        au.play().catch(() => { audioBtn.classList.remove('is-playing-voice'); _playSpeech(); });
-        au.addEventListener('ended', () => audioBtn.classList.remove('is-playing-voice'), { once: true });
-    }
-
     function _playWord() {
         if (!_fcplusSubmitted) _trackReplay(); // 提交後不計懲罰
-        const tpref = localStorage.getItem(TTS_PREF_KEY) || 'webspeech';
-        if (tpref === 'github') {
-            _playGithubMp3();
-        } else {
-            _playSpeech();
-        }
+        audioBtn.classList.add('is-playing-voice');
+        const src  = `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(item.text.trim())}.mp3`;
+        const au   = new Audio(src);
+        au.play().catch(() => { audioBtn.classList.remove('is-playing-voice'); _playSpeech(); });
+        au.addEventListener('ended', () => audioBtn.classList.remove('is-playing-voice'), { once: true });
     }
     audioBtn.onclick = _playWord;
 
@@ -3754,38 +3792,27 @@ function _setupFcplusFrontAudio(item) {
     const resultBtn = document.getElementById('fcplus-audio-btn-result');
     if (resultBtn) resultBtn.onclick = () => {
         // After submit, no penalty
-        const tpref = localStorage.getItem(TTS_PREF_KEY) || 'webspeech';
-        if (tpref === 'github') {
-            _playGithubMp3();
-        } else {
-            _playSpeech();
-        }
+        audioBtn.classList.add('is-playing-voice');
+        const src  = `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(item.text.trim())}.mp3`;
+        const au   = new Audio(src);
+        au.play().catch(_playSpeech);
+        au.addEventListener('ended', () => audioBtn.classList.remove('is-playing-voice'), { once: true });
     };
 
-    // Auto-play first time (依偏好)
-    const _tprefAuto = localStorage.getItem(TTS_PREF_KEY) || 'webspeech';
-    if (_tprefAuto === 'github') {
-        const autoAu = new Audio(
-            `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(item.text.trim())}.mp3`
-        );
-        autoAu.play().then(() => {
-            audioBtn.classList.add('is-playing-voice');
-            autoAu.addEventListener('ended', () => audioBtn.classList.remove('is-playing-voice'), { once: true });
-        }).catch(() => {
-            if ('speechSynthesis' in window) {
-                const u = new SpeechSynthesisUtterance(item.text);
-                u.lang = 'en-US';
-                window.speechSynthesis.speak(u);
-            }
-        });
-    } else {
-        // A (webspeech) 自動播放
+    // Auto-play first time
+    const autoAu = new Audio(
+        `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(item.text.trim())}.mp3`
+    );
+    autoAu.play().then(() => {
+        audioBtn.classList.add('is-playing-voice');
+        autoAu.addEventListener('ended', () => audioBtn.classList.remove('is-playing-voice'), { once: true });
+    }).catch(() => {
         if ('speechSynthesis' in window) {
             const u = new SpeechSynthesisUtterance(item.text);
             u.lang = 'en-US';
             window.speechSynthesis.speak(u);
         }
-    }
+    });
 }
 
 // ── Submit ────────────────────────────────────────────────────
@@ -3827,53 +3854,6 @@ document.getElementById('fcplus-submit-btn').addEventListener('click', () => {
         // Mark back-side word red
         const mark = document.getElementById('fcplus-back-mark');
         if (mark) mark.classList.add('fcplus-back-wrong');
-    }
-
-    // ── 提交後在正面下方立即顯示正確答案（答錯才顯示）──────────
-    // 移除舊的（重做時清除）
-    const _oldInline = document.getElementById('fcplus-inline-answer');
-    if (_oldInline) _oldInline.remove();
-
-    if (!correct) {
-        const inlineDiv = document.createElement('div');
-        inlineDiv.id = 'fcplus-inline-answer';
-        inlineDiv.className = 'fcplus-inline-answer';
-
-        // 用 HTML span 逐字母比對：正確字母綠色，錯誤字母紅色
-        const wordChars = word.replace(/-/g, '').split('');
-        let inputIdx = 0;
-        let html = '';
-        for (let i = 0; i < word.length; i++) {
-            const ch = word[i];
-            if (ch === '-') {
-                html += `<span class="fcplus-ia-hyphen">-</span>`;
-                continue;
-            }
-            const isSegFirst = i === 0 || word[i - 1] === '-';
-            const isSegLast  = i === word.length - 1 || word[i + 1] === '-';
-            const isHint     = isSegFirst || isSegLast;
-            if (isHint) {
-                // hint letter shown in original inputs, always correct
-                html += `<span class="fcplus-ia-letter fcplus-ia-correct">${ch.toLowerCase()}</span>`;
-            } else {
-                const inp = inputs.find(el => parseInt(el.dataset.idx) === i);
-                const typed    = inp ? inp.value.toLowerCase() : '';
-                const expected = ch.toLowerCase();
-                if (typed === expected) {
-                    html += `<span class="fcplus-ia-letter fcplus-ia-correct">${expected}</span>`;
-                } else {
-                    html += `<span class="fcplus-ia-letter fcplus-ia-wrong">${expected}</span>`;
-                }
-            }
-            inputIdx++;
-        }
-        inlineDiv.innerHTML = `<span class="fcplus-ia-label">✓</span>${html}`;
-
-        // 插入在 flip-hint 之後（即 .fcplus-front 結尾）
-        const flipHint = document.getElementById('fcplus-flip-hint');
-        if (flipHint && flipHint.parentNode) {
-            flipHint.parentNode.insertBefore(inlineDiv, flipHint.nextSibling);
-        }
     }
 
     // Hide submit, show flip hint

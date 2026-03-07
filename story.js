@@ -267,52 +267,41 @@ async function showAppView(user) {
 
 function createListItemWithImage(text, onClick, fallbackText = null) {
     const container = document.createElement('div');
-    container.className = 'list-item-with-image'; 
+    container.className = 'list-item-with-image';
 
     const img = document.createElement('img');
     img.className = 'category-thumb';
     img.alt = text;
-    
-    // 設定初始狀態
-    img.dataset.tryState = 'main-jpg'; 
-    img.src = `images/${text}.jpg`; 
-
-    // 錯誤處理：依序嘗試 JPG -> PNG -> Fallback JPG -> Fallback PNG -> 隱藏
-    img.onerror = function() {
-        const state = this.dataset.tryState;
-
-        if (state === 'main-jpg') {
-            // 1. 本名 JPG 失敗 -> 試試 本名 PNG
-            this.dataset.tryState = 'main-png';
-            this.src = `images/${text}.png`;
-        } 
-        else if (state === 'main-png') {
-            // 2. 本名 PNG 失敗 -> 如果有備用字(上一層)，試試 上一層 JPG
-            if (fallbackText) {
-                this.dataset.tryState = 'fallback-jpg';
-                this.src = `images/${fallbackText}.jpg`;
-            } else {
-                this.classList.add('img-hidden');
-            }
-        } 
-        else if (state === 'fallback-jpg') {
-            // 3. 上一層 JPG 失敗 -> 試試 上一層 PNG
-            this.dataset.tryState = 'fallback-png';
-            this.src = `images/${fallbackText}.png`;
-        } 
-        else {
-            // 4. 全部都失敗 -> 隱藏圖片
-            this.classList.add('img-hidden');
-        }
-    };
 
     const span = document.createElement('span');
     span.textContent = text;
 
     container.appendChild(img);
     container.appendChild(span);
-
     container.addEventListener('click', onClick);
+
+    // 用 fetch HEAD 靜默依序確認圖片存在，避免瀏覽器印 ERR_FILE_NOT_FOUND
+    const candidates = [
+        `images/${text}.jpg`,
+        `images/${text}.png`,
+        ...(fallbackText ? [`images/${fallbackText}.jpg`, `images/${fallbackText}.png`] : [])
+    ];
+
+    (function tryNext(i) {
+        if (i >= candidates.length) {
+            img.classList.add('img-hidden');
+            return;
+        }
+        fetch(candidates[i], { method: 'HEAD' })
+            .then(res => {
+                if (res.ok) {
+                    img.src = candidates[i];
+                } else {
+                    tryNext(i + 1);
+                }
+            })
+            .catch(() => tryNext(i + 1));
+    })(0);
 
     return container;
 }
