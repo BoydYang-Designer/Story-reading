@@ -2511,6 +2511,14 @@ button.secondary:hover {
     transition: background 0.15s, border-color 0.15s, box-shadow 0.15s, transform 0.15s;
 }
 
+/* 鍵盤預選藍色要蓋過 hint 綠色（is-hint-word 用了 !important，需同優先級覆蓋） */
+.reorder-word.is-hint-word.is-key-highlight {
+    background: #bde0ff !important;
+    border-color: #4aa8ff !important;
+    color: #003a6e !important;
+    box-shadow: 0 0 0 2px #4aa8ff55 !important;
+}
+
 /* ── Options ── */
 .quiz-options {
     display: flex;
@@ -2543,20 +2551,6 @@ button.secondary:hover {
     border-color: var(--color-primary);
     background: var(--color-bg);
     transform: translateY(0);
-}
-
-/* 預選狀態（第一次點擊，尚未確定）— 模擬 hover 效果但更明顯 */
-.quiz-option-btn.is-pending {
-    border-color: var(--color-accent) !important;
-    background: var(--color-accent-light) !important;
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
-    font-weight: 600;
-}
-
-[data-theme="dark"] .quiz-option-btn.is-pending {
-    border-color: var(--color-accent) !important;
-    background: rgba(var(--color-accent-rgb, 100, 149, 237), 0.15) !important;
 }
 
 /* Lock colours once answered — hover must not override result state */
