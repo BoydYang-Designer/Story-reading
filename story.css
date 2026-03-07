@@ -4286,6 +4286,60 @@ textarea:focus-visible {
     display: none;
 }
 
+/* ── Inline correct answer (shown immediately after wrong submit) ── */
+.fcplus-inline-answer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 3px;
+    margin-top: 10px;
+    padding: 8px 14px;
+    background: rgba(45, 138, 80, 0.08);
+    border: 1.5px solid rgba(45, 138, 80, 0.25);
+    border-radius: 10px;
+}
+
+.fcplus-ia-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #2d8a50;
+    margin-right: 4px;
+    letter-spacing: 0.03em;
+}
+
+.fcplus-ia-letter {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 22px;
+    height: 28px;
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: 4px;
+    padding: 0 2px;
+}
+
+.fcplus-ia-correct {
+    color: #2d8a50;
+    background: rgba(80, 184, 108, 0.15);
+}
+
+.fcplus-ia-wrong {
+    color: #a83030;
+    background: rgba(224, 92, 92, 0.18);
+    text-decoration: underline;
+    text-decoration-color: #e05c5c;
+    text-underline-offset: 2px;
+}
+
+.fcplus-ia-hyphen {
+    color: var(--color-text-light);
+    font-weight: 700;
+    font-size: 1rem;
+    margin: 0 1px;
+}
+
 /* Back: context sentence */
 .fcplus-context {
     font-size: 1em;
