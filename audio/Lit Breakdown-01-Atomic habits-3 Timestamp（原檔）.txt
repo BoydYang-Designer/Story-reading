@@ -1,0 +1,90 @@
+[00:00:00.000 --> 00:00:01.060] Chapter 3.
+[00:00:01.740 --> 00:00:05.060] How to build better habits in four simple steps.
+[00:00:05.860 --> 00:00:07.940] All habits follow the same pattern.
+[00:00:08.580 --> 00:00:11.680] Cue, craving, response, and reward.
+[00:00:12.560 --> 00:00:16.440] James Clear introduces this as the four laws of behavior change.
+[00:00:17.340 --> 00:00:22.220] It's a simple, powerful framework for building good habits and breaking bad ones.
+[00:00:23.080 --> 00:00:24.040] Here's how it works.
+[00:00:24.920 --> 00:00:28.860] First, there's the cue, the trigger that initiates behavior.
+[00:00:28.860 --> 00:00:32.380] It's the signal your brain uses to begin a habit.
+[00:00:33.080 --> 00:00:40.740] A cue can be anything, a notification, a time of day, a specific location, or even an emotional state.
+[00:00:41.580 --> 00:00:46.280] Next comes the craving, the motivational force behind every habit.
+[00:00:46.980 --> 00:00:51.340] It's not the habit itself you crave, but the change in state it delivers.
+[00:00:52.100 --> 00:00:53.880] You don't crave brushing your teeth.
+[00:00:54.400 --> 00:00:55.780] You crave a clean mouth.
+[00:00:56.340 --> 00:00:58.140] You don't crave smoking a cigarette.
+[00:00:58.140 --> 00:01:00.220] You crave the relief it gives.
+[00:01:00.880 --> 00:01:02.800] Cravings give habits their power.
+[00:01:03.660 --> 00:01:07.760] Then we have the response, the habit or action you perform.
+[00:01:08.720 --> 00:01:17.120] This could be physical, doing push -ups, mental, making a decision, or emotional, sending a text when you're lonely.
+[00:01:18.040 --> 00:01:23.400] The response depends on how motivated you are and how much friction is involved.
+[00:01:24.100 --> 00:01:26.980] If a habit is too difficult, you won't do it.
+[00:01:27.780 --> 00:01:31.860] Finally, there's the reward, the benefit you get from the habit.
+[00:01:32.540 --> 00:01:35.340] This satisfies your craving and teaches your brain.
+[00:01:36.120 --> 00:01:37.880] This behavior is worth remembering.
+[00:01:38.780 --> 00:01:41.240] Every habit loops through these four stages.
+[00:01:42.100 --> 00:01:47.580] And once you understand this cycle, you can begin to design habits that actually stick.
+[00:01:48.460 --> 00:01:50.640] Clear calls this the habit loop.
+[00:01:51.280 --> 00:01:55.240] And to make it practical, he reframes each step into a law.
+[00:01:55.940 --> 00:01:57.840] Make it obvious, cue.
+[00:01:58.800 --> 00:02:00.900] Make it attractive, craving.
+[00:02:02.040 --> 00:02:03.700] Make it easy, response.
+[00:02:04.820 --> 00:02:07.040] Make it satisfying, reward.
+[00:02:08.200 --> 00:02:09.260] Let's break them down.
+[00:02:10.120 --> 00:02:12.040] One, make it obvious.
+[00:02:13.000 --> 00:02:17.520] If you want to build a habit, you need to be clear about when and where it happens.
+[00:02:18.360 --> 00:02:20.140] Ambiguity kills action.
+[00:02:20.700 --> 00:02:22.900] I don't just say, I'll eat healthier.
+[00:02:23.540 --> 00:02:26.960] Say, I will eat a vegetable with lunch at 1 p .m.
+[00:02:27.020 --> 00:02:27.600] in my kitchen.
+[00:02:28.660 --> 00:02:30.660] This is called an implementation intention.
+[00:02:31.580 --> 00:02:35.400] A clear plan that defines the behavior, time, and place.
+[00:02:36.360 --> 00:02:40.260] When you make the cue obvious, your brain knows exactly what to do.
+[00:02:41.060 --> 00:02:45.780] You can also use habit stacking, where you attach a new habit to an existing one.
+[00:02:45.780 --> 00:02:50.620] For example, after I make my coffee, I will journal for one minute.
+[00:02:51.300 --> 00:02:55.180] This way, your existing routines become triggers for new behaviors.
+[00:02:56.000 --> 00:02:58.140] Two, make it attractive.
+[00:02:59.240 --> 00:03:02.900] The more appealing a habit is, the more likely you are to do it.
+[00:03:03.640 --> 00:03:06.720] Clear explains that we are motivated by anticipation.
+[00:03:07.440 --> 00:03:11.220] So when a habit looks enjoyable, your brain leans in.
+[00:03:11.840 --> 00:03:15.560] One way to make a habit attractive is temptation bundling.
+[00:03:16.340 --> 00:03:18.960] Pair something you want to do with something you need to do.
+[00:03:19.560 --> 00:03:23.500] For example, only listen to your favorite podcast while running.
+[00:03:24.540 --> 00:03:28.920] Another technique is to join a culture where your desired habit is the norm.
+[00:03:29.700 --> 00:03:34.100] If everyone around you exercises, you're more likely to adopt that behavior.
+[00:03:34.840 --> 00:03:37.540] Humans imitate the habits of those close to them.
+[00:03:38.340 --> 00:03:40.220] Three, make it easy.
+[00:03:41.040 --> 00:03:44.280] The key to long -term consistency isn't discipline.
+[00:03:44.720 --> 00:03:45.960] It's reducing friction.
+[00:03:46.740 --> 00:03:50.560] The easier a habit is, the more likely it becomes automatic.
+[00:03:51.660 --> 00:03:53.360] Use the two -minute rule.
+[00:03:54.380 --> 00:03:57.760] Downscale any habit into something you can do in under two minutes.
+[00:03:58.420 --> 00:03:59.240] Want to read more?
+[00:04:00.000 --> 00:04:01.240] Just read one page.
+[00:04:02.000 --> 00:04:02.880] Want to work out?
+[00:04:03.540 --> 00:04:05.460] Just change into workout clothes.
+[00:04:05.460 --> 00:04:08.720] The goal is to master the art of showing up.
+[00:04:09.600 --> 00:04:11.840] Also, optimize your environment.
+[00:04:12.580 --> 00:04:15.720] If you want to drink more water, leave a bottle on your desk.
+[00:04:16.300 --> 00:04:20.280] If you want to stop wasting time on social media, delete the apps.
+[00:04:20.880 --> 00:04:24.020] Small environmental tweaks have massive effects.
+[00:04:25.100 --> 00:04:27.580] Five, make it satisfying.
+[00:04:28.780 --> 00:04:30.780] We repeat behaviors that feel good.
+[00:04:30.780 --> 00:04:36.200] If a habit rewards you instantly, your brain marks it as worth doing again.
+[00:04:37.000 --> 00:04:40.500] Use immediate rewards to reinforce positive habits.
+[00:04:41.480 --> 00:04:43.940] Track your progress with a habit tracker.
+[00:04:44.700 --> 00:04:46.320] Celebrate small wins.
+[00:04:47.140 --> 00:04:50.260] Even crossing off a to -do list creates satisfaction.
+[00:04:51.060 --> 00:04:56.020] On the flip side, to break a bad habit, make it unsatisfying.
+[00:04:56.820 --> 00:04:58.120] Introduce accountability.
+[00:04:58.120 --> 00:05:00.240] Make failure visible.
+[00:05:01.040 --> 00:05:06.800] Tell a friend or use a commitment contract where breaking your habit costs you money.
+[00:05:07.840 --> 00:05:10.960] The four laws of behavior change aren't just theory.
+[00:05:11.500 --> 00:05:12.200] They're a blueprint.
+[00:05:13.220 --> 00:05:14.440] Make the cue obvious.
+[00:05:15.380 --> 00:05:16.700] Make the craving attractive.
+[00:05:17.840 --> 00:05:19.260] Make the response easy.
+[00:05:20.180 --> 00:05:21.840] Make the reward satisfying.
+[00:05:23.040 --> 00:05:27.000] This is how you shape your behavior and take control of your future.
+[00:05:27.000 --> 00:05:29.480] It's not about radical change.
+[00:05:29.980 --> 00:05:34.960] It's about small changes that, repeated daily, become who you are.

@@ -4026,13 +4026,13 @@ textarea:focus-visible {
 .reorder-word.is-neighbor-left,
 .reorder-word.is-neighbor-right {
     animation: reorder-neighbor-wiggle 0.4s ease-in-out infinite;
-    outline: 2px solid #89c8ff;
+    outline: 2px solid #4aa8ff;
     outline-offset: 1px;
     z-index: 1;
     position: relative;
-    background: #daeeff !important;
-    border-color: #89c8ff !important;
-    color: #1a4a70 !important;
+    background: #bde0ff !important;
+    border-color: #4aa8ff !important;
+    color: #003a6e !important;
 }
 /* 左邊的單字向左偏、右邊的向右偏，更有「撥開空間」的感覺 */
 .reorder-word.is-neighbor-left {
