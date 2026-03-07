@@ -2603,6 +2603,30 @@ let reorderFirstWord = '';  // 第一個單字
 let reorderLastWord = '';   // 最後一個單字
 let reorderFirstWordIdx = -1; // shuffle 後 tokens[0] 在 reorderPool 中的索引（避免大小寫重複標記）
 let reorderLastWordIdx  = -1; // shuffle 後 tokens[last] 在 reorderPool 中的索引
+
+// ── 單字發音開關（hover / click）────────────────────────────
+let reorderWordSpeakEnabled = true;
+
+function _updateReorderSpeakToggleBtn() {
+    const btn = document.getElementById('reorder-word-speak-toggle');
+    if (!btn) return;
+    const iconEl  = btn.querySelector('.reorder-ctrl-icon');
+    if (reorderWordSpeakEnabled) {
+        btn.classList.remove('reorder-ctrl-word-sound--off');
+        btn.classList.add('reorder-ctrl-word-sound--on');
+        if (iconEl) iconEl.textContent = '🔊';
+    } else {
+        btn.classList.remove('reorder-ctrl-word-sound--on');
+        btn.classList.add('reorder-ctrl-word-sound--off');
+        if (iconEl) iconEl.textContent = '🔇';
+    }
+}
+
+document.getElementById('reorder-word-speak-toggle').addEventListener('click', () => {
+    reorderWordSpeakEnabled = !reorderWordSpeakEnabled;
+    _updateReorderSpeakToggleBtn();
+});
+
 // 重組句專用發音（三層降級）
 function _speakReorderWord(word) {
     const clean = word.replace(/^[^a-zA-Z]+|[^a-zA-Z]+$/g, '').trim();
@@ -2913,7 +2937,7 @@ function _dragEnd(e) {
             } else {
                 // 從單字池拖進答案區 → 發音
                 reorderAnswer.splice(insertPos, 0, { word: _drag.word, idx: _drag.poolIdx });
-                _speakReorderWord(_drag.word);
+                if (reorderWordSpeakEnabled) _speakReorderWord(_drag.word);
             }
         } else if (_drag.source === 'answer') {
             // 放開在答案區外 → 退回單字池（移除即可，renderReorderPool 會重新顯示）
@@ -2933,7 +2957,7 @@ function _dragEnd(e) {
             const idx = _drag.poolIdx;
             if (reorderAnswer.some(a => a.idx === idx)) return;
             reorderAnswer.push({ word: _drag.word, idx });
-            _speakReorderWord(_drag.word); // 點擊放入答案區瞬間發音
+            if (reorderWordSpeakEnabled) _speakReorderWord(_drag.word); // 點擊放入答案區瞬間發音
         } else {
             reorderAnswer.splice(_drag.answerPos, 1);
         }
@@ -3099,6 +3123,17 @@ function renderReorderPool() {
             e.currentTarget.setPointerCapture(e.pointerId);
             _dragStart(e, 'pool', idx, null, word);
         });
+
+        // Hover 發音（受開關控制，不在已用或已檢查時觸發）
+        // 只有滑鼠 hover 才發音（pointerType === 'mouse'），拖動中跳過
+        btn.addEventListener('pointerenter', (e) => {
+            if (!reorderWordSpeakEnabled) return;
+            if (isUsed || reorderChecked) return;
+            if (e.pointerType !== 'mouse') return;  // 排除 touch / pen 造成的假 hover
+            if (_drag.ghost) return;                 // 正在拖動中，不觸發
+            _speakReorderWord(word);
+        });
+
         wordPool.appendChild(btn);
     });
 }
@@ -3120,6 +3155,15 @@ function renderReorderAnswer() {
             if (reorderChecked) return;
             e.currentTarget.setPointerCapture(e.pointerId);
             _dragStart(e, 'answer', item.idx, pos, item.word);
+        });
+        // Hover 發音（受開關控制）
+        // 只有滑鼠 hover 才發音，拖動中跳過
+        btn.addEventListener('pointerenter', (e) => {
+            if (!reorderWordSpeakEnabled) return;
+            if (reorderChecked) return;
+            if (e.pointerType !== 'mouse') return;
+            if (_drag.ghost) return;
+            _speakReorderWord(item.word);
         });
         answerArea.appendChild(btn);
     });
@@ -3290,8 +3334,8 @@ function _reorderCycleLetter(letter) {
     const targetIdx = candidates[_reorderKeyCyclePos];
     _reorderKeyHighlightIdx = targetIdx;
 
-    // 按下字母鍵瞬間立即發音（無條件，不需開啟 hover sound）
-    _speakReorderWord(reorderPool[targetIdx]);
+    // 按下字母鍵瞬間發音（受 Word Sound 開關控制）
+    if (reorderWordSpeakEnabled) _speakReorderWord(reorderPool[targetIdx]);
 
     // Apply highlight to DOM
     document.querySelectorAll('#reorder-word-pool .reorder-word').forEach(el => {
