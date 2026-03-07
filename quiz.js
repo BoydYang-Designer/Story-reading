@@ -1029,18 +1029,9 @@ function showQuizResult(mode, correct, total, wrongItems) {
                     e.stopPropagation();
                     const word = btn.dataset.word;
                     btn.textContent = '⏸';
-                    const src = `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(word.trim())}.mp3`;
-                    const aud = new Audio(src);
-                    aud.play().catch(() => {
-                        if ('speechSynthesis' in window) {
-                            window.speechSynthesis.cancel();
-                            const u = new SpeechSynthesisUtterance(word);
-                            u.lang = 'en-US';
-                            window.speechSynthesis.speak(u);
-                        }
-                    });
-                    aud.addEventListener('ended', () => { btn.textContent = '▶'; }, { once: true });
-                    aud.addEventListener('error', () => {
+                    const pref = localStorage.getItem(TTS_PREF_KEY) || 'webspeech';
+
+                    const _fallbackSpeech = () => {
                         btn.textContent = '▶';
                         if ('speechSynthesis' in window) {
                             window.speechSynthesis.cancel();
@@ -1049,7 +1040,25 @@ function showQuizResult(mode, correct, total, wrongItems) {
                             u.onend = () => { btn.textContent = '▶'; };
                             window.speechSynthesis.speak(u);
                         }
-                    }, { once: true });
+                    };
+
+                    if (pref === 'github') {
+                        const src = `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(word.trim())}.mp3`;
+                        const aud = new Audio(src);
+                        aud.play().catch(_fallbackSpeech);
+                        aud.addEventListener('ended', () => { btn.textContent = '▶'; }, { once: true });
+                        aud.addEventListener('error', _fallbackSpeech, { once: true });
+                    } else {
+                        if ('speechSynthesis' in window) {
+                            window.speechSynthesis.cancel();
+                            const u = new SpeechSynthesisUtterance(word);
+                            u.lang = 'en-US';
+                            u.onend = () => { btn.textContent = '▶'; };
+                            window.speechSynthesis.speak(u);
+                        } else {
+                            btn.textContent = '▶';
+                        }
+                    }
                 });
             });
         }
@@ -1106,16 +1115,27 @@ function showQuizResult(mode, correct, total, wrongItems) {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 if (btn.dataset.word) {
-                    // Word pronunciation
-                    const src = `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(btn.dataset.word.trim())}.mp3`;
-                    quizAudioPlayer.src = src;
-                    quizAudioPlayer.play().catch(() => {
+                    // Word pronunciation — respect A/B pref
+                    const word = btn.dataset.word;
+                    const pref = localStorage.getItem(TTS_PREF_KEY) || 'webspeech';
+                    if (pref === 'github') {
+                        const src = `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(word.trim())}.mp3`;
+                        quizAudioPlayer.src = src;
+                        quizAudioPlayer.play().catch(() => {
+                            if ('speechSynthesis' in window) {
+                                const u = new SpeechSynthesisUtterance(word);
+                                u.lang = 'en-US';
+                                window.speechSynthesis.speak(u);
+                            }
+                        });
+                    } else {
                         if ('speechSynthesis' in window) {
-                            const u = new SpeechSynthesisUtterance(btn.dataset.word);
+                            window.speechSynthesis.cancel();
+                            const u = new SpeechSynthesisUtterance(word);
                             u.lang = 'en-US';
                             window.speechSynthesis.speak(u);
                         }
-                    });
+                    }
                 } else {
                     // Sentence snippet
                     const start = parseFloat(btn.dataset.start);
@@ -1374,51 +1394,80 @@ function showFlashcard() {
         window.speechSynthesis.speak(u);
     }
 
-    function _playWordAudio() {
-        _trackReplay();
-        audioBtn.classList.remove('needs-tap');
-        audioBtn.classList.add('is-playing-voice');
+    function _playGithubWord(onFallback) {
         const wordSrc   = `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(item.text.trim())}.mp3`;
         const wordAudio = new Audio(wordSrc);
         wordAudio.play().catch(() => {
             audioBtn.classList.remove('is-playing-voice');
-            _playSpeech();
+            if (onFallback) onFallback();
         });
         wordAudio.addEventListener('ended', () => {
             audioBtn.classList.remove('is-playing-voice');
         }, { once: true });
     }
+
+    function _playWordAudio() {
+        _trackReplay();
+        audioBtn.classList.remove('needs-tap');
+        audioBtn.classList.add('is-playing-voice');
+        const pref = localStorage.getItem(TTS_PREF_KEY) || 'webspeech';
+        if (pref === 'github') {
+            _playGithubWord(_playSpeech);
+        } else {
+            _playSpeech();
+        }
+    }
     audioBtn.onclick = _playWordAudio;
 
-    // 自動播放 — iOS Safari 非手勢觸發可能被封鎖，偵測後改用 pulse 提示
-    const _autoAudio = new Audio(
-        `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(item.text.trim())}.mp3`
-    );
-    _autoAudio.play()
-        .then(() => {
-            audioBtn.classList.add('is-playing-voice');
-            _autoAudio.addEventListener('ended', () => audioBtn.classList.remove('is-playing-voice'), { once: true });
-        })
-        .catch(() => {
-            // GitHub mp3 失敗 → 試 speechSynthesis
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                const _u = new SpeechSynthesisUtterance(item.text);
-                _u.lang = 'en-US';
-                window.speechSynthesis.speak(_u);
-                setTimeout(() => {
-                    if (window.speechSynthesis.speaking) {
-                        audioBtn.classList.add('is-playing-voice');
-                        _u.onend = () => audioBtn.classList.remove('is-playing-voice');
-                    } else {
-                        // iOS 封鎖 → pulse 提示點擊
-                        audioBtn.classList.add('needs-tap');
-                    }
-                }, 100);
-            } else {
-                audioBtn.classList.add('needs-tap');
-            }
-        });
+    // 自動播放 — 依 A/B 偏好決定方式；iOS Safari 非手勢觸發可能被封鎖，偵測後改用 pulse 提示
+    const _autoPlayPref = localStorage.getItem(TTS_PREF_KEY) || 'webspeech';
+    if (_autoPlayPref === 'github') {
+        const _autoAudio = new Audio(
+            `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(item.text.trim())}.mp3`
+        );
+        _autoAudio.play()
+            .then(() => {
+                audioBtn.classList.add('is-playing-voice');
+                _autoAudio.addEventListener('ended', () => audioBtn.classList.remove('is-playing-voice'), { once: true });
+            })
+            .catch(() => {
+                // GitHub mp3 失敗 → 試 speechSynthesis
+                if ('speechSynthesis' in window) {
+                    window.speechSynthesis.cancel();
+                    const _u = new SpeechSynthesisUtterance(item.text);
+                    _u.lang = 'en-US';
+                    window.speechSynthesis.speak(_u);
+                    setTimeout(() => {
+                        if (window.speechSynthesis.speaking) {
+                            audioBtn.classList.add('is-playing-voice');
+                            _u.onend = () => audioBtn.classList.remove('is-playing-voice');
+                        } else {
+                            audioBtn.classList.add('needs-tap');
+                        }
+                    }, 100);
+                } else {
+                    audioBtn.classList.add('needs-tap');
+                }
+            });
+    } else {
+        // Mode A：Web Speech 自動播放
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            const _u = new SpeechSynthesisUtterance(item.text);
+            _u.lang = 'en-US';
+            window.speechSynthesis.speak(_u);
+            setTimeout(() => {
+                if (window.speechSynthesis.speaking) {
+                    audioBtn.classList.add('is-playing-voice');
+                    _u.onend = () => audioBtn.classList.remove('is-playing-voice');
+                } else {
+                    audioBtn.classList.add('needs-tap');
+                }
+            }, 100);
+        } else {
+            audioBtn.classList.add('needs-tap');
+        }
+    }
 
     // ── 背面：整句音檔 + ✏️ ────────────────────────────────────
     const backAudioBtn      = document.getElementById('flashcard-back-audio-btn');
@@ -2635,11 +2684,12 @@ function _playGithubMp3(clean) {
         return;
     }
 
-    // 單字：首字大寫 → 全小寫 → fallback Web Speech
+    // 單字候選：首字大寫 → 全小寫 → 原始字串（若與前兩者不同）→ fallback Web Speech
     const BASE        = 'https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/';
     const capitalized = clean.charAt(0).toUpperCase() + clean.slice(1).toLowerCase();
     const lower       = clean.toLowerCase();
-    const candidates  = [capitalized, lower];
+    // 加入原始字串作為第三候選，處理全大寫縮寫（如 "AI"、"USA"）
+    const candidates  = [...new Set([capitalized, lower, clean.trim()])];
     let tried = 0;
 
     function attempt() {
@@ -2676,7 +2726,8 @@ function _playGithubMp3Sequence(words, index) {
     const BASE        = 'https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/';
     const capitalized = clean.charAt(0).toUpperCase() + clean.slice(1).toLowerCase();
     const lower       = clean.toLowerCase();
-    const candidates  = [capitalized, lower];
+    // 加入原始字串作為第三候選，處理全大寫縮寫（如 "AI"、"USA"）
+    const candidates  = [...new Set([capitalized, lower, clean.trim()])];
     let tried = 0;
 
     function attempt() {
@@ -3778,41 +3829,61 @@ function _setupFcplusFrontAudio(item) {
         window.speechSynthesis.speak(u);
     }
 
+    function _playGithubWord(onFallback) {
+        const src = `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(item.text.trim())}.mp3`;
+        const au  = new Audio(src);
+        au.play().catch(() => { audioBtn.classList.remove('is-playing-voice'); if (onFallback) onFallback(); });
+        au.addEventListener('ended', () => audioBtn.classList.remove('is-playing-voice'), { once: true });
+    }
+
     function _playWord() {
         if (!_fcplusSubmitted) _trackReplay(); // 提交後不計懲罰
         audioBtn.classList.add('is-playing-voice');
-        const src  = `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(item.text.trim())}.mp3`;
-        const au   = new Audio(src);
-        au.play().catch(() => { audioBtn.classList.remove('is-playing-voice'); _playSpeech(); });
-        au.addEventListener('ended', () => audioBtn.classList.remove('is-playing-voice'), { once: true });
+        const pref = localStorage.getItem(TTS_PREF_KEY) || 'webspeech';
+        if (pref === 'github') {
+            _playGithubWord(_playSpeech);
+        } else {
+            _playSpeech();
+        }
     }
     audioBtn.onclick = _playWord;
 
     // Also wire result-side audio btn
     const resultBtn = document.getElementById('fcplus-audio-btn-result');
     if (resultBtn) resultBtn.onclick = () => {
-        // After submit, no penalty
         audioBtn.classList.add('is-playing-voice');
-        const src  = `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(item.text.trim())}.mp3`;
-        const au   = new Audio(src);
-        au.play().catch(_playSpeech);
-        au.addEventListener('ended', () => audioBtn.classList.remove('is-playing-voice'), { once: true });
+        const pref = localStorage.getItem(TTS_PREF_KEY) || 'webspeech';
+        if (pref === 'github') {
+            _playGithubWord(_playSpeech);
+        } else {
+            _playSpeech();
+        }
     };
 
-    // Auto-play first time
-    const autoAu = new Audio(
-        `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(item.text.trim())}.mp3`
-    );
-    autoAu.play().then(() => {
-        audioBtn.classList.add('is-playing-voice');
-        autoAu.addEventListener('ended', () => audioBtn.classList.remove('is-playing-voice'), { once: true });
-    }).catch(() => {
+    // Auto-play first time — 依 A/B 偏好
+    const _autoPlayPref = localStorage.getItem(TTS_PREF_KEY) || 'webspeech';
+    if (_autoPlayPref === 'github') {
+        const autoAu = new Audio(
+            `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(item.text.trim())}.mp3`
+        );
+        autoAu.play().then(() => {
+            audioBtn.classList.add('is-playing-voice');
+            autoAu.addEventListener('ended', () => audioBtn.classList.remove('is-playing-voice'), { once: true });
+        }).catch(() => {
+            if ('speechSynthesis' in window) {
+                const u = new SpeechSynthesisUtterance(item.text);
+                u.lang = 'en-US';
+                window.speechSynthesis.speak(u);
+            }
+        });
+    } else {
         if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
             const u = new SpeechSynthesisUtterance(item.text);
             u.lang = 'en-US';
             window.speechSynthesis.speak(u);
         }
-    });
+    }
 }
 
 // ── Submit ────────────────────────────────────────────────────
