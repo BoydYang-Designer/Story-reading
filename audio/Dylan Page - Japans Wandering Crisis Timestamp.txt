@@ -1,17 +1,25 @@
-[00:00:00.000 --> 00:00:03.280] I am here in Japan where something pretty crazy is happening.
-[00:00:03.460 --> 00:00:09.240] Thousands of people across the country are wondering out of their homes never to be seen alive again.
-[00:00:09.380 --> 00:00:11.540] And we're not talking about some one -off weird event.
-[00:00:11.900 --> 00:00:20.420] Last year alone, 18 ,000 people in Japan wondered out of their homes and 500 of which were later found dead.
-[00:00:20.520 --> 00:00:25.560] To make matters even crazier, police say that cases of this happening have doubled since 2012.
-[00:00:25.720 --> 00:00:27.820] So what the hell is going on?
-[00:00:27.820 --> 00:00:33.600] Well, Japan is officially the world's oldest society and because of that, their dementia crisis is staggering.
-[00:00:33.740 --> 00:00:36.840] We're talking one in five people in 2025.
-[00:00:37.060 --> 00:00:46.040] This is tragically resulting in elderly people wandering onto train tracks, getting hit by cars, falling into rivers and getting locked outside alone in the freezing cold.
-[00:00:46.140 --> 00:00:53.380] But what surprised me so much about being here and speaking to people is that despite how dark this problem is, Japan are tackling this head -on.
-[00:00:53.380 --> 00:01:00.020] Certain regions are deploying GPS wearables from key rings and shoes with GPS insults to QR codes that are stuck to their fingernails.
-[00:01:00.060 --> 00:01:05.120] There are towns like Miwa which have installed a fake bus stop, preventing dementia patients from wandering off and getting lost.
-[00:01:05.300 --> 00:01:14.280] With their shortage of care workers, a government -funded program is now developing AI care robots, which can carry out essential tasks like changing diapers, getting dressed and helping movements.
-[00:01:14.460 --> 00:01:23.840] Japan's thousands of convenience stores now act as safe havens, many staff even trained by local authorities to recognize dementia symptoms and quickly contact police or family.
-[00:01:23.960 --> 00:01:36.280] And then, my personal favorite, the restaurant of mistaken orders, a place where customers are happy for their orders to sometimes be wrong, because it allows all the servers who live with dementia to still be productive and not alone.
-[00:01:36.380 --> 00:01:41.880] And instead of frustration, the vulnerability opens up space for connection, laughter and kindness.
-[00:01:42.040 --> 00:01:47.160] Japan can't stop dementia, but they are redefining what it means to live with it.
+[00:00:00.000 --> 00:00:03.300] I am here in Japan, where something pretty crazy is happening.
+[00:00:03.520 --> 00:00:09.180] Thousands of people across the country are wandering out of their homes, never to be seen alive again.
+[00:00:09.380 --> 00:00:11.560] And we're not talking about some one -off weird event.
+[00:00:11.720 --> 00:00:17.100] Last year alone, 18 ,000 people in Japan wandered out of their homes,
+[00:00:17.220 --> 00:00:20.400] and 500 of which were later found dead.
+[00:00:20.540 --> 00:00:25.540] To make matters even crazier, police say that cases of this happening have doubled since 2012.
+[00:00:25.760 --> 00:00:27.820] So what the hell is going on?
+[00:00:27.820 --> 00:00:30.780] Well, Japan is officially the world's oldest society.
+[00:00:30.860 --> 00:00:33.580] And because of that, their dementia crisis is staggering.
+[00:00:33.700 --> 00:00:36.760] We're talking one in five people in 2025.
+[00:00:37.060 --> 00:00:43.160] This is tragically resulting in elderly people wandering onto train tracks, getting hit by cars, falling into rivers,
+[00:00:43.220 --> 00:00:46.020] and getting locked outside alone in the freezing cold.
+[00:00:46.140 --> 00:00:53.360] But what surprised me so much about being here and speaking to people is that despite how dark this problem is, Japan are tackling this head on.
+[00:00:53.360 --> 00:01:00.000] Certain regions are deploying GPS wearables from key rings and shoes with GPS insults, to QR codes that are stuck to their fingernails.
+[00:01:00.080 --> 00:01:05.160] There are towns like Miwa which have installed a fake bus stop, preventing dementia patients from wandering off and getting lost.
+[00:01:05.260 --> 00:01:14.300] With their shortage of care workers, a government -funded program is now developing AI care robots, which can carry out essential tasks like changing diapers, getting dressed, and helping movements.
+[00:01:14.420 --> 00:01:23.840] Japan's thousands of convenience stores now act as safe havens, with many staff even trained by local authorities to recognize dementia symptoms and quickly contact police or family.
+[00:01:23.960 --> 00:01:27.560] And then, my personal favorite, the restaurant of mistaken orders.
+[00:01:27.640 --> 00:01:36.280] A place where customers are happy for their orders to sometimes be wrong because it allows all the servers who live with dementia to still be productive and not alone.
+[00:01:36.380 --> 00:01:41.860] And instead of frustration, the vulnerability opens up space for connection, laughter, and kindness.
+[00:01:42.020 --> 00:01:47.160] Japan can't stop dementia, but they are redefining what it means to live with it.
+[00:01:47.960 --> 00:01:48.000] Japan can't stop dementia, but they are redefining what it means to live with it.
+[00:01:48.000 --> 00:01:48.320] Japan can't stop dementia, but they are redefining what it means to live with it.
+[00:01:48.320 --> 00:01:48.340] Japan can't stop dementia, but they are redefining what it means to live with it.
+[00:01:48.340 --> 00:01:48.460] Japan can't stop dementia, but they are redefining what it means to live with it. Japan can't stop dementia.
