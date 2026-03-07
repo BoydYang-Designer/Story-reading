@@ -2951,13 +2951,6 @@ function renderReorderPool() {
         if (_reorderKeyHighlightIdx !== null && idx === _reorderKeyHighlightIdx && !isUsed) {
             btn.classList.add('is-key-highlight');
         }
-        // 🔊 桌機 hover 發音（開啟時滑入即播）
-        if (reorderHoverSound && !isUsed) {
-            btn.addEventListener('mouseenter', () => {
-                if (reorderChecked) return;
-                _speakReorderWord(word);
-            });
-        }
 
         btn.addEventListener('pointerdown', (e) => {
             if (reorderChecked || isUsed) return;
