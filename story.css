@@ -2545,6 +2545,20 @@ button.secondary:hover {
     transform: translateY(0);
 }
 
+/* 預選狀態（第一次點擊，尚未確定）— 模擬 hover 效果但更明顯 */
+.quiz-option-btn.is-pending {
+    border-color: var(--color-accent) !important;
+    background: var(--color-accent-light) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    font-weight: 600;
+}
+
+[data-theme="dark"] .quiz-option-btn.is-pending {
+    border-color: var(--color-accent) !important;
+    background: rgba(var(--color-accent-rgb, 100, 149, 237), 0.15) !important;
+}
+
 /* Lock colours once answered — hover must not override result state */
 .quiz-option-btn.is-correct {
     border-color: #50b86c !important;

@@ -630,7 +630,13 @@ document.getElementById('back-to-note-from-quiz').addEventListener('click', () =
                 showView(document.getElementById('scores-dashboard-view'));
             }
         } else if (quizState.source === 'story') {
-            showView(document.getElementById('playback-view'));
+            // 回到 Story：恢復 Quiz 前的播放進度
+            if (typeof showPlayback === 'function' && typeof currentStoryIndex !== 'undefined' && currentStoryIndex > -1) {
+                const savedPos = (typeof playbackPositionBeforeNote !== 'undefined') ? playbackPositionBeforeNote : 0;
+                showPlayback(currentStoryIndex, savedPos);
+            } else {
+                showView(document.getElementById('playback-view'));
+            }
         } else {
             showView(document.getElementById('home-view'));
         }
@@ -1595,11 +1601,26 @@ function showDictationQuestion() {
     document.getElementById('dictation-feedback').textContent = '';
     document.getElementById('dictation-next').classList.add('is-hidden');
 
+    let _dictationPendingBtn = null;
+
     options.forEach(opt => {
         const btn = document.createElement('button');
         btn.className = 'quiz-option-btn quiz-option-sentence';
         btn.textContent = opt;
-        btn.addEventListener('click', () => handleDictationAnswer(opt, q.sentence, btn));
+        btn.addEventListener('click', () => {
+            // 兩步驟確認：第一次點擊 = 預選，第二次點擊 = 確定
+            if (_dictationPendingBtn === btn) {
+                // 第二次點擊同一個 → 確定作答
+                handleDictationAnswer(opt, q.sentence, btn);
+            } else {
+                // 第一次點擊 → 預選狀態（移除其他預選，標記此按鈕）
+                if (_dictationPendingBtn) {
+                    _dictationPendingBtn.classList.remove('is-pending');
+                }
+                _dictationPendingBtn = btn;
+                btn.classList.add('is-pending');
+            }
+        });
         optionsEl.appendChild(btn);
     });
 }
@@ -1819,11 +1840,26 @@ function showArticleListenQuestion() {
     document.getElementById('article-listen-feedback').textContent = '';
     document.getElementById('article-listen-next').classList.add('is-hidden');
 
+    let _articleListenPendingBtn = null;
+
     options.forEach(opt => {
         const btn = document.createElement('button');
         btn.className = 'quiz-option-btn quiz-option-sentence';
         btn.textContent = opt;
-        btn.addEventListener('click', () => handleArticleListenAnswer(opt, q, btn));
+        btn.addEventListener('click', () => {
+            // 兩步驟確認：第一次點擊 = 預選，第二次點擊 = 確定
+            if (_articleListenPendingBtn === btn) {
+                // 第二次點擊同一個 → 確定作答
+                handleArticleListenAnswer(opt, q, btn);
+            } else {
+                // 第一次點擊 → 預選狀態（移除其他預選，標記此按鈕）
+                if (_articleListenPendingBtn) {
+                    _articleListenPendingBtn.classList.remove('is-pending');
+                }
+                _articleListenPendingBtn = btn;
+                btn.classList.add('is-pending');
+            }
+        });
         optEl.appendChild(btn);
     });
 }

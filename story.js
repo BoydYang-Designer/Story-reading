@@ -2646,6 +2646,7 @@ const goToStoryQuizBtn = document.getElementById('go-to-story-quiz-btn');
 if (goToStoryQuizBtn) {
     goToStoryQuizBtn.addEventListener('click', () => {
         if (currentCategoryName && currentStoryTitle && typeof openQuiz === 'function') {
+            playbackPositionBeforeNote = audio.currentTime; // 儲存進度，回到 Story 時可恢復
             if (isPlaying) pauseAudio();
             openQuiz(currentCategoryName, currentStoryTitle, 'story');
         }
