@@ -684,6 +684,12 @@ function openQuiz(categoryName, titleName, source) {
     quizResult.classList.add('is-hidden');
 
     showView(quizView);
+
+    // 背景預查筆記單字的 FreeDictionary URL（靜默執行，不 block UI）
+    // story.js 的 _prefetchNoteWords 已掛在 window，直接呼叫
+    if (typeof _prefetchNoteWords === 'function' && categoryName && titleName) {
+        _prefetchNoteWords(categoryName, titleName);
+    }
 }
 
 // ── Event Listeners: Menu ─────────────────────────────────────

@@ -1504,8 +1504,8 @@ function isWordMatchVariation(word1, word2) {
 // 層級三：Web Speech API（瀏覽器合成語音，最後保底）
 // ─────────────────────────────────────────────────────────────────────────────
 
-// FreeDictionary API 快取（避免重複請求同一個字）
-const _freeDictCache = {};
+// FreeDictionary API 快取（window 全域，供 story.js 與 quiz.js 共用，同一字只查一次）
+if (typeof window._freeDictCache === 'undefined') window._freeDictCache = {};
 
 // 層級三：Web Speech TTS
 function _speakTTS(word) {
@@ -1524,24 +1524,67 @@ function _speakTTS(word) {
 // 回傳 Promise<string|null>，有快取直接回傳，避免重複 fetch
 async function _getFreeDictAudioUrl(word) {
     const key = word.toLowerCase().trim();
-    if (_freeDictCache[key] !== undefined) return _freeDictCache[key];
+    if (window._freeDictCache[key] !== undefined) return window._freeDictCache[key];
 
     try {
         const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(key)}`);
-        if (!res.ok) { _freeDictCache[key] = null; return null; }
+        if (!res.ok) { window._freeDictCache[key] = null; return null; }
         const json = await res.json();
-        if (!Array.isArray(json) || json.length === 0) { _freeDictCache[key] = null; return null; }
+        if (!Array.isArray(json) || json.length === 0) { window._freeDictCache[key] = null; return null; }
 
         const allPhonetics = json.flatMap(entry => entry.phonetics || []);
         const audioUrls = allPhonetics.map(p => p.audio).filter(Boolean);
         // 優先美式（URL 含 '-us'），沒有才用第一個
         const chosen = audioUrls.find(u => u.includes('-us')) || audioUrls[0] || null;
-        _freeDictCache[key] = chosen;
+        window._freeDictCache[key] = chosen;
         return chosen;
     } catch (e) {
-        _freeDictCache[key] = null;
+        window._freeDictCache[key] = null;
         return null;
     }
+}
+
+// ── 預查筆記單字（背景靜默執行）────────────────────────────────────────────
+// 進入文章時，把已存筆記的單字（不在 vocabularyData 裡的）預先查好 FreeDictionary URL
+// 存入 window._freeDictCache，讓使用者點字時直接命中快取，不需等待
+async function _prefetchNoteWords(categoryName, titleName) {
+    if (!categoryName || !titleName) return;
+
+    const storyData = savedWords[categoryName]?.[titleName];
+    if (!storyData) return;
+
+    // 收集 words + phrases（sentences 不需要 FreeDictionary）
+    const candidates = new Set();
+    storyData.words?.forEach(w => candidates.add(w.toLowerCase().trim()));
+    storyData.phrases?.forEach(p => {
+        // phrase 可能含連字號（儲存格式），還原為空格後拆成單字個別查
+        p.toLowerCase().trim().replace(/-/g, ' ').split(/\s+/).filter(Boolean)
+         .forEach(w => candidates.add(w));
+    });
+
+    // 過濾掉 vocabularyData 已有的字（這些字有 GitHub MP3，不需要查 FreeDictionary）
+    const needsFetch = Array.from(candidates).filter(word => {
+        return !vocabularyData.some(v =>
+            (v['Words'] || v['word'] || '').toLowerCase().trim() === word
+        );
+    // 再過濾掉快取裡已經有結果的字（不管是 URL 還是 null）
+    }).filter(word => window._freeDictCache[word] === undefined);
+
+    if (needsFetch.length === 0) return;
+    console.log(`[Prefetch] ${titleName}: ${needsFetch.length} words to prefetch`);
+
+    // 並發限制 3，避免 FreeDictionary rate limit
+    const CONCURRENCY = 3;
+    let i = 0;
+    async function runNext() {
+        if (i >= needsFetch.length) return;
+        const word = needsFetch[i++];
+        await _getFreeDictAudioUrl(word); // 結果自動存入 window._freeDictCache
+        await runNext();
+    }
+    // 啟動 CONCURRENCY 條並行通道
+    await Promise.all(Array.from({ length: CONCURRENCY }, runNext));
+    console.log(`[Prefetch] ${titleName}: done`);
 }
 
 // 播放單字發音（主要 API）— 三層降級
@@ -2473,6 +2516,9 @@ async function showPlayback(index, startTime = 0, maintainTimestampMode = false)
   } else {
       textContainer.appendChild(parafyAndMakeClickable('\n\n' + story['內文'], currentCategoryName, currentStoryTitle));
   }
+
+  // 背景預查筆記單字的 FreeDictionary URL（靜默執行，不 block UI）
+  _prefetchNoteWords(currentCategoryName, currentStoryTitle);
 
   // 設定音訊來源
   setAudioSourceWithFallback(currentStoryTitle);
