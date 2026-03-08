@@ -3320,6 +3320,26 @@ button.secondary:hover {
     animation: pulse-play 1s ease-in-out infinite;
 }
 
+/* Word Sound Toggle — 綠色調（ON）/ 灰色調（OFF）*/
+.reorder-ctrl-word-sound {
+    border-color: rgba(90,200,120,0.35);
+    color: #4cc87a;
+    background: rgba(90,200,120,0.08);
+}
+.reorder-ctrl-word-sound:hover {
+    background: rgba(90,200,120,0.16);
+}
+.reorder-ctrl-word-sound--off {
+    border-color: rgba(160,160,160,0.25);
+    color: var(--color-text-light, #888);
+    background: transparent;
+    opacity: 0.55;
+}
+.reorder-ctrl-word-sound--off:hover {
+    opacity: 0.8;
+    background: rgba(255,255,255,0.06);
+}
+
 @keyframes pulse-play {
     0%, 100% { opacity: 1; }
     50%       { opacity: 0.55; }
