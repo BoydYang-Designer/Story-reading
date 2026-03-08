@@ -106,14 +106,13 @@
 [00:08:44.350 --> 00:08:47.050] I heard every word you fellows were saying.
 [00:08:48.090 --> 00:08:52.890] Tell us a story, said the March Hare. Yes, please do, pleaded Alice.
 [00:08:53.710 --> 00:08:58.190] And be quick about it, added the Hatter, or you'll be asleep again before it's done.
-[00:09:00.200 --> 00:09:05.120] Once upon a time there were three little sisters, the Dormouse began in a great hurry,
-[00:09:05.300 --> 00:09:12.640] and their names were Elsie, Lacey, and Tilly, and they lived at the bottom of a well. What did they live on?
+[00:09:00.200 --> 00:09:06.980] Once upon a time there were three little sisters, the Dormouse began in a great hurry, and their names were Elsie,
+[00:09:07.160 --> 00:09:12.640] Lacey, and Tilly, and they lived at the bottom of a well. What did they live on?
 [00:09:12.720 --> 00:09:17.220] said Alice, who always took a great interest in questions of eating and drinking.
 [00:09:18.160 --> 00:09:22.640] They lived on Treacle, said the Dormouse, after thinking a minute or two.
 [00:09:23.400 --> 00:09:28.400] They couldn't have done that, you know, Alice gently remarked. They'd have been ill.
 [00:09:29.360 --> 00:09:32.480] So they were, said the Dormouse, very ill.
-[00:09:33.980 --> 00:09:38.520] Alice tried to fancy to herself what such an extraordinary way of living would be like,
-[00:09:38.680 --> 00:09:41.040] but it puzzled her too much, so she went on.
+[00:09:33.980 --> 00:09:41.040] Alice tried to fancy to herself what such an extraordinary way of living would be like, but it puzzled her too much, so she went on.
 [00:09:41.040 --> 00:09:44.100] But why did they live at the bottom of a well?
 [00:09:45.200 --> 00:09:48.840] Take some more tea, the March Hare said to Alice very earnestly.
 [00:09:49.640 --> 00:09:54.640] I've had nothing yet, Alice replied in an offended tone, so I can't take more.
@@ -151,17 +150,17 @@
 [00:12:25.260 --> 00:12:30.200] And they drew all manner of things, everything that begins with an M.
 [00:12:31.460 --> 00:12:33.460] Why with an M, said Alice.
 [00:12:34.280 --> 00:12:38.340] Why not, said the March Hare. Alice was silent.
-[00:12:39.640 --> 00:12:43.840] The Dormouse had closed its eyes by this time, and was going off into a doze,
-[00:12:44.040 --> 00:12:49.000] but on being pinched by the Hatter, it woke up again with a little shriek, and went on,
-[00:12:49.480 --> 00:12:55.620] That begins with an M, such as mouse -traps, and the moon, and memory, and muchness.
+[00:12:39.640 --> 00:12:46.300] The Dormouse had closed its eyes by this time, and was going off into a doze, but on being pinched by the Hatter,
+[00:12:46.520 --> 00:12:52.680] it woke up again with a little shriek, and went on, That begins with an M, such as mouse -traps,
+[00:12:52.820 --> 00:12:55.620] and the moon, and memory, and muchness.
 [00:12:56.060 --> 00:12:58.520] You know you say things are much of a muchness.
 [00:12:58.720 --> 00:13:02.380] Did you ever see such a thing as a drawing of a muchness?
 [00:13:03.640 --> 00:13:08.560] Really, now you ask me, said Alice, very much confused. I don't think...
 [00:13:09.180 --> 00:13:11.460] Then you shouldn't talk, said the Hatter.
 [00:13:12.660 --> 00:13:15.740] This piece of rudeness was more than Alice could bear.
 [00:13:15.920 --> 00:13:18.780] She got up in great disgust, and walked off.
-[00:13:19.060 --> 00:13:23.920] The Dormouse fell asleep instantly, and neither of the others took the least notice of her going,
-[00:13:24.240 --> 00:13:28.220] though she looked back once or twice, half hoping that they would call after her.
+[00:13:19.060 --> 00:13:26.140] The Dormouse fell asleep instantly, and neither of the others took the least notice of her going, though she looked back once or twice,
+[00:13:26.520 --> 00:13:28.220] half hoping that they would call after her.
 [00:13:28.500 --> 00:13:32.740] The last time she saw them, they were trying to put the Dormouse into the teapot.
 [00:13:33.760 --> 00:13:38.860] At any rate, I'll never go there again, said Alice, as she picked her way through the wood.
 [00:13:39.240 --> 00:13:43.140] It's the stupidest tea -party I ever was at in all my life.

@@ -1,0 +1,39 @@
+[00:00:00.000 --> 00:00:03.020] The theory predicts its own downfall.
+[00:00:03.200 --> 00:00:04.620] Same at the Big Bang, by the way.
+[00:00:05.160 --> 00:00:06.800] But we don't know what the theory is.
+[00:00:06.860 --> 00:00:08.800] We've not been clever enough to put it together.
+[00:00:09.200 --> 00:00:13.500] But the first steps are being made with things like Hawking radiation.
+[00:00:13.980 --> 00:00:16.440] Particle physics is a game of statistics, essentially.
+[00:00:17.020 --> 00:00:21.620] So it's like tossing a coin 100 times and it is possible that you'll get 99 heads.
+[00:00:21.880 --> 00:00:23.240] Doesn't mean the coin is weighted.
+[00:00:23.540 --> 00:00:24.040] There's a possibility.
+[00:00:24.040 --> 00:00:35.100] And because we have up 600 million collisions per second on average at LHC or more, that means you've got huge numbers of collisions, huge amounts of data.
+[00:00:35.340 --> 00:00:40.040] So you're always getting things that look like new particles and then they tend to go away again when you get more data.
+[00:00:40.360 --> 00:00:42.040] Statistics fluctuating around.
+[00:00:42.660 --> 00:00:48.260] But we did have hints of which look very like new particles in the old data.
+[00:00:48.380 --> 00:00:50.620] And we need to take new data to see whether they go away or not.
+[00:00:50.620 --> 00:00:53.020] But one of them is a famous thing.
+[00:00:53.080 --> 00:00:54.580] It's called the Diffoton Excess.
+[00:00:54.880 --> 00:00:58.060] And it was about 750 times the mass of the proton.
+[00:00:58.720 --> 00:00:59.920] Now that's very heavy.
+[00:01:00.040 --> 00:01:02.340] The Higgs is 120 odd times the mass of the proton.
+[00:01:02.580 --> 00:01:07.900] So it's a very heavy new particle it looked like, which was decaying into two particles of light.
+[00:01:08.860 --> 00:01:09.960] And one of the...
+[00:01:09.960 --> 00:01:19.100] So you can see that no one knew what this was because there were over 200 theoretical papers published describing 200 different versions of what it might be.
+[00:01:19.100 --> 00:01:20.480] So nobody knows.
+[00:01:20.880 --> 00:01:23.240] Nobody knows even if it's there, it might go away.
+[00:01:23.660 --> 00:01:32.900] But if it stays, one of the suggestions is that it's a hint of extra spatial dimensions in the universe.
+[00:01:33.480 --> 00:01:38.460] So there are ideas which go back to the 1930s called colluzor -cline gravitons.
+[00:01:38.880 --> 00:01:45.360] And the idea is that you can have extra spatial dimensions that kind of curled up small so we can't see them.
+[00:01:46.020 --> 00:01:50.680] Now the analogy that's often given, which is a good one, is imagine a hose pipe at the bottom of your garden.
+[00:01:50.960 --> 00:01:56.200] And if you're a long way away from it, it looks like a line, sort of a one -dimensional thing.
+[00:01:56.480 --> 00:02:00.800] But if you walk up to it, you can see that it's actually curved up into a second dimension.
+[00:02:00.920 --> 00:02:03.080] So it's a two -dimensional thing, a cylinder.
+[00:02:03.800 --> 00:02:05.400] So space can be like that.
+[00:02:06.000 --> 00:02:14.280] And one of the signatures is that you get these signatures of heavy particles, kind of towers of them, almost like harmonics on a guitar string.
+[00:02:15.320 --> 00:02:17.960] And this looks like one of those if it's there.
+[00:02:18.540 --> 00:02:30.040] So if we're very lucky and we see hints of something like extra dimensions, then you start being able to probe these effects,
+[00:02:30.340 --> 00:02:35.840] so gravity potentially, try to understand gravity by looking at collisions in particle accelerators.
+[00:02:36.180 --> 00:02:37.640] And then you're on your way.
+[00:02:38.200 --> 00:02:42.440] So if that, that it's very exciting, if it turns out to be true, I just don't know.
+[00:02:43.220 --> 00:02:46.340] Many of these things go away when you get more statistics.

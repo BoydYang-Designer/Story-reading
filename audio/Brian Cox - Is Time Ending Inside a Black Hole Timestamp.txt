@@ -1,23 +1,51 @@
-[00:00:00.000 --> 00:00:01.100] There is a question.
-[00:00:01.320 --> 00:00:03.040] So there is a cosmological horizon.
-[00:00:03.200 --> 00:00:31.460] There are different kinds of cosmological horizons and it is a very good question that but people don't really even know how to phrase it That but could it be that you can describe the whole universe in terms of a quantum theory living on a boundary of some description and I think the guess is yes that the guess But we don't even know what we mean by the boundary.
-[00:00:32.000 --> 00:00:32.360] Yeah, right.
-[00:00:32.500 --> 00:00:34.520] It's one of the problems here.
-[00:00:34.780 --> 00:00:53.220] So the the reason that Maldesina was able to show this is this works for this very specific thing called ADS space is Because there's a boundary you can identify in that particular geometry Whereas our universe is desitter,
-[00:00:53.220 --> 00:00:54.100] right?
-[00:00:54.260 --> 00:01:20.820] There isn't it's not obvious what you mean by a boundary It's not a really obvious what question You know that as you said it's hard to find the words it is we don't really know what question we're asking but that rough picture that there could be a theory of a quantum theory somehow this network of qubits that gives rise to geometry space time is
-[00:01:22.320 --> 00:01:42.000] Accepted broadly right so we but when you try to get into the detail of it It's only been fully realized for a very specific model which is kind of a toy model It's not our universe so it could be that our universe does not admit that description could be could be that yeah But it's certainly beyond us the moment technically,
-[00:01:42.040 --> 00:01:54.120] but it's a wonderful thought and actually there's a paper recently That so people are beginning to use the the Google chip the willow chip Which is a very powerful?
-[00:01:54.780 --> 00:01:56.140] It's not a quantum computer.
-[00:01:56.280 --> 00:02:19.420] It's a proto quantum computer kind of thing So and people have started to use it because what it is is a load of qubits that you can entangle And you can set it up and it's very well controlled So whilst we don't know how to do quantum calculations on the thing really what you can do is try to say well Could I set them up so that it's like space emerges?
-[00:02:19.820 --> 00:02:37.180] Yeah from them and there was a paper recently Where something that was described in the paper as a one -dimensional wormhole was Made that created wouldn't be now a universe this thing It would be but it kind of emerged from this structure and that's the kind of picture.
-[00:02:37.180 --> 00:02:40.520] We're trying to get to it So it's a good paper.
-[00:02:40.680 --> 00:02:41.600] It's been peer reviewed.
-[00:02:41.660 --> 00:03:14.920] It's a controversial paper You'll see loads of stuff online, but it's worth looking at those papers and by the time this is Sent out might be some other paper a lot of people are working on it So on also actually building little clocks a little quantum clocks tiny clocks and because we don't even know what a clock is Right at the most fundamental level because we don't know what time is So so we're talking about very fundamental questions about reality in this research But it all came from these that right which is how cool is that it came from thinking about those things?
-[00:03:15.160 --> 00:03:44.340] It's so cool and thank you for taking that question so seriously It's a great question and I think it's really instructive that Neither of us because nobody has the language When you get into the real detail You're talking about mathematics ultimately And even the mathematics is not complete So we're talking about Research at the cutting edge and it takes a long time.
-[00:03:44.940 --> 00:03:57.920] I mean even quantum you think about quantum mechanics If we were talking about quantum mechanics, this is a hundred year old theory That's very well tested and very well understood But when you try to put it into language To speak about it.
-[00:03:57.940 --> 00:04:21.000] It's much easier to write down the equations or something I mean even Feynman says that in the Feynman lectures when you talking about this thing called a double slit experiment It's a great description of the way quantum mechanics behaves But ultimately Feynman says you know mathematically it's easy this I can just write down a one line Which tells you how this interference works and all those things But then if you try to say well,
-[00:04:21.000 --> 00:04:21.560] what does it mean?
-[00:04:21.780 --> 00:04:22.220] What happens?
-[00:04:22.380 --> 00:04:24.320] What does it mean for our picture of reality?
-[00:04:24.680 --> 00:04:35.400] Then we're still arguing about that now, but the maths is easy This is worse because here the maths is really difficult and we have no idea what it's telling us really Let's see
+[00:00:00.050 --> 00:00:03.050] There is a question. So there is a cosmological horizon.
+[00:00:03.230 --> 00:00:04.970] There are different kinds of cosmological horizons.
+[00:00:05.170 --> 00:00:12.590] And it is a very good question, but people don't even know how to phrase it.
+[00:00:13.010 --> 00:00:24.030] But could it be that you can describe the whole universe in terms of a quantum theory living on a boundary of some description?
+[00:00:24.030 --> 00:00:28.550] And I think the guess is yes, the guess.
+[00:00:28.770 --> 00:00:32.330] But we don't even know what we mean by the boundary, right?
+[00:00:32.490 --> 00:00:34.550] It's one of the problems here.
+[00:00:34.690 --> 00:00:50.630] So the reason that Maldesina was able to show this works for this very specific thing called ADS space is because there's a boundary you can identify in that particular geometry. Geometry.
+[00:00:51.230 --> 00:00:54.730] Whereas our universe is de sitta, right? There isn't.
+[00:00:54.830 --> 00:00:56.870] It's not obvious what you mean by a boundary.
+[00:00:57.170 --> 00:00:59.070] It's not a really obvious what question.
+[00:00:59.970 --> 00:01:02.630] You know, as you said, it's hard to find the words. It is.
+[00:01:02.770 --> 00:01:04.350] We don't really know what question we're asking.
+[00:01:04.350 --> 00:01:23.210] But that rough picture that there could be a theory of a quantum theory somehow, this network of qubits that gives rise to geometry, space, time is accepted broadly.
+[00:01:23.570 --> 00:01:33.570] But when you try to get into the detail of it, it's only been fully realized for a very specific model, which is kind of a toy model. It's not our universe.
+[00:01:33.750 --> 00:01:37.970] So it could be that our universe does not admit that description. Could be. Could be.
+[00:01:38.530 --> 00:01:43.390] But it's certainly beyond us at the moment, technically. But it's a wonderful thought.
+[00:01:43.590 --> 00:01:56.510] And actually, there's a paper recently that so people are beginning to use the Google chip, the Willow chip, which is a very powerful. It's not a quantum computer. It's not a quantum computer.
+[00:01:56.510 --> 00:01:58.250] It's a proto quantum computer kind of thing.
+[00:01:59.030 --> 00:02:08.290] So and people have started to use it because what it is is a load of qubits that you can entangle and you can set it up. And it's very well controlled.
+[00:02:08.810 --> 00:02:15.030] So whilst we don't know how to do quantum calculations on the thing, really, what you can do is try to say,
+[00:02:15.030 --> 00:02:20.630] well, could I set them up so that it's like space emerges from them?
+[00:02:20.830 --> 00:02:30.170] And there was a paper recently where something that was described in the paper as a one dimensional wormhole was made.
+[00:02:30.530 --> 00:02:32.570] It wouldn't be in our universe, this thing.
+[00:02:32.850 --> 00:02:35.670] But it kind of emerged from this structure.
+[00:02:35.670 --> 00:02:42.870] And that's the kind of picture we're trying to get to. It's a good paper. It's been peer reviewed. It's a controversial paper.
+[00:02:43.010 --> 00:02:44.150] You'll see loads of stuff online.
+[00:02:44.530 --> 00:02:46.370] But it's worth looking at those papers.
+[00:02:46.630 --> 00:02:49.850] And by the time this is sent out, there might be some other paper.
+[00:02:49.970 --> 00:02:51.310] A lot of people are working on it.
+[00:02:51.930 --> 00:02:57.030] So on also actually building little clocks, little quantum clocks, tiny clocks,
+[00:02:57.110 --> 00:03:01.650] because we don't even know what a clock is, right, at the most fundamental level, because we don't know what time is.
+[00:03:01.650 --> 00:03:09.150] So we're talking about very fundamental questions about reality in this research.
+[00:03:09.310 --> 00:03:11.110] But it all came from that, right?
+[00:03:11.350 --> 00:03:13.070] Which is, how cool is that?
+[00:03:13.210 --> 00:03:16.230] It came from thinking about those things. It's so cool.
+[00:03:16.570 --> 00:03:21.290] And thank you for taking that question so seriously. It's a great question. I appreciate it.
+[00:03:21.910 --> 00:03:29.890] And I think it's really instructive that neither of us, because nobody has the language.
+[00:03:29.890 --> 00:03:35.070] When you get into the real detail, you're talking about mathematics, ultimately.
+[00:03:35.830 --> 00:03:37.890] And even the mathematics is not complete.
+[00:03:38.490 --> 00:03:42.250] So we're talking about research at the cutting edge.
+[00:03:42.610 --> 00:03:44.410] And it takes a long time.
+[00:03:44.730 --> 00:03:47.230] I mean, even quantum mechanics, you think about quantum mechanics.
+[00:03:47.350 --> 00:03:53.530] If we were talking about quantum mechanics, this is a hundred -year -old theory that's very well tested and very well understood.
+[00:03:54.010 --> 00:04:00.910] But when you try to put it into language, to speak about it, it's much easier to write down the equations or something.
+[00:04:01.110 --> 00:04:06.630] I mean, even Feynman says that in the Feynman lectures, when he's talking about this thing called the double slit experiment.
+[00:04:06.890 --> 00:04:10.010] It's a great description of the way quantum mechanics behaves.
+[00:04:10.310 --> 00:04:13.630] But ultimately, Feynman says, you know, mathematically, it's easy, this.
+[00:04:13.850 --> 00:04:19.030] I can just write down one line which tells you how this interference works and all those things.
+[00:04:19.510 --> 00:04:27.950] But then if you try to say, well, what does it mean, what happens, what does it mean for our picture of reality, then we're still arguing about that now. But the maths is easy.
+[00:04:28.230 --> 00:04:34.930] This is worse, because here the maths is really difficult and we have no idea what it's telling us really about reality.

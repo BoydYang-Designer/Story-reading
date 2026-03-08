@@ -1,0 +1,40 @@
+[00:00:00.000 --> 00:00:01.100] Page 1 Introduction.
+[00:00:01.800 --> 00:00:05.140] This is my latest Concept Stroller design named Neostrol.
+[00:00:05.700 --> 00:00:10.020] Neostrol features a new folding mechanism developed to achieve true one -handed operation.
+[00:00:10.960 --> 00:00:20.820] The design goal is very clear, one -hand operation, one continuous motion, no separate seat folding steps, safe and secure, intuitive and easy to understand.
+[00:00:21.900 --> 00:00:28.540] Neostrol is designed to eliminate unnecessary steps and design trade -offs commonly found in existing folding strollers.
+[00:00:29.180 --> 00:00:31.900] Page 2 How the Folding Mechanism Works.
+[00:00:32.820 --> 00:00:37.580] The folding process begins by pressing the one -hand button to unlock the rotating handlebar.
+[00:00:38.120 --> 00:00:40.880] As the handlebar is rotated, the seat rotates simultaneously.
+[00:00:41.500 --> 00:00:44.740] When the handlebar reaches a specific angle, the seat folds automatically.
+[00:00:45.600 --> 00:00:49.640] At the same time, the front leg hinge and rear leg hinge are released simultaneously.
+[00:00:50.620 --> 00:00:55.840] By pushing the handlebar downward, the front and rear legs move closer together, creating a compact fold.
+[00:00:56.820 --> 00:01:03.180] Finally, the upper section of the handlebar can be rotated further to achieve an even more compact folded size.
+[00:01:04.580 --> 00:01:11.580] Once folded, the stroller stands upright on its own and can be pulled like a trolley, making it easy to transport and store.
+[00:01:12.380 --> 00:01:15.300] Hatcher Page 3 Forward Facing Seat, Overall View.
+[00:01:16.100 --> 00:01:23.840] This page shows the overall design of the stroller in the Forward Facing Seat configuration, highlighting its proportions and structure in daily use.
+[00:01:24.640 --> 00:01:26.680] Page 4 Folding Scenario.
+[00:01:27.420 --> 00:01:33.060] On this page, I present a quick usage scenario showing how the stroller can be folded elegantly and naturally.
+[00:01:33.800 --> 00:01:41.560] As you can see after folding, the stroller can be pulled like a trolley and stands upright on its own, making it convenient for travel and storage.
+[00:01:42.280 --> 00:01:45.720] Page 5 Rearward Facing Seat, Overall View.
+[00:01:46.460 --> 00:01:54.740] This page shows the overall view of the stroller with the seat in the Rearward Facing position, demonstrating that the design maintains balance and usability in both configurations.
+[00:01:56.960 --> 00:02:00.760] Page 6 Folding and Unfolding with Rearward Facing Seat.
+[00:02:01.260 --> 00:02:06.500] This page explains how the stroller folds when the seat is Rearward Facing and how it can be unfolded easily.
+[00:02:07.220 --> 00:02:13.460] After unfolding the frame, the seat needs to be rotated and unfolded manually, which keeps the structure simple and secure.
+[00:02:15.100 --> 00:02:17.360] Page 7 Carry Cut Adaptation.
+[00:02:18.040 --> 00:02:23.620] This page shows how the stroller adapts to a carry cut, expanding its usability for newborns.
+[00:02:23.700 --> 00:02:26.120] Page 8 Folding with Carry Cut Attached.
+[00:02:26.520 --> 00:02:29.720] Neostrol can also be folded with the carry cut attached.
+[00:02:30.140 --> 00:02:36.960] However, because the carry cut is longer and extends outward, an additional folding step may be required for the cut itself.
+[00:02:37.760 --> 00:02:41.180] Page 9 Size Comparison, Open and Folded.
+[00:02:41.660 --> 00:02:45.580] This page compares the overall dimensions of the stroller when open and folded.
+[00:02:46.020 --> 00:02:50.560] Neostrol is designed as a comfort stroller with a rear wheel diameter of 295 millimeters.
+[00:02:51.180 --> 00:02:56.000] Despite this, it still achieves a compact folded size, making it suitable for everyday use.
+[00:02:58.520 --> 00:03:00.420] Page 10 Main Hinge Details.
+[00:03:01.060 --> 00:03:10.260] This page highlights the main hinge design, which plays a key role in linking the handlebar hinge with the frame release mechanism, enabling synchronized movement, safety and smooth folding.
+[00:03:11.780 --> 00:03:13.580] Page 11 Rear Brake Pedal.
+[00:03:14.060 --> 00:03:18.680] Here you can see the rear brake pedal, designed as a push -push braking system for intuitive operation.
+[00:03:20.000 --> 00:03:22.640] Page 12 Recap to Recap.
+[00:03:23.080 --> 00:03:33.340] Neostrol is a concept designed to achieve true one -handed folding, one continuous intuitive motion, no separate seat folding steps, high safety without compromise,
+[00:03:33.680 --> 00:03:35.500] a clean, elegant user experience.
+[00:03:36.180 --> 00:03:41.800] This concept focuses on simplifying real -world use while maintaining comfort, safety and design integrity.

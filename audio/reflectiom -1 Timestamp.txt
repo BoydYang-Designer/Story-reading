@@ -1,10 +1,10 @@
-[00:00:00.000 --> 00:00:02.220] We've been doing some self -reflection as a team.
-[00:00:02.540 --> 00:00:08.240] We often come up with very innovative concepts, but we've realized that innovation alone doesn't always connect with the market.
-[00:00:08.840 --> 00:00:14.920] So we started asking ourselves, do products really need brand new features every time?
-[00:00:15.120 --> 00:00:23.660] Or could simpler functional improvements, along with better form, details, and usability actually work better?
-[00:00:24.400 --> 00:00:30.260] In some cases, we feel these small, focused improvements might be more effective than big innovations.
-[00:00:31.220 --> 00:00:41.800] We're also wondering if some ideas didn't succeed, not because the concept was wrong, but because the design, execution, aesthetics, or level of detail wasn't strong enough.
-[00:00:42.580 --> 00:00:48.000] Finding the right balance between function, design, and cost takes experience, and that's something we're still learning.
-[00:00:48.420 --> 00:00:50.340] That's why we'd really love to hear your perspective.
-[00:00:51.300 --> 00:00:55.960] How you find that balance and decide what feels just right for different markets.
-[00:00:55.960 --> 00:01:02.100] We hope to learn from your experience and see if there's a chance for us to complement each other's strengths.
+[00:00:00.000 --> 00:00:02.240] We've been doing some self -reflection as a team.
+[00:00:02.400 --> 00:00:08.260] We often come up with very innovative concepts, but we've realized that innovation alone doesn't always connect with the market.
+[00:00:08.560 --> 00:00:14.860] So we started asking ourselves, do products really need brand new features every time?
+[00:00:15.060 --> 00:00:23.660] Or could simpler functional improvements, along with better form, details, and usability, actually work better?
+[00:00:24.180 --> 00:00:30.240] In some cases, we feel these small focused improvements might be more effective than big innovations.
+[00:00:31.100 --> 00:00:39.560] We're also wondering if some ideas didn't succeed, not because the concept was wrong, but because the design, execution, aesthetics,
+[00:00:39.920 --> 00:00:41.860] or level of detail wasn't strong enough.
+[00:00:42.300 --> 00:00:48.020] Finding the right balance between function, design, and cost takes experience, and that's something we're still learning.
+[00:00:48.320 --> 00:00:56.040] That's why we'd really love to hear your perspective, how you find that balance, and decide what feels just right for different markets.
+[00:00:56.860 --> 00:01:02.100] We hope to learn from your experience and see if there's a chance for us to complement each other's strengths.

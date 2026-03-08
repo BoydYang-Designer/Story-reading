@@ -55,8 +55,8 @@
 [00:04:40.520 --> 00:04:51.200] "'I don't know where Din may be,' said the Mock Turtle, "'but if you've seen them so often, of course you know what they're like.' "'I believe so,' Alice replied thoughtfully.
 [00:04:51.560 --> 00:04:57.640] "'They have their tails in their mouths, and they're all over crumbs.' "'You're
 [00:04:57.640 --> 00:04:59.460] wrong about the crumbs,' said the Mock Turtle.
-[00:04:59.960 --> 00:05:05.760] "'Crumbs would all wash off in the sea, but they have their tails in their mouths, and the reason is—'
-[00:05:06.840 --> 00:05:09.520] Here the Mock Turtle yawned and shut his eyes.
+[00:04:59.960 --> 00:05:07.280] "'Crumbs would all wash off in the sea, but they have their tails in their mouths, and the reason is—' Here
+[00:05:07.280 --> 00:05:09.520] the Mock Turtle yawned and shut his eyes.
 [00:05:10.500 --> 00:05:14.120] "'Tell her about the reason and all that,' he said to the griffin.
 [00:05:15.040 --> 00:05:20.080] "'The reason is,' said the griffin, "'that they would go with the lobsters to the dance,
 [00:05:20.220 --> 00:05:26.760] so they got thrown out to sea, so they had to fall a long way, so they got their tails fast in their mouths,
@@ -81,9 +81,7 @@
 [00:06:53.880 --> 00:06:56.980] "'No wise fish would go anywhere without a porpoise.'
 [00:06:57.880 --> 00:07:00.920] "'Wouldn't it really?' said Alice, in a tone of great surprise.
 [00:07:01.700 --> 00:07:03.440] "'Of course not,' said the Mock Turtle.
-[00:07:03.440 --> 00:07:07.300] "'Why, if a fish came to me and told me he was going on a journey,
-[00:07:07.460 --> 00:07:09.880] "'I should say, with what porpoise?'
-[00:07:10.700 --> 00:07:13.560] "'Don't you mean purpose?' said Alice.
+[00:07:03.440 --> 00:07:13.560] "'Why, if a fish came to me and told me he was going on a journey, "'I should say, with what porpoise?' "'Don't you mean purpose?' said Alice.
 [00:07:14.260 --> 00:07:18.720] "'I mean what I say,' the Mock Turtle replied in an offended tone.
 [00:07:19.200 --> 00:07:26.100] And the griffin added, "'Come, let's hear some of your adventures.' "'I
 [00:07:26.100 --> 00:07:30.540] could tell you my adventures beginning from this morning,' said Alice a little timidly.

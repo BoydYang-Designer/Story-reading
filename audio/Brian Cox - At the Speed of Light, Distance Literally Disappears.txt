@@ -1,13 +1,29 @@
-which is still not enough, right? To get you there in a reasonable time. But you can, as you approach close to the speed of light, that factor can become arbitrarily large.
-
-According to just physics, if you could do that, you can travel between the galaxies, but you've got to travel extremely close to the speed of light in a human lifetime. The limits, by the way, in relativity, which you can't, but if you were to travel at a speed of light, then the distance shrinks to zero. The closer you get to speed of light from the point of view of someone in the spacecraft, traveling between the galaxies, the more the distance shrinks.
-
-The flip side is that time passes more slowly on the spacecraft relative to the person on the earth, and so you can, all those things, but that's just standard first year undergraduate relativity. So I wouldn't claim the laws of nature as we understand them, stop you traveling between galaxies. But the challenge of traveling very, very, very close to the speed of light, I think it looks impossible from our perspective.
-
-Every star you see in the night sky is likely orbited by planets, many potentially capable of hosting life. In fact, scientists estimate that there could be billions of earth-like worlds in our galaxy alone, yet despite these vast numbers, we found no evidence of other intelligent beings. Could alien life truly be so extraordinarily rare?
-
-It's a great question. The answer is we don't know how rare it is, and we are trying to detect it. So in our solar system, primarily, although it is possible, I should say, that with the James Webb Space Telescope and other instruments that are coming online now, that it's possible we could detect biosignatures in the atmospheres of planets around distant stars.
-
-But that's at the edge of our capability at the moment. So at the moment we're talking about, of course, the missions to Mars, not yet quite designed to detect life, but to check if the conditions were present on Mars that may support life. I think it's fair to say we're pretty sure that the conditions on Mars four billion years ago, let's say, were very similar to the conditions that led to the origin of life on Earth.
-
-And so we've got the Perseverance rover now, which is taking samples as part of the Mars sample return mission, which hopefully, although the timeline is by no means clear, but hopefully those samples will return to Earth at some point, let's say in the next decade or so, we look, that's because we suspect that there may be evidence that life existed or may still exist on Mars.
+Which is still not enough, right, to get you there in any reasonable time.
+But you can, as you approach close to the speed of light, that factor can become arbitrarily large.
+According to just physics, if you could do that, you can travel between the galaxies.
+But you've got to travel extremely close to the speed of light in a human lifetime.
+The limit, by the way, in relativity, which you can't, but if you were to travel at the speed of light,
+then the distance shrinks to zero.
+The closer you get to speed of light, from the point of view of someone in the spacecraft traveling between the galaxies, the more the distance shrinks.
+The flip side is that time passes more slowly on the spacecraft relative to the person on the Earth.
+And so you can, all those things.
+But that's all, that's just standard first year undergraduate relativity.
+So I wouldn't claim the laws of nature, as we understand them, stop you traveling between galaxies.
+But the challenge of traveling very, very, very close to the speed of light,
+I think it looks impossible from our perspective.
+Every star you see in the night sky is likely orbited by planets, many potentially capable of hosting life.
+In fact, scientists estimate that there could be billions of Earth -like worlds in our galaxy alone.
+Yet despite these vast numbers, we've found no evidence of other intelligent beings.
+Could alien life truly be so extraordinarily rare? It's a great question.
+The answer is we don't know how rare it is.
+And we are trying to detect it.
+So in our solar system, primarily, although it is possible,
+I should say, that with the James Webb Space Telescope and other instruments that are coming online now,
+that it's possible we could detect biosignatures in the atmospheres of planets around distant stars.
+But that's at the edge of our capability at the moment.
+So at the moment we're talking about, of course, the missions to Mars, not yet quite designed to detect life,
+but to check if the conditions were present on Mars that may support life.
+I think it's fair to say we're pretty sure that the conditions on Mars four billion years ago, let's say, were very similar to the conditions that led to the origin of life on Earth.
+And so we've got the Perseverance rover now, which is taking samples as part of the Mars sample return mission, which hopefully, although the timeline is by no means clear,
+but hopefully those samples will return to Earth at some point, let's say in the next decade or so, with luck.
+That's because we suspect that there may be evidence that life existed or may still exist on Mars.

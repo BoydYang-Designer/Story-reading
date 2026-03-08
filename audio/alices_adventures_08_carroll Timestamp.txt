@@ -18,8 +18,8 @@
 [00:01:15.520 --> 00:01:20.500] Would you tell me, said Alice, a little timidly, why you are painting those roses?
 [00:01:22.300 --> 00:01:24.920] Five and Seven said nothing, but looked at Two.
 [00:01:25.600 --> 00:01:27.340] Two began in a low voice.
-[00:01:27.920 --> 00:01:32.400] Why, the fact is, you see, Miss, this here ought to have been a red rose tree,
-[00:01:32.580 --> 00:01:38.960] and we put a white one in by mistake, and if the queen was to find it out, we should all have our heads cut off, you know.
+[00:01:27.920 --> 00:01:34.700] Why, the fact is, you see, Miss, this here ought to have been a red rose tree, and we put a white one in by mistake,
+[00:01:34.860 --> 00:01:38.960] and if the queen was to find it out, we should all have our heads cut off, you know.
 [00:01:39.260 --> 00:01:42.380] So, you see, Miss, we're doing our best, afore she comes, too.
 [00:01:43.280 --> 00:01:49.440] At this moment Five, who had been anxiously looking across the garden, called out, The Queen! The Queen!
 [00:01:49.760 --> 00:01:53.900] and the three gardeners instantly threw themselves flat upon their faces.
@@ -134,16 +134,13 @@
 [00:11:55.160 --> 00:11:59.540] The queen had only one way of settling all difficulties, great or small.
 [00:12:00.180 --> 00:12:03.140] Off with his head, she said, without even looking round.
 [00:12:04.300 --> 00:12:08.560] I'll fetch the executioner myself, said the king eagerly, and he hurried off.
-[00:12:10.080 --> 00:12:14.080] Alice thought she might as well go back and see how the game was going on,
-[00:12:14.220 --> 00:12:17.720] as she heard the queen's voice in the distance, screaming with passion.
-[00:12:18.340 --> 00:12:23.220] She had already heard her sentence three of the players to be executed for having missed their turns,
-[00:12:23.400 --> 00:12:30.180] and she did not like the look of things at all, as the game was in such confusion that she never knew whether it was her turn or not.
+[00:12:10.080 --> 00:12:17.720] Alice thought she might as well go back and see how the game was going on, as she heard the queen's voice in the distance, screaming with passion.
+[00:12:18.340 --> 00:12:25.800] She had already heard her sentence three of the players to be executed for having missed their turns, and she did not like the look of things at all,
+[00:12:25.980 --> 00:12:30.180] as the game was in such confusion that she never knew whether it was her turn or not.
 [00:12:30.540 --> 00:12:32.560] So she went in search of her hedgehog.
 [00:12:34.060 --> 00:12:42.120] The hedgehog was engaged in a fight with another hedgehog, which seemed to Alice an excellent opportunity for croqueting one of them with the other.
-[00:12:42.420 --> 00:12:47.140] The only difficulty was that her flamingo was gone across to the other side of the garden,
-[00:12:47.360 --> 00:12:51.660] where Alice could see it trying, in a helpless sort of way, to fly up into a tree.
-[00:12:52.820 --> 00:12:56.880] By the time she had caught the flamingo and brought it back, the fight was over,
-[00:12:56.980 --> 00:12:59.060] and both the hedgehogs were out of sight.
+[00:12:42.420 --> 00:12:51.660] The only difficulty was that her flamingo was gone across to the other side of the garden, where Alice could see it trying, in a helpless sort of way, to fly up into a tree.
+[00:12:52.820 --> 00:12:59.060] By the time she had caught the flamingo and brought it back, the fight was over, and both the hedgehogs were out of sight.
 [00:12:59.960 --> 00:13:05.460] But it doesn't matter much, thought Alice, as all the arches are gone from this side of the ground.
 [00:13:06.580 --> 00:13:13.180] So she tucked it away under her arm, that it might not escape again, and went back for a little more conversation with her friend.
 [00:13:14.360 --> 00:13:20.120] When she got back to the Cheshire Cat, she was surprised to find quite a large crowd collected round it.
@@ -154,8 +151,7 @@
 [00:13:45.400 --> 00:13:51.340] The executioner's argument was that you couldn't cut off a head unless there was a body to cut it off from,
 [00:13:51.560 --> 00:13:57.040] that he had never had to do such a thing before, and he wasn't going to begin at his time of life.
 [00:13:58.680 --> 00:14:05.220] The king's argument was that anything that had a head could be beheaded, and that you weren't to talk nonsense.
-[00:14:06.600 --> 00:14:11.060] The queen's argument was that if something wasn't done about it in less than no time,
-[00:14:11.280 --> 00:14:13.520] she'd have everybody executed all round.
+[00:14:06.600 --> 00:14:13.520] The queen's argument was that if something wasn't done about it in less than no time, she'd have everybody executed all round.
 [00:14:14.360 --> 00:14:19.080] It was this last remark that had made the whole party look so grave and anxious.
 [00:14:20.680 --> 00:14:22.720] Alice could think of nothing else to say, but,
 [00:14:23.320 --> 00:14:26.540] it belongs to the duchess, you'd better ask her about it.

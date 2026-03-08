@@ -1,11 +1,12 @@
-[00:00:00.000 --> 00:00:01.140] I have another idea.
-[00:00:01.620 --> 00:00:03.220] What if we design a carryable stroller?
-[00:00:03.620 --> 00:00:04.940] Could this be a promising direction?
-[00:00:05.840 --> 00:00:12.320] The concept is inspired by products like the MaxiCosi Coral Detachable Infant Car Seat, but applied to a stroller system.
-[00:00:13.140 --> 00:00:23.540] When users encounter environments where pushing a stroller is difficult or impossible, such as stairs, underpasses, or entrances without elevators, the stroller can be separated into two parts.
-[00:00:24.000 --> 00:00:28.000] Upper module, the seat unit with the baby, designed to be safely lifted.
-[00:00:28.820 --> 00:00:33.100] Lower module, the frame and wheels, which can be quickly folded and handled separately.
-[00:00:34.200 --> 00:00:42.040] In this scenario, the user only needs to carry the lighter upper module with the baby, making stair climbing safer and far less physically demanding.
-[00:00:43.020 --> 00:00:50.420] This approach reduces lifting weight while effectively solving terrain limitations that traditional strollers struggle with.
-[00:00:51.040 --> 00:01:02.300] For safety and ergonomic reasons, this concept would likely require clear usage limits such as suitable for infants under one year old or a maximum load of 10 kilograms.
-[00:01:03.400 --> 00:01:14.020] Overall, this idea is not intended to replace a full feature stroller, but rather to offer a practical urban oriented solution for short distance carrying scenarios where pushing is simply not feasible.
+[00:00:00.000 --> 00:00:03.240] I have another idea. What if we design a carryable stroller?
+[00:00:03.540 --> 00:00:04.940] Could this be a promising direction?
+[00:00:05.600 --> 00:00:12.420] The concept is inspired by products like the MaxiCosi Coral Detachable Infant Car Seat, but applied to a stroller system.
+[00:00:12.740 --> 00:00:19.460] When users encounter environments where pushing a stroller is difficult or impossible, such as stairs, underpasses,
+[00:00:19.580 --> 00:00:23.680] or entrances without elevators, the stroller can be separated into two parts.
+[00:00:23.880 --> 00:00:28.080] Upper module, the seat unit with the baby, designed to be safely lifted.
+[00:00:28.580 --> 00:00:33.220] Lower module, the frame and wheels, which can be quickly folded and handled separately.
+[00:00:33.860 --> 00:00:42.040] In this scenario, the user only needs to carry the lighter upper module with the baby, making stair climbing safer and far less physically demanding.
+[00:00:42.680 --> 00:00:50.420] This approach reduces lifting weight while effectively solving terrain limitations that traditional strollers struggle with.
+[00:00:50.760 --> 00:00:56.140] For safety and ergonomic reasons, this concept would likely require clear usage limits.
+[00:00:56.260 --> 00:01:02.280] such as suitable for infants under one year old, or a maximum load of 10 kilograms.
+[00:01:03.480 --> 00:01:14.020] Overall, this idea is not intended to replace a full -feature stroller, but rather to offer a practical, urban -oriented solution for short -distance carrying scenarios where pushing is simply not feasible.

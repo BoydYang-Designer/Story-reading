@@ -29,11 +29,10 @@
 [00:03:05.300 --> 00:03:14.280] "'Well, I've tried to say, how doth the little busy bee, but it all came different,' Alice replied in a very melancholy voice.
 [00:03:16.200 --> 00:03:19.620] "'Repeat, you are old, Father William,' said the caterpillar.
 [00:03:21.280 --> 00:03:23.220] Alice folded her hands and began.
-[00:03:25.590 --> 00:03:30.430] "'You are old, Father William,' the young man said, "'and your hair has become very white,
-[00:03:30.470 --> 00:03:33.430] and yet you incessantly stand on your head.
+[00:03:25.590 --> 00:03:33.430] "'You are old, Father William,' the young man said, "'and your hair has become very white, and yet you incessantly stand on your head.
 [00:03:33.630 --> 00:03:39.730] Do you think at your age it is right?' "'In my youth,' Father William replied to his son,
-[00:03:39.730 --> 00:03:44.730] "'I feared it might injure the brain, but now that I'm perfectly sure I have none,
-[00:03:45.130 --> 00:03:47.050] why, I do it again and again.'
+[00:03:39.730 --> 00:03:45.390] "'I feared it might injure the brain, but now that I'm perfectly sure I have none, why,
+[00:03:45.550 --> 00:03:47.050] I do it again and again.'
 [00:03:48.270 --> 00:03:53.470] "'You are old,' said the youth, as I mentioned before, and have grown most uncommonly fat.
 [00:03:53.750 --> 00:03:56.310] Yet you turned a back somersault in at the door.
 [00:03:56.590 --> 00:03:58.550] Pray, what is the reason of that?'
@@ -94,8 +93,7 @@
 [00:08:40.790 --> 00:08:46.270] As there seemed to be no chance of getting her hands up to her head, she tried to get her head down to them,
 [00:08:46.430 --> 00:08:51.310] and was delighted to find that her neck would bend about easily in any direction like a serpent.
 [00:08:51.930 --> 00:08:57.990] She had just succeeded in curving it down into a graceful zigzag, and was going to dive in among the leaves,
-[00:08:58.150 --> 00:09:02.010] which she found to be nothing but the tops of the trees under which she had been wandering,
-[00:09:02.430 --> 00:09:05.190] when a sharp hiss made her draw back in a hurry.
+[00:08:58.150 --> 00:09:05.190] which she found to be nothing but the tops of the trees under which she had been wandering, when a sharp hiss made her draw back in a hurry.
 [00:09:05.190 --> 00:09:14.170] A large pigeon had flown into her face, and was beating her violently with its wings. "'Serpent!' screamed the pigeon.
 [00:09:15.110 --> 00:09:20.070] "'I'm not a serpent!' said Alice indignantly. "'Let me alone!'
 [00:09:20.850 --> 00:09:27.230] "'Serpent, I say again,' repeated the pigeon, but in a more subdued tone, and added with a kind of sob,
@@ -120,17 +118,16 @@
 [00:11:19.390 --> 00:11:24.610] "'But little girls eat eggs quite as much as serpents do, you know.' "'I
 [00:11:24.610 --> 00:11:26.070] don't believe it,' said the pigeon.
 [00:11:26.250 --> 00:11:30.230] "'But if they do, why, then they're a kind of serpent. That's all I can say.'
-[00:11:32.130 --> 00:11:37.030] "'This was such a new idea to Alice that she was quite silent for a minute or two,
-[00:11:37.250 --> 00:11:39.690] which gave the pigeon the opportunity of adding,
+[00:11:32.130 --> 00:11:39.690] "'This was such a new idea to Alice that she was quite silent for a minute or two, which gave the pigeon the opportunity of adding,
 [00:11:40.630 --> 00:11:49.230] "'You're looking for eggs, I know that well enough, and what does it matter to me whether you're a little girl or a serpent?' "'It
 [00:11:49.230 --> 00:11:54.630] matters a good deal to me,' said Alice hastily, "'but I'm not looking for eggs as it happens,
 [00:11:54.750 --> 00:11:58.450] and if I was I shouldn't want yours. I don't like them raw.'
 [00:11:59.730 --> 00:12:05.170] "'Well, be off, then,' said the pigeon in a sulky tone, as it settled down again into its nest.
 [00:12:06.230 --> 00:12:12.310] Alice crouched down among the trees as well as she could, for her neck kept getting entangled among the branches,
 [00:12:12.530 --> 00:12:15.530] and every now and then she had to stop and untwist it.
-[00:12:16.350 --> 00:12:20.390] After a while she remembered that she still held the pieces of mushroom in her hands,
-[00:12:20.590 --> 00:12:25.270] and she set to work very carefully, nibbling first at one and then at the other,
-[00:12:25.510 --> 00:12:32.230] and growing sometimes taller and sometimes shorter, until she had succeeded in bringing herself down to her usual height.
+[00:12:16.350 --> 00:12:22.430] After a while she remembered that she still held the pieces of mushroom in her hands, and she set to work very carefully,
+[00:12:22.930 --> 00:12:28.350] nibbling first at one and then at the other, and growing sometimes taller and sometimes shorter,
+[00:12:28.630 --> 00:12:32.230] until she had succeeded in bringing herself down to her usual height.
 [00:12:33.310 --> 00:12:38.810] It was so long since she had been anything near the right size that it felt quite strange at first,
 [00:12:38.990 --> 00:12:43.390] but she got used to it in a few minutes, and began talking to herself as usual.
 [00:12:44.290 --> 00:12:46.630] "'Come, there's half my plan done now.

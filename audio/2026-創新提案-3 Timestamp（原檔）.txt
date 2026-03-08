@@ -1,0 +1,5 @@
+[00:00:00.000 --> 00:00:07.160] To give a clearer view of how the stroller frame works during folding, I made the seat and basket transparent so you can see how the frame tubes move.
+[00:00:08.080 --> 00:00:13.020] As you can see, after the handlebar rotates to a certain angle, the seat folds automatically.
+[00:00:13.980 --> 00:00:22.320] This is because the seat locking mechanism is released by the handlebar rotation, and both the front leg and rear leg hinges are released at the same time.
+[00:00:23.020 --> 00:00:27.840] You then simply push the handlebar downward to achieve the final compact fold.
+[00:00:27.840 --> 00:00:33.120] After folding, the handlebar remains upright and the stroller can stand on its own.

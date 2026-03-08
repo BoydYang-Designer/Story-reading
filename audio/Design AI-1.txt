@@ -1,5 +1,7 @@
-From my perspective with the current stage of AI development, AI is not yet capable of replacing industrial designers. However, it has already proven to be a powerful tool for significantly improving both design efficiency and quality. This shift is comparable to the transformation that occurred over 20 years ago, when 3D software replaced 2D CAD and became a fundamental milestone in industrial design.
-
-Today, industrial design can no longer exist without 3D-assisted design tools. I believe the same will soon be true for AI-assisted design tools. In the near future, industrial designers who do not adopt AI will gradually lose their competitive edge in terms of speed, insight and overall capability.
-
-AI will not replace designers. Designers who effectively use AI will replace those who do not.
+From my perspective, with the current stage of AI development, AI is not yet capable of replacing industrial designers.
+However, it has already proven to be a powerful tool for significantly improving both design efficiency and quality.
+This shift is comparable to the transformation that occurred over 20 years ago, when 3D software replaced 2D CAD and became a fundamental milestone in industrial design.
+Today, industrial design can no longer exist without 3D -assisted design tools.
+I believe the same will soon be true for AI -assisted design tools.
+In the near future, industrial designers who do not adopt AI will gradually lose their competitive edge in terms of speed, insight, and overall capability. AI will not replace designers.
+Designers who effectively use AI will replace those who do not.

@@ -1,43 +1,35 @@
 [00:00:00.000 --> 00:00:03.420] You know, there's something I find myself thinking about quite often.
-[00:00:04.120 --> 00:00:07.920] It's one of those ideas that sounds simple at first.
-[00:00:08.880 --> 00:00:09.820] Almost obvious.
-[00:00:10.520 --> 00:00:17.760] It sits there in the collective imagination of our species, glowing with a kind of romantic inevitability.
-[00:00:18.240 --> 00:00:29.360] It's the idea that we are going, that it is our destiny, that we are leaving this cradle and stepping out into the black to build a new home,
-[00:00:29.820 --> 00:00:31.460] sending human beings to Mars.
-[00:00:32.260 --> 00:00:36.680] It's spoken about now as if it's already happened in the future tense.
-[00:00:37.240 --> 00:00:38.500] NASA has plans.
-[00:00:39.360 --> 00:00:40.640] SpaceX has plans.
-[00:00:41.620 --> 00:00:42.940] China has plans.
-[00:00:43.980 --> 00:00:49.240] We see the CGI renders of gleaming cities under glass domes.
-[00:00:49.740 --> 00:00:54.900] We see the rockets landing in unison, kicking up the rust -colored dust.
-[00:00:55.310 --> 00:01:04.040] We see astronauts looking out over the vowels, marinaries, watching a blue sunset, feeling the pride of a species that has conquered two worlds.
-[00:01:04.800 --> 00:01:09.260] Everyone seems to agree that Mars is where we're headed next.
-[00:01:09.700 --> 00:01:10.980] It feels like a promise.
-[00:01:11.500 --> 00:01:20.440] And on the surface, it sounds almost routine, like a natural continuation of what we've already done.
-[00:01:21.020 --> 00:01:23.980] We looked at the oceans and we crossed them.
-[00:01:24.480 --> 00:01:27.520] We looked at the skies and we flew in them.
-[00:01:28.040 --> 00:01:31.760] We looked at the moon and we walked on it.
-[00:01:32.240 --> 00:01:34.800] First the moon, then Mars.
-[00:01:35.720 --> 00:01:37.800] It's just the next step on the ladder.
-[00:01:38.680 --> 00:01:41.140] But here is what fascinates me as a physicist.
-[00:01:41.820 --> 00:01:45.140] And it's something that troubles me deeply as a human being.
-[00:01:45.480 --> 00:01:56.040] When you actually calculate what's involved, when you strip away the music and the artwork and the speeches, when you sit down with the cold, hard numbers of mass,
-[00:01:56.520 --> 00:02:02.560] energy, distance and biology, you begin to realize that this is not just another step outward.
-[00:02:03.040 --> 00:02:04.900] It is not like crossing the Atlantic.
-[00:02:05.600 --> 00:02:07.440] It is not like climbing Everest.
-[00:02:08.280 --> 00:02:10.660] It is not even like going to the moon.
-[00:02:11.400 --> 00:02:18.200] It may be the most difficult thing our species has ever seriously contemplated.
-[00:02:18.600 --> 00:02:20.800] And I want to be very careful with my language here.
-[00:02:20.800 --> 00:02:24.740] When I say difficult, I don't mean it's expensive.
-[00:02:25.480 --> 00:02:31.220] It will be expensive, of course, trillions upon trillions of dollars poured into the void.
-[00:02:31.940 --> 00:02:34.200] And I don't mean it's an engineering challenge.
-[00:02:34.980 --> 00:02:36.360] We have brilliant engineers.
-[00:02:37.000 --> 00:02:38.820] We can build remarkable machines.
-[00:02:39.680 --> 00:02:42.800] I mean, difficult in a deeper, more fundamental sense.
-[00:02:43.700 --> 00:02:48.000] Difficult in the sense that the physics itself seems to resist us.
-[00:02:48.000 --> 00:02:54.660] Difficult in the sense that the universe is quietly, passive -aggressively pushing back against our ambition.
-[00:02:55.220 --> 00:02:57.860] I believe that humans will never reach Mars.
-[00:02:58.780 --> 00:03:00.080] Not in the way that matters.
-[00:03:00.860 --> 00:03:02.300] Not in the way we dream of.
-[00:03:03.080 --> 00:03:05.620] We might send a few brave souls to die there.
-[00:03:06.220 --> 00:03:07.400] We might plan to flag.
+[00:00:03.900 --> 00:00:09.800] It's one of those ideas that sounds simple at first, almost obvious.
+[00:00:10.000 --> 00:00:17.680] It sits there in the collective imagination of our species, glowing with a kind of romantic inevitability.
+[00:00:17.780 --> 00:00:31.560] It's the idea that we are going, that it is our destiny, that we are leaving this cradle and stepping out into the black to build a new home, sending human beings to Mars.
+[00:00:31.980 --> 00:00:43.020] It's spoken about now as if it's already happened in the future tense. NASA has plans. SpaceX has plans. China has plans.
+[00:00:43.640 --> 00:00:49.180] We see the CGI renders of gleaming cities under glass domes.
+[00:00:49.360 --> 00:00:54.920] We see the rockets landing in unison, kicking up the rust -coloured dust.
+[00:00:55.380 --> 00:01:04.000] We see astronauts looking out over the valves, marineries, watching a blue sunset, feeling the pride of a species that has conquered two worlds.
+[00:01:04.880 --> 00:01:11.120] Everyone seems to agree that Mars is where we're headed next. It feels like a promise.
+[00:01:11.380 --> 00:01:16.840] And on the surface, it sounds almost routine, like
+[00:01:16.840 --> 00:01:20.420] a natural continuation of what we've already done.
+[00:01:20.660 --> 00:01:23.980] We looked at the oceans and we crossed them.
+[00:01:23.980 --> 00:01:27.480] We looked at the skies and we flew in them.
+[00:01:27.700 --> 00:01:34.900] We looked at the moon and we walked on it. First the moon, then Mars.
+[00:01:35.440 --> 00:01:37.820] It's just the next step on the ladder.
+[00:01:38.320 --> 00:01:41.160] But here is what fascinates me as a physicist.
+[00:01:41.760 --> 00:01:45.220] And it's something that troubles me deeply as a human being.
+[00:01:45.220 --> 00:01:56.060] When you actually calculate what's involved, when you strip away the music and the artwork and the speeches, when you sit down with the cold, hard numbers of mass,
+[00:01:56.340 --> 00:02:02.520] energy, distance and biology, you begin to realise that this is not just another step outward.
+[00:02:02.860 --> 00:02:04.880] It is not like crossing the Atlantic.
+[00:02:05.400 --> 00:02:07.400] It is not like climbing Everest.
+[00:02:07.400 --> 00:02:10.640] It is not even like going to the moon.
+[00:02:10.940 --> 00:02:18.240] It may be the most difficult thing our species has ever seriously contemplated.
+[00:02:18.500 --> 00:02:20.820] And I want to be very careful with my language here.
+[00:02:20.980 --> 00:02:24.720] When I say difficult, I don't mean it's expensive.
+[00:02:24.720 --> 00:02:27.460] It will be expensive, of course.
+[00:02:28.020 --> 00:02:31.280] Trillions upon trillions of dollars poured into the void.
+[00:02:31.500 --> 00:02:38.860] And I don't mean it's an engineering challenge. We have brilliant engineers. We can build remarkable machines.
+[00:02:39.420 --> 00:02:42.840] I mean, difficult in a deeper, more fundamental sense.
+[00:02:43.540 --> 00:02:48.020] Difficult in the sense that the physics itself seems to resist us.
+[00:02:48.340 --> 00:02:54.660] Difficult in the sense that the universe is quietly, passive -aggressively pushing back against our ambition.
+[00:02:54.940 --> 00:02:58.000] I believe that humans will never reach Mars.
+[00:02:58.420 --> 00:03:00.160] Not in the way that matters.
+[00:03:00.600 --> 00:03:02.340] Not in the way we dream of.
+[00:03:02.640 --> 00:03:07.440] We might send a few brave souls to die there. We might plant a flag.

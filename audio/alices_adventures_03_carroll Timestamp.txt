@@ -6,8 +6,7 @@
 [00:00:33.320 --> 00:00:39.180] Indeed she had quite a long argument with the lorry, who at last turned sulky, and would only say,
 [00:00:39.360 --> 00:00:42.240] I am older than you and must know better.
 [00:00:42.880 --> 00:00:52.200] And this Alice would not allow without knowing how old it was, and, as the lorry positively refused to tell its age, there was no more to be said.
-[00:00:53.460 --> 00:00:57.620] At last the mouse, who seemed to be a person of authority among them, called out,
-[00:00:57.820 --> 00:00:59.880] Sit down, all of you, and listen to me.
+[00:00:53.460 --> 00:00:59.880] At last the mouse, who seemed to be a person of authority among them, called out, Sit down, all of you, and listen to me.
 [00:01:00.060 --> 00:01:01.740] I'll soon make you dry enough.
 [00:01:02.580 --> 00:01:06.240] They all sat down at once in a large ring, with the mouse in the middle.
 [00:01:07.000 --> 00:01:15.940] Alice kept her eyes anxiously fixed on it, for she felt sure she would catch a bad cold if she did not get dry very soon. Ahem!
@@ -57,8 +56,7 @@
 [00:04:46.940 --> 00:04:48.700] But who is to give the prizes?
 [00:04:49.060 --> 00:04:50.840] quite a chorus of voices asked.
 [00:04:51.760 --> 00:05:01.540] Why, she, of course, said the dodo, pointing to Alice with one finger, and the whole party at once crowded round her, calling out in a confused way, Prizes, prizes!
-[00:05:02.860 --> 00:05:07.360] Alice had no idea what to do, and in despair she put her hand in her pocket,
-[00:05:07.540 --> 00:05:09.260] and pulled out a box of comfits.
+[00:05:02.860 --> 00:05:09.260] Alice had no idea what to do, and in despair she put her hand in her pocket, and pulled out a box of comfits.
 [00:05:09.960 --> 00:05:14.000] Luckily the salt water had not got into it, and handed them round as prizes.
 [00:05:14.280 --> 00:05:16.800] There was exactly one apiece, all round.
 [00:05:17.840 --> 00:05:20.800] But she must have a prize herself, you know, said the mouse.
@@ -67,12 +65,10 @@
 [00:05:26.420 --> 00:05:27.800] he went on, turning to Alice.
 [00:05:29.260 --> 00:05:31.440] Only a thimble, said Alice sadly.
 [00:05:32.120 --> 00:05:33.800] Hand it over here, said the dodo.
-[00:05:34.940 --> 00:05:39.640] Then they all crowded round her once more, while the dodo solemnly presented the thimble, saying,
-[00:05:40.120 --> 00:05:43.360] We beg your acceptance of this elegant thimble.
+[00:05:34.940 --> 00:05:43.360] Then they all crowded round her once more, while the dodo solemnly presented the thimble, saying, We beg your acceptance of this elegant thimble.
 [00:05:43.840 --> 00:05:47.280] And when it had finished the short speech, they all cheered.
 [00:05:48.640 --> 00:05:54.200] Alice thought the whole thing very absurd, but they all looked so grave that she did not dare to laugh,
-[00:05:54.380 --> 00:05:59.320] and, as she could not think of anything to say, she simply bowed, and took the thimble,
-[00:05:59.320 --> 00:06:01.200] looking as solemn as she could.
+[00:05:54.380 --> 00:06:01.200] and, as she could not think of anything to say, she simply bowed, and took the thimble, looking as solemn as she could.
 [00:06:02.500 --> 00:06:04.540] The next thing was to eat the comfits.
 [00:06:04.800 --> 00:06:10.280] This caused some noise and confusion, as the large birds complained that they could not taste theirs,
 [00:06:10.460 --> 00:06:13.300] and the small ones choked and had to be patted on the back.
@@ -101,8 +97,8 @@
 [00:08:05.360 --> 00:08:07.600] The mouse only growled in reply.
 [00:08:08.380 --> 00:08:14.860] Please come back and finish your story, Alice called after it, and the others all joined in chorus. Yes, please do.
 [00:08:15.280 --> 00:08:19.080] But the mouse only shook its head impatiently, and walked a little quicker.
-[00:08:20.780 --> 00:08:24.780] What a pity it wouldn't stay, sighed the lorry, as soon as it was quite out of sight,
-[00:08:24.920 --> 00:08:32.500] and an old crab took the opportunity of saying to her daughter, Ah, my dear, let this be a lesson to you never to lose your temper.
+[00:08:20.780 --> 00:08:28.020] What a pity it wouldn't stay, sighed the lorry, as soon as it was quite out of sight, and an old crab took the opportunity of saying to her daughter,
+[00:08:28.560 --> 00:08:32.500] Ah, my dear, let this be a lesson to you never to lose your temper.
 [00:08:33.320 --> 00:08:36.380] Hold your tongue, Ma, said the young crab, a little snappishly.
 [00:08:36.740 --> 00:08:38.940] You're enough to try the patience of an oyster.
 [00:08:40.720 --> 00:08:42.480] I wish I had our diner here.
@@ -123,5 +119,5 @@
 [00:09:44.120 --> 00:09:48.320] Nobody seems to like her down here, and I'm sure she's the best cat in the world.
 [00:09:48.500 --> 00:09:52.220] Oh, my dear Dinah, I wonder if I shall ever see you any more.
 [00:09:53.180 --> 00:09:58.420] And here poor Alice began to cry again, for she felt very lonely and low -spirited.
-[00:09:59.120 --> 00:10:03.720] In a little while, however, she again heard a little pattering of footsteps in the distance,
-[00:10:03.720 --> 00:10:10.720] and she looked up eagerly, half hoping that the mouse had changed his mind, and was coming back to finish his story.
+[00:09:59.120 --> 00:10:08.020] In a little while, however, she again heard a little pattering of footsteps in the distance, and she looked up eagerly, half hoping that the mouse had changed his mind,
+[00:10:08.200 --> 00:10:10.720] and was coming back to finish his story.

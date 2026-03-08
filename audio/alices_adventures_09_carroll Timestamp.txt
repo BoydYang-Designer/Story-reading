@@ -54,11 +54,10 @@
 [00:05:57.530 --> 00:06:00.450] but slowly followed her back to the croquet ground.
 [00:06:01.850 --> 00:06:06.810] The other guests had taken advantage of the Queen's absence, and were resting in the shade.
 [00:06:07.370 --> 00:06:15.690] However, the moment they saw her, they hurried back to the game, the Queen merely remarking that a moment's delay would cost them their lives.
-[00:06:17.310 --> 00:06:21.310] All the time they were playing, the Queen never left off quarrelling with the other players,
-[00:06:21.490 --> 00:06:24.810] and shouting, "'Off with his head!' or, "'Off with her head!'
-[00:06:25.850 --> 00:06:32.630] Those whom she sentenced were taken into custody by the soldiers, who of course had to leave off being arches to do this,
-[00:06:32.810 --> 00:06:36.610] so that by the end of half an hour or so there were no arches left,
-[00:06:36.750 --> 00:06:43.330] and all the players, except the King, the Queen, and Alice, were in custody and under sentence of execution.
+[00:06:17.310 --> 00:06:26.370] All the time they were playing, the Queen never left off quarrelling with the other players, and shouting, "'Off with his head!' or, "'Off with her head!' Those
+[00:06:26.370 --> 00:06:32.630] whom she sentenced were taken into custody by the soldiers, who of course had to leave off being arches to do this,
+[00:06:32.810 --> 00:06:39.410] so that by the end of half an hour or so there were no arches left, and all the players, except the King, the Queen,
+[00:06:39.610 --> 00:06:43.330] and Alice, were in custody and under sentence of execution.
 [00:06:44.970 --> 00:06:53.170] Then the Queen left off, quite out of breath, and said to Alice, "'Alice, have you seen the mock -turtle yet?' "'No,'
 [00:06:53.170 --> 00:06:56.610] said Alice, "'I don't even know what a mock -turtle is.'
 [00:06:57.590 --> 00:07:00.890] "'It's the thing mock -turtle soup is made from,' said the Queen.
@@ -97,8 +96,8 @@
 [00:10:26.450 --> 00:10:28.270] We used to call him Tortoise.'
 [00:10:29.050 --> 00:10:32.590] "'Why did you call him Tortoise if he wasn't one?' Alice asked.
 [00:10:33.370 --> 00:10:39.310] "'We call him Tortoise because he taught us,' said the mock -turtle angrily. "'Really, you are very dull.'
-[00:10:40.510 --> 00:10:45.350] "'You ought to be ashamed of yourself for asking such a simple question,' added the griffin,
-[00:10:45.510 --> 00:10:51.650] and then they both sat silent and looked at poor Alice, who felt ready to sink into the earth.
+[00:10:40.510 --> 00:10:49.150] "'You ought to be ashamed of yourself for asking such a simple question,' added the griffin, and then they both sat silent and looked at poor Alice,
+[00:10:49.390 --> 00:10:51.650] who felt ready to sink into the earth.
 [00:10:52.310 --> 00:11:00.350] At last the griffin said to the mock -turtle, "'Drive on, old fellow, don't be all day about it.' And he went on in these words,
 [00:11:02.320 --> 00:11:09.760] "'Yes, we went to school in the sea, though you mayn't believe it.' "'I never said I didn't,' interrupted Alice.
 [00:11:09.760 --> 00:11:12.420] "'You did,' said the mock -turtle.

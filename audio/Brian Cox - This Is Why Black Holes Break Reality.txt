@@ -1,37 +1,46 @@
-see myself, if someone asks me what I do, I say, I'm a physicist. But actually, of course, most of my time now is spent on the public engagement side, so that, and I kind of fell into that accidentally. But I still, maybe it's a thing, maybe there's some deep psychological thing going on, but I never say TV, whatever it is, I just say, physicist.
-
-Well, that's what I want to talk to you all about today. So imagine that you and I are on a mission to fall into a black hole. And we have some imaginary spaceship that can take us as far and as fast as we want.
-
-So we get up, we walk outside, we get into our spaceship. What now? What is a black hole and how do we find them?
-
-So a black hole, it's interesting that the idea or the first glimpse of them theoretically came very shortly after Einstein's theory of gravity was published in 1915, although it wasn't recognised as such at the time, this glimpse. But essentially, what does Einstein's theory do? It's important for what follows.
-
-It's a theory of space and time and how space, time, which is often described as the fabric of the universe, responds, warps or curves to matter and energy in the universe. So the equations, basically the theory that Einstein published all those years ago, will say, give me some distribution of matter, some something like a ball of matter. And the equations will tell you how the fabric of the universe is distorted.
-
-And by the way, the force of gravity in that theory then is the response of everything else in the universe to that distortion. So Einstein would say, what are we feeling now? Newton would say it's a force between us and the earth.
-
-Right. But Einstein would say there isn't a force. What we're responding to the distortion in the fabric of the universe created by the earth.
-
-So that's John Wheeler, actually, the great physicist, put it beautifully. He said, matter tells space, time, how to curve. And space, time tells matter, how to move.
-
-And that's it. Right. So that's Einstein's theory.
-
-So in 1916, shortly after it was published, a man called Carl Schwarzschild remarkably managed to solve the equations for a perfectly spherical, non-spinning ball of matter. It's the simplest thing you could do, which tells you how space and time are distorted by it. And that's a model for a star.
-
+see myself. If someone asks me what I do, I say, I'm a physicist.
+But actually, of course, most of my time now is spent on the public engagement side.
+And I kind of fell into that accidentally.
+But I still, maybe it's a thing, maybe there's some deep psychological thing going on.
+But I never say TV presenter or whatever it is. I just say physicist.
+Well, that's what I want to talk to you all about today.
+So imagine that you and I are on a mission to fall into a black hole.
+And we have some imaginary spaceship that can take us as far and as fast as we want.
+So we get up, we walk outside, we get into our spaceship. What now?
+What is a black hole and how do we find them?
+So a black hole, it's interesting that the idea or the first glimpse of them theoretically came very shortly after Einstein's theory of gravity was published in 1915.
+although it wasn't recognised as such at the time, this glimpse.
+But essentially, what does Einstein's theory do? It's important for what follows.
+It's a theory of space and time and how space -time, which is often described as the fabric of the universe, responds, warps
+or curves, to matter and energy in the universe.
+So the equations, basically the theory that Einstein published all those years ago, will say, give me some distribution of matter, something like a ball of matter.
+And the equations will tell you how the fabric of the universe is distorted.
+And by the way, the force of gravity in that theory then is the response of everything else in the universe to that distortion.
+So Einstein would say, what are we feeling now?
+Newton would say it's a force between us and the earth, right?
+But Einstein would say, there isn't a force.
+What we're responding to the distortion in the fabric of the universe, created by the earth.
+So that's, John Wheeler actually, the great physicist, put it beautifully.
+He said, matter tells space -time how to curve, and space -time tells matter how to move. And that's it, right? So that's Einstein's theory.
+So in 1916, shortly after it was published, a man called Carl Schwarzschild remarkably managed to solve the equations for a perfectly spherical, non -spinning ball of matter.
+It's the simplest thing you could do, which tells you how space and time are distorted by it.
+And that's a model for a star.
 It's the simplest thing you could do. So he solved the equations. It's a remarkable thing.
-
-In those equations, there is a description of a black hole, although it wasn't realized at the time. So it's a remarkable piece, simple piece of mathematics, actually. So essentially, what's the idea behind a black hole?
-
-One way to think about it is that you could remove. Could you remove the star from from this fabric, but leave the distortion behind? So if you do that, you get the description of a black hole.
-
-But you might say, what would you mean? That how can that be formed in nature? So you think about what a star is.
-
-Then a star is a balancing act. So it's a it's a mainly hydrogen helium collapsing under its own gravity. That's how our sun formed four and a half billion years ago.
-
-So it's collapsing. So what stops it collapsing? Well, as it collapses, the core heats up and that initiates nuclear fusion reactions in the core.
-
-In the case of our sun, it's hydrogen being fused into helium. That releases energy, which creates a pressure, which holds the thing up. So it's balancing, but it needs the fuel.
-
-And it's not infinitely big, of course. So at some point it runs out of nuclear fuel. And ultimately, no more fusion reactions can occur in any star.
-
+In those equations, there is a description of a black hole, although it wasn't realised at the time.
+It's a remarkable piece, simple piece of mathematics, actually.
+So essentially, what's the idea behind a black hole?
+One way to think about it is that you could remove, could you remove the star from this fabric, but leave the distortion behind?
+So if you do that, you get the description of a black hole.
+But you might say, what do you mean?
+How can that be formed in nature?
+So you think about what a star is.
+Then a star is a balancing act.
+So it's mainly hydrogen and helium collapsing under its own gravity.
+That's how our sun formed four and a half billion years ago. So it's collapsing. So what stops it collapsing?
+Well, as it collapses, the core heats up and that initiates nuclear fusion reactions in the core.
+In the case of our sun, it's hydrogen being fused into helium that releases energy, which creates a pressure, which holds the thing up.
+So it's balancing, but it needs the fuel.
+And it's not infinitely big, of course.
+So at some point it runs out of nuclear fuel.
+And ultimately, no more fusion reactions can occur in any star.
 And so the star will resume its collapse.

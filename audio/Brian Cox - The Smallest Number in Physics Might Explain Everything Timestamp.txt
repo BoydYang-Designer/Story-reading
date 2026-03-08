@@ -1,51 +1,45 @@
-[00:00:00.000 --> 00:00:06.240] By the way, he didn't believe it when he saw it because it wasn't in the air this idea.
-[00:00:06.400 --> 00:00:07.760] He was looking at light from Supernova.
-[00:00:07.960 --> 00:00:08.380] Right, right.
-[00:00:08.480 --> 00:00:08.840] This is Supernova.
-[00:00:08.880 --> 00:00:11.920] I'm on a paper with Brian Schmidt.
-[00:00:12.220 --> 00:00:12.340] Yeah.
-[00:00:12.480 --> 00:00:14.140] I'm like a very minor author.
-[00:00:15.180 --> 00:00:17.360] You have to scroll down and then my name is...
-[00:00:17.360 --> 00:00:18.420] In the Supernova date, yeah.
-[00:00:18.760 --> 00:00:22.220] But it was analysis of high redshift Supernova.
-[00:00:22.460 --> 00:00:29.660] And I totally enjoyed that work, but he obviously went on and made an entire sort of branch of his career on it.
-[00:00:29.660 --> 00:00:39.880] So there's this remarkable idea that comes from that, which is in Einstein's theory, this idea that you can have a kind of energy in the universe,
-[00:00:40.040 --> 00:00:47.600] let's say, or a thing, whatever it is, because we don't know what it is, but something that makes the universe, that the rate that space stretches, increase.
-[00:00:49.180 --> 00:00:51.000] So that's there and it's observed.
-[00:00:51.480 --> 00:01:00.140] It's one of the great mysteries because I think it's the smallest number in all of physics by what is it?
-[00:01:00.260 --> 00:01:06.780] It's something like a 10 to the power minus 122 or something in the appropriate units, right?
-[00:01:07.280 --> 00:01:09.240] Which is absolutely ridiculously...
-[00:01:09.240 --> 00:01:17.200] So it's a tiny, tiny, tiny thing that's causing this rate of expansion, but it's not zero.
-[00:01:17.880 --> 00:01:19.520] And so the question becomes, why is it tiny?
-[00:01:20.240 --> 00:01:21.440] Why is it tiny and not zero?
-[00:01:21.600 --> 00:01:22.040] Yeah, yeah.
-[00:01:22.240 --> 00:01:25.260] And so because if it were even slightly bigger, we wouldn't be here.
-[00:01:25.420 --> 00:01:26.840] So the universe would have been blown apart.
-[00:01:26.840 --> 00:01:28.460] So it seems very unusual.
-[00:01:28.860 --> 00:01:41.800] But I saw the other week, the other day, actually, that there's some research that's linking that in the framework of a string theory or M theory to dark matter.
-[00:01:43.800 --> 00:01:55.960] So there's a kind of an idea that if you fix that, you get a prediction out that there should be dark matter, but it turns out it's to do with extra dimensions and gravitons and extra dimensions and things.
-[00:01:55.960 --> 00:01:58.200] So it's quite interesting.
-[00:01:58.680 --> 00:02:04.900] So I think there are some very interesting areas of string theory where progress is being made quite remarkable.
-[00:02:04.960 --> 00:02:08.780] Do string theorists need a fuller or better inventory of particles?
-[00:02:09.260 --> 00:02:11.640] So for example, are we still looking for a graviton?
-[00:02:12.260 --> 00:02:13.760] Are we still looking for...
-[00:02:13.760 --> 00:02:21.920] Every, you shake a stick and there's a physicist proposing a hypothetical particle to explain dark matter, to explain whatever.
-[00:02:21.940 --> 00:02:25.080] Wouldn't it be cool if the dark matter were related to gravitons?
-[00:02:25.080 --> 00:02:28.200] This is not my field.
-[00:02:28.280 --> 00:02:33.100] I only heard of it the other day, but it sounded interesting, but it just shows you that we...
-[00:02:33.100 --> 00:02:40.480] So to go back to LHC, we have the Higgs particle, as you said.
-[00:02:41.360 --> 00:02:47.160] We had expected, I would say most particle physicists, expected there would be other particles discovered.
-[00:02:47.760 --> 00:02:48.740] There's a particular theory...
-[00:02:48.740 --> 00:02:49.280] You did that same experiment.
-[00:02:49.580 --> 00:02:50.700] Yeah, at LHC.
-[00:02:50.760 --> 00:02:54.780] So there's a particular theory which motivated by string theory a long time ago.
-[00:02:55.080 --> 00:02:59.280] Our super symmetry, which is a property of the universe.
-[00:02:59.880 --> 00:03:00.400] We've...
-[00:03:00.400 --> 00:03:01.560] It's been around for many decades.
-[00:03:01.560 --> 00:03:03.760] Yeah, and it came initially from...
-[00:03:04.580 --> 00:03:07.140] Either from string theory or from some other...
-[00:03:07.140 --> 00:03:08.140] And got incorporated in.
-[00:03:08.220 --> 00:03:18.980] I can't remember historically which way it came, but it essentially predicts that there are double the number of particles that we see, fundamental particles of this energy.
-[00:03:19.900 --> 00:03:20.880] So we...
-[00:03:20.880 --> 00:03:25.040] And they would have been great candidates for dark matter, by the way, which is an astrophysical discovery.
-[00:03:26.020 --> 00:03:35.340] So we should say, I suppose, the one sentence description of dark matter is that we see the universe there's far much more matter in the universe than we can see.
+[00:00:00.000 --> 00:00:06.240] By the way, he didn't believe it when he saw it, because it wasn't in the air, this idea.
+[00:00:06.420 --> 00:00:08.400] He was looking at light from supernova. Right, right.
+[00:00:08.840 --> 00:00:12.340] I'm on a paper with Brian Schmidt. Yeah.
+[00:00:12.480 --> 00:00:14.180] I'm like a very minor author.
+[00:00:14.780 --> 00:00:18.400] You have to scroll down, and then my name is. In the supernova date, yeah.
+[00:00:18.640 --> 00:00:22.580] But it was analysis of high redshift supernova. Yeah.
+[00:00:22.700 --> 00:00:29.680] And I totally enjoyed that work, but he obviously went on and made an entire sort of branch of his career on it.
+[00:00:29.680 --> 00:00:35.660] So there's this remarkable idea which comes from that, which is, in Einstein's theory,
+[00:00:35.880 --> 00:00:43.060] this idea that you can have a kind of energy in the universe, let's say, or a thing, whatever it is, because we don't know what it is,
+[00:00:43.180 --> 00:00:47.660] but something that makes the universe, the rate that space stretches, increase.
+[00:00:49.180 --> 00:00:51.060] So that's there, and it's observed.
+[00:00:51.240 --> 00:01:00.120] It's one of the great mysteries, because I think it's the smallest number in all of physics. It's by, what is it?
+[00:01:00.200 --> 00:01:08.720] It's something like a 10 to the power minus 122, or something in appropriate units, right? Which is absolutely ridiculous.
+[00:01:08.800 --> 00:01:17.180] So it's a tiny, tiny, tiny, tiny thing that's causing this rate of expansion. But it's not zero.
+[00:01:17.820 --> 00:01:19.560] And so the question becomes, why is it tiny?
+[00:01:20.000 --> 00:01:21.440] Why is it tiny and not zero?
+[00:01:21.440 --> 00:01:25.240] Yeah, yeah, and so, because if it were even slightly bigger, we wouldn't be here.
+[00:01:25.340 --> 00:01:28.480] So the universe would have been blown apart. So it seems very unusual.
+[00:01:28.640 --> 00:01:37.400] But I saw the other week, the other day, actually, that there's some research that's linking that in the framework of a string theory,
+[00:01:38.080 --> 00:01:41.880] or M theory, to dark matter.
+[00:01:41.880 --> 00:01:51.460] So there's a kind of an idea that if you fix that, you get a prediction out that there should be dark matter.
+[00:01:51.620 --> 00:01:55.980] But it turns out it's to do with extra dimensions and gravitons and extra dimensions and things.
+[00:01:56.180 --> 00:01:58.340] So it's quite, but it's quite interesting.
+[00:01:58.620 --> 00:02:04.900] So I think there are some very interesting areas of string theory, where progress is being made quite remarkably.
+[00:02:04.900 --> 00:02:08.800] Do string theorists need a fuller or better inventory of particles?
+[00:02:09.020 --> 00:02:11.720] So, for example, are we still looking for a graviton?
+[00:02:11.900 --> 00:02:22.120] Are we still looking for, you know, every, you shake a stick, and there's a physicist proposing a hypothetical particle to explain dark matter, to explain whatever.
+[00:02:22.120 --> 00:02:28.200] Yeah, wouldn't it be cool if the dark matter were related to gravitons, which is, this is not my field.
+[00:02:28.240 --> 00:02:31.000] I only heard of it the other day. But it sounded interesting.
+[00:02:31.180 --> 00:02:36.660] But it just shows you that we're, so to go back to LHC,
+[00:02:37.680 --> 00:02:40.520] we have the Higgs particle, as you said.
+[00:02:41.320 --> 00:02:50.680] We had expected, I would say, most particle physicists expected there would be other particles discovered. There's a particular theory. In that same experiment. Yeah, LHC.
+[00:02:50.780 --> 00:02:56.120] So there's a particular theory, which motivated by string theory a long time ago, called supersymmetry,
+[00:02:56.900 --> 00:02:59.360] which is a property of the universe.
+[00:03:00.000 --> 00:03:01.660] It's been around for many decades.
+[00:03:01.660 --> 00:03:03.340] Yeah, and it came initially from,
+[00:03:04.580 --> 00:03:08.140] either from string theory or from some other, and got incorporated in.
+[00:03:08.160 --> 00:03:11.120] I can't remember historically which way it came. But it's,
+[00:03:11.760 --> 00:03:19.020] but it essentially predicts that there are double the number of particles that we see, fundamental particles of this energy.
+[00:03:19.540 --> 00:03:25.080] So we, and they would have been great candidates for dark matter, by the way, which is an astrophysical discovery.
+[00:03:26.020 --> 00:03:31.540] So we should say, I suppose the one, the one sentence description of dark matter is that we see the,
+[00:03:31.540 --> 00:03:35.360] the universe, there's far much more matter in the universe than we can see.
+[00:03:35.360 --> 00:03:35.480] So we're going to see the two things that we see.
+[00:03:35.480 --> 00:03:35.500] So we're going to see the two things that we see.
+[00:03:35.500 --> 00:03:35.580] So we're going to see the two things that we see.

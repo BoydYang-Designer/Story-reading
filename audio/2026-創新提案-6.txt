@@ -1,5 +1,6 @@
-I realized that the same concept could be applied to conventional frame strollers. By rotating the handlebar, the seat rotates simultaneously, and at a defined angle, it triggers a release mechanism, allowing the seat to fold automatically by gravity. This is how a previously designed stroller functions.
-
-As you can see, I simply applied this feature to demonstrate how it can create a more convenient folding process for the user. To fold the stroller, the user presses the one hand button to unlock the rotating handlebar. As the handlebar rotates, the seat moves together with it.
-
-When the handlebar reaches a specific angle, the seat folds automatically. The user then continues the same motion until the stroller reaches its fully folded state, all in one smooth, continuous action.
+i realized that the same concept could be applied to conventional frame strollers by rotating the handlebar the seat rotates simultaneously and at a defined angle it triggers a release mechanism allowing the seat to fold automatically by gravity this
+is how a previously designed stroller functions as you can see i simply applied this feature to demonstrate how it can create a more convenient folding process for the user to
+fold the stroller the user presses the one hand button to unlock the rotating handlebar as
+the handlebar rotates the seat moves together with it
+when the handlebar reaches a specific angle the seat folds automatically
+the user then continues the same motion until the stroller reaches its fully folded state all in one smooth continuous action
