@@ -1498,16 +1498,12 @@ function isWordMatchVariation(word1, word2) {
     return false;
 }
 
-// ── 發音系統（三層降級）───────────────────────────────────────────────────
+// ── 發音系統（兩層降級）───────────────────────────────────────────────────
 // 層級一：GitHub audio_files MP3（自有字典，最快最穩）
-// 層級二：FreeDictionary API MP3（真人發音，免費，覆蓋更廣，有快取）
-// 層級三：Web Speech API（瀏覽器合成語音，最後保底）
+// 層級二：Web Speech API（瀏覽器合成語音，最後保底）
 // ─────────────────────────────────────────────────────────────────────────────
 
-// FreeDictionary API 快取（window 全域，供 story.js 與 quiz.js 共用，同一字只查一次）
-if (typeof window._freeDictCache === 'undefined') window._freeDictCache = {};
-
-// 層級三：Web Speech TTS
+// 層級二：Web Speech TTS
 function _speakTTS(word) {
     if (!('speechSynthesis' in window)) {
         showNotification(`Audio for "${word}" was not found and TTS is not supported.`, 'error');
@@ -1520,74 +1516,7 @@ function _speakTTS(word) {
     window.speechSynthesis.speak(utterance);
 }
 
-// 層級二：FreeDictionary API → 取得真人 MP3 URL（優先美式）
-// 回傳 Promise<string|null>，有快取直接回傳，避免重複 fetch
-async function _getFreeDictAudioUrl(word) {
-    const key = word.toLowerCase().trim();
-    if (window._freeDictCache[key] !== undefined) return window._freeDictCache[key];
-
-    try {
-        const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(key)}`);
-        if (!res.ok) { window._freeDictCache[key] = null; return null; }
-        const json = await res.json();
-        if (!Array.isArray(json) || json.length === 0) { window._freeDictCache[key] = null; return null; }
-
-        const allPhonetics = json.flatMap(entry => entry.phonetics || []);
-        const audioUrls = allPhonetics.map(p => p.audio).filter(Boolean);
-        // 優先美式（URL 含 '-us'），沒有才用第一個
-        const chosen = audioUrls.find(u => u.includes('-us')) || audioUrls[0] || null;
-        window._freeDictCache[key] = chosen;
-        return chosen;
-    } catch (e) {
-        window._freeDictCache[key] = null;
-        return null;
-    }
-}
-
-// ── 預查筆記單字（背景靜默執行）────────────────────────────────────────────
-// 進入文章時，把已存筆記的單字（不在 vocabularyData 裡的）預先查好 FreeDictionary URL
-// 存入 window._freeDictCache，讓使用者點字時直接命中快取，不需等待
-async function _prefetchNoteWords(categoryName, titleName) {
-    if (!categoryName || !titleName) return;
-
-    const storyData = savedWords[categoryName]?.[titleName];
-    if (!storyData) return;
-
-    // 收集 words + phrases（sentences 不需要 FreeDictionary）
-    const candidates = new Set();
-    storyData.words?.forEach(w => candidates.add(w.toLowerCase().trim()));
-    storyData.phrases?.forEach(p => {
-        // phrase 可能含連字號（儲存格式），還原為空格後拆成單字個別查
-        p.toLowerCase().trim().replace(/-/g, ' ').split(/\s+/).filter(Boolean)
-         .forEach(w => candidates.add(w));
-    });
-
-    // 過濾掉 vocabularyData 已有的字（這些字有 GitHub MP3，不需要查 FreeDictionary）
-    const needsFetch = Array.from(candidates).filter(word => {
-        return !vocabularyData.some(v =>
-            (v['Words'] || v['word'] || '').toLowerCase().trim() === word
-        );
-    // 再過濾掉快取裡已經有結果的字（不管是 URL 還是 null）
-    }).filter(word => window._freeDictCache[word] === undefined);
-
-    if (needsFetch.length === 0) return;
-    console.log(`[Prefetch] ${titleName}: ${needsFetch.length} words to prefetch`);
-
-    // 並發限制 3，避免 FreeDictionary rate limit
-    const CONCURRENCY = 3;
-    let i = 0;
-    async function runNext() {
-        if (i >= needsFetch.length) return;
-        const word = needsFetch[i++];
-        await _getFreeDictAudioUrl(word); // 結果自動存入 window._freeDictCache
-        await runNext();
-    }
-    // 啟動 CONCURRENCY 條並行通道
-    await Promise.all(Array.from({ length: CONCURRENCY }, runNext));
-    console.log(`[Prefetch] ${titleName}: done`);
-}
-
-// 播放單字發音（主要 API）— 三層降級
+// 播放單字發音（主要 API）— 兩層降級
 async function playWordAudio(word) {
     const cleanWord = word.trim().toLowerCase().replace(/^[.,?!:;'"]+|[.,?!:;'"]+$/g, '');
     if (!cleanWord) return;
@@ -1601,30 +1530,14 @@ async function playWordAudio(word) {
     if (hasGithubAudio) {
         const src = `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(word.trim())}.mp3`;
         const au = new Audio(src);
-        au.play().catch(async () => {
-            console.warn(`[playWordAudio] GitHub MP3 failed for "${word}", trying FreeDictionary...`);
-            const fdUrl = await _getFreeDictAudioUrl(cleanWord);
-            if (fdUrl) {
-                new Audio(fdUrl).play().catch(() => _speakTTS(word));
-            } else {
-                _speakTTS(word);
-            }
-        });
-        return;
-    }
-
-    // ── 層級二：FreeDictionary API MP3 ────────────────────────────────────
-    const fdUrl = await _getFreeDictAudioUrl(cleanWord);
-    if (fdUrl) {
-        const au = new Audio(fdUrl);
         au.play().catch(() => {
-            console.warn(`[playWordAudio] FreeDictionary MP3 failed for "${word}", using TTS.`);
+            console.warn(`[playWordAudio] GitHub MP3 failed for "${word}", using TTS.`);
             _speakTTS(word);
         });
         return;
     }
 
-    // ── 層級三：Web Speech API ─────────────────────────────────────────────
+    // ── 層級二：Web Speech API ─────────────────────────────────────────────
     console.log(`[playWordAudio] No MP3 found for "${word}", using TTS.`);
     _speakTTS(word);
 }
@@ -2516,9 +2429,6 @@ async function showPlayback(index, startTime = 0, maintainTimestampMode = false)
   } else {
       textContainer.appendChild(parafyAndMakeClickable('\n\n' + story['內文'], currentCategoryName, currentStoryTitle));
   }
-
-  // 背景預查筆記單字的 FreeDictionary URL（靜默執行，不 block UI）
-  _prefetchNoteWords(currentCategoryName, currentStoryTitle);
 
   // 設定音訊來源
   setAudioSourceWithFallback(currentStoryTitle);

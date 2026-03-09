@@ -5,38 +5,15 @@
 // ============================================================
 
 const QUIZ_SCORES_KEY = 'readingChallengeQuizScores';
-// TTS_PREF_KEY 已移除：發音改為三層自動降級（GitHub MP3 → FreeDictionary → Web Speech）
+// TTS_PREF_KEY 已移除：發音改為兩層自動降級（GitHub MP3 → Web Speech）
 
-// ── 共用發音系統（三層降級）─────────────────────────────────────────────────
+// ── 共用發音系統（兩層降級）─────────────────────────────────────────────────
 // 層級一：GitHub audio_files MP3（自有字典，最快最穩）
-// 層級二：FreeDictionary API MP3（真人發音，免費，覆蓋更廣，有快取）
-// 層級三：Web Speech API（瀏覽器合成語音，最後保底）
+// 層級二：Web Speech API（瀏覽器合成語音，最後保底）
 // ─────────────────────────────────────────────────────────────────────────────
 
-// FreeDictionary 快取（與 story.js 共用命名空間，若先載入則沿用）
-if (typeof window._freeDictCache === 'undefined') window._freeDictCache = {};
-
-async function _getFreeDictAudioUrl(word) {
-    const key = word.toLowerCase().trim();
-    if (window._freeDictCache[key] !== undefined) return window._freeDictCache[key];
-    try {
-        const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(key)}`);
-        if (!res.ok) { window._freeDictCache[key] = null; return null; }
-        const json = await res.json();
-        if (!Array.isArray(json) || json.length === 0) { window._freeDictCache[key] = null; return null; }
-        const allPhonetics = json.flatMap(e => e.phonetics || []);
-        const audioUrls = allPhonetics.map(p => p.audio).filter(Boolean);
-        const chosen = audioUrls.find(u => u.includes('-us')) || audioUrls[0] || null;
-        window._freeDictCache[key] = chosen;
-        return chosen;
-    } catch (e) {
-        window._freeDictCache[key] = null;
-        return null;
-    }
-}
-
 /**
- * Quiz 共用單字發音函式（三層降級）
+ * Quiz 共用單字發音函式（兩層降級）
  * @param {string} word               要播放的單字
  * @param {HTMLElement|null} btn      播放按鈕（可選），播放中加 is-playing-voice，結束後移除
  * @param {Function|null} onEnd       播放結束 callback（可選）
@@ -58,23 +35,13 @@ async function _quizPlayWord(word, btn = null, onEnd = null) {
         window.speechSynthesis.speak(u);
     }
 
-    async function _tryFreeDict() {
-        const url = await _getFreeDictAudioUrl(clean);
-        if (!url) { _tts(); return; }
-        const au = new Audio(url);
-        if (btn) btn.classList.add('is-playing-voice');
-        au.play().catch(_tts);
-        au.addEventListener('ended', () => { if (btn) btn.classList.remove('is-playing-voice'); if (onEnd) onEnd(); }, { once: true });
-        au.addEventListener('error', _tts, { once: true });
-    }
-
     // 層級一：GitHub MP3（大寫首字 / 小寫 / 原始 三候選）
     const capitalized = clean.charAt(0).toUpperCase() + clean.slice(1);
     const candidates = [...new Set([capitalized, clean, word.trim()])];
     let tried = 0;
 
     function _tryGithub() {
-        if (tried >= candidates.length) { _tryFreeDict(); return; }
+        if (tried >= candidates.length) { _tts(); return; }
         const src = BASE + encodeURIComponent(candidates[tried++]) + '.mp3';
         const au = new Audio(src);
         let settled = false;
@@ -684,12 +651,6 @@ function openQuiz(categoryName, titleName, source) {
     quizResult.classList.add('is-hidden');
 
     showView(quizView);
-
-    // 背景預查筆記單字的 FreeDictionary URL（靜默執行，不 block UI）
-    // story.js 的 _prefetchNoteWords 已掛在 window，直接呼叫
-    if (typeof _prefetchNoteWords === 'function' && categoryName && titleName) {
-        _prefetchNoteWords(categoryName, titleName);
-    }
 }
 
 // ── Event Listeners: Menu ─────────────────────────────────────
