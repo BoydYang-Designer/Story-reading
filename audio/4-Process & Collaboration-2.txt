@@ -1,9 +1,0 @@
-Have you ever had to compromise a creative idea to meet safety regulations or mechanical limitations?
-Yes, I've definitely had to compromise creative ideas for safety.
-For example, in one stroller project, I originally proposed a very slim, minimalistic frame design to make the stroller look lighter and more elegant.
-However, during early testing, the engineers raised concerns that the slim tubing would not pass the required durability and rollover safety standards.
-Instead of abandoning the idea, I collaborated closely with the engineers to adjust the design.
-We reinforced the stress points by using slightly thicker tubing, and the team also suggested either increasing the size of the main joint or adding support tubes to improve structural durability.
-Another solution we explored was changing the main joint material from plastic to aluminum casting.
-This allowed us to maintain the original joint size and preserve the minimal, stylish look without adding extra tubes.
-This experience reminded me that safety always has to come first, and creativity comes from solving constraints, not ignoring them.
