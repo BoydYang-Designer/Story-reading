@@ -41,13 +41,20 @@ async function _quizPlayWord(word, btn = null, onEnd = null) {
     let tried = 0;
 
     function _tryGithub() {
-        if (tried >= candidates.length) { _tts(); return; }
+        if (tried >= candidates.length) {
+            if (typeof showAudioSourceHint === 'function') showAudioSourceHint('tts');
+            _tts();
+            return;
+        }
         const src = BASE + encodeURIComponent(candidates[tried++]) + '.mp3';
         const au = new Audio(src);
         let settled = false;
         const onFail = () => { if (settled) return; settled = true; _tryGithub(); };
         au.onerror = onFail;
-        au.oncanplay = () => { settled = true; };
+        au.oncanplay = () => {
+            settled = true;
+            if (typeof showAudioSourceHint === 'function') showAudioSourceHint('mp3');
+        };
         if (btn) btn.classList.add('is-playing-voice');
         au.play().catch(onFail);
         au.addEventListener('ended', () => { if (btn) btn.classList.remove('is-playing-voice'); if (onEnd) onEnd(); }, { once: true });
@@ -2613,6 +2620,7 @@ function _playGithubMp3(clean) {
 
     function attempt() {
         if (tried >= candidates.length) {
+            if (typeof showAudioSourceHint === 'function') showAudioSourceHint('tts');
             _speakWithWebSpeech(clean);
             return;
         }
@@ -2628,7 +2636,10 @@ function _playGithubMp3(clean) {
         };
 
         au.onerror   = onFail;
-        au.oncanplay = () => { settled = true; };
+        au.oncanplay = () => {
+            settled = true;
+            if (typeof showAudioSourceHint === 'function') showAudioSourceHint('mp3');
+        };
         au.play().catch(onFail);
         // 播完後不需要特別處理，單字很短會自然結束
     }
@@ -2652,6 +2663,7 @@ function _playGithubMp3Sequence(words, index) {
     function attempt() {
         if (tried >= candidates.length) {
             // 這個字找不到 mp3，用 Web Speech 念這個字，然後繼續播下一個
+            if (typeof showAudioSourceHint === 'function') showAudioSourceHint('tts');
             const u = new SpeechSynthesisUtterance(clean);
             u.lang = 'en-US';
             u.rate = 0.9;
@@ -2674,7 +2686,10 @@ function _playGithubMp3Sequence(words, index) {
         };
 
         au.onerror   = onFail;
-        au.oncanplay = () => { settled = true; };
+        au.oncanplay = () => {
+            settled = true;
+            if (typeof showAudioSourceHint === 'function') showAudioSourceHint('mp3');
+        };
         au.onended   = () => _playGithubMp3Sequence(words, index + 1); // 播完接下一個字
         au.play().catch(onFail);
     }

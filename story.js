@@ -1516,30 +1516,90 @@ function _speakTTS(word) {
     window.speechSynthesis.speak(utterance);
 }
 
+// ── 發音來源提示（輕薄 toast）────────────────────────────────────────────────
+let _audioHintEl = null;
+let _audioHintTimeout = null;
+
+function showAudioSourceHint(type) {
+    // 建立元素（只建一次，之後重複使用）
+    if (!_audioHintEl) {
+        _audioHintEl = document.createElement('div');
+        _audioHintEl.id = 'audio-source-hint';
+        Object.assign(_audioHintEl.style, {
+            position:      'fixed',
+            top:           '56px',
+            left:          '50%',
+            transform:     'translateX(-50%)',
+            padding:       '3px 10px',
+            borderRadius:  '20px',
+            fontSize:      '0.72rem',
+            fontWeight:    '600',
+            letterSpacing: '0.04em',
+            pointerEvents: 'none',
+            zIndex:        '1100',
+            opacity:       '0',
+            transition:    'opacity 0.15s ease',
+            whiteSpace:    'nowrap',
+            boxShadow:     '0 1px 4px rgba(0,0,0,0.15)'
+        });
+        document.body.appendChild(_audioHintEl);
+    }
+
+    // 清除上一個計時器
+    if (_audioHintTimeout) {
+        clearTimeout(_audioHintTimeout);
+        _audioHintTimeout = null;
+    }
+
+    if (type === 'mp3') {
+        _audioHintEl.textContent = '🔊 MP3';
+        _audioHintEl.style.backgroundColor = '#e8f5e9';
+        _audioHintEl.style.color = '#2e7d32';
+        _audioHintEl.style.border = '1px solid #a5d6a7';
+    } else {
+        _audioHintEl.textContent = '🔊 TTS';
+        _audioHintEl.style.backgroundColor = '#fff3e0';
+        _audioHintEl.style.color = '#e65100';
+        _audioHintEl.style.border = '1px solid #ffcc80';
+    }
+
+    // 淡入
+    _audioHintEl.style.opacity = '1';
+
+    // 1.5 秒後淡出
+    _audioHintTimeout = setTimeout(() => {
+        _audioHintEl.style.opacity = '0';
+        _audioHintTimeout = null;
+    }, 1500);
+}
+
 // 播放單字發音（主要 API）— 兩層降級
+// 策略：直接嘗試播 MP3，載入失敗才降級 TTS（不依賴字典預先判斷）
 async function playWordAudio(word) {
     const cleanWord = word.trim().toLowerCase().replace(/^[.,?!:;'"]+|[.,?!:;'"]+$/g, '');
     if (!cleanWord) return;
 
-    // ── 層級一：GitHub audio_files（vocabularyData 預先判斷有無 MP3）──────
-    const hasGithubAudio = vocabularyData.some(v => {
-        const vWord = (v['Words'] || v['word'] || '').toLowerCase().trim();
-        return vWord === cleanWord;
-    });
+    // ── 層級一：直接嘗試 GitHub audio_files MP3 ──────────────────────────
+    const src = `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(cleanWord)}.mp3`;
+    const au = new Audio(src);
 
-    if (hasGithubAudio) {
-        const src = `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(word.trim())}.mp3`;
-        const au = new Audio(src);
-        au.play().catch(() => {
-            console.warn(`[playWordAudio] GitHub MP3 failed for "${word}", using TTS.`);
+    // 監聽 error 事件（404 或網路失敗）→ 降級 TTS
+    au.addEventListener('error', () => {
+        console.warn(`[playWordAudio] MP3 not found for "${cleanWord}", using TTS.`);
+        showAudioSourceHint('tts');
+        _speakTTS(word);
+    }, { once: true });
+
+    au.play()
+        .then(() => {
+            showAudioSourceHint('mp3');
+        })
+        .catch(() => {
+            // play() 被瀏覽器阻擋（非 404），也降級 TTS
+            console.warn(`[playWordAudio] play() blocked for "${cleanWord}", using TTS.`);
+            showAudioSourceHint('tts');
             _speakTTS(word);
         });
-        return;
-    }
-
-    // ── 層級二：Web Speech API ─────────────────────────────────────────────
-    console.log(`[playWordAudio] No MP3 found for "${word}", using TTS.`);
-    _speakTTS(word);
 }
 
 textContainer.addEventListener('click', (e) => {
