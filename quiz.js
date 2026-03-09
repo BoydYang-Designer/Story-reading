@@ -3085,16 +3085,6 @@ function renderReorderPool() {
             _dragStart(e, 'pool', idx, null, word);
         });
 
-        // Hover 發音（受開關控制，不在已用或已檢查時觸發）
-        // 只有滑鼠 hover 才發音（pointerType === 'mouse'），拖動中跳過
-        btn.addEventListener('pointerenter', (e) => {
-            if (!reorderWordSpeakEnabled) return;
-            if (isUsed || reorderChecked) return;
-            if (e.pointerType !== 'mouse') return;  // 排除 touch / pen 造成的假 hover
-            if (_drag.ghost) return;                 // 正在拖動中，不觸發
-            _speakReorderWord(word);
-        });
-
         wordPool.appendChild(btn);
     });
 }
@@ -3116,15 +3106,6 @@ function renderReorderAnswer() {
             if (reorderChecked) return;
             e.currentTarget.setPointerCapture(e.pointerId);
             _dragStart(e, 'answer', item.idx, pos, item.word);
-        });
-        // Hover 發音（受開關控制）
-        // 只有滑鼠 hover 才發音，拖動中跳過
-        btn.addEventListener('pointerenter', (e) => {
-            if (!reorderWordSpeakEnabled) return;
-            if (reorderChecked) return;
-            if (e.pointerType !== 'mouse') return;
-            if (_drag.ghost) return;
-            _speakReorderWord(item.word);
         });
         answerArea.appendChild(btn);
     });
@@ -3327,7 +3308,7 @@ document.addEventListener('keydown', (e) => {
     if (e.code === 'Space') {
         e.preventDefault();
         const playBtn = document.getElementById('reorder-play-btn');
-        if (playBtn && !playBtn.disabled && !playBtn.classList.contains('is-hidden')) {
+        if (playBtn && !playBtn.classList.contains('is-hidden')) {
             playBtn.click();
         }
     } else if (e.code === 'Escape') {
