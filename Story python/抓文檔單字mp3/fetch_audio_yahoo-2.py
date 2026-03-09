@@ -38,12 +38,6 @@ OXFORD_CSV   = Path(__file__).parent / "oxford_5000.csv"
 YAHOO_URL    = "https://tw.dictionary.yahoo.com/dictionary?p={word}"
 CEFR_LEVELS  = ["A1", "A2", "B1", "B2", "C1", "未知"]
 
-# MP3 直接下載樣板（啟動時可透過對話窗更新）
-MP3_TEMPLATES: list[str] = [
-    "https://s.yimg.com/bg/dict/ox/mp3/v1/{word}@_us_1.mp3",
-    "https://s.yimg.com/bg/dict/ox/mp3/v1/{word}@_en_1.mp3",
-]
-
 HEADERS = {
     "User-Agent": (
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
@@ -173,9 +167,12 @@ def get_yahoo_mp3_url(word: str) -> str | None:
         if mp3_urls:
             return mp3_urls[0]
 
-        # 方法 4：直接構造 yimg URL（備援，使用 MP3_TEMPLATES）
-        for tmpl in MP3_TEMPLATES:
-            candidate = tmpl.format(word=word.lower())
+        # 方法 4：直接構造 yimg URL（備援，網頁上找不到時才用）
+        for tmpl in [
+            "https://s.yimg.com/bg/dict/ox/mp3/v1/{w}@_us_1.mp3",
+            "https://s.yimg.com/bg/dict/ox/mp3/v1/{w}@_en_1.mp3",
+        ]:
+            candidate = tmpl.format(w=word.lower())
             try:
                 r2 = requests.head(candidate, headers=HEADERS, timeout=5, allow_redirects=True)
                 if r2.status_code == 200:
@@ -404,87 +401,6 @@ def write_log(
     return log_path
 
 
-
-# ── 啟動時：詢問是否更新 MP3 路徑 ────────────────────────────────────────────
-
-def ask_mp3_url_update() -> None:
-    """
-    啟動時彈出對話窗，讓使用者貼上新的範例 MP3 URL。
-    程式自動解析樣板並更新 MP3_TEMPLATES。
-    留空直接按確認則沿用內建樣板。
-    """
-    global MP3_TEMPLATES
-
-    root = tk.Tk()
-    root.title("更新 MP3 路徑（選填）")
-    root.resizable(False, False)
-
-    tk.Label(
-        root, text="更新 MP3 路徑（選填）",
-        font=("Arial", 12, "bold"), pady=10
-    ).pack()
-
-    tk.Label(
-        root,
-        text="若 Yahoo 音檔路徑已更換，請貼上新的範例 URL。\n留空直接按「確認」則使用內建路徑。",
-        font=("Arial", 10), fg="gray", justify="center"
-    ).pack(padx=20)
-
-    tk.Label(
-        root, text="範例：https://s.yimg.com/bg/dict/ox/mp3/v1/good@_us_1.mp3",
-        font=("Arial", 9), fg="#aaaaaa"
-    ).pack(pady=(4, 0))
-
-    entry_var = tk.StringVar()
-    entry = tk.Entry(root, textvariable=entry_var, width=60, font=("Arial", 10))
-    entry.pack(padx=20, pady=10)
-    entry.focus()
-
-    status_var = tk.StringVar(value="")
-    tk.Label(root, textvariable=status_var, font=("Arial", 10), fg="#1565c0").pack()
-
-    def on_confirm():
-        url = entry_var.get().strip()
-        if not url:
-            status_var.set("✅ 沿用內建路徑")
-            root.after(600, root.destroy)
-            return
-        # 解析 URL：找出 {word} 的位置
-        # 例：https://s.yimg.com/bg/dict/ox/mp3/v1/good@_us_1.mp3
-        #  →  https://s.yimg.com/bg/dict/ox/mp3/v1/{word}@_us_1.mp3
-        m = re.search(r'(https?://.+/)([^/@]+?)(@[^/]*\.mp3)', url)
-        if m:
-            base, _, suffix = m.group(1), m.group(2), m.group(3)
-            us_suffix = re.sub(r'@_[a-z]+_', '@_us_', suffix)
-            en_suffix = re.sub(r'@_[a-z]+_', '@_en_', suffix)
-            MP3_TEMPLATES.clear()
-            MP3_TEMPLATES.append(base + "{word}" + us_suffix)
-            MP3_TEMPLATES.append(base + "{word}" + en_suffix)
-            status_var.set(f"✅ 已更新！→ {base}{{word}}{us_suffix}")
-            print(f"  🔄 MP3 樣板已更新：")
-            for t in MP3_TEMPLATES:
-                print(f"     {t}")
-        else:
-            status_var.set("⚠️ 無法解析，沿用內建路徑")
-        root.after(1000, root.destroy)
-
-    btn_frame = tk.Frame(root, pady=10)
-    btn_frame.pack()
-
-    tk.Button(
-        btn_frame, text="確認", command=on_confirm,
-        bg="#1565c0", fg="white",
-        font=("Arial", 11, "bold"), width=10, relief="flat", cursor="hand2"
-    ).pack(side="left", padx=8)
-
-    tk.Button(
-        btn_frame, text="跳過", command=root.destroy,
-        font=("Arial", 11), width=8, relief="flat", cursor="hand2"
-    ).pack(side="left", padx=8)
-
-    root.mainloop()
-
-
 # ── 主程式 ───────────────────────────────────────────────────────────────────
 
 def main():
@@ -492,9 +408,6 @@ def main():
     print("  Yahoo 奇摩字典  英文單字 MP3 下載工具")
     print("  （支援 CEFR 等級篩選 / Oxford 5000）")
     print("=" * 55)
-
-    # 0. 詢問是否更新 MP3 路徑
-    ask_mp3_url_update()
 
     # 1. 載入 Oxford 5000
     print("\n📚 載入 Oxford 5000 等級清單...")
