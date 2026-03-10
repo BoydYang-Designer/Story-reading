@@ -35,9 +35,9 @@ async function _quizPlayWord(word, btn = null, onEnd = null) {
         window.speechSynthesis.speak(u);
     }
 
-    // 層級一：GitHub MP3（大寫首字 / 小寫 / 原始 三候選）
+    // 層級一：GitHub MP3（大寫首字 / 小寫 兩候選，找不到直接 TTS，不嘗試詞形還原）
     const capitalized = clean.charAt(0).toUpperCase() + clean.slice(1);
-    const candidates = [...new Set([capitalized, clean, word.trim()])];
+    const candidates = [...new Set([capitalized, clean])];
     let tried = 0;
 
     function _tryGithub() {
@@ -3904,10 +3904,9 @@ function _showFcplusInlineAnswer(inputs, word) {
         ].join(';');
 
         if (isHint) {
-            // hint 字母（首/尾）同正確字母，統一用綠色
-            span.style.color      = '#1a8a3c';
-            span.style.background = 'rgba(26,138,60,0.12)';
-            span.style.border     = '1px solid rgba(26,138,60,0.3)';
+            // hint 字母（首/尾）用灰色
+            span.style.color = '#888';
+            span.style.background = 'rgba(0,0,0,0.06)';
         } else {
             const inp = inputs.find(el => parseInt(el.dataset.idx) === i);
             const typed    = inp ? inp.value.toLowerCase() : '';
