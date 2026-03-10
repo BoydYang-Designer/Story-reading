@@ -1218,7 +1218,12 @@ async function startFlashcardFromArticle() {
     });
     deck = filterByWordDifficulty(deck, quizState.difficulty);
     if (deck.length === 0) {
-        showNotification(`No ${quizState.difficulty === 'mix' ? '' : quizState.difficulty + ' '}words found in this article.`, 'warning');
+        const label = _diffLabel(quizState.difficulty);
+        showNotification(
+            quizState.difficulty === 'mix'
+                ? 'No words found in this article.'
+                : `No ${label} words found in this article. Try Mix to see all words.`,
+            'warning');
         return;
     }
     deck = weightedSample(deck, quizState.questionCount || 10,
@@ -1262,7 +1267,12 @@ function startFlashcard() {
         if (!quizState.titleName && quizState.scope === 'this') {
             showNotification('Select an article first, or switch to "All Notes".', 'warning');
         } else {
-            showNotification(`No ${quizState.difficulty === 'mix' ? '' : quizState.difficulty + ' '}words or phrases found.`, 'warning');
+            const label = _diffLabel(quizState.difficulty);
+            showNotification(
+                quizState.difficulty === 'mix'
+                    ? 'No words or phrases found.'
+                    : `No ${label} words found. Try Mix to see all words.`,
+                'warning');
         }
         return;
     }
@@ -1487,36 +1497,9 @@ document.getElementById('flashcard-wrong').addEventListener('click', () => {
     showFlashcard();
 });
 
-// ── Flashcard Keyboard Shortcuts ─────────────────────────────
-// Space = 正面播單字 / 背面播句子
-// Enter = 翻牌
-document.addEventListener('keydown', (e) => {
-    const fcArea = document.getElementById('quiz-flashcard-area');
-    if (!fcArea || fcArea.classList.contains('is-hidden')) return;
-
-    if (e.code === 'Space') {
-        e.preventDefault();
-        const card = document.getElementById('flashcard');
-        const isFlipped = card && card.classList.contains('is-flipped');
-        if (isFlipped) {
-            // 背面：播句子
-            const backAudio = document.getElementById('flashcard-back-audio-btn');
-            if (backAudio && !backAudio.disabled) backAudio.click();
-        } else {
-            // 正面：播單字
-            const frontAudio = document.getElementById('flashcard-audio-btn');
-            if (frontAudio) frontAudio.click();
-        }
-        return;
-    }
-
-    if (e.code === 'Enter') {
-        e.preventDefault();
-        document.getElementById('flashcard').click();
-    }
-});
-
-
+// ══════════════════════════════════════════════════════════════
+//  PHASE 3 — DICTATION (Listen & Choose)
+// ══════════════════════════════════════════════════════════════
 
 async function startDictation() {
     const items = getAllNoteItems(quizState.scope, quizState.categoryName, quizState.titleName);
@@ -1719,19 +1702,76 @@ function getDifficultyLabel(wordCount) {
     return                     { label: 'Hard',   color: '#e05c5c', diff: 'hard' };
 }
 
-// Word/phrase difficulty by character length (strip hyphens for phrases)
-function getWordDifficulty(text) {
-    const letters = text.replace(/-/g, '').replace(/[^a-zA-Z]/g, '').length;
-    if (letters <= 5)  return 'easy';
-    if (letters <= 8)  return 'medium';
-    return 'hard';
+// Word difficulty via Oxford CEFR lookup (requires oxford_cefr.js)
+// Returns 'a1a2' | 'b1b2' | 'c1c2' | null (null = not in Oxford list)
+
+/**
+ * 簡易 stemming：產生候選原形清單，依序查 Oxford 表
+ * 例如 knows→know, running→run, believed→believe
+ */
+function _stemCandidates(word) {
+    const w = word.trim().toLowerCase();
+    const c = [w];
+    const add = (pattern, replacement) => {
+        if (pattern.test(w)) {
+            const s = w.replace(pattern, replacement);
+            if (s.length >= 2 && !c.includes(s)) c.push(s);
+        }
+    };
+    add(/ies$/, 'y');
+    add(/ied$/, 'y');
+    add(/ying$/, 'y');
+    add(/ves$/, 'f');
+    add(/ness$/, '');
+    add(/ment$/, '');
+    add(/ing$/, 'e');
+    add(/ing$/, '');
+    // double-consonant: running→runn→run
+    const noIng = w.replace(/ing$/, '');
+    if (noIng.length >= 3 && noIng[noIng.length-1] === noIng[noIng.length-2]) {
+        const dedup = noIng.slice(0, -1);
+        if (!c.includes(dedup)) c.push(dedup);
+    }
+    add(/ed$/, 'e');
+    add(/ed$/, '');
+    add(/er$/, 'e');
+    add(/er$/, '');
+    add(/est$/, 'e');
+    add(/est$/, '');
+    add(/ly$/, '');
+    add(/es$/, 'e');
+    add(/es$/, '');
+    add(/s$/, '');
+    return c;
 }
 
-// Filter word/phrase items by difficulty setting
+function getWordDifficulty(text) {
+    if (typeof OXFORD_CEFR === 'undefined') return null;
+    const candidates = _stemCandidates(text);
+    for (const cand of candidates) {
+        const level = OXFORD_CEFR[cand];
+        if (level) {
+            if (level === 'a1' || level === 'a2') return 'a1a2';
+            if (level === 'b1' || level === 'b2') return 'b1b2';
+            return 'c1c2';
+        }
+    }
+    return null;
+}
+
+// Filter word/phrase items by CEFR difficulty
+// mix → all items including unrated
+// a1a2/b1b2/c1c2 → only Oxford-matched items of that level
 function filterByWordDifficulty(items, diff) {
     if (diff === 'mix') return items;
     return items.filter(item => getWordDifficulty(item.text) === diff);
 }
+
+// 難度標籤（用於提示訊息）
+function _diffLabel(diff) {
+    return { a1a2: 'A1-A2', b1b2: 'B1-B2', c1c2: 'C1-C2' }[diff] || diff;
+}
+
 
 // Filter sentence items by difficulty setting
 function filterBySentenceDifficulty(items, diff) {
@@ -3492,7 +3532,12 @@ function startFcplus() {
     allItems = filterByWordDifficulty(allItems, quizState.difficulty);
 
     if (allItems.length === 0) {
-        showNotification('No suitable words found. Add words to your note first.', 'warning');
+        const label = _diffLabel(quizState.difficulty);
+        showNotification(
+            quizState.difficulty === 'mix'
+                ? 'No suitable words found. Add words to your note first.'
+                : `No ${label} words found in your notes. Try Mix to see all words.`,
+            'warning');
         return;
     }
 
@@ -3550,13 +3595,19 @@ async function startFcplusFromArticle() {
         return true;
     });
     deck = filterByWordDifficulty(deck, quizState.difficulty);
-    deck = weightedSample(deck, quizState.questionCount || 10,
-                          item => item.text, quizState.categoryName, title, 'articleWords');
 
     if (deck.length === 0) {
-        showNotification('No words found for selected difficulty.', 'warning');
+        const label = _diffLabel(quizState.difficulty);
+        showNotification(
+            quizState.difficulty === 'mix'
+                ? 'No words found in this article.'
+                : `No ${label} words found in this article. Try Mix to see all words.`,
+            'warning');
         return;
     }
+
+    deck = weightedSample(deck, quizState.questionCount || 10,
+                          item => item.text, quizState.categoryName, title, 'articleWords');
 
     const audioSrc = `audio/${encodeURIComponent(title.trim())}.mp3`;
     _setQuizAudioSrc(audioSrc);
@@ -4073,8 +4124,6 @@ document.addEventListener('keydown', (e) => {
     if (!fcArea || fcArea.classList.contains('is-hidden')) return;
 
     if (e.code === 'Space') {
-        // 輸入框有焦點時，讓空白鍵正常輸入，不攔截
-        if (document.activeElement && document.activeElement.classList.contains('fcplus-letter-input')) return;
         e.preventDefault();
         const backAudio   = document.getElementById('fcplus-back-audio-btn');
         const resultAudio = document.getElementById('fcplus-audio-btn-result');
