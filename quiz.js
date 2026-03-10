@@ -122,13 +122,11 @@ let _quizIsEditingAudio = false;
 
 // ── 目前卡片的播放函式（供 Space 鍵直接呼叫，繞過按鈕 focus）──
 // Flashcard
-let _fcPlayWord = null;         // 正面：播單字
-let _fcPlayBack = null;         // 背面：播句子
-let _fcPlayBackPending = false; // 背面 timestamp 查詢中使用者已按 Space，查完後自動播
+let _fcPlayWord = null;   // 正面：播單字
+let _fcPlayBack = null;   // 背面：播句子
 // Flashcard+
-let _fcpPlayWord = null;        // 正面：播單字
-let _fcpPlayBack = null;        // 背面：播句子
-let _fcpPlayBackPending = false;// 同上，Flashcard+ 用
+let _fcpPlayWord = null;  // 正面：播單字
+let _fcpPlayBack = null;  // 背面：播句子
 
 /** 每道新題目出現時重置計數 */
 function _resetReplayCount() {
@@ -1376,7 +1374,6 @@ function showFlashcard() {
     audioBtn.onclick = _playWordAudio;
     _fcPlayWord = _playWordAudio;  // Space 鍵直接呼叫
     _fcPlayBack = null;            // 背面音訊尚未設定，先清空
-    _fcPlayBackPending = false;    // 重置 pending 狀態
 
     // 自動播放（三層降級；iOS Safari 非手勢觸發可能被封鎖，偵測後改用 pulse 提示）
     _quizPlayWord(item.text, audioBtn, () => {
@@ -1424,12 +1421,6 @@ function showFlashcard() {
                 });
             };
             _fcPlayBack = backAudioBtn.onclick; // Space 鍵直接呼叫
-
-            // 若使用者在 timestamp 查詢期間已按過 Space，查完後立即觸發播放
-            if (_fcPlayBackPending) {
-                _fcPlayBackPending = false;
-                backAudioBtn.click();
-            }
 
             if (backEditContainer && typeof createAudioEditBtn === 'function') {
                 backEditContainer.innerHTML = '';
@@ -1508,7 +1499,7 @@ document.getElementById('flashcard-wrong').addEventListener('click', () => {
 });
 
 // ── Flashcard Keyboard Shortcuts ─────────────────────────────
-// Space = 正面播單字 / 背面播句子
+// Space = 正面播單字 / 背面播句子（直接呼叫函式，不依賴按鈕 focus）
 // Enter = 翻牌
 document.addEventListener('keydown', (e) => {
     const fcArea = document.getElementById('quiz-flashcard-area');
@@ -1519,16 +1510,9 @@ document.addEventListener('keydown', (e) => {
         const card = document.getElementById('flashcard');
         const isFlipped = card && card.classList.contains('is-flipped');
         if (isFlipped) {
-            if (_fcPlayBack) {
-                // timestamp 已就緒：直接 click 按鈕（確保 user gesture）
-                document.getElementById('flashcard-back-audio-btn').click();
-            } else {
-                // timestamp 還在查詢中：標記 pending，查完後自動播
-                _fcPlayBackPending = true;
-            }
+            if (_fcPlayBack) _fcPlayBack();
         } else {
-            // 正面：click 按鈕（確保 user gesture，解決 iOS Safari 封鎖問題）
-            document.getElementById('flashcard-audio-btn').click();
+            if (_fcPlayWord) _fcPlayWord();
         }
         return;
     }
@@ -3693,12 +3677,6 @@ async function showFcplusCard() {
                     };
                     _fcpPlayBack = backAudioBtn.onclick; // Space 鍵直接呼叫
 
-                    // 若使用者在 timestamp 查詢期間已按過 Space，查完後立即觸發播放
-                    if (_fcpPlayBackPending) {
-                        _fcpPlayBackPending = false;
-                        backAudioBtn.click();
-                    }
-
                     if (backEditContainer && typeof createAudioEditBtn === 'function') {
                         const editBtn = createAudioEditBtn({
                             title: flashTitle, sentence: ctx,
@@ -3839,9 +3817,8 @@ function _setupFcplusFrontAudio(item) {
         _quizPlayWord(item.text, audioBtn);
     }
     audioBtn.onclick = _playWord;
-    _fcpPlayWord = _playWord;       // Space 鍵直接呼叫
-    _fcpPlayBack = null;            // 背面音訊尚未設定，先清空
-    _fcpPlayBackPending = false;    // 重置 pending 狀態
+    _fcpPlayWord = _playWord;  // Space 鍵直接呼叫
+    _fcpPlayBack = null;       // 背面音訊尚未設定，先清空
 
     // Also wire result-side audio btn
     const resultBtn = document.getElementById('fcplus-audio-btn-result');
@@ -4111,17 +4088,13 @@ document.addEventListener('keydown', (e) => {
         e.preventDefault();
         if (_fcplusFlipped && !_fcplusAfterFlip) {
             // 背面：播句子
-            if (_fcpPlayBack) {
-                // timestamp 已就緒：直接 click 按鈕（確保 user gesture）
-                document.getElementById('fcplus-back-audio-btn').click();
-            } else {
-                // timestamp 還在查詢中：標記 pending，查完後自動播
-                _fcpPlayBackPending = true;
-            }
+            if (_fcpPlayBack) _fcpPlayBack();
+        } else if (_fcplusAfterFlip) {
+            // 結果面：播單字（同正面）
+            if (_fcpPlayWord) _fcpPlayWord();
         } else {
-            // 正面 / 結果面：click 按鈕（確保 user gesture，解決 iOS Safari 封鎖問題）
-            const wordBtn = document.getElementById('fcplus-audio-btn');
-            if (wordBtn) wordBtn.click();
+            // 正面：播單字
+            if (_fcpPlayWord) _fcpPlayWord();
         }
         return;
     }
