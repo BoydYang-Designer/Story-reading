@@ -1218,7 +1218,7 @@ async function startFlashcardFromArticle() {
     });
     deck = filterByWordDifficulty(deck, quizState.difficulty);
     if (deck.length === 0) {
-        showNotification(`No ${quizState.difficulty === 'mix' ? '' : quizState.difficulty.toUpperCase() + ' '}words found in this article.`, 'warning');
+        showNotification(`No ${quizState.difficulty === 'mix' ? '' : quizState.difficulty + ' '}words found in this article.`, 'warning');
         return;
     }
     deck = weightedSample(deck, quizState.questionCount || 10,
@@ -1262,7 +1262,7 @@ function startFlashcard() {
         if (!quizState.titleName && quizState.scope === 'this') {
             showNotification('Select an article first, or switch to "All Notes".', 'warning');
         } else {
-            showNotification(`No ${quizState.difficulty === 'mix' ? '' : quizState.difficulty.toUpperCase() + ' '}words or phrases found.`, 'warning');
+            showNotification(`No ${quizState.difficulty === 'mix' ? '' : quizState.difficulty + ' '}words or phrases found.`, 'warning');
         }
         return;
     }
@@ -1487,9 +1487,36 @@ document.getElementById('flashcard-wrong').addEventListener('click', () => {
     showFlashcard();
 });
 
-// ══════════════════════════════════════════════════════════════
-//  PHASE 3 — DICTATION (Listen & Choose)
-// ══════════════════════════════════════════════════════════════
+// ── Flashcard Keyboard Shortcuts ─────────────────────────────
+// Space = 正面播單字 / 背面播句子
+// Enter = 翻牌
+document.addEventListener('keydown', (e) => {
+    const fcArea = document.getElementById('quiz-flashcard-area');
+    if (!fcArea || fcArea.classList.contains('is-hidden')) return;
+
+    if (e.code === 'Space') {
+        e.preventDefault();
+        const card = document.getElementById('flashcard');
+        const isFlipped = card && card.classList.contains('is-flipped');
+        if (isFlipped) {
+            // 背面：播句子
+            const backAudio = document.getElementById('flashcard-back-audio-btn');
+            if (backAudio && !backAudio.disabled) backAudio.click();
+        } else {
+            // 正面：播單字
+            const frontAudio = document.getElementById('flashcard-audio-btn');
+            if (frontAudio) frontAudio.click();
+        }
+        return;
+    }
+
+    if (e.code === 'Enter') {
+        e.preventDefault();
+        document.getElementById('flashcard').click();
+    }
+});
+
+
 
 async function startDictation() {
     const items = getAllNoteItems(quizState.scope, quizState.categoryName, quizState.titleName);
@@ -1692,21 +1719,15 @@ function getDifficultyLabel(wordCount) {
     return                     { label: 'Hard',   color: '#e05c5c', diff: 'hard' };
 }
 
-// Word difficulty via Oxford CEFR lookup (requires oxford_cefr.js)
-// Returns 'a1a2' | 'b1b2' | 'c1c2' | null (null = not in Oxford list)
+// Word/phrase difficulty by character length (strip hyphens for phrases)
 function getWordDifficulty(text) {
-    if (typeof OXFORD_CEFR === 'undefined') return null;
-    const key = text.trim().toLowerCase().replace(/-/g, ' ');
-    const level = OXFORD_CEFR[key] || OXFORD_CEFR[text.trim().toLowerCase()];
-    if (!level) return null;
-    if (level === 'a1' || level === 'a2') return 'a1a2';
-    if (level === 'b1' || level === 'b2') return 'b1b2';
-    return 'c1c2';
+    const letters = text.replace(/-/g, '').replace(/[^a-zA-Z]/g, '').length;
+    if (letters <= 5)  return 'easy';
+    if (letters <= 8)  return 'medium';
+    return 'hard';
 }
 
-// Filter word/phrase items by CEFR difficulty
-// mix → all items (including unrated)
-// a1a2/b1b2/c1c2 → only items with a matching Oxford level (unrated excluded)
+// Filter word/phrase items by difficulty setting
 function filterByWordDifficulty(items, diff) {
     if (diff === 'mix') return items;
     return items.filter(item => getWordDifficulty(item.text) === diff);
@@ -4052,6 +4073,8 @@ document.addEventListener('keydown', (e) => {
     if (!fcArea || fcArea.classList.contains('is-hidden')) return;
 
     if (e.code === 'Space') {
+        // 輸入框有焦點時，讓空白鍵正常輸入，不攔截
+        if (document.activeElement && document.activeElement.classList.contains('fcplus-letter-input')) return;
         e.preventDefault();
         const backAudio   = document.getElementById('fcplus-back-audio-btn');
         const resultAudio = document.getElementById('fcplus-audio-btn-result');
