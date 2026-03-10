@@ -3610,6 +3610,7 @@ async function showFcplusCard() {
     _fcplusIsCorrect = false;
     _fcplusFlipped   = false;
     _fcplusAfterFlip = false;
+    _fcpIsFlipped    = false;   // 重置：避免上一題的翻面狀態影響新題
 
     // 清除上一題的即時答案列
     const oldInline = document.getElementById('fcplus-inline-answer');
@@ -4024,6 +4025,9 @@ function _showFcplusBack() {
     document.querySelector('.fcplus-front').classList.add('is-hidden');
     document.getElementById('fcplus-front-result').classList.add('is-hidden');
     document.querySelector('.fcplus-back').classList.remove('is-hidden');
+    // 翻到背面時強制移除 input focus，確保空白鍵能被 document keydown 攔截
+    document.querySelectorAll('#fcplus-letters .fcplus-letter-input').forEach(inp => inp.blur());
+    document.body.focus();
 }
 
 function _showFcplusFrontResult() {
@@ -4110,6 +4114,10 @@ document.addEventListener('keydown', (e) => {
 
     if (e.code === 'Space') {
         e.preventDefault();
+        // 若 input 還有 focus，先 blur 移除（避免 Space 被 input 攔截）
+        if (document.activeElement && document.activeElement.classList.contains('fcplus-letter-input')) {
+            document.activeElement.blur();
+        }
         if (_fcplusFlipped && !_fcplusAfterFlip) {
             // 背面：播句子
             if (_fcpPlayBack) _fcpPlayBack();
