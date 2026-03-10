@@ -120,6 +120,16 @@ let _quizReplayCount    = 0;
 let _quizAutoPlayed     = false;
 let _quizIsEditingAudio = false;
 
+// ── 目前卡片的播放函式（供 Space 鍵直接呼叫，繞過按鈕 focus）──
+// Flashcard
+let _fcPlayWord = null;         // 正面：播單字
+let _fcPlayBack = null;         // 背面：播句子
+let _fcPlayBackPending = false; // 背面 timestamp 查詢中使用者已按 Space，查完後自動播
+// Flashcard+
+let _fcpPlayWord = null;        // 正面：播單字
+let _fcpPlayBack = null;        // 背面：播句子
+let _fcpPlayBackPending = false;// 同上，Flashcard+ 用
+
 /** 每道新題目出現時重置計數 */
 function _resetReplayCount() {
     _quizReplayCount    = 0;
@@ -1218,12 +1228,7 @@ async function startFlashcardFromArticle() {
     });
     deck = filterByWordDifficulty(deck, quizState.difficulty);
     if (deck.length === 0) {
-        const label = _diffLabel(quizState.difficulty);
-        showNotification(
-            quizState.difficulty === 'mix'
-                ? 'No words found in this article.'
-                : `No ${label} words found in this article. Try Mix to see all words.`,
-            'warning');
+        showNotification(`No ${quizState.difficulty === 'mix' ? '' : quizState.difficulty + ' '}words found in this article.`, 'warning');
         return;
     }
     deck = weightedSample(deck, quizState.questionCount || 10,
@@ -1267,12 +1272,7 @@ function startFlashcard() {
         if (!quizState.titleName && quizState.scope === 'this') {
             showNotification('Select an article first, or switch to "All Notes".', 'warning');
         } else {
-            const label = _diffLabel(quizState.difficulty);
-            showNotification(
-                quizState.difficulty === 'mix'
-                    ? 'No words or phrases found.'
-                    : `No ${label} words found. Try Mix to see all words.`,
-                'warning');
+            showNotification(`No ${quizState.difficulty === 'mix' ? '' : quizState.difficulty + ' '}words or phrases found.`, 'warning');
         }
         return;
     }
@@ -1374,6 +1374,9 @@ function showFlashcard() {
         _quizPlayWord(item.text, audioBtn);
     }
     audioBtn.onclick = _playWordAudio;
+    _fcPlayWord = _playWordAudio;  // Space 鍵直接呼叫
+    _fcPlayBack = null;            // 背面音訊尚未設定，先清空
+    _fcPlayBackPending = false;    // 重置 pending 狀態
 
     // 自動播放（三層降級；iOS Safari 非手勢觸發可能被封鎖，偵測後改用 pulse 提示）
     _quizPlayWord(item.text, audioBtn, () => {
@@ -1420,6 +1423,13 @@ function showFlashcard() {
                     onEnd:   () => backAudioBtn.classList.remove('is-playing-voice')
                 });
             };
+            _fcPlayBack = backAudioBtn.onclick; // Space 鍵直接呼叫
+
+            // 若使用者在 timestamp 查詢期間已按過 Space，查完後立即觸發播放
+            if (_fcPlayBackPending) {
+                _fcPlayBackPending = false;
+                backAudioBtn.click();
+            }
 
             if (backEditContainer && typeof createAudioEditBtn === 'function') {
                 backEditContainer.innerHTML = '';
@@ -1495,6 +1505,38 @@ document.getElementById('flashcard-wrong').addEventListener('click', () => {
         recordItemResult(quizState.categoryName, quizState.titleName, _itype, item.text, false, _quizReplayCount, 'fc');
     }
     showFlashcard();
+});
+
+// ── Flashcard Keyboard Shortcuts ─────────────────────────────
+// Space = 正面播單字 / 背面播句子
+// Enter = 翻牌
+document.addEventListener('keydown', (e) => {
+    const fcArea = document.getElementById('quiz-flashcard-area');
+    if (!fcArea || fcArea.classList.contains('is-hidden')) return;
+
+    if (e.code === 'Space') {
+        e.preventDefault();
+        const card = document.getElementById('flashcard');
+        const isFlipped = card && card.classList.contains('is-flipped');
+        if (isFlipped) {
+            if (_fcPlayBack) {
+                // timestamp 已就緒：直接 click 按鈕（確保 user gesture）
+                document.getElementById('flashcard-back-audio-btn').click();
+            } else {
+                // timestamp 還在查詢中：標記 pending，查完後自動播
+                _fcPlayBackPending = true;
+            }
+        } else {
+            // 正面：click 按鈕（確保 user gesture，解決 iOS Safari 封鎖問題）
+            document.getElementById('flashcard-audio-btn').click();
+        }
+        return;
+    }
+
+    if (e.code === 'Enter') {
+        e.preventDefault();
+        document.getElementById('flashcard').click();
+    }
 });
 
 // ══════════════════════════════════════════════════════════════
@@ -1702,76 +1744,19 @@ function getDifficultyLabel(wordCount) {
     return                     { label: 'Hard',   color: '#e05c5c', diff: 'hard' };
 }
 
-// Word difficulty via Oxford CEFR lookup (requires oxford_cefr.js)
-// Returns 'a1a2' | 'b1b2' | 'c1c2' | null (null = not in Oxford list)
-
-/**
- * 簡易 stemming：產生候選原形清單，依序查 Oxford 表
- * 例如 knows→know, running→run, believed→believe
- */
-function _stemCandidates(word) {
-    const w = word.trim().toLowerCase();
-    const c = [w];
-    const add = (pattern, replacement) => {
-        if (pattern.test(w)) {
-            const s = w.replace(pattern, replacement);
-            if (s.length >= 2 && !c.includes(s)) c.push(s);
-        }
-    };
-    add(/ies$/, 'y');
-    add(/ied$/, 'y');
-    add(/ying$/, 'y');
-    add(/ves$/, 'f');
-    add(/ness$/, '');
-    add(/ment$/, '');
-    add(/ing$/, 'e');
-    add(/ing$/, '');
-    // double-consonant: running→runn→run
-    const noIng = w.replace(/ing$/, '');
-    if (noIng.length >= 3 && noIng[noIng.length-1] === noIng[noIng.length-2]) {
-        const dedup = noIng.slice(0, -1);
-        if (!c.includes(dedup)) c.push(dedup);
-    }
-    add(/ed$/, 'e');
-    add(/ed$/, '');
-    add(/er$/, 'e');
-    add(/er$/, '');
-    add(/est$/, 'e');
-    add(/est$/, '');
-    add(/ly$/, '');
-    add(/es$/, 'e');
-    add(/es$/, '');
-    add(/s$/, '');
-    return c;
-}
-
+// Word/phrase difficulty by character length (strip hyphens for phrases)
 function getWordDifficulty(text) {
-    if (typeof OXFORD_CEFR === 'undefined') return null;
-    const candidates = _stemCandidates(text);
-    for (const cand of candidates) {
-        const level = OXFORD_CEFR[cand];
-        if (level) {
-            if (level === 'a1' || level === 'a2') return 'a1a2';
-            if (level === 'b1' || level === 'b2') return 'b1b2';
-            return 'c1c2';
-        }
-    }
-    return null;
+    const letters = text.replace(/-/g, '').replace(/[^a-zA-Z]/g, '').length;
+    if (letters <= 5)  return 'easy';
+    if (letters <= 8)  return 'medium';
+    return 'hard';
 }
 
-// Filter word/phrase items by CEFR difficulty
-// mix → all items including unrated
-// a1a2/b1b2/c1c2 → only Oxford-matched items of that level
+// Filter word/phrase items by difficulty setting
 function filterByWordDifficulty(items, diff) {
     if (diff === 'mix') return items;
     return items.filter(item => getWordDifficulty(item.text) === diff);
 }
-
-// 難度標籤（用於提示訊息）
-function _diffLabel(diff) {
-    return { a1a2: 'A1-A2', b1b2: 'B1-B2', c1c2: 'C1-C2' }[diff] || diff;
-}
-
 
 // Filter sentence items by difficulty setting
 function filterBySentenceDifficulty(items, diff) {
@@ -3532,12 +3517,7 @@ function startFcplus() {
     allItems = filterByWordDifficulty(allItems, quizState.difficulty);
 
     if (allItems.length === 0) {
-        const label = _diffLabel(quizState.difficulty);
-        showNotification(
-            quizState.difficulty === 'mix'
-                ? 'No suitable words found. Add words to your note first.'
-                : `No ${label} words found in your notes. Try Mix to see all words.`,
-            'warning');
+        showNotification('No suitable words found. Add words to your note first.', 'warning');
         return;
     }
 
@@ -3595,19 +3575,13 @@ async function startFcplusFromArticle() {
         return true;
     });
     deck = filterByWordDifficulty(deck, quizState.difficulty);
-
-    if (deck.length === 0) {
-        const label = _diffLabel(quizState.difficulty);
-        showNotification(
-            quizState.difficulty === 'mix'
-                ? 'No words found in this article.'
-                : `No ${label} words found in this article. Try Mix to see all words.`,
-            'warning');
-        return;
-    }
-
     deck = weightedSample(deck, quizState.questionCount || 10,
                           item => item.text, quizState.categoryName, title, 'articleWords');
+
+    if (deck.length === 0) {
+        showNotification('No words found for selected difficulty.', 'warning');
+        return;
+    }
 
     const audioSrc = `audio/${encodeURIComponent(title.trim())}.mp3`;
     _setQuizAudioSrc(audioSrc);
@@ -3717,6 +3691,13 @@ async function showFcplusCard() {
                             onEnd:   () => backAudioBtn.classList.remove('is-playing-voice')
                         });
                     };
+                    _fcpPlayBack = backAudioBtn.onclick; // Space 鍵直接呼叫
+
+                    // 若使用者在 timestamp 查詢期間已按過 Space，查完後立即觸發播放
+                    if (_fcpPlayBackPending) {
+                        _fcpPlayBackPending = false;
+                        backAudioBtn.click();
+                    }
 
                     if (backEditContainer && typeof createAudioEditBtn === 'function') {
                         const editBtn = createAudioEditBtn({
@@ -3854,10 +3835,13 @@ function _setupFcplusFrontAudio(item) {
     }
 
     function _playWord() {
-        if (!_fcplusSubmitted) _trackReplay(); // 提交後不計懲罰
+        if (!_fcplusSubmitted) _trackReplay();
         _quizPlayWord(item.text, audioBtn);
     }
     audioBtn.onclick = _playWord;
+    _fcpPlayWord = _playWord;       // Space 鍵直接呼叫
+    _fcpPlayBack = null;            // 背面音訊尚未設定，先清空
+    _fcpPlayBackPending = false;    // 重置 pending 狀態
 
     // Also wire result-side audio btn
     const resultBtn = document.getElementById('fcplus-audio-btn-result');
@@ -4125,15 +4109,19 @@ document.addEventListener('keydown', (e) => {
 
     if (e.code === 'Space') {
         e.preventDefault();
-        const backAudio   = document.getElementById('fcplus-back-audio-btn');
-        const resultAudio = document.getElementById('fcplus-audio-btn-result');
-        const frontAudio  = document.getElementById('fcplus-audio-btn');
-        if (_fcplusFlipped && !_fcplusAfterFlip && backAudio && !backAudio.disabled) {
-            backAudio.click();
-        } else if (_fcplusAfterFlip && resultAudio) {
-            resultAudio.click();
-        } else if (frontAudio) {
-            frontAudio.click();
+        if (_fcplusFlipped && !_fcplusAfterFlip) {
+            // 背面：播句子
+            if (_fcpPlayBack) {
+                // timestamp 已就緒：直接 click 按鈕（確保 user gesture）
+                document.getElementById('fcplus-back-audio-btn').click();
+            } else {
+                // timestamp 還在查詢中：標記 pending，查完後自動播
+                _fcpPlayBackPending = true;
+            }
+        } else {
+            // 正面 / 結果面：click 按鈕（確保 user gesture，解決 iOS Safari 封鎖問題）
+            const wordBtn = document.getElementById('fcplus-audio-btn');
+            if (wordBtn) wordBtn.click();
         }
         return;
     }
