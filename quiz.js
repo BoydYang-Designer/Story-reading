@@ -1315,6 +1315,11 @@ function showFlashcard() {
 
     // Reset flip state
     card.classList.remove('is-flipped');
+    // 重置 overlay：顯示正面播放，隱藏背面播放
+    const _fo = document.getElementById('fc-front-play');
+    const _bo = document.getElementById('fc-back-play');
+    if (_fo) _fo.classList.remove('is-hidden');
+    if (_bo) _bo.classList.add('is-hidden');
 
     document.getElementById('flashcard-word').textContent = item.text;
 
@@ -1465,19 +1470,24 @@ function showFlashcard() {
     document.getElementById('flashcard-correct').style.visibility = 'hidden';
 }
 
-// Flip card on tap
-document.getElementById('flashcard').addEventListener('click', (e) => {
-    // 點到按鈕不翻牌（正面 ▶、背面 ▶ 和 ✏️ 都不觸發翻牌）
-    if (e.target.closest('button')) return;
-    const card = document.getElementById('flashcard');
+// Flip card on tap — 按鈕已在卡片 DOM 外，整張卡片點擊都翻牌
+document.getElementById('flashcard').addEventListener('click', () => {
+    const card     = document.getElementById('flashcard');
+    const frontOvl = document.getElementById('fc-front-play');
+    const backOvl  = document.getElementById('fc-back-play');
     card.classList.toggle('is-flipped');
     if (card.classList.contains('is-flipped')) {
+        // 翻到背面：隱藏正面播放，顯示背面播放
+        if (frontOvl) frontOvl.classList.add('is-hidden');
+        if (backOvl)  backOvl.classList.remove('is-hidden');
         document.getElementById('flashcard-wrong').style.visibility = 'visible';
         document.getElementById('flashcard-correct').style.visibility = 'visible';
         _fcIsFlipped = true;
-        // 音訊已就緒 → 直接播；尚未就緒 → _setupBackAudio 完成後會自動播
         if (_fcPlayBack) _fcPlayBack();
     } else {
+        // 翻回正面：顯示正面播放，隱藏背面播放
+        if (frontOvl) frontOvl.classList.remove('is-hidden');
+        if (backOvl)  backOvl.classList.add('is-hidden');
         _fcIsFlipped = false;
     }
 });
@@ -3612,6 +3622,14 @@ async function showFcplusCard() {
     _fcplusAfterFlip = false;
     _fcpIsFlipped    = false;   // 重置：避免上一題的翻面狀態影響新題
 
+    // 重置 overlay：顯示正面播放，隱藏其他
+    const _fp = document.getElementById('fcp-front-play');
+    const _rp = document.getElementById('fcp-result-play');
+    const _bp = document.getElementById('fcp-back-play');
+    if (_fp) _fp.classList.remove('is-hidden');
+    if (_rp) _rp.classList.add('is-hidden');
+    if (_bp) _bp.classList.add('is-hidden');
+
     // 清除上一題的即時答案列
     const oldInline = document.getElementById('fcplus-inline-answer');
     if (oldInline) oldInline.remove();
@@ -4019,12 +4037,26 @@ function _showFcplusFront() {
     document.querySelector('.fcplus-front').classList.remove('is-hidden');
     document.getElementById('fcplus-front-result').classList.add('is-hidden');
     document.querySelector('.fcplus-back').classList.add('is-hidden');
+    // overlay：顯示正面播放，隱藏其他
+    const fp = document.getElementById('fcp-front-play');
+    const rp = document.getElementById('fcp-result-play');
+    const bp = document.getElementById('fcp-back-play');
+    if (fp) fp.classList.remove('is-hidden');
+    if (rp) rp.classList.add('is-hidden');
+    if (bp) bp.classList.add('is-hidden');
 }
 
 function _showFcplusBack() {
     document.querySelector('.fcplus-front').classList.add('is-hidden');
     document.getElementById('fcplus-front-result').classList.add('is-hidden');
     document.querySelector('.fcplus-back').classList.remove('is-hidden');
+    // overlay：隱藏正面播放，顯示背面播放
+    const fp = document.getElementById('fcp-front-play');
+    const rp = document.getElementById('fcp-result-play');
+    const bp = document.getElementById('fcp-back-play');
+    if (fp) fp.classList.add('is-hidden');
+    if (rp) rp.classList.add('is-hidden');
+    if (bp) bp.classList.remove('is-hidden');
     // 翻到背面時強制移除 input focus，確保空白鍵能被 document keydown 攔截
     document.querySelectorAll('#fcplus-letters .fcplus-letter-input').forEach(inp => inp.blur());
     document.body.focus();
@@ -4035,6 +4067,13 @@ function _showFcplusFrontResult() {
     document.querySelector('.fcplus-back').classList.add('is-hidden');
     const resultEl = document.getElementById('fcplus-front-result');
     resultEl.classList.remove('is-hidden');
+    // overlay：顯示結果面播放，隱藏其他
+    const fp = document.getElementById('fcp-front-play');
+    const rp = document.getElementById('fcp-result-play');
+    const bp = document.getElementById('fcp-back-play');
+    if (fp) fp.classList.add('is-hidden');
+    if (rp) rp.classList.remove('is-hidden');
+    if (bp) bp.classList.add('is-hidden');
 
     // ==================== 原有重建結果顯示 ====================
     const word   = _fcplusItem.text;
