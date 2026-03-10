@@ -3556,6 +3556,10 @@ async function showFcplusCard() {
     _fcplusFlipped   = false;
     _fcplusAfterFlip = false;
 
+    // 清除上一題的即時答案列
+    const oldInline = document.getElementById('fcplus-inline-answer');
+    if (oldInline) oldInline.remove();
+
     const deck = quizState.deck;
     if (quizState.deckIndex >= deck.length) {
         showQuizResult('fcplus', quizState.correct,
@@ -3844,7 +3848,83 @@ document.getElementById('fcplus-submit-btn').addEventListener('click', () => {
     // Hide submit, show flip hint
     document.getElementById('fcplus-submit-btn').classList.add('is-hidden');
     document.getElementById('fcplus-flip-hint').classList.remove('is-hidden');
+
+    // ── 提交後立即顯示正確答案（逐字母紅/綠標色）────────────────
+    _showFcplusInlineAnswer(inputs, word);
 });
+
+/**
+ * 在輸入框下方立即顯示正確答案列
+ * 正確字母 → 綠色，錯誤字母 → 紅色（hint 字母用灰色顯示）
+ */
+function _showFcplusInlineAnswer(inputs, word) {
+    // 移除舊的（換題時清除）
+    const old = document.getElementById('fcplus-inline-answer');
+    if (old) old.remove();
+
+    const container = document.createElement('div');
+    container.id = 'fcplus-inline-answer';
+    container.style.cssText = [
+        'display:flex',
+        'flex-wrap:wrap',
+        'justify-content:center',
+        'gap:3px',
+        'margin-top:12px',
+        'padding:10px 14px',
+        'background:rgba(0,0,0,0.04)',
+        'border-radius:10px',
+        'border:1px solid rgba(0,0,0,0.08)',
+    ].join(';');
+
+    word.split('').forEach((ch, i) => {
+        if (ch === '-') {
+            const sep = document.createElement('span');
+            sep.textContent = '-';
+            sep.style.cssText = 'font-size:1.3rem;font-weight:700;color:#aaa;align-self:center;margin:0 2px';
+            container.appendChild(sep);
+            return;
+        }
+
+        const isSegFirst = i === 0 || word[i - 1] === '-';
+        const isSegLast  = i === word.length - 1 || word[i + 1] === '-';
+        const isHint     = isSegFirst || isSegLast;
+
+        const span = document.createElement('span');
+        span.textContent = ch.toLowerCase();
+        span.style.cssText = [
+            'display:inline-flex',
+            'align-items:center',
+            'justify-content:center',
+            'width:1.7rem',
+            'height:2rem',
+            'border-radius:5px',
+            'font-size:1.1rem',
+            'font-weight:700',
+            'line-height:1',
+        ].join(';');
+
+        if (isHint) {
+            // hint 字母（首/尾）用灰色
+            span.style.color = '#888';
+            span.style.background = 'rgba(0,0,0,0.06)';
+        } else {
+            const inp = inputs.find(el => parseInt(el.dataset.idx) === i);
+            const typed    = inp ? inp.value.toLowerCase() : '';
+            const expected = ch.toLowerCase();
+            const isOk     = typed === expected;
+            span.style.color      = isOk ? '#1a8a3c' : '#d0312d';
+            span.style.background = isOk ? 'rgba(26,138,60,0.12)' : 'rgba(208,49,45,0.12)';
+            span.style.border     = isOk ? '1px solid rgba(26,138,60,0.3)' : '1px solid rgba(208,49,45,0.3)';
+        }
+        container.appendChild(span);
+    });
+
+    // 插入到 fcplus-letters 之後
+    const lettersEl = document.getElementById('fcplus-letters');
+    if (lettersEl && lettersEl.parentNode) {
+        lettersEl.parentNode.insertBefore(container, lettersEl.nextSibling);
+    }
+}
 
 // ── Card flip ─────────────────────────────────────────────────
 
