@@ -124,9 +124,11 @@ let _quizIsEditingAudio = false;
 // Flashcard
 let _fcPlayWord = null;   // 正面：播單字
 let _fcPlayBack = null;   // 背面：播句子
+let _fcIsFlipped = false; // 是否已翻到背面（給非同步音訊設定用）
 // Flashcard+
 let _fcpPlayWord = null;  // 正面：播單字
 let _fcpPlayBack = null;  // 背面：播句子
+let _fcpIsFlipped = false; // 是否已翻到背面（給非同步音訊設定用）
 
 /** 每道新題目出現時重置計數 */
 function _resetReplayCount() {
@@ -1374,6 +1376,7 @@ function showFlashcard() {
     audioBtn.onclick = _playWordAudio;
     _fcPlayWord = _playWordAudio;  // Space 鍵直接呼叫
     _fcPlayBack = null;            // 背面音訊尚未設定，先清空
+    _fcIsFlipped = false;          // 重置翻面狀態
 
     // 自動播放（三層降級；iOS Safari 非手勢觸發可能被封鎖，偵測後改用 pulse 提示）
     _quizPlayWord(item.text, audioBtn, () => {
@@ -1421,6 +1424,7 @@ function showFlashcard() {
                 });
             };
             _fcPlayBack = backAudioBtn.onclick; // Space 鍵直接呼叫
+            if (_fcIsFlipped) _fcPlayBack();   // 若已翻面（音訊稍晚就緒）立即播
 
             if (backEditContainer && typeof createAudioEditBtn === 'function') {
                 backEditContainer.innerHTML = '';
@@ -1470,8 +1474,11 @@ document.getElementById('flashcard').addEventListener('click', (e) => {
     if (card.classList.contains('is-flipped')) {
         document.getElementById('flashcard-wrong').style.visibility = 'visible';
         document.getElementById('flashcard-correct').style.visibility = 'visible';
-        // 翻到背面後自動播放句子音檔
-        setTimeout(() => { if (_fcPlayBack) _fcPlayBack(); }, 400);
+        _fcIsFlipped = true;
+        // 音訊已就緒 → 直接播；尚未就緒 → _setupBackAudio 完成後會自動播
+        if (_fcPlayBack) _fcPlayBack();
+    } else {
+        _fcIsFlipped = false;
     }
 });
 
@@ -3688,6 +3695,7 @@ async function showFcplusCard() {
                         });
                     };
                     _fcpPlayBack = backAudioBtn.onclick; // Space 鍵直接呼叫
+                    if (_fcpIsFlipped) _fcpPlayBack();  // 若已翻面（音訊稍晚就緒）立即播
 
                     if (backEditContainer && typeof createAudioEditBtn === 'function') {
                         const editBtn = createAudioEditBtn({
@@ -3831,6 +3839,7 @@ function _setupFcplusFrontAudio(item) {
     audioBtn.onclick = _playWord;
     _fcpPlayWord = _playWord;  // Space 鍵直接呼叫
     _fcpPlayBack = null;       // 背面音訊尚未設定，先清空
+    _fcpIsFlipped = false;     // 重置翻面狀態
 
     // Also wire result-side audio btn
     const resultBtn = document.getElementById('fcplus-audio-btn-result');
@@ -3988,10 +3997,11 @@ document.getElementById('fcplus-card').addEventListener('click', (e) => {
 
     if (!_fcplusFlipped) {
         _fcplusFlipped = true;
+        _fcpIsFlipped = true;
         card.classList.add('fcplus-flipped-back');
         _showFcplusBack();
-        // 翻到背面後自動播放句子音檔
-        setTimeout(() => { if (_fcpPlayBack) _fcpPlayBack(); }, 400);
+        // 音訊已就緒 → 直接播；尚未就緒 → showFcplusCard async 完成後會自動播
+        if (_fcpPlayBack) _fcpPlayBack();
     } else if (!_fcplusAfterFlip) {
         _fcplusAfterFlip = true;
         card.classList.remove('fcplus-flipped-back');
