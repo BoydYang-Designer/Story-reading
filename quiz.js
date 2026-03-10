@@ -1218,7 +1218,7 @@ async function startFlashcardFromArticle() {
     });
     deck = filterByWordDifficulty(deck, quizState.difficulty);
     if (deck.length === 0) {
-        showNotification(`No ${quizState.difficulty === 'mix' ? '' : quizState.difficulty + ' '}words found in this article.`, 'warning');
+        showNotification(`No ${quizState.difficulty === 'mix' ? '' : quizState.difficulty.toUpperCase() + ' '}words found in this article.`, 'warning');
         return;
     }
     deck = weightedSample(deck, quizState.questionCount || 10,
@@ -1262,7 +1262,7 @@ function startFlashcard() {
         if (!quizState.titleName && quizState.scope === 'this') {
             showNotification('Select an article first, or switch to "All Notes".', 'warning');
         } else {
-            showNotification(`No ${quizState.difficulty === 'mix' ? '' : quizState.difficulty + ' '}words or phrases found.`, 'warning');
+            showNotification(`No ${quizState.difficulty === 'mix' ? '' : quizState.difficulty.toUpperCase() + ' '}words or phrases found.`, 'warning');
         }
         return;
     }
@@ -1692,15 +1692,21 @@ function getDifficultyLabel(wordCount) {
     return                     { label: 'Hard',   color: '#e05c5c', diff: 'hard' };
 }
 
-// Word/phrase difficulty by character length (strip hyphens for phrases)
+// Word difficulty via Oxford CEFR lookup (requires oxford_cefr.js)
+// Returns 'a1a2' | 'b1b2' | 'c1c2' | null (null = not in Oxford list)
 function getWordDifficulty(text) {
-    const letters = text.replace(/-/g, '').replace(/[^a-zA-Z]/g, '').length;
-    if (letters <= 5)  return 'easy';
-    if (letters <= 8)  return 'medium';
-    return 'hard';
+    if (typeof OXFORD_CEFR === 'undefined') return null;
+    const key = text.trim().toLowerCase().replace(/-/g, ' ');
+    const level = OXFORD_CEFR[key] || OXFORD_CEFR[text.trim().toLowerCase()];
+    if (!level) return null;
+    if (level === 'a1' || level === 'a2') return 'a1a2';
+    if (level === 'b1' || level === 'b2') return 'b1b2';
+    return 'c1c2';
 }
 
-// Filter word/phrase items by difficulty setting
+// Filter word/phrase items by CEFR difficulty
+// mix → all items (including unrated)
+// a1a2/b1b2/c1c2 → only items with a matching Oxford level (unrated excluded)
 function filterByWordDifficulty(items, diff) {
     if (diff === 'mix') return items;
     return items.filter(item => getWordDifficulty(item.text) === diff);
