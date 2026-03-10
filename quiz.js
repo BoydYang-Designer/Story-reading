@@ -1470,6 +1470,8 @@ document.getElementById('flashcard').addEventListener('click', (e) => {
     if (card.classList.contains('is-flipped')) {
         document.getElementById('flashcard-wrong').style.visibility = 'visible';
         document.getElementById('flashcard-correct').style.visibility = 'visible';
+        // 翻到背面後自動播放句子音檔
+        setTimeout(() => { if (_fcPlayBack) _fcPlayBack(); }, 400);
     }
 });
 
@@ -3988,6 +3990,8 @@ document.getElementById('fcplus-card').addEventListener('click', (e) => {
         _fcplusFlipped = true;
         card.classList.add('fcplus-flipped-back');
         _showFcplusBack();
+        // 翻到背面後自動播放句子音檔
+        setTimeout(() => { if (_fcpPlayBack) _fcpPlayBack(); }, 400);
     } else if (!_fcplusAfterFlip) {
         _fcplusAfterFlip = true;
         card.classList.remove('fcplus-flipped-back');
