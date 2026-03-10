@@ -3904,9 +3904,10 @@ function _showFcplusInlineAnswer(inputs, word) {
         ].join(';');
 
         if (isHint) {
-            // hint 字母（首/尾）用灰色
-            span.style.color = '#888';
-            span.style.background = 'rgba(0,0,0,0.06)';
+            // hint 字母（首/尾）同正確字母，統一用綠色
+            span.style.color      = '#1a8a3c';
+            span.style.background = 'rgba(26,138,60,0.12)';
+            span.style.border     = '1px solid rgba(26,138,60,0.3)';
         } else {
             const inp = inputs.find(el => parseInt(el.dataset.idx) === i);
             const typed    = inp ? inp.value.toLowerCase() : '';
