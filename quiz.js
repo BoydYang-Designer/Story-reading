@@ -1728,12 +1728,14 @@ function getDifficultyLabel(wordCount) {
     return                     { label: 'Hard',   color: '#e05c5c', diff: 'hard' };
 }
 
-// Word/phrase difficulty by character length (strip hyphens for phrases)
+// Word difficulty via Oxford CEFR lookup
 function getWordDifficulty(text) {
-    const letters = text.replace(/-/g, '').replace(/[^a-zA-Z]/g, '').length;
-    if (letters <= 5)  return 'easy';
-    if (letters <= 8)  return 'medium';
-    return 'hard';
+    const word = text.toLowerCase().trim();
+    const level = (typeof OXFORD_CEFR !== 'undefined') ? OXFORD_CEFR[word] : null;
+    if (!level) return null; // 不在 Oxford 表裡的詞
+    if (level === 'a1' || level === 'a2') return 'a1a2';
+    if (level === 'b1' || level === 'b2') return 'b1b2';
+    return 'c1c2';
 }
 
 // Filter word/phrase items by difficulty setting
@@ -3562,10 +3564,18 @@ async function startFcplusFromArticle() {
     deck = weightedSample(deck, quizState.questionCount || 10,
                           item => item.text, quizState.categoryName, title, 'articleWords');
 
-    if (deck.length === 0) {
-        showNotification('No words found for selected difficulty.', 'warning');
-        return;
-    }
+ if (deck.length === 0) {
+    const available = pool.map(item => getWordDifficulty(item.text));
+    const counts = { easy: 0, medium: 0, hard: 0 };
+    available.forEach(d => counts[d]++);
+    showNotification(
+        `No "${quizState.difficulty}" words found. ` +
+        `Available: easy(${counts.easy}), medium(${counts.medium}), hard(${counts.hard}). ` +
+        `Try "Mix" or a different difficulty.`,
+        'warning'
+    );
+    return;
+}
 
     const audioSrc = `audio/${encodeURIComponent(title.trim())}.mp3`;
     _setQuizAudioSrc(audioSrc);
