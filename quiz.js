@@ -1475,19 +1475,22 @@ document.getElementById('flashcard').addEventListener('click', () => {
     const card     = document.getElementById('flashcard');
     const frontOvl = document.getElementById('fc-front-play');
     const backOvl  = document.getElementById('fc-back-play');
+    const backBtn  = document.getElementById('flashcard-back-audio-btn');
     card.classList.toggle('is-flipped');
     if (card.classList.contains('is-flipped')) {
-        // 翻到背面：隱藏正面播放，顯示背面播放
+        // 翻到背面：顯示背面播放，恢復背面按鈕（若有音檔由 _setupBackAudio 控制）
         if (frontOvl) frontOvl.classList.add('is-hidden');
         if (backOvl)  backOvl.classList.remove('is-hidden');
+        if (backBtn && _fcPlayBack) backBtn.disabled = false; // 有音檔才啟用
         document.getElementById('flashcard-wrong').style.visibility = 'visible';
         document.getElementById('flashcard-correct').style.visibility = 'visible';
         _fcIsFlipped = true;
         if (_fcPlayBack) _fcPlayBack();
     } else {
-        // 翻回正面：顯示正面播放，隱藏背面播放
+        // 翻回正面：顯示正面播放，強制 disable 背面按鈕，確保空白鍵不誤播句子
         if (frontOvl) frontOvl.classList.remove('is-hidden');
         if (backOvl)  backOvl.classList.add('is-hidden');
+        if (backBtn)  backBtn.disabled = true;
         _fcIsFlipped = false;
     }
 });
