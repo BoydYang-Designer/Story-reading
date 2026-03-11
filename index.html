@@ -496,12 +496,13 @@
                         <div class="flashcard-context" id="flashcard-context"></div>
                     </div>
                 </div>
-                <!-- 正面播放按鈕：在卡片DOM外，點擊不觸發翻牌 -->
-                <div class="fc-play-overlay fc-front-play" id="fc-front-play">
+            </div>
+            <!-- 播放按鈕列：在卡片下方，不遮住卡牌 -->
+            <div class="fc-play-bar">
+                <div class="fc-play-bar-slot fc-front-play" id="fc-front-play">
                     <button class="flashcard-audio-btn" id="flashcard-audio-btn">▶</button>
                 </div>
-                <!-- 背面播放按鈕：在卡片DOM外，點擊不觸發翻牌 -->
-                <div class="fc-play-overlay fc-back-play is-hidden" id="fc-back-play">
+                <div class="fc-play-bar-slot fc-back-play is-hidden" id="fc-back-play">
                     <button class="flashcard-back-audio-btn" id="flashcard-back-audio-btn" disabled>▶</button>
                     <span id="flashcard-back-edit-container"></span>
                 </div>
@@ -540,16 +541,16 @@
                     </div>
 
                 </div>
-                <!-- 正面播放按鈕：在卡片DOM外 -->
-                <div class="fc-play-overlay fc-front-play" id="fcp-front-play">
+            </div>
+            <!-- 播放按鈕列：在卡片下方，不遮住卡牌 -->
+            <div class="fc-play-bar">
+                <div class="fc-play-bar-slot fc-front-play" id="fcp-front-play">
                     <button class="flashcard-audio-btn" id="fcplus-audio-btn">▶</button>
                 </div>
-                <!-- 結果面播放按鈕：在卡片DOM外 -->
-                <div class="fc-play-overlay fc-front-play is-hidden" id="fcp-result-play">
+                <div class="fc-play-bar-slot fc-front-play is-hidden" id="fcp-result-play">
                     <button class="flashcard-audio-btn" id="fcplus-audio-btn-result">▶</button>
                 </div>
-                <!-- 背面播放按鈕：在卡片DOM外 -->
-                <div class="fc-play-overlay fc-back-play is-hidden" id="fcp-back-play">
+                <div class="fc-play-bar-slot fc-back-play is-hidden" id="fcp-back-play">
                     <button class="flashcard-back-audio-btn" id="fcplus-back-audio-btn" disabled>▶</button>
                     <span id="fcplus-back-edit-container"></span>
                 </div>

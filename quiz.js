@@ -1315,11 +1315,11 @@ function showFlashcard() {
 
     // Reset flip state
     card.classList.remove('is-flipped');
-    // 重置 overlay：顯示正面播放，隱藏背面播放
+    // 重置播放列：顯示正面播放，隱藏背面播放
     const _fo = document.getElementById('fc-front-play');
     const _bo = document.getElementById('fc-back-play');
-    if (_fo) _fo.classList.remove('is-hidden');
-    if (_bo) _bo.classList.add('is-hidden');
+    if (_fo) { _fo.classList.remove('is-hidden'); }
+    if (_bo) { _bo.classList.add('is-hidden'); }
 
     document.getElementById('flashcard-word').textContent = item.text;
 
@@ -1374,7 +1374,7 @@ function showFlashcard() {
     }
 
     function _playWordAudio() {
-        _trackReplay();
+        // Flashcard 模式：播放不計入 replayCount，不影響熟悉度扣分
         audioBtn.classList.remove('needs-tap');
         _quizPlayWord(item.text, audioBtn);
     }
@@ -1421,7 +1421,7 @@ function showFlashcard() {
 
             backAudioBtn.disabled = false;
             backAudioBtn.onclick = () => {
-                _trackReplay();
+                // Flashcard 模式：播放不計入 replayCount，不影響熟悉度扣分
                 playSnippet({
                     start: _timing.start, end: _timing.end,
                     onStart: () => backAudioBtn.classList.add('is-playing-voice'),
@@ -1498,7 +1498,7 @@ document.getElementById('flashcard-correct').addEventListener('click', () => {
     quizState.deckIndex++;
     if (typeof recordItemResult === 'function' && _fcItem) {
         const _itype = quizState.flashSource === 'article' ? 'articleWords' : 'noteWords';
-        recordItemResult(quizState.categoryName, quizState.titleName, _itype, _fcItem.text, true, _quizReplayCount, 'fc');
+        recordItemResult(quizState.categoryName, quizState.titleName, _itype, _fcItem.text, true, 0, 'fc');
     }
     showFlashcard();
 });
@@ -1512,7 +1512,7 @@ document.getElementById('flashcard-wrong').addEventListener('click', () => {
     quizState.deckIndex++;
     if (typeof recordItemResult === 'function' && item) {
         const _itype = quizState.flashSource === 'article' ? 'articleWords' : 'noteWords';
-        recordItemResult(quizState.categoryName, quizState.titleName, _itype, item.text, false, _quizReplayCount, 'fc');
+        recordItemResult(quizState.categoryName, quizState.titleName, _itype, item.text, false, 0, 'fc');
     }
     showFlashcard();
 });
@@ -3622,13 +3622,13 @@ async function showFcplusCard() {
     _fcplusAfterFlip = false;
     _fcpIsFlipped    = false;   // 重置：避免上一題的翻面狀態影響新題
 
-    // 重置 overlay：顯示正面播放，隱藏其他
+    // 重置播放列：顯示正面播放，隱藏其他
     const _fp = document.getElementById('fcp-front-play');
     const _rp = document.getElementById('fcp-result-play');
     const _bp = document.getElementById('fcp-back-play');
-    if (_fp) _fp.classList.remove('is-hidden');
-    if (_rp) _rp.classList.add('is-hidden');
-    if (_bp) _bp.classList.add('is-hidden');
+    if (_fp) { _fp.classList.remove('is-hidden'); }
+    if (_rp) { _rp.classList.add('is-hidden'); }
+    if (_bp) { _bp.classList.add('is-hidden'); }
 
     // 清除上一題的即時答案列
     const oldInline = document.getElementById('fcplus-inline-answer');
@@ -3684,6 +3684,10 @@ async function showFcplusCard() {
         ctxEl.textContent = item.text;
     }
 
+    // Front audio (word pronunciation) — 必須在 await 之前執行，
+    // 避免 _setupFcplusFrontAudio 裡的 _fcpPlayBack = null 蓋掉 async 設好的值
+    _setupFcplusFrontAudio(item);
+
     // Back audio
     const backAudioBtn      = document.getElementById('fcplus-back-audio-btn');
     const backEditContainer = document.getElementById('fcplus-back-edit-container');
@@ -3729,9 +3733,6 @@ async function showFcplusCard() {
             }
         } catch (e) {}
     }
-
-    // Front audio (word pronunciation)
-    _setupFcplusFrontAudio(item);
 }
 
 // ── Build letter input boxes ──────────────────────────────────
@@ -3860,9 +3861,9 @@ function _setupFcplusFrontAudio(item) {
     _fcpPlayBack = null;       // 背面音訊尚未設定，先清空
     _fcpIsFlipped = false;     // 重置翻面狀態
 
-    // Also wire result-side audio btn
+    // Also wire result-side audio btn — 結果面播 MP3 句子（同背面）
     const resultBtn = document.getElementById('fcplus-audio-btn-result');
-    if (resultBtn) resultBtn.onclick = () => _quizPlayWord(item.text, audioBtn);
+    if (resultBtn) resultBtn.onclick = () => { if (_fcpPlayBack) _fcpPlayBack(); };
 
     // Auto-play first time（三層降級）
     _quizPlayWord(item.text, audioBtn);
@@ -4025,7 +4026,9 @@ document.getElementById('fcplus-card').addEventListener('click', (e) => {
         _fcplusAfterFlip = true;
         card.classList.remove('fcplus-flipped-back');
         _showFcplusFrontResult();
-        
+        // 結果面：自動播 MP3 句子
+        if (_fcpPlayBack) _fcpPlayBack();
+
         // 隱藏背面的 Next，避免重複
         const backNext = document.getElementById('fcplus-next-btn');
         if (backNext) backNext.style.display = 'none';
@@ -4037,7 +4040,7 @@ function _showFcplusFront() {
     document.querySelector('.fcplus-front').classList.remove('is-hidden');
     document.getElementById('fcplus-front-result').classList.add('is-hidden');
     document.querySelector('.fcplus-back').classList.add('is-hidden');
-    // overlay：顯示正面播放，隱藏其他
+    // 播放列：顯示正面播放，隱藏其他
     const fp = document.getElementById('fcp-front-play');
     const rp = document.getElementById('fcp-result-play');
     const bp = document.getElementById('fcp-back-play');
@@ -4050,7 +4053,7 @@ function _showFcplusBack() {
     document.querySelector('.fcplus-front').classList.add('is-hidden');
     document.getElementById('fcplus-front-result').classList.add('is-hidden');
     document.querySelector('.fcplus-back').classList.remove('is-hidden');
-    // overlay：隱藏正面播放，顯示背面播放
+    // 播放列：隱藏正面播放，顯示背面播放
     const fp = document.getElementById('fcp-front-play');
     const rp = document.getElementById('fcp-result-play');
     const bp = document.getElementById('fcp-back-play');
@@ -4067,7 +4070,7 @@ function _showFcplusFrontResult() {
     document.querySelector('.fcplus-back').classList.add('is-hidden');
     const resultEl = document.getElementById('fcplus-front-result');
     resultEl.classList.remove('is-hidden');
-    // overlay：顯示結果面播放，隱藏其他
+    // 播放列：顯示結果面播放，隱藏其他
     const fp = document.getElementById('fcp-front-play');
     const rp = document.getElementById('fcp-result-play');
     const bp = document.getElementById('fcp-back-play');
@@ -4161,8 +4164,8 @@ document.addEventListener('keydown', (e) => {
             // 背面：播句子
             if (_fcpPlayBack) _fcpPlayBack();
         } else if (_fcplusAfterFlip) {
-            // 結果面：播單字（同正面）
-            if (_fcpPlayWord) _fcpPlayWord();
+            // 結果面：播 MP3 句子（同背面）
+            if (_fcpPlayBack) _fcpPlayBack();
         } else {
             // 正面：播單字
             if (_fcpPlayWord) _fcpPlayWord();

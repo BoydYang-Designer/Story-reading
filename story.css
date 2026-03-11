@@ -2322,27 +2322,29 @@ button.secondary:hover {
 /* ── Flashcard ── */
 .flashcard-wrap {
     perspective: 1000px;
-    margin-bottom: 20px;
+    margin-bottom: 0;
     min-height: 200px;
-    position: relative; /* 讓 overlay 可以 absolute 定位 */
+    position: relative;
 }
 
-/* ── 播放按鈕 overlay：浮在卡片外，完全不屬於卡片 DOM ── */
-.fc-play-overlay {
-    position: absolute;
-    bottom: 18px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 30;
+/* ── 播放按鈕列：卡片正下方，不遮住卡牌 ── */
+.fc-play-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px 0 4px;
+    min-height: 72px;
+}
+
+.fc-play-bar-slot {
     display: flex;
     align-items: center;
     gap: 10px;
-    pointer-events: auto;
-    transition: opacity 0.2s;
 }
-.fc-play-overlay.is-hidden {
-    opacity: 0;
-    pointer-events: none;
+
+.fc-play-bar-slot.is-hidden {
+    display: none;
 }
 
 
@@ -2373,7 +2375,7 @@ button.secondary:hover {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 24px 20px 84px; /* 底部留空間給 overlay 播放按鈕 */
+    padding: 24px 20px 24px; /* 底部不需再留給播放按鈕 */
     box-sizing: border-box;
 }
 
