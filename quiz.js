@@ -82,6 +82,7 @@ let quizState = {
     deck: [],
     deckIndex: 0,
     againQueue: [],
+    againCountMap: {},   // FC-01 FIX: tracks how many times each item has been re-queued
     // article quiz specific
     articleSubMode: 'listen',  // 'listen' | 'cloze'
     // difficulty & question count — shared across ALL modes
@@ -1144,6 +1145,10 @@ document.getElementById('quiz-retry-btn').addEventListener('click', () => {
     quizState.retryWrongOnly = false;
     const mode = quizState.mode;
     if (mode === 'flashcard')        startFlashcard();
+    else if (mode === 'fcplus') {                              // FC-02 FIX
+        if (quizState.flashSource === 'article') startFcplusFromArticle();
+        else startFcplus();
+    }
     else if (mode === 'dictation')   startDictation();
     else if (mode === 'reorder')     startReorder(subpanelSource.reorder || 'note');
     else if (mode === 'article-listen' || mode === 'article-cloze') startArticleQuiz();
@@ -1152,10 +1157,14 @@ document.getElementById('quiz-retry-btn').addEventListener('click', () => {
 document.getElementById('quiz-retry-wrong-btn').addEventListener('click', () => {
     quizState.retryWrongOnly = true;
     const mode = quizState.mode;
-    if (mode === 'dictation')       startDictationRetryWrong();
+    if (mode === 'dictation')            startDictationRetryWrong();
     else if (mode === 'reorder')         startReorderRetryWrong();
     else if (mode === 'article-listen')  startArticleRetryWrong();
     else if (mode === 'article-cloze')   startArticleRetryWrong();
+    else if (mode === 'fcplus') {        // FC-03 FIX: use FC+ instead of plain Flashcard
+        if (quizState.flashSource === 'article') startFcplusFromArticle();
+        else startFcplus();
+    }
     else {
         quizState.retryWrongOnly = false;
         startFlashcard();
@@ -1170,9 +1179,27 @@ document.getElementById('quiz-back-btn').addEventListener('click', () => {
 });
 
 document.getElementById('quiz-add-wrong-to-note-btn').addEventListener('click', () => {
-    const cat = quizState.categoryName;
+    const cat   = quizState.categoryName;
     const title = quizState.titleName;
-    if (!cat || !title) return;
+
+    // FCP-05 FIX: scope='all' means titleName is null — use each item's own source title
+    if (!cat || !title) {
+        // Try per-item noteTitle fallback
+        const wrongQ = quizState.answeredQuestions.filter(q => !q.isCorrect);
+        const itemsWithTitle = wrongQ.filter(q => q.noteTitle && q.noteCat);
+        if (itemsWithTitle.length === 0) {
+            showNotification('請先選擇特定文章再加入筆記。', 'warning');
+            return;
+        }
+        let added = 0;
+        itemsWithTitle.forEach(q => {
+            addWordToNote(q.correct, q.noteCat, q.noteTitle);
+            added++;
+        });
+        showNotification(`${added} 個項目已加入對應文章的筆記。`, 'success');
+        document.getElementById('quiz-add-to-note-bar').classList.add('is-hidden');
+        return;
+    }
 
     let added = 0;
     quizState.answeredQuestions.filter(q => !q.isCorrect).forEach(q => {
@@ -1238,14 +1265,15 @@ async function startFlashcardFromArticle() {
     const audioSrc = `audio/${encodeURIComponent(title.trim())}.mp3`;
     _setQuizAudioSrc(audioSrc);
 
-    quizState.mode        = 'flashcard';
-    quizState.flashSource = 'article';
-    quizState.deck        = deck;
-    quizState.deckIndex   = 0;
-    quizState.againQueue  = [];
-    quizState.correct     = 0;
-    quizState.wrong       = 0;
-    quizState.wrongItems  = [];
+    quizState.mode          = 'flashcard';
+    quizState.flashSource   = 'article';
+    quizState.deck          = deck;
+    quizState.deckIndex     = 0;
+    quizState.againQueue    = [];
+    quizState.againCountMap = {};  // FC-01 FIX
+    quizState.correct       = 0;
+    quizState.wrong         = 0;
+    quizState.wrongItems    = [];
 
     closeAllSubpanels();
     showQuizSession('flashcard');
@@ -1277,15 +1305,16 @@ function startFlashcard() {
         return;
     }
 
-    quizState.mode        = 'flashcard';
-    quizState.flashSource = 'note';
-    quizState.deck        = weightedSample(allItems, quizState.questionCount || 10,
+    quizState.mode          = 'flashcard';
+    quizState.flashSource   = 'note';
+    quizState.deck          = weightedSample(allItems, quizState.questionCount || 10,
                                 item => item.text, quizState.categoryName, quizState.titleName, 'noteWords');
-    quizState.deckIndex   = 0;
-    quizState.againQueue  = [];
-    quizState.correct     = 0;
-    quizState.wrong       = 0;
-    quizState.wrongItems  = [];
+    quizState.deckIndex     = 0;
+    quizState.againQueue    = [];
+    quizState.againCountMap = {};  // FC-01 FIX
+    quizState.correct       = 0;
+    quizState.wrong         = 0;
+    quizState.wrongItems    = [];
 
     closeAllSubpanels();
     showQuizSession('flashcard');
@@ -1492,6 +1521,8 @@ document.getElementById('flashcard').addEventListener('click', () => {
         if (backOvl)  backOvl.classList.add('is-hidden');
         if (backBtn)  backBtn.disabled = true;
         _fcIsFlipped = false;
+        // 翻回正面後自動重播單字發音，Space 鍵也恢復播單字
+        if (_fcPlayWord) _fcPlayWord();
     }
 });
 
@@ -1510,8 +1541,15 @@ document.getElementById('flashcard-wrong').addEventListener('click', () => {
     const item = quizState.deck[quizState.deckIndex];
     quizState.wrong++;
     quizState.wrongItems.push(item.text);
-    // Add to end of deck to review again
-    quizState.deck.push(item);
+
+    // FC-01 FIX: 每張卡最多 re-queue 2 次，防止無限循環
+    const _againKey = item.text;
+    const _againCount = (quizState.againCountMap[_againKey] || 0) + 1;
+    quizState.againCountMap[_againKey] = _againCount;
+    if (_againCount <= 2) {
+        quizState.deck.push(item);
+    }
+
     quizState.deckIndex++;
     if (typeof recordItemResult === 'function' && item) {
         const _itype = quizState.flashSource === 'article' ? 'articleWords' : 'noteWords';
@@ -3529,14 +3567,15 @@ function startFcplus() {
         return;
     }
 
-    quizState.mode        = 'fcplus';
-    quizState.flashSource = 'note';
-    quizState.deck        = weightedSample(allItems, quizState.questionCount || 10,
+    quizState.mode          = 'fcplus';
+    quizState.flashSource   = 'note';
+    quizState.deck          = weightedSample(allItems, quizState.questionCount || 10,
                                 item => item.text, quizState.categoryName, quizState.titleName, 'noteWords');
-    quizState.deckIndex   = 0;
-    quizState.correct     = 0;
-    quizState.wrong       = 0;
-    quizState.wrongItems  = [];
+    quizState.deckIndex     = 0;
+    quizState.againCountMap = {};  // FC-01 FIX (shared field)
+    quizState.correct       = 0;
+    quizState.wrong         = 0;
+    quizState.wrongItems    = [];
 
     closeAllSubpanels();
     showQuizSession('fcplus');
@@ -3602,13 +3641,14 @@ async function startFcplusFromArticle() {
     const audioSrc = `audio/${encodeURIComponent(title.trim())}.mp3`;
     _setQuizAudioSrc(audioSrc);
 
-    quizState.mode        = 'fcplus';
-    quizState.flashSource = 'article';
-    quizState.deck        = deck;
-    quizState.deckIndex   = 0;
-    quizState.correct     = 0;
-    quizState.wrong       = 0;
-    quizState.wrongItems  = [];
+    quizState.mode          = 'fcplus';
+    quizState.flashSource   = 'article';
+    quizState.deck          = deck;
+    quizState.deckIndex     = 0;
+    quizState.againCountMap = {};  // FC-01 FIX (shared field)
+    quizState.correct       = 0;
+    quizState.wrong         = 0;
+    quizState.wrongItems    = [];
 
     closeAllSubpanels();
     showQuizSession('fcplus');
@@ -3864,9 +3904,9 @@ function _setupFcplusFrontAudio(item) {
     _fcpPlayBack = null;       // 背面音訊尚未設定，先清空
     _fcpIsFlipped = false;     // 重置翻面狀態
 
-    // Also wire result-side audio btn — 結果面播 MP3 句子（同背面）
+    // Also wire result-side audio btn — 結果面翻回正面後播單字（與 Flashcard 一致）
     const resultBtn = document.getElementById('fcplus-audio-btn-result');
-    if (resultBtn) resultBtn.onclick = () => { if (_fcpPlayBack) _fcpPlayBack(); };
+    if (resultBtn) resultBtn.onclick = () => { if (_fcpPlayWord) _fcpPlayWord(); };
 
     // Auto-play first time（三層降級）
     _quizPlayWord(item.text, audioBtn);
@@ -4029,8 +4069,8 @@ document.getElementById('fcplus-card').addEventListener('click', (e) => {
         _fcplusAfterFlip = true;
         card.classList.remove('fcplus-flipped-back');
         _showFcplusFrontResult();
-        // 結果面：自動播 MP3 句子
-        if (_fcpPlayBack) _fcpPlayBack();
+        // 結果面翻回正面：自動播單字（與 Flashcard 翻回正面行為一致）
+        if (_fcpPlayWord) _fcpPlayWord();
 
         // 隱藏背面的 Next，避免重複
         const backNext = document.getElementById('fcplus-next-btn');
@@ -4127,15 +4167,16 @@ function _showFcplusFrontResult() {
     const ctx = document.getElementById('fcplus-sentence').textContent;
     document.getElementById('fcplus-sentence-result').textContent = ctx;
 
-    // ==================== 新增：結果正面「下一題」按鈕 ====================
-    let nextBtn = document.getElementById('fcplus-result-next-btn');
-    if (!nextBtn) {
-        nextBtn = document.createElement('button');
-        nextBtn.id = 'fcplus-result-next-btn';
-        nextBtn.textContent = '下一題 →';
-        nextBtn.className = 'quiz-next-btn fcplus-result-next-btn';
-        resultEl.appendChild(nextBtn);
-    }
+    // ==================== 結果正面「下一題」按鈕 ====================
+    // FCP-03 FIX: always remove existing button first to prevent orphan nodes
+    const _oldNextBtn = document.getElementById('fcplus-result-next-btn');
+    if (_oldNextBtn) _oldNextBtn.remove();
+
+    const nextBtn = document.createElement('button');
+    nextBtn.id = 'fcplus-result-next-btn';
+    nextBtn.textContent = '下一題 →';
+    nextBtn.className = 'quiz-next-btn fcplus-result-next-btn';
+    resultEl.appendChild(nextBtn);
     nextBtn.style.display = 'block';
 
     nextBtn.onclick = () => {
@@ -4167,8 +4208,8 @@ document.addEventListener('keydown', (e) => {
             // 背面：播句子
             if (_fcpPlayBack) _fcpPlayBack();
         } else if (_fcplusAfterFlip) {
-            // 結果面：播 MP3 句子（同背面）
-            if (_fcpPlayBack) _fcpPlayBack();
+            // 結果面（翻回正面）：播單字（與 Flashcard 翻回正面一致）
+            if (_fcpPlayWord) _fcpPlayWord();
         } else {
             // 正面：播單字
             if (_fcpPlayWord) _fcpPlayWord();
@@ -4177,6 +4218,8 @@ document.addEventListener('keydown', (e) => {
     }
 
     if (e.code === 'Backspace' && !_fcplusSubmitted) {
+        // FCP-04 FIX: ignore Backspace when card is flipped or showing result
+        if (_fcplusFlipped || _fcplusAfterFlip) return;
         if (document.activeElement && document.activeElement.classList.contains('fcplus-letter-input')) return;
         e.preventDefault();
         const inputs = _getAllFcplusInputs();
@@ -4198,6 +4241,8 @@ document.addEventListener('keydown', (e) => {
             if (submitBtn && !submitBtn.classList.contains('is-hidden')) submitBtn.click();
             return;
         }
+        // FCP-02 FIX: after submit, Enter must flip card to show answer first
+        // only advance to next question after BOTH flips are done
         if (!_fcplusFlipped) { document.getElementById('fcplus-card').click(); return; }
         if (!_fcplusAfterFlip) { document.getElementById('fcplus-card').click(); return; }
         quizState.deckIndex++;
