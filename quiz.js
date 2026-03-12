@@ -67,7 +67,7 @@ async function _quizPlayWord(word, btn = null, onEnd = null) {
 // ── State ────────────────────────────────────────────────────
 let quizState = {
     mode: null,          // 'flashcard' | 'cloze' | 'dictation' | 'article-listen' | 'article-cloze'
-    scope: 'this',       // 'this' | 'all'
+    scope: 'this',       // 固定為 'this'（All Notes 功能已移除）
     categoryName: null,
     titleName: null,
     source: 'home',      // 'home' | 'note' — 記錄從哪裡進入 Quiz
@@ -264,45 +264,11 @@ function weightedSample(pool, n, keyFn, categoryName, titleName, itemType) {
     let itemScores = {};
     try { itemScores = JSON.parse(localStorage.getItem('readingChallengeItemScores') || '{}'); } catch (e) {}
 
-    // BUG-06 修正：scope='all' 時 categoryName/titleName 皆為 null，
-    // 用 "null||null" 查不到任何分數。改為：若有明確 key 就用單一 key 查；
-    // 若 categoryName 或 titleName 為 null，則合併所有 key 的分數到一個暫存 map。
-    let typeDataMap = {}; // text -> rec
-    const isAllScope = !categoryName || !titleName;
-    if (!isAllScope) {
-        const storeKey = `${categoryName}||${titleName}`;
-        const td = (itemScores[storeKey] && itemType) ? (itemScores[storeKey][itemType] || {}) : {};
-        typeDataMap = td;
-    } else {
-        // scope='all'：遍歷所有 key，合併同名 item 的 rec（後來的覆蓋前面，取最新）
-        for (const key in itemScores) {
-            const td = itemType ? (itemScores[key][itemType] || {}) : {};
-            for (const text in td) {
-                if (!typeDataMap[text]) {
-                    typeDataMap[text] = td[text];
-                } else {
-                    // 合併：累加 correct/wrong，取較新的 lastSeen
-                    const existing = typeDataMap[text];
-                    const incoming = td[text];
-                    // 新格式：各 source 子物件
-                    const sources = ['fc','fcplus','dictation','reorder','articleListen'];
-                    sources.forEach(s => {
-                        if (incoming[s]) {
-                            if (!existing[s]) {
-                                existing[s] = { ...incoming[s] };
-                            } else {
-                                existing[s].correct = (existing[s].correct || 0) + (incoming[s].correct || 0);
-                                existing[s].wrong   = (existing[s].wrong   || 0) + (incoming[s].wrong   || 0);
-                                if (incoming[s].lastSeen > (existing[s].lastSeen || 0)) {
-                                    existing[s].lastSeen = incoming[s].lastSeen;
-                                }
-                            }
-                        }
-                    });
-                }
-            }
-        }
-    }
+    // 依 categoryName||titleName 查詢此文章的 itemScore
+    const storeKey = `${categoryName}||${titleName}`;
+    const typeDataMap = (itemScores[storeKey] && itemType)
+        ? (itemScores[storeKey][itemType] || {})
+        : {};
 
     const weighted = pool.map(item => {
         const text = keyFn ? keyFn(item) : String(item);
@@ -354,23 +320,11 @@ function getNoteData(categoryName, titleName) {
 
 function getAllNoteItems(scope, categoryName, titleName) {
     const items = { words: [], phrases: [], sentences: [] };
-
-    if (scope === 'this') {
-        const data = getNoteData(categoryName, titleName);
-        // 包含 noteTitle，方便 Flashcard 翻卡時查對應文章 mp3
-        items.words    = Array.from(data.words    || []).map(w => typeof w === 'string' ? { text: w, noteTitle: titleName, noteCat: categoryName } : w);
-        items.phrases  = Array.from(data.phrases  || []).map(p => typeof p === 'string' ? { text: p, noteTitle: titleName, noteCat: categoryName } : p);
-        items.sentences = Array.from(data.sentences || []);
-    } else {
-        for (const cat in savedWords) {
-            for (const title in savedWords[cat]) {
-                const data = savedWords[cat][title];
-                items.words.push(...Array.from(data.words || []).map(w => typeof w === 'string' ? { text: w, noteTitle: title, noteCat: cat } : w));
-                items.phrases.push(...Array.from(data.phrases || []).map(p => typeof p === 'string' ? { text: p, noteTitle: title, noteCat: cat } : p));
-                items.sentences.push(...Array.from(data.sentences || []));
-            }
-        }
-    }
+    const data = getNoteData(categoryName, titleName);
+    // 包含 noteTitle，方便 Flashcard 翻卡時查對應文章 mp3
+    items.words     = Array.from(data.words     || []).map(w => typeof w === 'string' ? { text: w, noteTitle: titleName, noteCat: categoryName } : w);
+    items.phrases   = Array.from(data.phrases   || []).map(p => typeof p === 'string' ? { text: p, noteTitle: titleName, noteCat: categoryName } : p);
+    items.sentences = Array.from(data.sentences || []);
     return items;
 }
 
@@ -1182,25 +1136,6 @@ document.getElementById('quiz-add-wrong-to-note-btn').addEventListener('click', 
     const cat   = quizState.categoryName;
     const title = quizState.titleName;
 
-    // FCP-05 FIX: scope='all' means titleName is null — use each item's own source title
-    if (!cat || !title) {
-        // Try per-item noteTitle fallback
-        const wrongQ = quizState.answeredQuestions.filter(q => !q.isCorrect);
-        const itemsWithTitle = wrongQ.filter(q => q.noteTitle && q.noteCat);
-        if (itemsWithTitle.length === 0) {
-            showNotification('請先選擇特定文章再加入筆記。', 'warning');
-            return;
-        }
-        let added = 0;
-        itemsWithTitle.forEach(q => {
-            addWordToNote(q.correct, q.noteCat, q.noteTitle);
-            added++;
-        });
-        showNotification(`${added} 個項目已加入對應文章的筆記。`, 'success');
-        document.getElementById('quiz-add-to-note-bar').classList.add('is-hidden');
-        return;
-    }
-
     let added = 0;
     quizState.answeredQuestions.filter(q => !q.isCorrect).forEach(q => {
         addWordToNote(q.correct, cat, title);
@@ -1222,7 +1157,7 @@ async function startFlashcardFromArticle() {
         showNotification('Please select an article first.', 'warning');
         return;
     }
-    const tsData = await getTimestampForStory(title);
+    const tsData = await getTimestampForStoryWithCache(title) // BUG-10 FIX;
     if (!tsData || tsData.length === 0) {
         showNotification('Timestamp file not found for this article.', 'error');
         return;
@@ -1297,11 +1232,7 @@ function startFlashcard() {
     allItems = filterByWordDifficulty(allItems, quizState.difficulty);
 
     if (allItems.length === 0) {
-        if (!quizState.titleName && quizState.scope === 'this') {
-            showNotification('Select an article first, or switch to "All Notes".', 'warning');
-        } else {
-            showNotification(`No ${quizState.difficulty === 'mix' ? '' : quizState.difficulty + ' '}words or phrases found.`, 'warning');
-        }
+        showNotification(`No ${quizState.difficulty === 'mix' ? '' : quizState.difficulty + ' '}words or phrases found.`, 'warning');
         return;
     }
 
@@ -1356,10 +1287,10 @@ function showFlashcard() {
     const contextEl = document.getElementById('flashcard-context');
     // 決定背面音檔要用的文章 title：
     //   article 模式 → quizState.titleName（固定來自同一篇）
-    //   note 模式 → item.noteTitle（各 item 帶來源文章）或 scope=this 時用 titleName
+    //   note 模式 → item.noteTitle（各 item 帶來源文章）或用 titleName
     const _ctxTitle = quizState.flashSource === 'article'
         ? quizState.titleName
-        : (item.noteTitle || (quizState.scope === 'this' ? quizState.titleName : null));
+        : (item.noteTitle || quizState.titleName); // scope 永遠是 'this'
     const ctx = (quizState.flashSource === 'article' && item.sentence)
         ? item.sentence
         : findContextForWord(item.text.replace(/-/g, ' '), _ctxTitle);
@@ -1435,7 +1366,7 @@ function showFlashcard() {
     }
     if (backEditContainer) backEditContainer.innerHTML = '';
 
-    const _flashTitle = _ctxTitle; // 已考慮 article/note/scope
+    const _flashTitle = _ctxTitle;
     const _ctxText    = ctx;
 
     if (_flashTitle && _ctxText) {
@@ -1485,7 +1416,7 @@ function showFlashcard() {
             _setupBackAudio(item.start, item.end);
         } else {
             // Note 模式：查 timestamp 找句子對應時間
-            getTimestampForStory(_flashTitle).then(tsData => {
+            getTimestampForStoryWithCache(_flashTitle).then(tsData => { // BUG-10 FIX
                 if (!tsData || !backAudioBtn) return;
                 const _norm = t => t.trim().replace(/[.,?!'"`“”‘’]/g, '').toLowerCase();
                 const _match = tsData.find(l => _norm(l.sentence) === _norm(_ctxText));
@@ -1540,7 +1471,10 @@ document.getElementById('flashcard-correct').addEventListener('click', () => {
 document.getElementById('flashcard-wrong').addEventListener('click', () => {
     const item = quizState.deck[quizState.deckIndex];
     quizState.wrong++;
-    quizState.wrongItems.push(item.text);
+    // BUG-07 FIX: 同一個字只記錄一次，避免 re-queue 後結果頁重複顯示
+    if (!quizState.wrongItems.includes(item.text)) {
+        quizState.wrongItems.push(item.text);
+    }
 
     // FC-01 FIX: 每張卡最多 re-queue 2 次，防止無限循環
     const _againKey = item.text;
@@ -1596,11 +1530,11 @@ async function startDictation() {
     }
 
     // Need timestamp data
-    const title = quizState.scope === 'this' ? quizState.titleName : null;
+    const title = quizState.titleName; // scope 永遠是 'this'
     let tsData = null;
 
     if (title) {
-        tsData = await getTimestampForStory(title);
+        tsData = await getTimestampForStoryWithCache(title) // BUG-10 FIX;
         if (!tsData || tsData.length === 0) {
             showNotification('Timestamp file not found for this article. Dictation unavailable.', 'error');
             return;
@@ -1635,7 +1569,7 @@ async function startDictation() {
 
     quizState.mode        = 'dictation';
     quizState.questions   = weightedSample(filteredQ, quizState.questionCount || 10,
-                                item => item.sentence, quizState.categoryName, quizState.titleName || quizState.scope, 'noteSentences');
+                                item => item.sentence, quizState.categoryName, quizState.titleName, 'noteSentences');
     quizState.currentIndex = 0;
     quizState.correct     = 0;
     quizState.wrong       = 0;
@@ -1735,7 +1669,7 @@ function playDictationAudio(q) {
 function handleDictationAnswer(selected, correct, btn) {
     document.querySelectorAll('#dictation-options .quiz-option-btn').forEach(b => {
         b.disabled = true;
-        if (b.textContent === correct) b.classList.add('is-correct');
+        if (b.textContent.toLowerCase() === correct.toLowerCase()) b.classList.add('is-correct'); // BUG-01 FIX: 大小寫不敏感，與 isCorrect 判斷一致
     });
 
     const feedbackEl = document.getElementById('dictation-feedback');
@@ -1801,7 +1735,10 @@ function getWordDifficulty(text) {
 // Filter word/phrase items by difficulty setting
 function filterByWordDifficulty(items, diff) {
     if (diff === 'mix') return items;
-    return items.filter(item => getWordDifficulty(item.text) === diff);
+    return items.filter(item => {
+        const d = getWordDifficulty(item.text);
+        return d === null || d === diff; // BUG-06 FIX: null = 不在 Oxford 表 → 保留，避免題目意外消失
+    });
 }
 
 // Filter sentence items by difficulty setting
@@ -1820,7 +1757,7 @@ async function startArticleQuiz() {
         return;
     }
 
-    const tsData = await getTimestampForStory(title);
+    const tsData = await getTimestampForStoryWithCache(title) // BUG-05+BUG-10 FIX: 填充 tsDataCache 讓干擾選項 fallback 生效;
     if (!tsData || tsData.length === 0) {
         showNotification('Timestamp file not found for this article.', 'error');
         return;
@@ -2283,15 +2220,23 @@ function _mutSwapAdjacentWords(tokens) {
 
 /** Last-resort: minor character-level tweak */
 function _fallbackDistractors(sentence, n) {
+    // BUG-09 FIX: 用 seen Set 過濾，避免產生與正確答案相同或互相重複的干擾選項
     const results = [];
+    const seen = new Set([sentence.toLowerCase().trim()]);
     const words = sentence.split(' ');
-    for (let i = 0; i < n; i++) {
-        // shift one word to different position
-        const idx = 1 + (i % Math.max(1, words.length - 2));
+    let attempt = 0;
+    while (results.length < n && attempt < n * 10) {
+        const idx = 1 + (attempt % Math.max(1, words.length - 2));
         const shifted = [...words];
         const w = shifted.splice(idx, 1)[0];
         shifted.splice(Math.max(0, idx - 1), 0, w);
-        results.push(shifted.join(' '));
+        const candidate = shifted.join(' ');
+        const key = candidate.toLowerCase().trim();
+        if (!seen.has(key)) {
+            seen.add(key);
+            results.push(candidate);
+        }
+        attempt++;
     }
     return results;
 }
@@ -2387,7 +2332,7 @@ function showArticleClozeQuestion() {
     // Pick a word to blank out from the sentence
     // Prefer longer words (more meaningful)
     const words = q.sentence.match(/\b[a-zA-Z]{4,}\b/g) || q.sentence.split(/\s+/);
-    const targetWord = words[Math.floor(Math.random() * words.length)];
+    const targetWord = words[Math.floor(Math.random() * words.length)].toLowerCase(); // BUG-02 FIX: 統一小寫，避免句首大寫與選項不符
 
     // Build blanked sentence
     const blanked = q.sentence.replace(
@@ -2566,7 +2511,7 @@ async function startReorder(source) {
             showNotification('Please select an article using the dropdowns above.', 'warning');
             return;
         }
-        const tsData = await getTimestampForStory(title);
+        const tsData = await getTimestampForStoryWithCache(title) // BUG-10 FIX;
         if (!tsData || tsData.length === 0) {
             showNotification('Timestamp file not found for this article.', 'error');
             return;
@@ -2610,7 +2555,7 @@ async function startReorder(source) {
         // Try to match each note sentence against timestamp data
         let tsData = null;
         if (title) {
-            tsData = await getTimestampForStory(title);
+            tsData = await getTimestampForStoryWithCache(title) // BUG-10 FIX;
         }
 
         // BUG FIX: 先把所有句子 map 成 question 物件，再用 weightedSample 依熟悉度加權抽題
@@ -2633,7 +2578,7 @@ async function startReorder(source) {
             quizState.questionCount || 10,
             item => item.sentence,
             quizState.categoryName,
-            quizState.titleName || quizState.scope,
+            quizState.titleName,
             'noteSentences'
         );
 
@@ -2830,22 +2775,22 @@ function showReorderQuestion() {
     reorderChecked = false;
 
     // Tokenize and shuffle — ensure it's actually shuffled
+    // BUG-03 FIX: 用 { word, origIdx } 結構 shuffle，origIdx 天生唯一，
+    // 即使句子有重複詞（如 "Go go go!"）hint 索引也永遠精準
     const tokens = tokenize(q.sentence);
-    let shuffled;
-    do { shuffled = shuffle([...tokens]); }
-    while (tokens.length > 1 && shuffled.join(' ') === tokens.join(' '));
-    reorderPool = shuffled;
-    
-    // 記錄第一個和最後一個單字
+    const indexedTokens = tokens.map((word, origIdx) => ({ word, origIdx }));
+    let shuffledIndexed;
+    do { shuffledIndexed = shuffle([...indexedTokens]); }
+    while (tokens.length > 1 &&
+           shuffledIndexed.map(t => t.word).join(' ') === tokens.join(' '));
+    reorderPool = shuffledIndexed.map(t => t.word);
+
+    // 記錄第一個和最後一個單字（供 hint 顯示）
     reorderFirstWord = tokens[0];
-    reorderLastWord = tokens[tokens.length - 1];
-    // 記錄 shuffle 後的精確索引（直接比對字串身份，避免大小寫重複標記）
-    reorderFirstWordIdx = shuffled.indexOf(tokens[0]);
-    reorderLastWordIdx  = shuffled.lastIndexOf(tokens[tokens.length - 1]);
-    // 若 first === last（單詞句），last 用同一個 idx
-    if (tokens[0] === tokens[tokens.length - 1]) {
-        reorderLastWordIdx = reorderFirstWordIdx;
-    }
+    reorderLastWord  = tokens[tokens.length - 1];
+    // origIdx 唯一，不需要特判 first === last 的情況
+    reorderFirstWordIdx = shuffledIndexed.findIndex(t => t.origIdx === 0);
+    reorderLastWordIdx  = shuffledIndexed.findIndex(t => t.origIdx === tokens.length - 1);
     
     // 顯示提示
     const hintEl = document.getElementById('reorder-hint');
@@ -3591,7 +3536,7 @@ async function startFcplusFromArticle() {
         return;
     }
 
-    const tsData = await getTimestampForStory(title);
+    const tsData = await getTimestampForStoryWithCache(title) // BUG-10 FIX;
 
     const STOP = new Set(['that','this','with','have','from','they','been','were','when','what',
         'will','your','which','their','there','would','could','should','about','after','before',
@@ -3696,10 +3641,10 @@ async function showFcplusCard() {
     // Build letter inputs
     _buildFcplusLetters(item.text);
 
-    // Sentence display — note 模式用 item.noteTitle，支援 All Notes
+    // Sentence display — note 模式用 item.noteTitle
     const _fcplusCtxTitle = quizState.flashSource === 'article'
         ? quizState.titleName
-        : (item.noteTitle || (quizState.scope === 'this' ? quizState.titleName : null));
+        : (item.noteTitle || quizState.titleName); // scope 永遠是 'this'
     const ctx = (quizState.flashSource === 'article' && item.sentence)
         ? item.sentence
         : findContextForWord(item.text.replace(/-/g, ' '), _fcplusCtxTitle);
@@ -3738,12 +3683,12 @@ async function showFcplusCard() {
     backAudioBtn.onclick  = null;
     if (backEditContainer) backEditContainer.innerHTML = '';
 
-    const flashTitle = _fcplusCtxTitle; // 已考慮 note item.noteTitle 與 scope
+    const flashTitle = _fcplusCtxTitle;
     if (flashTitle && ctx) {
         const audioSrc   = `audio/${encodeURIComponent(flashTitle.trim())}.mp3`;
         _setQuizAudioSrc(audioSrc);
         try {
-            const tsData = await getTimestampForStory(flashTitle);
+            const tsData = await getTimestampForStoryWithCache(flashTitle) // BUG-10 FIX;
             if (tsData) {
                 const norm  = t => t.trim().replace(/[.,?!'"`\u201c\u201d\u2018\u2019]/g, '').toLowerCase();
                 const match = tsData.find(l => norm(l.sentence) === norm(ctx));
@@ -3795,10 +3740,7 @@ function _buildFcplusLetters(word) {
             sep.textContent = '-';
             container.appendChild(sep);
         } else {
-            const isFirst = (i === 0) || (chars[i-1] === '-' && i === chars.findIndex((c,j) => j >= i && c !== '-'));
-            const isLast  = (i === chars.length - 1) || (chars[i+1] === '-' && i === [...chars].reverse().findIndex((c,j) => j >= chars.length - 1 - i && c !== '-') );
-
-            // Recalculate first/last letter of each word segment
+            // BUG-08 FIX: 移除從未使用的 isFirst / isLast 廢碼
             // Simple: first letter if i===0 or chars[i-1]==='-'
             // Last letter if i===chars.length-1 or chars[i+1]==='-'
             const isSegFirst = i === 0 || chars[i - 1] === '-';
