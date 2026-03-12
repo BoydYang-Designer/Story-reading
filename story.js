@@ -1139,15 +1139,39 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
                     noteAudioPlayer.addEventListener('pause', restoreOnEnd, { once: true });
                     noteAudioPlayer.addEventListener('ended', restoreOnEnd, { once: true });
                 } else {
-                    const audioSrc = `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(itemText.trim())}.mp3`;
-                    const wordAudio = new Audio(audioSrc);
-                    wordAudio.play().catch(() => {
-                        voiceBtn.classList.remove('is-playing-voice');
-                        showNotification(`Audio for "${itemText}" was not found.`, 'error');
-                    });
-                    wordAudio.addEventListener('ended', () => {
-                        voiceBtn.classList.remove('is-playing-voice');
-                    }, { once: true });
+                    // 嘗試播放 GitHub MP3，若找不到則降級 TTS
+                    const cleanItem = itemText.trim();
+                    const capitalized = cleanItem.charAt(0).toUpperCase() + cleanItem.slice(1).toLowerCase();
+                    const candidates = [...new Set([capitalized, cleanItem.toLowerCase()])];
+                    let tried = 0;
+
+                    function _tryNoteGithub() {
+                        if (tried >= candidates.length) {
+                            // MP3 不存在 → 降級 TTS
+                            voiceBtn.classList.remove('is-playing-voice');
+                            if ('speechSynthesis' in window) {
+                                window.speechSynthesis.cancel();
+                                const u = new SpeechSynthesisUtterance(cleanItem);
+                                u.lang = 'en-US';
+                                u.rate = 0.9;
+                                u.onend = () => voiceBtn.classList.remove('is-playing-voice');
+                                voiceBtn.classList.add('is-playing-voice');
+                                window.speechSynthesis.speak(u);
+                            }
+                            return;
+                        }
+                        const BASE = 'https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/';
+                        const src = BASE + encodeURIComponent(candidates[tried++]) + '.mp3';
+                        const au = new Audio(src);
+                        let settled = false;
+                        au.onerror = () => { if (!settled) { settled = true; _tryNoteGithub(); } };
+                        au.play().catch(() => { if (!settled) { settled = true; _tryNoteGithub(); } });
+                        au.addEventListener('canplay', () => { settled = true; }, { once: true });
+                        au.addEventListener('ended', () => {
+                            voiceBtn.classList.remove('is-playing-voice');
+                        }, { once: true });
+                    }
+                    _tryNoteGithub();
                 }
             });
             actions.appendChild(voiceBtn);
