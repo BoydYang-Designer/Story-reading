@@ -1,82 +1,74 @@
-[00:00:00.000 --> 00:00:05.140] Put another way, our behavior is heavily dependent on how we interpret the events that happen to us,
-[00:00:05.300 --> 00:00:08.500] not necessarily the objective reality of the events themselves.
+[00:00:00.000 --> 00:00:08.500] Put another way, our behavior is heavily dependent on how we interpret the events that happen to us, not necessarily the objective reality of the events themselves.
 [00:00:09.620 --> 00:00:15.120] Two people can look at the same cigarette, and one feels the urge to smoke, while the other is repulsed by the smell.
-[00:00:15.500 --> 00:00:19.580] The same cue can spark a good habit or a bad habit depending on your prediction.
+[00:00:15.500 --> 00:00:19.580] The same cue can spark a good habit or a bad habit, depending on your prediction.
 [00:00:20.280 --> 00:00:23.760] The cause of your habits is actually the prediction that precedes them.
-[00:00:24.480 --> 00:00:28.080] These predictions lead to feelings, which is how we typically describe a craving.
-[00:00:28.080 --> 00:00:30.520] A feeling, a desire, an urge.
-[00:00:31.160 --> 00:00:37.460] Feelings and emotions transform the cues we perceive and the predictions we make into a signal that we can apply.
-[00:00:37.800 --> 00:00:40.120] They help explain what we are currently sensing.
-[00:00:40.460 --> 00:00:45.500] For instance, whether or not you realize it, you are noticing how warm or cold you feel right now.
-[00:00:45.740 --> 00:00:49.200] If the temperature drops by one degree, you probably won't do anything.
-[00:00:49.620 --> 00:00:54.600] If the temperature drops by ten degrees, however, you'll feel cold and put on another layer of clothing.
-[00:00:55.280 --> 00:00:58.420] Feeling cold was the signal that prompted you to act.
+[00:00:24.480 --> 00:00:30.520] These predictions lead to feelings, which is how we typically describe a craving. A feeling, a desire, an urge.
+[00:00:31.180 --> 00:00:37.460] Feelings and emotions transform the cues we perceive, and the predictions we make, into a signal that we can apply.
+[00:00:37.820 --> 00:00:40.100] They help explain what we are currently sensing.
+[00:00:40.480 --> 00:00:45.500] For instance, whether or not you realize it, you are noticing how warm or cold you feel right now.
+[00:00:45.800 --> 00:00:49.200] If the temperature drops by one degree, you probably won't do anything.
+[00:00:49.660 --> 00:00:54.600] If the temperature drops by ten degrees, however, you'll feel cold and put on another layer of clothing.
+[00:00:55.240 --> 00:00:58.420] Feeling cold was the signal that prompted you to act.
 [00:00:58.740 --> 00:01:06.220] You have been sensing the cues the entire time, but it is only when you predict that you would be better off in a different state that you take action.
-[00:01:07.180 --> 00:01:09.820] A craving is the sense that something is missing.
-[00:01:09.940 --> 00:01:12.560] It is the desire to change your internal state.
-[00:01:13.080 --> 00:01:18.860] When the temperature falls, there is a gap between what your body is currently sensing and what it wants to be sensing.
+[00:01:07.140 --> 00:01:09.820] A craving is the sense that something is missing.
+[00:01:09.900 --> 00:01:12.560] It is the desire to change your internal state.
+[00:01:13.040 --> 00:01:18.860] When the temperature falls, there is a gap between what your body is currently sensing and what it wants to be sensing.
 [00:01:18.860 --> 00:01:23.720] And this gap between your current state and your desired state provides a reason to act.
 [00:01:24.440 --> 00:01:29.420] So, desire is the difference between where you are now and where you want to be in the future.
 [00:01:29.840 --> 00:01:34.640] Even the tiniest action is tinged with the motivation to feel differently than you do in the moment.
-[00:01:35.140 --> 00:01:42.220] When you binge eat or light up or browse social media, what you really want is not a potato chip or a cigarette or a bunch of likes.
+[00:01:35.160 --> 00:01:42.220] When you binge eat or light up or browse social media, what you really want is not a potato chip or a cigarette or a bunch of likes.
 [00:01:42.240 --> 00:01:44.380] What you really want is to feel different.
 [00:01:45.120 --> 00:01:50.300] Our feelings and emotions tell us whether to hold steady in our current state or to make a change.
-[00:01:50.580 --> 00:01:52.920] They help us decide the best course of action.
-[00:01:53.800 --> 00:01:59.340] Neurologists have discovered that when emotions and feelings are impaired, we actually lose the ability to make decisions.
+[00:01:50.600 --> 00:01:52.920] They help us decide the best course of action.
+[00:01:53.800 --> 00:01:59.320] Neurologists have discovered that when emotions and feelings are impaired, we actually lose the ability to make decisions.
 [00:01:59.800 --> 00:02:02.860] We have no signal of what to pursue and what to avoid.
-[00:02:03.220 --> 00:02:10.360] As the neuroscientist Antonio Damasio explains, it is emotion that allows you to mark things as good, bad, or indifferent.
+[00:02:03.220 --> 00:02:10.380] As the neuroscientist Antonio Damasio explains, it is emotion that allows you to mark things as good, bad, or indifferent.
 [00:02:11.180 --> 00:02:19.080] To summarize, the specific cravings you feel and the habits you perform are really an attempt to address your fundamental underlying motives.
-[00:02:19.380 --> 00:02:24.120] Whenever a habit successfully addresses a motive, you develop a craving to do it again.
-[00:02:24.680 --> 00:02:40.780] In time, you learn to predict that, for example, checking social media will help you feel loved or that watching YouTube will allow you to forget your fears. For example,
-[00:02:42.900 --> 00:02:45.760] how to reprogram your brain to enjoy hard habits.
-[00:02:46.520 --> 00:02:51.400] You can make hard habits more attractive if you can learn to associate them with a positive experience.
-[00:02:52.100 --> 00:02:54.540] Sometimes, all you need is a slight mindset shift.
-[00:02:54.760 --> 00:02:58.780] For example, we often talk about everything we have to do on a given day.
-[00:02:58.960 --> 00:03:00.700] You have to wake up early for work.
-[00:03:00.700 --> 00:03:02.440] You have to make another sales call.
-[00:03:02.620 --> 00:03:04.200] You have to cook dinner for your family.
-[00:03:04.640 --> 00:03:09.340] Now, imagine changing just one word. You don't have to. You get to.
-[00:03:09.480 --> 00:03:11.480] You get to wake up early for work.
-[00:03:11.540 --> 00:03:13.600] You get to make another sales call for your business.
-[00:03:13.620 --> 00:03:15.340] You get to cook dinner for your family.
-[00:03:16.040 --> 00:03:19.240] By simply changing one word, you shift the way you view each event.
-[00:03:19.520 --> 00:03:23.740] You transition from seeing these behaviors as burdens and turn them into opportunities.
+[00:02:19.420 --> 00:02:24.120] Whenever a habit successfully addresses a motive, you develop a craving to do it again.
+[00:02:24.740 --> 00:02:32.740] In time, you learn to predict that, for example, checking social media will help you feel loved or that watching YouTube will allow you to forget your fears.
+[00:02:33.480 --> 00:02:40.760] Habits are attractive when we associate them with positive feelings, and we can use this insight to our advantage rather than to our detriment.
+[00:02:42.620 --> 00:02:45.760] How to reprogram your brain to enjoy hard habits
+[00:02:46.500 --> 00:02:51.440] You can make hard habits more attractive if you can learn to associate them with a positive experience.
+[00:02:52.060 --> 00:02:54.540] Sometimes, all you need is a slight mindset shift.
+[00:02:54.700 --> 00:02:58.780] For example, we often talk about everything we have to do on a given day.
+[00:02:58.900 --> 00:03:02.440] You have to wake up early for work. You have to make another sales call.
+[00:03:02.620 --> 00:03:09.340] You have to cook dinner for your family. Now, imagine changing just one word. You don't have to, you get to.
+[00:03:09.500 --> 00:03:11.480] You get to wake up early for work.
+[00:03:11.600 --> 00:03:13.600] You get to make another sales call for your business.
+[00:03:13.840 --> 00:03:15.340] You get to cook dinner for your family.
+[00:03:16.060 --> 00:03:19.240] By simply changing one word, you shift the way you view each event.
+[00:03:19.440 --> 00:03:23.740] You transition from seeing these behaviors as burdens and turn them into opportunities.
 [00:03:24.380 --> 00:03:27.900] The key point is that both versions of reality are true.
-[00:03:28.100 --> 00:03:32.080] You do have to do those things, and you also get to do them.
-[00:03:32.480 --> 00:03:35.240] We can find evidence for whatever mindset we choose.
+[00:03:28.140 --> 00:03:32.080] You do have to do those things, and you also get to do them.
+[00:03:32.480 --> 00:03:35.220] We can find evidence for whatever mindset we choose.
 [00:03:36.200 --> 00:03:38.800] I once heard a story about a man who uses a wheelchair.
-[00:03:39.080 --> 00:03:45.280] When asked if it was a difficult thing being confined, he responded, I'm not confined to my wheelchair. I'm liberated by it.
-[00:03:45.280 --> 00:03:49.320] If it wasn't for my wheelchair, I would be bed -bound and never able to leave the house.
-[00:03:50.120 --> 00:03:53.700] This shift in perspective completely transformed how he lived each day.
-[00:03:54.140 --> 00:04:05.860] Similarly, reframing your habits to highlight their benefits rather than their drawbacks is a fast and lightweight way to reprogram your mind and make a habit seem more attractive. Here are some examples. Exercise.
-[00:04:06.460 --> 00:04:11.440] Many people associate exercise with being a challenging task that drains energy and wears you down.
-[00:04:11.700 --> 00:04:15.720] But you can just as easily view it as a way to develop skills and build you up.
-[00:04:15.980 --> 00:04:19.700] Instead of telling yourself, I need to go for a run this morning, you can say,
-[00:04:20.360 --> 00:04:23.860] it's time to build endurance and get fast. Or finance.
-[00:04:24.480 --> 00:04:26.920] Saving money is often associated with sacrifice.
+[00:03:39.080 --> 00:03:45.260] When asked if it was a difficult thing being confined, he responded, I'm not confined to my wheelchair. I'm liberated by it.
+[00:03:45.420 --> 00:03:49.320] If it wasn't for my wheelchair, I would be bed -bound and never able to leave the house.
+[00:03:50.160 --> 00:03:53.700] This shift in perspective completely transformed how he lived each day.
+[00:03:54.180 --> 00:04:05.920] Similarly, reframing your habits to highlight their benefits rather than their drawbacks is a fast and lightweight way to reprogram your mind and make a habit seem more attractive. Here are some examples. Exercise.
+[00:04:06.440 --> 00:04:11.440] Many people associate exercise with being a challenging task that drains energy and wears you down.
+[00:04:11.680 --> 00:04:15.720] But you can just as easily view it as a way to develop skills and build you up.
+[00:04:15.960 --> 00:04:26.920] Instead of telling yourself, I need to go for a run this morning, you can say, it's time to build endurance and get fast. Or finance. Saving money is often associated with sacrifice.
 [00:04:26.920 --> 00:04:32.280] However, you can associate it with freedom rather than limitation if you realize one simple truth.
 [00:04:32.580 --> 00:04:36.360] Living below your current means increases your future means.
 [00:04:36.540 --> 00:04:41.780] The money you saved this month increases your purchasing power next month. Meditation.
-[00:04:42.180 --> 00:04:48.960] Anyone who has tried meditation for more than three seconds knows how frustrating it can be when the next distraction inevitably pops into your mind.
-[00:04:48.960 --> 00:04:56.380] But you can transform this frustration into delight when you realize that each interruption gives you a chance to practice returning to your breath.
-[00:04:56.920 --> 00:05:01.520] Distraction is actually a good thing because you need distractions to practice meditation.
-[00:05:02.200 --> 00:05:04.220] Or take someone who has pregame jitters.
-[00:05:04.460 --> 00:05:09.300] Many people feel anxious before delivering a big presentation or competing in an important event.
+[00:04:42.140 --> 00:04:48.960] Anyone who has tried meditation for more than three seconds knows how frustrating it can be when the next distraction inevitably pops into your mind.
+[00:04:49.280 --> 00:04:56.400] But you can transform this frustration into delight when you realize that each interruption gives you a chance to practice returning to your breath.
+[00:04:56.920 --> 00:05:04.220] Distraction is actually a good thing because you need distractions to practice meditation. Or take someone who has pregame jitters.
+[00:05:04.520 --> 00:05:09.300] Many people feel anxious before delivering a big presentation or competing in an important event.
 [00:05:09.840 --> 00:05:13.480] They experience quicker breathing, a faster heart rate, heightened arousal.
-[00:05:13.760 --> 00:05:17.500] If we interpret these feelings negatively, then we feel threatened and tense up.
-[00:05:17.500 --> 00:05:21.920] If we interpret these feelings positively, then we can respond with fluidity and grace.
-[00:05:22.180 --> 00:05:27.620] You can reframe, I am nervous, to, I am excited and I am getting an adrenaline rush to help me concentrate.
+[00:05:13.780 --> 00:05:17.500] If we interpret these feelings negatively, then we feel threatened and tense up.
+[00:05:17.740 --> 00:05:21.920] If we interpret these feelings positively, then we can respond with fluidity and grace.
+[00:05:21.920 --> 00:05:27.620] You can reframe, I am nervous, to, I am excited and I am getting an adrenaline rush to help me concentrate.
 [00:05:28.760 --> 00:05:34.720] These little mindset shifts aren't magic, but they can help change the feelings you associate with a particular habit or situation.
 [00:05:35.280 --> 00:05:38.660] If you want to take it a step further, you can create a motivation ritual.
-[00:05:39.020 --> 00:05:47.380] You simply associate your habits with something that you already enjoy, and then you use that as the cue whenever you need a little bit of motivation. For instance,
-[00:05:47.980 --> 00:05:52.920] if you always play the same song before having sex, then you'll begin to link the music with the act.
-[00:05:53.320 --> 00:05:55.940] Whenever you want to get in the mood, you can just press play.
-[00:05:56.980 --> 00:06:03.660] Ed Lattimore, a boxer and writer from Pittsburgh, benefited from a similar strategy without knowing it. Odd realization, he wrote.
-[00:06:04.140 --> 00:06:08.200] My focus and concentration goes up just by putting my headphones on while writing.
-[00:06:08.460 --> 00:06:10.100] I don't even have to play any music.
-[00:06:10.580 --> 00:06:13.160] Without realizing it, he was conditioning himself.
-[00:06:13.160 --> 00:06:18.340] In the beginning, he put his headphones on, played some music he enjoyed, and did focus work.
+[00:05:39.020 --> 00:05:46.420] You simply associate your habits with something that you already enjoy, and then you use that as the cue whenever you need a little bit of motivation.
+[00:05:46.680 --> 00:05:52.920] For instance, if you always play the same song before having sex, then you'll begin to link the music with the act.
+[00:05:53.340 --> 00:05:55.940] Whenever you want to get in the mood, you can just press play.
+[00:05:57.000 --> 00:06:03.660] Ed Lattimore, a boxer and writer from Pittsburgh, benefited from a similar strategy without knowing it. Odd realization, he wrote.
+[00:06:04.180 --> 00:06:08.200] My focus and concentration goes up just by putting my headphones on while writing.
+[00:06:08.440 --> 00:06:13.180] I don't even have to play any music. Without realizing it, he was conditioning himself.
+[00:06:13.620 --> 00:06:18.320] In the beginning, he put his headphones on, played some music he enjoyed, and did focus work.
 [00:06:18.780 --> 00:06:28.240] After doing it 5, 10, 20 times, putting his headphones on became a cue that he automatically associated with increased focus. The craving followed naturally.
-[00:06:29.600 --> 00:06:33.020] Athletes use similar strategies to get themselves in the mindset to perform.
-[00:06:33.880 --> 00:06:38.960] During my baseball career, I developed a specific ritual of stretching and throwing before each game.
-[00:06:39.160 --> 00:06:40.880] The whole sequence took about 10 minutes.
+[00:06:29.600 --> 00:06:33.040] Athletes use similar strategies to get themselves in the mindset to perform.
+[00:06:33.860 --> 00:06:40.880] During my baseball career, I developed a specific ritual of stretching and throwing before each game. The whole sequence took about 10 minutes.
