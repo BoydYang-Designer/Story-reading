@@ -1544,16 +1544,17 @@ def scan_folder_for_mp3(folder_path):
 
 
 def backup_file(path):
-    """將 path 備份為 path（原檔）.ext，若備份已存在則加編號。"""
+    """將 path 備份為 原檔_filename.ext，若備份已存在則加編號。"""
     if not os.path.exists(path):
         return None
-    base, ext = os.path.splitext(path)
-    backup_path = base + "（原檔）" + ext
+    dir_, filename = os.path.split(path)
+    base, ext = os.path.splitext(filename)
+    backup_path = os.path.join(dir_, "原檔_" + base + ext)
     if os.path.exists(backup_path):
         n = 2
-        while os.path.exists(f"{base}（原檔{n}）{ext}"):
+        while os.path.exists(os.path.join(dir_, f"原檔{n}_" + base + ext)):
             n += 1
-        backup_path = f"{base}（原檔{n}）{ext}"
+        backup_path = os.path.join(dir_, f"原檔{n}_" + base + ext)
     import shutil
     shutil.copy2(path, backup_path)
     return backup_path

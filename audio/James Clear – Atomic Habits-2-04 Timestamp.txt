@@ -1,20 +1,12 @@
 [00:00:00.140 --> 00:00:08.120] But before we do that, we need to transform these four steps into a practical framework that we can use to design good habits and eliminate bad ones.
 [00:00:08.840 --> 00:00:16.800] I refer to this framework as the four laws of behavior change, and it provides a simple set of rules for creating good habits and breaking bad ones.
 [00:00:17.700 --> 00:00:21.300] You can think of each law as a lever that influences human behavior.
-[00:00:21.560 --> 00:00:25.160] When the levers are in the right positions, creating good habits is effortless.
+[00:00:21.620 --> 00:00:25.160] When the levers are in the right positions, creating good habits is effortless.
 [00:00:25.160 --> 00:00:27.800] When they are in the wrong positions, it is nearly impossible.
-[00:00:28.680 --> 00:00:31.280] Here's how you can use the four laws to create a good habit.
-[00:00:32.260 --> 00:00:34.920] Q, the first law, make it obvious.
-[00:00:35.720 --> 00:00:38.440] Craving, the second law, make it attractive.
-[00:00:39.340 --> 00:00:42.000] Response, the third law, make it easy.
-[00:00:42.760 --> 00:00:45.120] Reward, the fourth law, make it satisfying.
-[00:00:46.060 --> 00:00:49.540] And we can invert these laws to learn how to break a bad habit.
-[00:00:50.920 --> 00:00:54.020] Q, inversion of the first law, make it invisible.
-[00:00:55.480 --> 00:00:58.840] Craving, inversion of the second law. Make it unattractive.
-[00:00:59.660 --> 00:01:02.940] Response, inversion of the third law. Make it difficult.
-[00:01:03.960 --> 00:01:07.260] Reward, inversion of the fourth law. Make it unsatisfying.
-[00:01:08.260 --> 00:01:15.700] It would be irresponsible for me to claim that these four laws are an exhaustive framework for changing any human behavior. But I think they're close.
-[00:01:16.100 --> 00:01:24.100] As you will see, the four laws of behavior change apply to nearly every field, from sports to politics, art to medicine, comedy to management.
+[00:00:28.700 --> 00:00:45.100] Here's how you can use the four laws to create a good habit. Q. The first law. Make it obvious. Craving. The second law. Make it attractive. Response. The third law. Make it easy. Reward. The fourth law. Make it satisfying.
+[00:00:46.080 --> 00:01:07.260] And we can invert these laws to learn how to break a bad habit. Q. Inversion. Of the first law. Make it invisible. Craving. Inversion. Of the second law. Make it unattractive. Response. Inversion. Of the third law. Make it difficult. Reward. Inversion. Of the fourth law. Make it unsatisfying.
+[00:01:08.280 --> 00:01:15.700] It would be irresponsible for me to claim that these four laws are an exhaustive framework for changing any human behavior. But I think they're close.
+[00:01:16.120 --> 00:01:24.100] As you will see, the four laws of behavior change apply to nearly every field, from sports to politics, art to medicine, comedy to management.
 [00:01:24.720 --> 00:01:27.260] These laws can be used no matter what challenge you are facing.
 [00:01:27.640 --> 00:01:30.300] There is no need for completely different strategies for each habit.
 [00:01:31.140 --> 00:01:45.220] Whenever you want to change your behavior, you can simply ask yourself, If
@@ -22,41 +14,39 @@
 [00:01:48.180 --> 00:01:52.620] Why don't I lose the weight, or stop smoking, or save for retirement, or start that side business?
 [00:01:52.620 --> 00:01:56.620] Why do I say something is important to me, but never seem to make time for it?
 [00:01:56.960 --> 00:02:00.740] The answers to those questions can be found somewhere in these four laws.
-[00:02:01.300 --> 00:02:08.740] The key to creating good habits and breaking bad ones is to understand these four fundamental laws and how to alter them to your specifications.
+[00:02:01.300 --> 00:02:08.760] The key to creating good habits and breaking bad ones is to understand these four fundamental laws and how to alter them to your specifications.
 [00:02:09.420 --> 00:02:12.960] Every goal is doomed to fail if it goes against the grain of human nature.
 [00:02:13.780 --> 00:02:16.480] Your habits are shaped by the systems in your life.
 [00:02:16.900 --> 00:02:29.250] In the chapters that follow, we will discuss these laws one by one and show how you can use them to create a system in which good habits emerge naturally and bad habits wither away. Chapter Summary
 [00:02:30.090 --> 00:02:33.950] A habit is a behavior that has been repeated enough times to be automatic.
 [00:02:34.790 --> 00:02:40.170] The ultimate purpose of habits is to solve the problems of life with as little energy and effort as possible.
-[00:02:40.850 --> 00:02:47.650] Any habit can be broken down into a feedback loop that involves four steps. Cue, craving, response, and reward.
-[00:02:48.820 --> 00:03:10.410] The four laws of behavior change are a simple set of rules we can use to build better habits. They are 1. Make it obvious 2. Make it attractive 3. Make it easy 4. Make it satisfying The first law Make it obvious
-[00:03:12.130 --> 00:03:17.650] Chapter 4 The man who didn't look right The
+[00:02:40.870 --> 00:02:47.650] Any habit can be broken down into a feedback loop that involves four steps. Cue, craving, response, and reward.
+[00:02:48.550 --> 00:03:10.410] The four laws of behavior change are a simple set of rules we can use to build better habits. They are 1. Make it obvious 2. Make it attractive 3. Make it easy 4. Make it satisfying The first law Make it obvious
+[00:03:12.270 --> 00:03:17.650] Chapter 4 The man who didn't look right The
 [00:03:17.650 --> 00:03:21.770] psychologist Gary Klein once told me a story about a woman who attended a family gathering.
-[00:03:22.470 --> 00:03:29.210] She had spent years working as a paramedic and, upon arriving at the event, took one look at her father -in -law and got very concerned.
-[00:03:29.770 --> 00:03:31.450] I don't like the way you look, she said.
+[00:03:22.470 --> 00:03:29.230] She had spent years working as a paramedic and, upon arriving at the event, took one look at her father -in -law and got very concerned.
+[00:03:29.770 --> 00:03:31.470] I don't like the way you look, she said.
 [00:03:31.890 --> 00:03:38.730] Her father -in -law, who was feeling perfectly fine, jokingly replied, Well, I don't like your looks either. No, she insisted.
-[00:03:38.930 --> 00:03:40.470] You need to go to the hospital now.
-[00:03:41.090 --> 00:03:50.150] A few hours later, the man was undergoing life -saving surgery after an examination had revealed that he had a blockage to a major artery and was at immediate risk of a heart attack.
-[00:03:50.750 --> 00:03:56.050] Without his daughter -in -law's intuition, he could have died. What did the paramedic see?
-[00:03:56.350 --> 00:03:58.330] How did she predict his impending heart attack?
-[00:03:59.310 --> 00:04:06.350] When major arteries are obstructed, the body focuses on sending blood to critical organs and away from peripheral locations near the surface of the skin.
+[00:03:38.950 --> 00:03:40.470] You need to go to the hospital now.
+[00:03:41.070 --> 00:03:50.150] A few hours later, the man was undergoing life -saving surgery after an examination had revealed that he had a blockage to a major artery and was at immediate risk of a heart attack.
+[00:03:50.710 --> 00:03:56.050] Without his daughter -in -law's intuition, he could have died. What did the paramedic see?
+[00:03:56.250 --> 00:03:58.350] How did she predict his impending heart attack?
+[00:03:59.270 --> 00:04:06.350] When major arteries are obstructed, the body focuses on sending blood to critical organs and away from peripheral locations near the surface of the skin.
 [00:04:06.350 --> 00:04:10.570] The result is a change in the pattern of distribution of blood in the face.
 [00:04:10.990 --> 00:04:17.510] After many years of working with people with heart failure, the woman had unknowingly developed the ability to recognize this pattern on sight.
-[00:04:18.090 --> 00:04:23.070] She couldn't explain what it was that she had noticed in her father -in -law's face, but she knew something was wrong.
-[00:04:24.610 --> 00:04:26.510] Similar stories exist in other fields.
+[00:04:18.090 --> 00:04:26.510] She couldn't explain what it was that she had noticed in her father -in -law's face, but she knew something was wrong. Similar stories exist in other fields.
 [00:04:26.510 --> 00:04:34.010] For example, military analysts can identify which blip on a radar screen is an enemy missile and which one is a plane from their own fleet,
 [00:04:34.210 --> 00:04:40.650] even though they are traveling at the same speed, flying at the same altitude, and look identical on radar in nearly every respect.
 [00:04:41.330 --> 00:04:47.330] During the Gulf War, Lieutenant Commander Michael Riley saved an entire battleship when he ordered a missile shot down,
 [00:04:47.610 --> 00:04:51.190] despite the fact that it looked exactly like the battleship's own planes on radar.
 [00:04:51.610 --> 00:04:55.530] He made the right call, but even his superior officers couldn't explain how he did it.
 [00:04:56.570 --> 00:05:02.310] Museum curators have been known to discern the difference between an authentic piece of art and an expertly produced counterfeit,
-[00:05:02.430 --> 00:05:05.330] even though they can't tell you precisely which details tip them off.
+[00:05:02.450 --> 00:05:05.330] even though they can't tell you precisely which details tip them off.
 [00:05:06.430 --> 00:05:13.370] Experienced radiologists can look at a brain scan and predict the area where a stroke will develop before any obvious signs are visible to the untrained eye.
-[00:05:14.070 --> 00:05:18.790] I've even heard of hairdressers noticing whether a client is pregnant based only on the feel of her hair.
-[00:05:19.790 --> 00:05:21.810] The human brain is a prediction machine.
-[00:05:21.810 --> 00:05:26.610] It is continuously taking in your surroundings and analyzing the information it comes across.
-[00:05:27.210 --> 00:05:34.790] Whenever you experience something repeatedly, like a paramedic seeing the face of a heart attack patient or a military analyst seeing a missile on a radar screen,
-[00:05:35.030 --> 00:05:43.050] your brain begins noticing what is important, sorting through the details, and highlighting the relevant cues and cataloging that information for future use.
-[00:05:44.070 --> 00:05:49.530] With enough practice, you can pick up on the cues that predict certain outcomes without consciously thinking about it.
-[00:05:50.170 --> 00:05:53.350] Automatically, your brain encodes the lessons learned through experience.
-[00:05:54.090 --> 00:05:58.650] We can't always explain what it is we are learning, but learning is happening all along the way.
+[00:05:14.070 --> 00:05:21.810] I've even heard of hairdressers noticing whether a client is pregnant based only on the feel of her hair. The human brain is a prediction machine.
+[00:05:21.910 --> 00:05:26.610] It is continuously taking in your surroundings and analyzing the information it comes across.
+[00:05:27.190 --> 00:05:34.790] Whenever you experience something repeatedly, like a paramedic seeing the face of a heart attack patient or a military analyst seeing a missile on a radar screen,
+[00:05:35.170 --> 00:05:43.050] your brain begins noticing what is important, sorting through the details, and highlighting the relevant cues and cataloging that information for future use.
+[00:05:44.030 --> 00:05:49.530] With enough practice, you can pick up on the cues that predict certain outcomes without consciously thinking about it.
+[00:05:50.210 --> 00:05:53.350] Automatically, your brain encodes the lessons learned through experience.
+[00:05:54.130 --> 00:05:58.650] We can't always explain what it is we are learning, but learning is happening all along the way.

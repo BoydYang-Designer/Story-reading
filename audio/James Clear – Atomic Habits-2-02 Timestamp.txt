@@ -1,74 +1,62 @@
-[00:00:00.000 --> 00:00:01.840] You alter your strategy for next time.
-[00:00:02.140 --> 00:00:05.840] Your brain immediately begins to catalog the events that preceded the reward.
-[00:00:06.100 --> 00:00:07.420] Wait a minute, that felt good.
-[00:00:07.620 --> 00:00:08.620] What did I do right before that?
+[00:00:00.000 --> 00:00:08.620] You alter your strategy for next time. Your brain immediately begins to catalog the events that preceded the reward. Wait a minute, that felt good. What did I do right before that?
 [00:00:09.540 --> 00:00:14.940] This is the feedback loop behind all human behavior. Try, fail, learn, try differently.
-[00:00:15.600 --> 00:00:21.600] With practice, the useless movements fade away, and the useful actions get reinforced. That's a habit for me.
+[00:00:15.640 --> 00:00:21.600] With practice, the useless movements fade away, and the useful actions get reinforced. That's a habit for me.
 [00:00:22.420 --> 00:00:27.300] Whenever you face a problem repeatedly, your brain begins to automate the process of solving it.
-[00:00:28.020 --> 00:00:33.180] Your habits are just a series of automatic solutions that solve the problems and stresses you face regularly.
-[00:00:33.700 --> 00:00:41.160] As behavioral scientist Jason Rea puts it, Habits are, simply, reliable solutions to recurring problems in our environment.
-[00:00:42.160 --> 00:00:45.880] As habits are created, the level of activity in the brain decreases.
+[00:00:28.040 --> 00:00:33.180] Your habits are just a series of automatic solutions that solve the problems and stresses you face regularly.
+[00:00:33.740 --> 00:00:41.160] As behavioral scientist Jason Rea puts it, habits are, simply, reliable solutions to recurring problems in our environment.
+[00:00:42.180 --> 00:00:45.880] As habits are created, the level of activity in the brain decreases.
 [00:00:46.260 --> 00:00:50.360] You learn to lock in on the cues that predict success and tune out everything else.
-[00:00:50.740 --> 00:00:54.940] When a similar situation arises in the future, you know exactly what to look for.
+[00:00:50.780 --> 00:00:54.940] When a similar situation arises in the future, you know exactly what to look for.
 [00:00:54.940 --> 00:00:58.400] There is no longer a need to analyze every angle of a situation.
 [00:00:58.800 --> 00:01:04.200] Your brain skips the process of trial and error and creates a mental rule. If this, then that.
-[00:01:04.860 --> 00:01:08.940] These cognitive scripts can be followed automatically whenever the situation is appropriate.
-[00:01:09.640 --> 00:01:12.380] Now, whenever you feel stressed, you get the itch to run.
+[00:01:04.820 --> 00:01:08.940] These cognitive scripts can be followed automatically whenever the situation is appropriate.
+[00:01:09.600 --> 00:01:12.380] Now, whenever you feel stressed, you get the itch to run.
 [00:01:12.580 --> 00:01:16.760] Or, as soon as you walk in the door from work, you grab the video game controller without thinking.
-[00:01:16.760 --> 00:01:22.100] A choice that once required effort is now automatic. A habit has been created.
-[00:01:23.640 --> 00:01:25.840] Habits are mental shortcuts learned from experience.
-[00:01:26.160 --> 00:01:31.680] In a sense, a habit is just a memory of the steps you previously followed to solve a problem in the past.
-[00:01:32.120 --> 00:01:37.120] Whenever the conditions are right, you can draw on this memory and automatically apply the same solution.
-[00:01:37.520 --> 00:01:42.480] The primary reason the brain remembers the past is to better predict what will work in the future.
-[00:01:43.560 --> 00:01:48.120] Habit formation is incredibly useful because the conscious mind is the bottleneck of the brain.
-[00:01:48.280 --> 00:01:50.640] It can only pay attention to one problem at a time.
-[00:01:51.040 --> 00:01:56.920] As a result, your brain is always working to preserve your conscious attention for whatever task is most essential.
-[00:01:57.660 --> 00:02:03.500] Whenever possible, the conscious mind likes to pawn off tasks to the non -conscious mind to do automatically.
-[00:02:04.020 --> 00:02:06.680] This is precisely what happens when a habit is formed.
-[00:02:06.680 --> 00:02:13.400] Habits reduce cognitive load and free up mental capacity so you can allocate your attention to other tasks.
-[00:02:14.320 --> 00:02:18.060] Despite their efficiency, some people still wonder about the benefits of habits.
-[00:02:18.340 --> 00:02:20.060] The argument might go like this.
-[00:02:20.460 --> 00:02:22.000] Will habits make my life dull?
+[00:01:17.340 --> 00:01:25.840] A choice that once required effort is now automatic. A habit has been created. Habits are mental shortcuts learned from experience.
+[00:01:26.240 --> 00:01:31.680] In a sense, a habit is just a memory of the steps you previously followed to solve a problem in the past.
+[00:01:32.160 --> 00:01:37.120] Whenever the conditions are right, you can draw on this memory and automatically apply the same solution.
+[00:01:37.560 --> 00:01:42.480] The primary reason the brain remembers the past is to better predict what will work in the future.
+[00:01:43.640 --> 00:01:48.120] Habit formation is incredibly useful because the conscious mind is the bottleneck of the brain.
+[00:01:48.260 --> 00:01:50.640] It can only pay attention to one problem at a time.
+[00:01:50.640 --> 00:01:56.920] As a result, your brain is always working to preserve your conscious attention for whatever task is most essential.
+[00:01:57.580 --> 00:02:03.480] Whenever possible, the conscious mind likes to pawn off tasks to the non -conscious mind to do automatically.
+[00:02:03.940 --> 00:02:06.680] This is precisely what happens when a habit is formed.
+[00:02:07.160 --> 00:02:13.400] Habits reduce cognitive load and free up mental capacity so you can allocate your attention to other tasks.
+[00:02:14.300 --> 00:02:22.000] Despite their efficiency, some people still wonder about the benefits of habits. The argument might go like this. Will habits make my life dull?
 [00:02:22.180 --> 00:02:24.820] I don't want to pigeonhole myself into a lifestyle I don't enjoy.
-[00:02:25.340 --> 00:02:30.220] Doesn't so much routine take away from the vibrancy and spontaneity of life? Hardly.
-[00:02:30.220 --> 00:02:37.040] Such questions set up a false dichotomy that make you think that you have to choose between building habits and attaining freedom.
-[00:02:37.480 --> 00:02:43.240] In reality, the two complement each other. Habits do not restrict freedom. They create it.
-[00:02:43.600 --> 00:02:48.480] In fact, the people who don't have their habits handled are often the ones with the least amount of freedom.
-[00:02:48.920 --> 00:02:52.520] Without good financial habits, you will always be struggling for the next dollar.
-[00:02:52.960 --> 00:02:55.980] Without good health habits, you will always seem to be short on energy.
+[00:02:25.340 --> 00:02:32.560] Doesn't so much routine take away from the vibrancy and spontaneity of life? Hardly. Such questions set up a false dichotomy.
+[00:02:32.700 --> 00:02:43.220] They make you think that you have to choose between building habits and attaining freedom. In reality, the two complement each other. Habits do not restrict freedom. They create it.
+[00:02:43.760 --> 00:02:48.480] In fact, the people who don't have their habits handled are often the ones with the least amount of freedom.
+[00:02:48.960 --> 00:02:52.520] Without good financial habits, you will always be struggling for the next dollar.
+[00:02:52.820 --> 00:02:55.980] Without good health habits, you will always seem to be short on energy.
 [00:02:56.520 --> 00:02:59.520] Without good learning habits, you will always feel like you're behind the curve.
-[00:03:00.180 --> 00:03:04.120] If you're always being forced to make decisions about simple tasks, when should I work out?
-[00:03:04.240 --> 00:03:05.040] Where do I go to write?
-[00:03:05.240 --> 00:03:06.280] When do I pay the bills?
-[00:03:06.500 --> 00:03:08.200] Then you have less time for freedom.
-[00:03:08.720 --> 00:03:15.080] It's only by making the fundamentals of life easier that you can create the mental space needed for free thinking and creativity.
+[00:03:00.180 --> 00:03:08.200] If you're always being forced to make decisions about simple tasks, when should I work out? Where do I go to write? When do I pay the bills? Then you have less time for freedom.
+[00:03:08.720 --> 00:03:15.060] It's only by making the fundamentals of life easier that you can create the mental space needed for free thinking and creativity.
 [00:03:16.600 --> 00:03:25.240] Conversely, when you have your habits dialed in and the basics of life are handled and done, your mind is free to focus on new challenges and master the next set of problems.
-[00:03:25.940 --> 00:03:29.580] Building habits in the present allows you to do more of what you want in the future.
-[00:03:31.440 --> 00:03:33.240] The science of how habits work.
-[00:03:34.280 --> 00:03:42.200] The process of building a habit can be divided into four simple steps. Cue, craving, response, and reward.
-[00:03:43.260 --> 00:03:46.680] Readers of The Power of Habit by Charles Duhigg will recognize these terms.
-[00:03:47.340 --> 00:03:56.880] Duhigg wrote a great book, and my intention is to pick up where he left off by integrating these stages into four simple laws you can apply to build better habits in life and work.
-[00:03:57.980 --> 00:04:04.560] Breaking the process down into these fundamental parts can help us understand what a habit is, how it works, and how to improve it.
-[00:04:05.220 --> 00:04:13.620] This four -step pattern is the backbone of every habit, and your brain runs through these steps in the same order each time. First, there's the cue.
-[00:04:14.080 --> 00:04:16.660] The cue triggers your brain to initiate a behavior.
-[00:04:16.960 --> 00:04:21.200] It is a bit of information that predicts a reward, something that catches your attention.
-[00:04:21.980 --> 00:04:29.300] Our prehistoric ancestors were paying attention to cues that signaled the location of primary rewards, like food, water, and sex.
-[00:04:29.300 --> 00:04:38.620] Today, we spend most of our time learning cues that predict secondary rewards, like money and fame, power and status, praise and approval, love and friendship,
-[00:04:38.860 --> 00:04:40.560] or a sense of personal satisfaction.
-[00:04:41.140 --> 00:04:48.360] Of course, these pursuits also indirectly improve our odds of survival and reproduction, which is the deeper motive behind everything we do.
-[00:04:49.440 --> 00:04:56.140] Your mind is continuously analyzing your internal and external environment for hints of where rewards are located.
+[00:03:25.820 --> 00:03:33.240] Building habits in the present allows you to do more of what you want in the future. The science of how habits work.
+[00:03:34.000 --> 00:03:42.200] The process of building a habit can be divided into four simple steps. Cue, craving, response, and reward.
+[00:03:43.220 --> 00:03:46.680] Readers of The Power of Habit by Charles Duhigg will recognize these terms.
+[00:03:47.300 --> 00:03:56.880] Duhigg wrote a great book, and my intention is to pick up where he left off by integrating these stages into four simple laws you can apply to build better habits in life and work.
+[00:03:57.960 --> 00:04:04.560] Breaking the process down into these fundamental parts can help us understand what a habit is, how it works, and how to improve it.
+[00:04:05.240 --> 00:04:13.620] This four -step pattern is the backbone of every habit, and your brain runs through these steps in the same order each time. First, there's the cue.
+[00:04:14.040 --> 00:04:16.660] The cue triggers your brain to initiate a behavior.
+[00:04:16.940 --> 00:04:21.200] It is a bit of information that predicts a reward, something that catches your attention.
+[00:04:21.940 --> 00:04:29.320] Our prehistoric ancestors were paying attention to cues that signaled the location of primary rewards, like food, water, and sex.
+[00:04:29.860 --> 00:04:34.960] Today, we spend most of our time learning cues that predict secondary rewards, like money and fame,
+[00:04:35.200 --> 00:04:40.580] power and status, praise and approval, love and friendship, or a sense of personal satisfaction.
+[00:04:41.180 --> 00:04:48.360] Of course, these pursuits also indirectly improve our odds of survival and reproduction, which is the deeper motive behind everything we do.
+[00:04:49.480 --> 00:04:56.140] Your mind is continuously analyzing your internal and external environment for hints of where rewards are located.
 [00:04:56.820 --> 00:05:02.420] Because the cue is the first indication that we are close to a reward, it naturally leads to a craving.
-[00:05:03.560 --> 00:05:07.380] Cravings are the second step, and they are the motivational force behind every habit.
-[00:05:07.760 --> 00:05:13.360] Without some level of motivation or desire, without craving a change, we have no reason to act.
-[00:05:13.800 --> 00:05:18.080] What you crave is not the habit itself, but the change in state it delivers.
-[00:05:18.500 --> 00:05:20.400] You do not crave smoking a cigarette.
-[00:05:20.440 --> 00:05:22.560] You crave the feeling of relief it provides.
-[00:05:22.560 --> 00:05:27.180] You are not motivated by brushing your teeth, but rather by the feeling of a clean mouth.
-[00:05:27.640 --> 00:05:30.900] You do not want to turn on the television. You want to be entertained.
-[00:05:31.540 --> 00:05:35.540] Every craving is linked to a desire to change your internal state.
-[00:05:36.040 --> 00:05:39.060] This is an important point that we will discuss in detail later.
-[00:05:40.400 --> 00:05:42.100] Cravings differ from person to person.
-[00:05:42.480 --> 00:05:45.660] In theory, any piece of information could trigger a craving.
-[00:05:45.960 --> 00:05:49.020] But in practice, people are not motivated by the same cues.
-[00:05:49.020 --> 00:05:54.820] For a gambler, the sound of slot machines can be a potent trigger that sparks an intense wave of desire.
-[00:05:55.580 --> 00:06:00.400] For someone who rarely gambles, the jingles and chimes of the casino are just background noise.
+[00:05:03.520 --> 00:05:07.380] Cravings are the second step, and they are the motivational force behind every habit.
+[00:05:07.740 --> 00:05:13.360] Without some level of motivation or desire, without craving a change, we have no reason to act.
+[00:05:13.780 --> 00:05:20.400] What you crave is not the habit itself, but the change in state it delivers. You do not crave smoking a cigarette.
+[00:05:20.440 --> 00:05:22.540] You crave the feeling of relief it provides.
+[00:05:22.880 --> 00:05:27.160] You are not motivated by brushing your teeth, but rather by the feeling of a clean mouth.
+[00:05:27.640 --> 00:05:30.940] You do not want to turn on the television. You want to be entertained.
+[00:05:31.800 --> 00:05:35.540] Every craving is linked to a desire to change your internal state.
+[00:05:36.040 --> 00:05:42.100] This is an important point that we will discuss in detail later. Cravings differ from person to person.
+[00:05:42.520 --> 00:05:45.660] In theory, any piece of information could trigger a craving.
+[00:05:45.660 --> 00:05:49.040] But in practice, people are not motivated by the same cues.
+[00:05:49.400 --> 00:05:54.820] For a gambler, the sound of slot machines can be a potent trigger that sparks an intense wave of desire.
+[00:05:55.620 --> 00:06:00.400] For someone who rarely gambles, the jingles and chimes of the casino are just background noise.
+[00:06:00.400 --> 00:06:00.820] For someone who rarely gambles, the jingles and chimes of the jingles of the jingles of the jingles of the jingles of the jingles of the jingles of the jingles of the jingles of the jingles of the jingles of the jingles of the jingles of the jingles of the jingles of the jingles of the jingles of the jingles of the jingles of the jingles of the jingles of the jingles of the jingles of the jingles of the jingles of the jingles of the jingles of the jingles of the jingles of the jingles of the jingles of the jingles of the jingles of the jingles of the jingles of the jingles of the jingles of the jingles of the jingles of the jingles of the jingles of the jingles of the jingles of the jing

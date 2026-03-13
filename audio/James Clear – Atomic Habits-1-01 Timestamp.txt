@@ -1,88 +1,78 @@
-[00:00:00.000 --> 00:00:08.060] Atomic Habits. An easy and proven way to build good habits and break bad ones. Tiny Changes. Remarkable Results.
-[00:00:08.720 --> 00:00:14.720] This is the author, James Clear. Introduction. My Story.
-[00:00:15.780 --> 00:00:20.480] On the final day of my sophomore year of high school, I was hit in the face with a baseball bat.
-[00:00:21.100 --> 00:00:28.300] As my classmate took a full swing, the bat slipped out of his hands and came flying toward me before striking me directly between the eyes.
-[00:00:28.880 --> 00:00:31.100] I have no memory of the moment of impact.
-[00:00:32.220 --> 00:00:37.600] The bat smashed into my face with such force that it crushed my nose into a distorted U -shape.
-[00:00:38.000 --> 00:00:42.360] The collision sent the soft tissue of my brain slamming into the inside of my skull.
-[00:00:43.460 --> 00:00:46.440] Immediately, a wave of swelling surged throughout my head.
-[00:00:47.140 --> 00:00:53.200] In a fraction of a second, I had a broken nose, multiple skull fractures, and two shattered eye sockets.
-[00:00:54.200 --> 00:00:57.940] When I opened my eyes, I saw people staring at me and running over to help.
-[00:00:58.420 --> 00:01:00.980] I looked down and noticed spots of red on my clothes.
+[00:00:00.000 --> 00:00:14.720] Atomic Habits. An easy and proven way to build good habits and break bad ones. Tiny Changes. Remarkable Results. This is the author, James Clear. Introduction. My Story.
+[00:00:15.820 --> 00:00:20.480] On the final day of my sophomore year of high school, I was hit in the face with a baseball bat.
+[00:00:21.140 --> 00:00:28.300] As my classmate took a full swing, the bat slipped out of his hands and came flying toward me before striking me directly between the eyes.
+[00:00:28.840 --> 00:00:31.100] I have no memory of the moment of impact.
+[00:00:32.180 --> 00:00:37.600] The bat smashed into my face with such force that it crushed my nose into a distorted U -shape.
+[00:00:37.960 --> 00:00:42.360] The collision sent the soft tissue of my brain slamming into the inside of my skull.
+[00:00:43.420 --> 00:00:46.440] Immediately, a wave of swelling surged throughout my head.
+[00:00:47.100 --> 00:00:53.200] In a fraction of a second, I had a broken nose, multiple skull fractures, and two shattered eye sockets.
+[00:00:54.200 --> 00:00:57.920] When I opened my eyes, I saw people staring at me and running over to help.
+[00:00:58.420 --> 00:01:00.960] I looked down and noticed spots of red on my clothes.
 [00:01:01.380 --> 00:01:04.600] One of my classmates took the shirt off his back and handed it to me.
 [00:01:05.280 --> 00:01:08.460] I used it to plug the stream of blood rushing from my broken nose.
 [00:01:09.140 --> 00:01:12.720] Shocked and confused, I was unaware of how seriously I had been injured.
-[00:01:14.080 --> 00:01:20.000] My teacher looped his arm around my shoulder, and we began the long walk to the nurse's office, across the field,
-[00:01:20.340 --> 00:01:22.020] down the hill, and back into school.
-[00:01:22.800 --> 00:01:25.660] Random hands touched my sides, holding me upright.
-[00:01:26.060 --> 00:01:27.920] We took our time and walked slowly.
-[00:01:28.500 --> 00:01:30.780] Nobody realized that every minute mattered.
+[00:01:14.080 --> 00:01:18.700] My teacher looped his arm around my shoulder, and we began the long walk to the nurse's office.
+[00:01:19.020 --> 00:01:22.020] Across the field, down the hill, and back into school.
+[00:01:22.680 --> 00:01:30.780] Random hands touched my sides, holding me upright. We took our time and walked slowly. Nobody realized that every minute mattered.
 [00:01:32.220 --> 00:01:41.920] When we arrived at the nurse's office, she asked me a series of questions. What year is it? 1998, I answered. It was actually 2002.
-[00:01:42.780 --> 00:01:46.620] Who is the President of the United States? Bill Clinton, I said.
-[00:01:46.980 --> 00:01:56.960] The correct answer was George W. Bush. What is your mom's name? Uh, um, I stalled. Ten seconds passed.
-[00:01:58.260 --> 00:02:03.540] Patty, I said casually, ignoring the fact that it had taken me ten seconds to remember my own mother's name.
-[00:02:04.940 --> 00:02:06.740] That is the last question I remember.
-[00:02:07.160 --> 00:02:12.860] My body was unable to handle the rapid swelling in my brain, and I lost consciousness before the ambulance arrived.
-[00:02:13.460 --> 00:02:17.220] Minutes later, I was carried out of school and taken to the local hospital.
-[00:02:18.440 --> 00:02:21.360] Shortly after arriving, my body began shutting down.
-[00:02:21.800 --> 00:02:24.900] I struggled with basic functions like swallowing and breathing.
-[00:02:25.420 --> 00:02:29.420] I had my first seizure of the day. Then, I stopped breathing entirely.
-[00:02:30.140 --> 00:02:36.400] As the doctors hurried to supply me with oxygen, they also decided the local hospital was unequipped to handle the situation,
-[00:02:36.600 --> 00:02:39.880] and ordered a helicopter to fly me to a larger hospital in Cincinnati.
+[00:01:42.800 --> 00:01:56.960] Who is the President of the United States? Bill Clinton, I said. The correct answer was George W. Bush. What is your mom's name? Uh, um, I stalled. Ten seconds passed.
+[00:01:58.300 --> 00:02:06.740] Patty, I said casually, ignoring the fact that it had taken me ten seconds to remember my own mother's name. That is the last question I remember.
+[00:02:07.180 --> 00:02:12.860] My body was unable to handle the rapid swelling in my brain, and I lost consciousness before the ambulance arrived.
+[00:02:13.480 --> 00:02:17.220] Minutes later, I was carried out of school and taken to the local hospital.
+[00:02:18.380 --> 00:02:21.360] Shortly after arriving, my body began shutting down.
+[00:02:21.360 --> 00:02:24.880] I struggled with basic functions like swallowing and breathing.
+[00:02:25.400 --> 00:02:29.420] I had my first seizure of the day. Then, I stopped breathing entirely.
+[00:02:30.120 --> 00:02:36.400] As the doctors hurried to supply me with oxygen, they also decided the local hospital was unequipped to handle the situation,
+[00:02:36.400 --> 00:02:39.840] and ordered a helicopter to fly me to a larger hospital in Cincinnati.
 [00:02:40.940 --> 00:02:45.160] I was rolled out of the emergency room doors and toward the helipad across the street.
-[00:02:45.500 --> 00:02:51.720] The stretcher rattled on a bumpy sidewalk as one nurse pushed me along, while another pumped each breath into me by hand.
-[00:02:52.360 --> 00:02:57.840] My mother, who had arrived at the hospital a few moments before, climbed into the helicopter beside me.
-[00:02:58.320 --> 00:03:03.060] I remained unconscious and unable to breathe on my own, as she held my hand during the flight.
+[00:02:45.160 --> 00:02:51.720] The stretcher rattled on a bumpy sidewalk as one nurse pushed me along, while another pumped each breath into me by hand.
+[00:02:52.440 --> 00:02:57.840] My mother, who had arrived at the hospital a few moments before, climbed into the helicopter beside me.
+[00:02:58.400 --> 00:03:03.060] I remained unconscious and unable to breathe on my own, as she held my hand during the flight.
 [00:03:04.600 --> 00:03:10.600] While my mother rode with me in the helicopter, my father went home to check on my brother and sister and break the news to them.
-[00:03:11.220 --> 00:03:16.320] He choked back tears as he explained to my sister that he would miss her 8th grade graduation ceremony that night.
-[00:03:17.040 --> 00:03:21.920] After passing my siblings off to family and friends, he drove to Cincinnati to meet my mother.
-[00:03:23.220 --> 00:03:31.060] When my mom and I landed on the roof of the hospital, a team of nearly 20 doctors and nurses sprinted onto the helipad and wheeled me into the trauma unit.
-[00:03:31.680 --> 00:03:37.200] By this time, the swelling in my brain had become so severe that I was having repeated post -traumatic seizures.
+[00:03:11.220 --> 00:03:16.320] He choked back tears as he explained to my sister that he would miss her eighth -grade graduation ceremony that night.
+[00:03:16.980 --> 00:03:21.920] After passing my siblings off to family and friends, he drove to Cincinnati to meet my mother.
+[00:03:23.160 --> 00:03:31.080] When my mom and I landed on the roof of the hospital, a team of nearly twenty doctors and nurses sprinted onto the helipad and wheeled me into the trauma unit.
+[00:03:31.660 --> 00:03:37.200] By this time, the swelling in my brain had become so severe that I was having repeated post -traumatic seizures.
 [00:03:37.600 --> 00:03:41.920] My broken bones needed to be fixed, but I was in no condition to undergo surgery.
-[00:03:42.660 --> 00:03:49.020] After yet another seizure, my third of the day, I was put into a medically induced coma and placed on a ventilator.
-[00:03:50.480 --> 00:03:52.720] My parents were no strangers to this hospital.
-[00:03:53.400 --> 00:03:59.480] Ten years earlier, they had entered the same building on the ground floor after my sister was diagnosed with leukemia at age three.
-[00:04:00.080 --> 00:04:01.420] I was five at the time.
-[00:04:01.660 --> 00:04:03.160] My brother was just six months old.
-[00:04:04.040 --> 00:04:09.100] After two and a half years of chemotherapy treatments, spinal taps, and bone marrow biopsies,
-[00:04:09.320 --> 00:04:13.800] my little sister finally walked out of the hospital happy, healthy, and cancer -free.
-[00:04:14.680 --> 00:04:20.720] And now, after ten years of normal life, my parents found themselves back in the same place with a different child.
-[00:04:22.420 --> 00:04:27.220] While I slipped into a coma, the hospital sent a priest and a social worker to comfort my parents.
-[00:04:27.600 --> 00:04:32.780] It was the same priest who had met with them a decade earlier on the evening they found out my sister had cancer.
+[00:03:42.680 --> 00:03:49.020] After yet another seizure, my third of the day, I was put into a medically induced coma and placed on a ventilator.
+[00:03:50.500 --> 00:03:52.720] My parents were no strangers to this hospital.
+[00:03:53.400 --> 00:04:03.180] Ten years earlier, they had entered the same building on the ground floor after my sister was diagnosed with leukemia at age three. I was five at the time. My brother was just six months old.
+[00:04:04.020 --> 00:04:13.820] After two and a half years of chemotherapy treatments, spinal taps, and bone marrow biopsies, my little sister finally walked out of the hospital happy, healthy, and cancer -free.
+[00:04:14.660 --> 00:04:20.720] And now, after ten years of normal life, my parents found themselves back in the same place with a different child.
+[00:04:22.400 --> 00:04:27.240] While I slipped into a coma, the hospital sent a priest and a social worker to comfort my parents.
+[00:04:27.240 --> 00:04:32.800] It was the same priest who had met with them a decade earlier, on the evening they found out my sister had cancer.
 [00:04:33.580 --> 00:04:37.440] As day faded into night, a series of machines kept me alive.
-[00:04:38.180 --> 00:04:40.900] My parents slept restlessly on a hospital mattress.
-[00:04:41.300 --> 00:04:43.180] One moment, they would collapse from fatigue.
-[00:04:43.500 --> 00:04:45.500] The next, they would be wide awake with worry.
-[00:04:46.080 --> 00:04:53.830] My mother would tell me later, it was one of the worst nights I've ever had. My recovery.
-[00:04:55.590 --> 00:05:01.310] Mercifully, by the next morning, my breathing had rebounded to the point where the doctors felt comfortable releasing me from the coma.
-[00:05:01.930 --> 00:05:05.950] When I finally regained consciousness, I discovered that I had lost my ability to smell.
-[00:05:06.630 --> 00:05:10.530] As a test, a nurse asked me to blow my nose and sniff an apple juice box.
-[00:05:11.210 --> 00:05:19.850] My sense of smell returned, but, to everyone's surprise, the act of blowing my nose forced air through the fractures in my eye socket and pushed my left eye outward.
-[00:05:20.470 --> 00:05:27.130] My eyeball bulged out of the socket, held precariously in place by my eyelid and the optic nerve attaching my eye to my brain.
-[00:05:28.490 --> 00:05:34.910] The ophthalmologist said my eye would gradually slide back into place as the air seeped out, but it was hard to tell how long this would take.
-[00:05:35.530 --> 00:05:40.090] I was scheduled for surgery one week later, which would allow me some additional time to heal.
-[00:05:40.770 --> 00:05:45.290] I looked like I had been on the wrong end of a boxing match, but I was cleared to leave the hospital.
+[00:04:38.180 --> 00:04:43.180] My parents slept restlessly on a hospital mattress. One moment, they would collapse from fatigue.
+[00:04:43.480 --> 00:04:45.500] The next, they would be wide awake with worry.
+[00:04:46.080 --> 00:04:53.830] My mother would tell me later, It was one of the worst nights I've ever had. My recovery.
+[00:04:55.550 --> 00:05:01.310] Mercifully, by the next morning, my breathing had rebounded to the point where the doctors felt comfortable releasing me from the coma.
+[00:05:01.890 --> 00:05:05.970] When I finally regained consciousness, I discovered that I had lost my ability to smell.
+[00:05:06.610 --> 00:05:10.530] As a test, a nurse asked me to blow my nose and sniff an apple juice box.
+[00:05:11.170 --> 00:05:19.870] My sense of smell returned, but, to everyone's surprise, the act of blowing my nose forced air through the fractures in my eye socket and pushed my left eye outward.
+[00:05:20.450 --> 00:05:27.130] My eyeball bulged out of the socket, held precariously in place by my eyelid and the optic nerve attaching my eye to my brain.
+[00:05:28.510 --> 00:05:34.890] The ophthalmologist said my eye would gradually slide back into place as the air seeped out, but it was hard to tell how long this would take.
+[00:05:35.510 --> 00:05:40.090] I was scheduled for surgery one week later, which would allow me some additional time to heal.
+[00:05:40.770 --> 00:05:45.270] I looked like I had been on the wrong end of a boxing match, but I was cleared to leave the hospital.
 [00:05:46.290 --> 00:05:53.950] I returned home with a broken nose, half a dozen facial fractures, and a bulging left eye. The following months were hard.
-[00:05:54.150 --> 00:05:56.350] It felt like everything in my life was on pause.
-[00:05:56.630 --> 00:05:59.610] I had double vision for weeks. I literally couldn't see straight.
-[00:05:59.910 --> 00:06:04.250] It took more than a month, but my eyeball did eventually return to its normal location.
-[00:06:04.850 --> 00:06:09.150] Between the seizures and my vision problems, it was eight months before I could drive a car again.
-[00:06:09.830 --> 00:06:14.070] At physical therapy, I practiced basic motor patterns, like walking in a straight line.
+[00:05:54.170 --> 00:05:56.350] It felt like everything in my life was on pause.
+[00:05:56.690 --> 00:05:59.610] I had double vision for weeks, I literally couldn't see straight.
+[00:05:59.990 --> 00:06:04.250] It took more than a month, but my eyeball did eventually return to its normal location.
+[00:06:04.830 --> 00:06:09.150] Between the seizures and my vision problems, it was eight months before I could drive a car again.
+[00:06:09.910 --> 00:06:14.070] At physical therapy, I practiced basic motor patterns like walking in a straight line.
 [00:06:14.670 --> 00:06:20.310] I was determined not to let my injury get me down, but there were more than a few moments when I felt depressed and overwhelmed.
 [00:06:21.670 --> 00:06:26.470] I became painfully aware of how far I had to go when I returned to the baseball field one year later.
 [00:06:27.370 --> 00:06:29.330] Baseball had always been a major part of my life.
-[00:06:29.570 --> 00:06:31.650] My dad had played minor league baseball for the St.
+[00:06:29.530 --> 00:06:31.650] My dad had played minor league baseball for the St.
 [00:06:31.690 --> 00:06:34.390] Louis Cardinals, and I had a dream of playing professionally too.
-[00:06:35.190 --> 00:06:39.450] After months of rehabilitation, what I wanted more than anything was to get back on the field.
+[00:06:35.190 --> 00:06:39.430] After months of rehabilitation, what I wanted more than anything was to get back on the field.
 [00:06:40.150 --> 00:06:42.130] But my return to baseball was not smooth.
-[00:06:42.790 --> 00:06:46.810] When the season rolled around, I was the only junior to be cut from the varsity baseball team.
+[00:06:42.810 --> 00:06:46.810] When the season rolled around, I was the only junior to be cut from the varsity baseball team.
 [00:06:47.130 --> 00:06:49.990] I was sent down to play with the sophomores on junior varsity.
-[00:06:50.610 --> 00:06:56.890] I had been playing since age four, and for someone who had spent so much time and effort on the sport, getting cut was humiliating.
-[00:06:57.410 --> 00:06:59.230] I vividly remember the day it happened.
-[00:06:59.530 --> 00:07:04.910] I sat in my car and cried as I flipped through the radio, desperately searching for a song that would make me feel better.
-[00:07:06.510 --> 00:07:12.030] After a year of self -doubt, I managed to make the varsity team as a senior, but I rarely made it on the field.
-[00:07:12.710 --> 00:07:17.590] In total, I played 11 innings of high school varsity baseball, barely more than a single game.
-[00:07:18.470 --> 00:07:24.890] Despite my lackluster high school career, I still believed I could become a great player, and I knew that if things were going to improve,
-[00:07:25.150 --> 00:07:27.330] I was the one responsible for making it happen.
-[00:07:27.930 --> 00:07:32.610] The turning point came two years after my injury, when I began college at Denison University.
-[00:07:33.410 --> 00:07:38.870] It was a new beginning, and it was the place where I would discover the surprising power of small habits for the first time.
+[00:06:50.610 --> 00:06:59.230] I had been playing since age four, and for someone who had spent so much time and effort on the sport, getting cut was humiliating. I vividly remember the day it happened.
+[00:06:59.230 --> 00:07:04.910] I sat in my car and cried as I flipped through the radio, desperately searching for a song that would make me feel better.
+[00:07:06.550 --> 00:07:12.030] After a year of self -doubt, I managed to make the varsity team as a senior, but I rarely made it on the field.
+[00:07:12.750 --> 00:07:17.590] In total, I played 11 innings of high school varsity baseball, barely more than a single game.
+[00:07:18.510 --> 00:07:24.890] Despite my lackluster high school career, I still believed I could become a great player, and I knew that if things were going to improve,
+[00:07:25.170 --> 00:07:27.330] I was the one responsible for making it happen.
+[00:07:27.970 --> 00:07:32.610] The turning point came two years after my injury, when I began college at Denison University.
+[00:07:33.390 --> 00:07:38.890] It was a new beginning, and it was the place where I would discover the surprising power of small habits for the first time.
