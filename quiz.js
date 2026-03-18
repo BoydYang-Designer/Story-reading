@@ -86,7 +86,8 @@ let quizState = {
     // article quiz specific
     articleSubMode: 'listen',  // 'listen' | 'cloze'
     // difficulty & question count — shared across ALL modes
-    difficulty: 'mix',         // 'easy' | 'medium' | 'hard' | 'mix'
+    difficulty: 'mix',         // 'easy' | 'medium' | 'hard' | 'mix' (legacy, kept for sentence/article modes)
+    selectedCefrLevels: new Set(['a1a2', 'b1b2', 'c1c2']), // multi-select CEFR for Words & Phrases modes
     questionCount: 10,         // 5 | 10 (UI 支援的選項)
 };
 
@@ -622,6 +623,14 @@ function openQuiz(categoryName, titleName, source) {
     quizSession.classList.add('is-hidden');
     quizResult.classList.add('is-hidden');
 
+    // Sync CEFR multi-select button states on open (default: all active)
+    // _syncCefrButtons is defined after this function; safe to call since
+    // openQuiz is only invoked via user interaction, after all JS has parsed.
+    setTimeout(() => {
+        _syncCefrButtons('flashcard');
+        _syncCefrButtons('fcplus');
+    }, 0);
+
     showView(quizView);
 }
 
@@ -734,15 +743,63 @@ document.querySelectorAll('.quiz-source-btn').forEach(btn => {
     });
 });
 
-// ── Difficulty buttons ────────────────────────────────────────
+// ── Difficulty / CEFR buttons ─────────────────────────────────
+// • Flashcard & Flashcard+ modes  → multi-select CEFR (A1-A2 / B1-B2 / C1-C2)
+//   Uses existing .quiz-diff-btn with data-diff="easy|medium|hard|mix"
+//   Maps:  easy → a1a2 | medium → b1b2 | hard → c1c2 | mix → all three
+// • All other modes (dictation, cloze…) → original single-select behaviour
+// ─────────────────────────────────────────────────────────────
+
+// CEFR keys used in flashcard/fcplus HTML buttons (data-diff values)
+const _CEFR_KEYS = new Set(['a1a2', 'b1b2', 'c1c2']);
+// Modes that use CEFR multi-select
+const _CEFR_MODES = new Set(['flashcard', 'fcplus']);
+
+/** Re-render all diff-btn active states for a given mode based on selectedCefrLevels */
+function _syncCefrButtons(mode) {
+    document.querySelectorAll(`.quiz-diff-btn[data-mode="${mode}"]`).forEach(b => {
+        const diff = b.dataset.diff;
+        if (diff === 'mix') {
+            // "Mix" is active only when all three levels are selected
+            b.classList.toggle('is-active', quizState.selectedCefrLevels.size === 3);
+        } else if (_CEFR_KEYS.has(diff)) {
+            // data-diff is already the CEFR key (a1a2 / b1b2 / c1c2)
+            b.classList.toggle('is-active', quizState.selectedCefrLevels.has(diff));
+        }
+    });
+}
+
 document.querySelectorAll('.quiz-diff-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
         e.stopPropagation();
         const mode = btn.dataset.mode;
+        const diff = btn.dataset.diff;
+
+        // ── CEFR multi-select path (Flashcard & Flashcard+) ──────
+        if (_CEFR_MODES.has(mode)) {
+            if (diff === 'mix') {
+                // Mix = select all three
+                quizState.selectedCefrLevels = new Set(['a1a2', 'b1b2', 'c1c2']);
+            } else if (_CEFR_KEYS.has(diff)) {
+                // diff is already a CEFR key — toggle it
+                if (quizState.selectedCefrLevels.has(diff)) {
+                    // Deselect — but keep at least one selected
+                    if (quizState.selectedCefrLevels.size > 1) {
+                        quizState.selectedCefrLevels.delete(diff);
+                    }
+                } else {
+                    quizState.selectedCefrLevels.add(diff);
+                }
+            }
+            _syncCefrButtons(mode);
+            return;
+        }
+
+        // ── Original single-select path (Dictation, Cloze…) ──────
         document.querySelectorAll(`.quiz-diff-btn[data-mode="${mode}"]`)
             .forEach(b => b.classList.remove('is-active'));
         btn.classList.add('is-active');
-        quizState.difficulty = btn.dataset.diff;
+        quizState.difficulty = diff;
     });
 });
 
@@ -1188,9 +1245,9 @@ async function startFlashcardFromArticle() {
         seen.add(item.text);
         return true;
     });
-    deck = filterByWordDifficulty(deck, quizState.difficulty);
+    deck = filterByWordDifficulty(deck); // CEFR multi-select
     if (deck.length === 0) {
-        showNotification(`No ${quizState.difficulty === 'mix' ? '' : quizState.difficulty + ' '}words found in this article.`, 'warning');
+        showNotification('No words found for the selected CEFR level(s). Try selecting more levels.', 'warning');
         return;
     }
     deck = weightedSample(deck, quizState.questionCount || 10,
@@ -1229,10 +1286,10 @@ function startFlashcard() {
         return letters >= 4;
     });
 
-    allItems = filterByWordDifficulty(allItems, quizState.difficulty);
+    allItems = filterByWordDifficulty(allItems); // CEFR multi-select
 
     if (allItems.length === 0) {
-        showNotification(`No ${quizState.difficulty === 'mix' ? '' : quizState.difficulty + ' '}words or phrases found.`, 'warning');
+        showNotification('No words or phrases found for the selected CEFR level(s). Try selecting more levels.', 'warning');
         return;
     }
 
@@ -1732,12 +1789,29 @@ function getWordDifficulty(text) {
     return 'c1c2';
 }
 
-// Filter word/phrase items by difficulty setting
+// Filter word/phrase items by CEFR multi-select (selectedCefrLevels)
+// Falls back to legacy diff string only if called with an explicit diff argument.
 function filterByWordDifficulty(items, diff) {
-    if (diff === 'mix') return items;
+    // ── Legacy / sentence modes: diff is a string ('mix','easy','medium','hard') ──
+    if (typeof diff === 'string') {
+        if (diff === 'mix') return items;
+        // Map legacy easy/medium/hard → CEFR group for sentence-difficulty callers
+        // (Words & Phrases callers now pass undefined and use selectedCefrLevels)
+        const legacyMap = { easy: 'a1a2', medium: 'b1b2', hard: 'c1c2' };
+        const target = legacyMap[diff] || diff; // if already a cefr key, use directly
+        return items.filter(item => {
+            const d = getWordDifficulty(item.text);
+            return d === null || d === target; // null = 查不到 → 保留
+        });
+    }
+
+    // ── New path: use quizState.selectedCefrLevels (Set) ──
+    const levels = quizState.selectedCefrLevels;
+    // If all three selected, return everything (same as mix)
+    if (!levels || levels.size === 0 || levels.size === 3) return items;
     return items.filter(item => {
         const d = getWordDifficulty(item.text);
-        return d === null || d === diff; // BUG-06 FIX: null = 不在 Oxford 表 → 保留，避免題目意外消失
+        return d === null || levels.has(d); // null = 查不到 → 保留
     });
 }
 
@@ -3505,10 +3579,10 @@ function startFcplus() {
         return letters >= 4;
     });
 
-    allItems = filterByWordDifficulty(allItems, quizState.difficulty);
+    allItems = filterByWordDifficulty(allItems); // CEFR multi-select
 
     if (allItems.length === 0) {
-        showNotification('No suitable words found. Add words to your note first.', 'warning');
+        showNotification('No words found for the selected CEFR level(s). Try selecting more levels.', 'warning');
         return;
     }
 
@@ -3566,22 +3640,17 @@ async function startFcplusFromArticle() {
         seen.add(item.text);
         return true;
     });
-    deck = filterByWordDifficulty(deck, quizState.difficulty);
+    deck = filterByWordDifficulty(deck); // CEFR multi-select
     deck = weightedSample(deck, quizState.questionCount || 10,
                           item => item.text, quizState.categoryName, title, 'articleWords');
 
- if (deck.length === 0) {
-    const available = pool.map(item => getWordDifficulty(item.text));
-    const counts = { easy: 0, medium: 0, hard: 0 };
-    available.forEach(d => counts[d]++);
-    showNotification(
-        `No "${quizState.difficulty}" words found. ` +
-        `Available: easy(${counts.easy}), medium(${counts.medium}), hard(${counts.hard}). ` +
-        `Try "Mix" or a different difficulty.`,
-        'warning'
-    );
-    return;
-}
+    if (deck.length === 0) {
+        showNotification(
+            'No words found for the selected CEFR level(s). Try selecting more levels.',
+            'warning'
+        );
+        return;
+    }
 
     const audioSrc = `audio/${encodeURIComponent(title.trim())}.mp3`;
     _setQuizAudioSrc(audioSrc);
