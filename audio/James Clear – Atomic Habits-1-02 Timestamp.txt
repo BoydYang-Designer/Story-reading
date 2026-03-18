@@ -7,98 +7,85 @@
 [00:00:34.010 --> 00:00:37.850] These improvements were minor, but they gave me a sense of control over my life.
 [00:00:38.130 --> 00:00:47.090] I started to feel confident again, and this growing belief in myself rippled into the classroom as I improved my study habits and managed to earn straight A's during my first year.
 [00:00:48.190 --> 00:00:53.650] A habit is a routine or behavior that is performed regularly, and, in many cases, automatically.
-[00:00:54.190 --> 00:01:01.790] As each semester passed, I accumulated small but consistent habits that ultimately led to results that were unimaginable to me when I started.
-[00:01:02.310 --> 00:01:07.370] For example, for the first time in my life, I made it a habit to lift weights multiple times per week,
-[00:01:07.370 --> 00:01:14.370] and in the years that followed, my 6 -foot, 4 -inch frame bulked up from a featherweight 170 to a lean 200 pounds.
-[00:01:15.390 --> 00:01:18.890] When my sophomore season arrived, I earned a starting role on the pitching staff.
-[00:01:18.890 --> 00:01:24.610] By my junior year, I was voted team captain, and at the end of the season, I was selected for the all -conference team.
-[00:01:25.190 --> 00:01:31.630] But it was not until my senior season that my sleep habits, study habits, and strength training habits really began to pay off.
-[00:01:32.470 --> 00:01:38.050] Six years after I had been hit in the face with a baseball bat, flown to the hospital, and placed into a coma,
-[00:01:38.210 --> 00:01:44.210] I was selected as the top male athlete at Denison University and named to the ESPN Academic All -America team,
-[00:01:44.430 --> 00:01:47.290] an honor given to just 33 players across the country.
-[00:01:47.850 --> 00:01:52.090] By the time I graduated, I was listed in the school record books in eight different categories.
-[00:01:52.530 --> 00:01:57.170] That same year, I was awarded the university's highest academic honor, the President's Medal.
-[00:01:58.510 --> 00:02:00.710] I hope you'll forgive me if this sounds boastful.
-[00:02:00.870 --> 00:02:04.790] To be honest, there was nothing legendary or historic about my athletic career.
-[00:02:05.010 --> 00:02:06.810] I never ended up playing professionally.
-[00:02:07.250 --> 00:02:13.270] However, looking back on those years, I believe I accomplished something just as rare. I fulfilled my potential.
-[00:02:13.270 --> 00:02:17.790] And I believe the concepts in this book can help you fulfill your potential as well.
-[00:02:18.570 --> 00:02:20.330] We all face challenges in life.
-[00:02:20.610 --> 00:02:22.030] This injury was one of mine.
-[00:02:22.250 --> 00:02:24.430] And the experience taught me a critical lesson.
-[00:02:25.250 --> 00:02:31.810] Changes that seem small and unimportant at first will compound into remarkable results if you're willing to stick with them for years.
+[00:00:54.210 --> 00:01:01.770] As each semester passed, I accumulated small, but consistent habits that ultimately led to results that were unimaginable to me when I started.
+[00:01:02.330 --> 00:01:07.370] For example, for the first time in my life, I made it a habit to lift weights multiple times per week,
+[00:01:07.370 --> 00:01:14.350] and in the years that followed, my 6 -foot, 4 -inch frame bulked up from a featherweight 170 to a lean 200 pounds.
+[00:01:15.430 --> 00:01:18.870] When my sophomore season arrived, I earned a starting role on the pitching staff.
+[00:01:19.210 --> 00:01:24.610] By my junior year, I was voted team captain, and at the end of the season, I was selected for the all -conference team.
+[00:01:25.210 --> 00:01:31.630] But it was not until my senior season that my sleep habits, study habits, and strength training habits really began to pay off.
+[00:01:32.510 --> 00:01:38.050] Six years after I had been hit in the face with a baseball bat, flown to the hospital, and placed into a coma,
+[00:01:38.050 --> 00:01:44.190] I was selected as the top male athlete at Denison University, and named to the ESPN Academic All -America team,
+[00:01:44.510 --> 00:01:47.290] an honor given to just 33 players across the country.
+[00:01:47.810 --> 00:01:52.090] By the time I graduated, I was listed in the school record books in eight different categories.
+[00:01:52.550 --> 00:01:57.190] That same year, I was awarded the university's highest academic honor, the President's Medal.
+[00:01:58.490 --> 00:02:00.710] I hope you'll forgive me if this sounds boastful.
+[00:02:00.950 --> 00:02:06.790] To be honest, there was nothing legendary or historic about my athletic career. I never ended up playing professionally.
+[00:02:06.790 --> 00:02:13.250] However, looking back on those years, I believe I accomplished something just as rare. I fulfilled my potential.
+[00:02:13.630 --> 00:02:20.330] And I believe the concepts in this book can help you fulfill your potential as well. We all face challenges in life.
+[00:02:20.550 --> 00:02:24.430] This injury was one of mine, and the experience taught me a critical lesson.
+[00:02:25.190 --> 00:02:31.830] Changes that seem small and unimportant at first will compound into remarkable results if you're willing to stick with them for years.
 [00:02:32.550 --> 00:02:38.370] We all deal with setbacks, but in the long run, the quality of our lives often depends on the quality of our habits.
-[00:02:38.930 --> 00:02:41.490] With the same habits, you'll end up with the same results.
-[00:02:41.850 --> 00:02:44.250] But with better habits, anything is possible.
-[00:02:45.910 --> 00:02:48.830] Maybe there are people who can achieve incredible success overnight.
+[00:02:38.930 --> 00:02:44.250] With the same habits, you'll end up with the same results. But with better habits, anything is possible.
+[00:02:45.890 --> 00:02:48.830] Maybe there are people who can achieve incredible success overnight.
 [00:02:49.270 --> 00:02:51.630] I don't know any of them, and I'm certainly not one of them.
-[00:02:51.630 --> 00:03:00.070] There wasn't one defining moment in my journey from medically induced coma to academic All -American. There were many. It was a gradual evolution.
-[00:03:00.350 --> 00:03:03.170] A long series of small wins and tiny breakthroughs.
-[00:03:03.530 --> 00:03:08.190] The only way I made progress, the only choice I had to be honest, was to start small.
-[00:03:08.570 --> 00:03:14.370] And I employed this same strategy a few years later when I started my own business and began working on this book.
-[00:03:17.110 --> 00:03:18.930] How and why I wrote this book.
-[00:03:19.790 --> 00:03:24.450] In November 2012, I began publishing articles at jamesclear .com.
-[00:03:25.090 --> 00:03:31.130] For years, I had been keeping notes about my personal experiments with habits, and I was finally ready to share some of them publicly.
-[00:03:32.390 --> 00:03:35.450] I began by publishing a new article every Monday and Thursday.
-[00:03:35.910 --> 00:03:40.350] Within a few months, this simple writing habit led to my first 1 ,000 email subscribers.
-[00:03:40.670 --> 00:03:44.830] And by the end of 2013, that number had grown to more than 30 ,000 people.
-[00:03:46.030 --> 00:03:53.030] In 2014, my email list expanded to over 100 ,000 subscribers, which made it one of the fastest -growing newsletters on the internet.
-[00:03:53.810 --> 00:03:59.450] I had felt like an imposter when I began writing two years earlier, but now I was becoming known as an expert on habits,
-[00:03:59.630 --> 00:04:02.710] a new label that excited me but that also felt uncomfortable.
+[00:02:51.630 --> 00:02:58.150] There wasn't one defining moment in my journey from medically induced coma to academic all -American. There were many.
+[00:02:58.510 --> 00:03:03.190] It was a gradual evolution, a long series of small wins and tiny breakthroughs.
+[00:03:03.530 --> 00:03:08.190] The only way I made progress, the only choice I had, to be honest, was to start small.
+[00:03:08.190 --> 00:03:18.930] And I employed this same strategy a few years later, when I started my own business, and began working on this book. How and why I wrote this book.
+[00:03:19.830 --> 00:03:24.470] In November 2012, I began publishing articles at JamesClear .com.
+[00:03:25.130 --> 00:03:31.110] For years, I had been keeping notes about my personal experiments with habits, and I was finally ready to share some of them publicly.
+[00:03:32.430 --> 00:03:35.430] I began by publishing a new article every Monday and Thursday.
+[00:03:35.930 --> 00:03:40.270] Within a few months, this simple writing habit led to my first 1 ,000 email subscribers.
+[00:03:40.490 --> 00:03:44.850] And by the end of 2013, that number had grown to more than 30 ,000 people.
+[00:03:46.030 --> 00:03:53.030] In 2014, my email list expanded to over 100 ,000 subscribers, which made it one of the fastest -growing newsletters on the Internet.
+[00:03:53.810 --> 00:03:59.450] I had felt like an imposter when I began writing two years earlier, but now I was becoming known as an expert on habits.
+[00:03:59.650 --> 00:04:02.690] A new label that excited me, but that also felt uncomfortable.
 [00:04:03.230 --> 00:04:08.690] I had never considered myself a master of the topic, but rather someone who was experimenting alongside my readers.
-[00:04:09.570 --> 00:04:17.150] In 2015, I reached 200 ,000 email subscribers and signed a book deal with Penguin Random House to begin writing the book you are listening to now.
-[00:04:17.830 --> 00:04:20.750] As my audience grew, so did my business opportunities.
-[00:04:21.090 --> 00:04:27.230] I was increasingly asked to speak at top companies about the science of habit formation, behavior change, and continuous improvement.
-[00:04:27.490 --> 00:04:31.590] I found myself delivering keynote speeches at conferences in the United States and Europe.
-[00:04:32.410 --> 00:04:38.710] In 2016, my articles began to appear regularly in major publications like Time, Entrepreneur, and Forbes.
-[00:04:39.530 --> 00:04:42.570] Incredibly, my writing was read by over 8 million people that year.
-[00:04:43.150 --> 00:04:47.910] Coaches in the NFL, NBA, and MLB began reading my work and sharing it with their teams.
-[00:04:48.310 --> 00:04:58.810] And at the start of 2017, I launched the Habits Academy, which became the premier training platform for organizations and individuals interested in building better habits in life and work.
-[00:04:59.930 --> 00:05:04.410] Fortune 500 companies and growing startups began to enroll their leaders and train their staff.
-[00:05:04.770 --> 00:05:10.730] In total, over 10 ,000 leaders, managers, coaches, and teachers have graduated from the Habits Academy,
-[00:05:10.810 --> 00:05:16.110] and my work with them has taught me an incredible amount about what it takes to make habits work in the real world.
-[00:05:16.750 --> 00:05:19.970] You can learn more by visiting habitsacademy .com.
-[00:05:21.290 --> 00:05:24.190] As I put the finishing touches on this book in 2018,
-[00:05:24.870 --> 00:05:31.250] jamesclear .com is receiving millions of visitors per month and nearly 500 ,000 people subscribe to my weekly email newsletter,
-[00:05:31.530 --> 00:05:36.590] a number that is so far beyond my expectations when I began that I'm not even sure what to think of it.
-[00:05:39.260 --> 00:05:40.900] How this book will benefit you.
-[00:05:41.660 --> 00:05:47.940] The entrepreneur and investor Naval Ravikant has said, to write a great book, you must first become the book.
-[00:05:48.840 --> 00:05:52.560] I originally learned about the ideas mentioned here because I had to live them.
-[00:05:52.560 --> 00:06:02.960] I had to rely on small habits to rebound from my injury, to get stronger in the gym, to perform at a high level in the field, to become a writer, to build a successful business,
-[00:06:03.180 --> 00:06:05.820] and simply to develop into a responsible adult.
-[00:06:06.280 --> 00:06:12.640] Small habits helped me fulfill my potential, and since you're listening to this book, I'm guessing you'd like to fulfill yours as well.
+[00:04:09.650 --> 00:04:17.150] In 2015, I reached 200 ,000 email subscribers and signed a book deal with Penguin Random House to begin writing the book you are listening to now.
+[00:04:17.770 --> 00:04:20.730] As my audience grew, so did my business opportunities.
+[00:04:21.050 --> 00:04:27.210] I was increasingly asked to speak at top companies about the science of habit formation, behavior change, and continuous improvement.
+[00:04:27.450 --> 00:04:31.590] I found myself delivering keynote speeches at conferences in the United States and Europe.
+[00:04:32.570 --> 00:04:38.710] In 2016, my articles began to appear regularly in major publications like Time, Entrepreneur, and Forbes.
+[00:04:39.610 --> 00:04:42.550] Incredibly, my writing was read by over 8 million people that year.
+[00:04:43.230 --> 00:04:47.910] Coaches in the NFL, NBA, and MLB began reading my work and sharing it with their teams.
+[00:04:47.910 --> 00:04:58.810] And at the start of 2017, I launched the Habits Academy, which became the premier training platform for organizations and individuals interested in building better habits in life and work.
+[00:04:59.910 --> 00:05:04.410] Fortune 500 companies and growing startups began to enroll their leaders and train their staff.
+[00:05:04.730 --> 00:05:10.750] In total, over 10 ,000 leaders, managers, coaches, and teachers have graduated from the Habits Academy,
+[00:05:10.750 --> 00:05:16.110] and my work with them has taught me an incredible amount about what it takes to make habits work in the real world.
+[00:05:16.790 --> 00:05:20.090] You can learn more by visiting habitsacademy .com.
+[00:05:21.330 --> 00:05:24.210] As I put the finishing touches on this book in 2018,
+[00:05:24.850 --> 00:05:31.250] JamesClear .com is receiving millions of visitors per month, and nearly 500 ,000 people subscribe to my weekly email newsletter,
+[00:05:31.430 --> 00:05:40.900] a number that is so far beyond my expectations when I began that I'm not even sure what to think of it. How this book will benefit you
+[00:05:41.620 --> 00:05:47.920] The entrepreneur and investor Naval Ravikant has said, To write a great book, you must first become the book.
+[00:05:48.800 --> 00:05:52.560] I originally learned about the ideas mentioned here because I had to live them.
+[00:05:52.800 --> 00:06:08.440] I had to rely on small habits to rebound from my injury, to get stronger in the gym, to perform at a high level in the field, to become a writer, to build a successful business, and simply to develop into a responsible adult. Small Habits helped me fulfill my potential.
+[00:06:08.740 --> 00:06:12.640] And since you're listening to this book, I'm guessing you'd like to fulfill yours as well.
 [00:06:14.120 --> 00:06:20.580] In what follows, I will share a step -by -step plan for building better habits, not for days or weeks, but for a lifetime.
-[00:06:21.080 --> 00:06:27.500] While science supports everything I've written, this book is not meant to be an academic research paper. It's an operating manual.
+[00:06:21.100 --> 00:06:27.500] While science supports everything I've written, this book is not meant to be an academic research paper. It's an operating manual.
 [00:06:27.880 --> 00:06:36.600] You'll find wisdom and practical advice front and center as I explain the science of how to create and change your habits in a way that is easy to understand and apply.
-[00:06:37.240 --> 00:06:42.960] The fields I draw on, biology, neuroscience, philosophy, psychology, and more,
-[00:06:43.180 --> 00:06:44.580] have been around for many years.
-[00:06:44.900 --> 00:06:53.300] What I offer you is a synthesis of the best ideas smart people figured out a long time ago, as well as the most compelling discoveries scientists have made recently.
-[00:06:53.960 --> 00:07:00.420] My contribution, I hope, is to find the ideas that matter most and connect them in a way that is highly actionable.
-[00:07:00.940 --> 00:07:04.760] Anything wise you hear, you should credit to the many experts who preceded me.
-[00:07:04.760 --> 00:07:07.440] Anything foolish, assume it is my heir.
-[00:07:08.380 --> 00:07:13.960] The backbone of this book is my four -step model of habits, cue, craving, response,
-[00:07:14.000 --> 00:07:18.600] and reward, and the four laws of behavior change that evolve out of these steps.
-[00:07:19.360 --> 00:07:28.180] Readers with a psychology background may recognize some of these terms from operant conditioning, which was first proposed as stimulus -response -reward by B .F.
-[00:07:28.260 --> 00:07:33.500] Skinner in the 1930s, and has been popularized more recently as cue, routine, reward,
+[00:06:37.220 --> 00:06:44.580] The fields I draw on, biology, neuroscience, philosophy, psychology, and more, have been around for many years.
+[00:06:44.880 --> 00:06:53.300] What I offer you is a synthesis of the best ideas smart people figured out a long time ago, as well as the most compelling discoveries scientists have made recently.
+[00:06:53.920 --> 00:07:00.460] My contribution, I hope, is to find the ideas that matter most and connect them in a way that is highly actionable.
+[00:07:00.900 --> 00:07:07.440] Anything wise you hear, you should credit to the many experts who preceded me. Anything foolish, assume it is my heir.
+[00:07:08.420 --> 00:07:13.940] The backbone of this book is my four -step model of habits, cue, craving, response,
+[00:07:14.040 --> 00:07:18.600] and reward, and the four laws of behavior change that evolve out of these steps.
+[00:07:19.360 --> 00:07:28.180] Readers with a psychology background may recognize some of these terms from operant conditioning, which was first proposed as stimulus response reward by B .F.
+[00:07:28.280 --> 00:07:33.480] Skinner in the 1930s, and has been popularized more recently as cue, routine reward,
 [00:07:33.660 --> 00:07:35.560] and the power of habit by Charles Duhigg.
 [00:07:36.700 --> 00:07:43.300] Behavioral scientists like Skinner realized that if you offered the right reward or punishment, you could get people to act in a certain way.
-[00:07:43.580 --> 00:07:49.120] But while Skinner's model did an excellent job of explaining how external stimuli influenced our habits,
-[00:07:49.420 --> 00:07:54.180] it lacked a good explanation for how our thoughts, feelings, and beliefs impact our behavior.
-[00:07:54.740 --> 00:07:57.880] Internal states, our moods and emotions, matter too.
-[00:07:57.880 --> 00:08:03.980] In recent decades, scientists have begun to determine the connection between our thoughts, feelings, and behavior.
-[00:08:04.400 --> 00:08:06.620] This research, too, will be covered here.
-[00:08:07.900 --> 00:08:13.520] In total, the framework I offer is an integrated model of the cognitive and behavioral sciences.
-[00:08:14.000 --> 00:08:22.760] I believe it is one of the first models of human behavior to accurately account for both the influence of external stimuli and internal emotions on our habits.
-[00:08:23.340 --> 00:08:34.960] While some of the language may be familiar, I'm confident that the details and the applications of the four laws of behavior change will offer a new way to think about your habits. Human behavior is always changing.
-[00:08:35.320 --> 00:08:38.900] Situation to situation, moment to moment, second to second.
-[00:08:39.160 --> 00:08:41.500] But this book is about what doesn't change.
-[00:08:41.760 --> 00:08:43.980] It's about the fundamentals of human behavior.
-[00:08:44.240 --> 00:08:47.500] The lasting principles you can rely on year after year.
-[00:08:47.840 --> 00:08:52.140] The ideas you can build a business around. Build a family around. Build a life around.
-[00:08:52.800 --> 00:08:55.940] There is no one right way to create better habits.
+[00:07:43.460 --> 00:07:49.120] But while Skinner's model did an excellent job of explaining how external stimuli influenced our habits,
+[00:07:49.380 --> 00:07:54.180] it lacked a good explanation for how our thoughts, feelings, and beliefs impact our behavior.
+[00:07:54.700 --> 00:07:57.880] Internal states, our moods and emotions, matter too.
+[00:07:58.380 --> 00:08:06.640] In recent decades, scientists have begun to determine the connection between our thoughts, feelings, and behavior. This research too will be covered here.
+[00:08:07.900 --> 00:08:13.540] In total, the framework I offer is an integrated model of the cognitive and behavioral sciences.
+[00:08:13.800 --> 00:08:22.760] I believe it is one of the first models of human behavior to accurately account for both the influence of external stimuli and internal emotions on our habits.
+[00:08:23.300 --> 00:08:34.960] While some of the language may be familiar, I'm confident that the details and the applications of the four laws of behavior change will offer a new way to think about your habits. Human behavior is always changing.
+[00:08:35.280 --> 00:08:38.900] Situation to situation, moment to moment, second to second.
+[00:08:39.260 --> 00:08:43.960] But this book is about what doesn't change. It's about the fundamentals of human behavior.
+[00:08:44.300 --> 00:08:47.500] The lasting principles you can rely on year after year.
+[00:08:47.800 --> 00:08:52.160] The ideas you can build a business around, build a family around, build a life around.
+[00:08:52.720 --> 00:08:55.960] There is no one right way to create better habits.
 [00:08:56.180 --> 00:08:58.500] But this book describes the best way I know.
-[00:08:58.780 --> 00:09:03.640] An approach that will be effective regardless of where you start or what you're trying to change.
-[00:09:04.060 --> 00:09:09.180] The strategies I cover will be relevant to anyone looking for a step -by -step system for improvement.
-[00:09:09.420 --> 00:09:11.840] Whether your goals center on health, money,
-[00:09:12.920 --> 00:09:15.120] productivity, relationships, or all of the above.
-[00:09:15.700 --> 00:09:19.480] As long as human behavior is involved, this book will be your guide.
+[00:08:58.720 --> 00:09:03.660] An approach that will be effective regardless of where you start or what you're trying to change.
+[00:09:04.000 --> 00:09:15.120] The strategies I cover will be relevant to anyone looking for a step -by -step system for improvement. Whether your goals center on health, money, relationships, or all of the above.
+[00:09:15.720 --> 00:09:19.460] As long as human behavior is involved, this book will be your guide.

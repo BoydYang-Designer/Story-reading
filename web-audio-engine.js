@@ -415,6 +415,17 @@ var WebAudioEngine = (() => {
         return !!(window.AudioContext || window.webkitAudioContext);
     }
 
+    /**
+     * iOS Chrome 解鎖用：在用戶手勢堆疊內同步建立並 resume AudioContext。
+     * 由 quiz.js 的全域 touchstart/click 監聽器呼叫，確保第一次觸碰後 context 已就緒。
+     */
+    function unlock() {
+        const ctx = _getContext();
+        if (ctx && ctx.state === 'suspended') {
+            ctx.resume().catch(() => {});
+        }
+    }
+
     // ── 公開 API ─────────────────────────────────────────────
     return {
         playSnippet,
@@ -422,7 +433,8 @@ var WebAudioEngine = (() => {
         preload,
         clearCache,
         getCacheStatus,
-        isSupported
+        isSupported,
+        unlock
     };
 
 })();

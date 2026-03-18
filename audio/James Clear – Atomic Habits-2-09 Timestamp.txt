@@ -1,63 +1,59 @@
 [00:00:00.080 --> 00:00:05.060] At first glance, this sounds reasonable, but soon I realized that the trigger was unclear.
 [00:00:05.720 --> 00:00:10.120] Would I do my push -ups before I ate lunch? After I ate lunch? Where would I do them?
-[00:00:10.740 --> 00:00:16.220] After a few inconsistent days, I changed my habit stack to, when I close my laptop for lunch,
-[00:00:16.360 --> 00:00:19.500] I will do 10 push -ups next to my desk. Ambiguity gone.
-[00:00:20.760 --> 00:00:28.320] Habits like read more or eat better are worthy causes, but these goals do not provide instruction on how and when to act.
-[00:00:28.500 --> 00:00:30.080] You need to be specific and clear.
+[00:00:10.820 --> 00:00:16.220] After a few inconsistent days, I changed my habit stack to, when I close my laptop for lunch,
+[00:00:16.260 --> 00:00:19.500] I will do 10 push -ups next to my desk. Ambiguity gone.
+[00:00:20.760 --> 00:00:30.080] Habits like read more or eat better are worthy causes, but these goals do not provide instruction on how and when to act. You need to be specific and clear.
 [00:00:30.280 --> 00:00:35.620] After I close the door, after I brush my teeth, after I sit down at the table, the specificity is important.
 [00:00:36.360 --> 00:00:43.300] The more tightly bound your new habit is to a specific cue, the better the odds are that you will notice when the time comes to act.
-[00:00:44.240 --> 00:00:47.700] Remember, the first law of behavior change is to make it obvious.
+[00:00:44.240 --> 00:00:47.680] Remember, the first law of behavior change is to make it obvious.
 [00:00:48.360 --> 00:00:58.980] Strategies like implementation intentions and habit stacking are among the most practical ways to create obvious cues for your habits and design a clear plan for when and where to take action.
-[00:01:00.860 --> 00:01:05.440] Chapter Summary The first law of behavior change is make it obvious.
+[00:01:00.840 --> 00:01:05.420] Chapter Summary The first law of behavior change is make it obvious.
 [00:01:06.220 --> 00:01:09.580] The two most common cues are time and location.
 [00:01:10.340 --> 00:01:16.860] Creating an implementation intention is a strategy you can use to pair a new habit with a specific time and location.
-[00:01:17.400 --> 00:01:24.200] The implementation intention formula is I will behavior at time in location.
+[00:01:17.400 --> 00:01:24.220] The implementation intention formula is I will behavior at time in location.
 [00:01:25.120 --> 00:01:29.560] Habit stacking is a strategy you can use to pair a new habit with a current habit.
-[00:01:30.000 --> 00:01:44.700] The habit stacking formula is after current habit, I will new habit. Chapter six, motivation is overrated. Environment often matters more.
-[00:01:46.970 --> 00:01:52.970] Anne Thorndyke, a primary care physician at Massachusetts General Hospital in Boston, had a crazy idea.
+[00:01:30.040 --> 00:01:44.680] The habit stacking formula is after current habit, I will new habit. Chapter six. Motivation is overrated. Environment often matters more.
+[00:01:47.110 --> 00:01:52.950] Anne Thorndyke, a primary care physician at Massachusetts General Hospital in Boston, had a crazy idea.
 [00:01:53.610 --> 00:02:01.750] She believed she could improve the eating habits of thousands of hospital staff and visitors without changing their willpower or motivation in the slightest way.
-[00:02:02.230 --> 00:02:04.830] In fact, she didn't plan on talking to them at all.
-[00:02:06.070 --> 00:02:11.610] Thorndyke and her colleagues designed a six -month study to alter the choice architecture of the hospital cafeteria.
-[00:02:12.630 --> 00:02:18.590] Originally, the refrigerators located next to the cash registers in the cafeteria were filled with only soda.
+[00:02:02.170 --> 00:02:04.830] In fact, she didn't plan on talking to them at all.
+[00:02:05.890 --> 00:02:11.590] Thorndyke and her colleagues designed a six -month study to alter the choice architecture of the hospital cafeteria.
+[00:02:12.650 --> 00:02:18.590] Originally, the refrigerators located next to the cash registers in the cafeteria were filled with only soda.
 [00:02:19.030 --> 00:02:22.110] The researchers added water as an option to each one.
-[00:02:22.890 --> 00:02:27.390] Additionally, they placed baskets of bottled water next to the food stations throughout the room.
-[00:02:28.290 --> 00:02:33.870] Soda was still in the primary refrigerators, but now water was an option available at all drink locations.
-[00:02:34.990 --> 00:02:39.970] Over the next three months, the number of soda sales at the hospital dropped by 11 .4 percent.
-[00:02:40.670 --> 00:02:44.630] Meanwhile, sales of bottled water increased by 25 .8 percent.
-[00:02:45.190 --> 00:02:49.530] They made similar adjustments and saw similar results with the food in the cafeteria.
-[00:02:50.050 --> 00:02:52.470] Nobody had said a word to anyone eating there.
-[00:02:53.150 --> 00:03:01.670] To see a graphical representation of the layouts in the cafeteria before and after the changes, visit atomichabits .com slash media.
-[00:03:02.690 --> 00:03:07.610] People often choose products not because of what they are, but because of where they are.
-[00:03:07.930 --> 00:03:13.290] If I walk into the kitchen and see a plate of cookies on the counter, I'll pick up half a dozen and start eating,
-[00:03:13.310 --> 00:03:17.390] even if I hadn't been thinking about them beforehand and didn't necessarily feel hungry.
-[00:03:17.870 --> 00:03:24.310] If the communal table at the office is always filled with donuts and bagels, it's going to be hard not to grab one every now and then.
-[00:03:24.710 --> 00:03:28.770] Your habits change depending on the room you are in and the queues in front of you.
-[00:03:29.670 --> 00:03:32.550] Environment is the invisible hand that shapes human behavior.
-[00:03:32.990 --> 00:03:39.490] Despite our unique personalities, certain behaviors tend to arise again and again under certain environmental conditions.
-[00:03:40.110 --> 00:03:42.310] In church, people tend to talk in whispers.
-[00:03:42.670 --> 00:03:45.230] On a dark street, people act wary and guarded.
-[00:03:45.670 --> 00:03:49.890] In this way, the most common form of change is not internal but external.
-[00:03:50.170 --> 00:03:54.670] We are changed by the world around us. Every habit is context dependent.
-[00:03:55.610 --> 00:04:01.370] In 1936, psychologist Kurt Lewin wrote a simple equation that makes a powerful statement.
-[00:04:01.810 --> 00:04:07.050] Behavior is a function of the person in their environment, or B equals FPE.
-[00:04:07.770 --> 00:04:11.010] It didn't take long for Lewin's equation to be tested in business.
-[00:04:11.390 --> 00:04:18.090] In 1952, the economist Hawkins Stern described a phenomenon he called suggestion impulse buying,
-[00:04:18.470 --> 00:04:23.450] which is triggered when a shopper sees a product for the first time and visualizes the need for it.
-[00:04:23.750 --> 00:04:30.650] In other words, customers will occasionally buy products not because they want them, but because of how they are presented to them.
-[00:04:31.250 --> 00:04:35.850] For example, items at eye level tend to be purchased more than those down near the floor.
-[00:04:36.110 --> 00:04:46.010] For this reason, you'll find expensive brand names featured in easy -to -reach locations on store shelves because they drive the most profit, while cheaper alternatives are tucked away in harder -to -reach spots.
+[00:02:22.930 --> 00:02:27.390] Additionally, they placed baskets of bottled water next to the food stations throughout the room.
+[00:02:28.330 --> 00:02:33.870] Soda was still in the primary refrigerators, but now water was an option available at all drink locations.
+[00:02:35.030 --> 00:02:40.010] Over the next three months, the number of soda sales at the hospital dropped by 11 .4%.
+[00:02:40.010 --> 00:02:44.570] Meanwhile, sales of bottled water increased by 25 .8%.
+[00:02:44.570 --> 00:02:49.530] They made similar adjustments and saw similar results with the food in the cafeteria.
+[00:02:49.970 --> 00:02:52.450] Nobody had said a word to anyone eating there.
+[00:02:53.030 --> 00:03:01.670] To see a graphical representation of the layouts in the cafeteria before and after the changes, visit atomichabits .com slash media.
+[00:03:02.730 --> 00:03:07.630] People often choose products not because of what they are, but because of where they are.
+[00:03:07.970 --> 00:03:13.290] If I walk into the kitchen and see a plate of cookies on the counter, I'll pick up half a dozen and start eating,
+[00:03:13.490 --> 00:03:17.410] even if I hadn't been thinking about them beforehand and didn't necessarily feel hungry.
+[00:03:17.950 --> 00:03:24.310] If the communal table at the office is always filled with donuts and bagels, it's going to be hard not to grab one every now and then.
+[00:03:24.750 --> 00:03:28.750] Your habits change depending on the room you're in and the queues in front of you.
+[00:03:29.610 --> 00:03:32.530] Environment is the invisible hand that shapes human behavior.
+[00:03:32.910 --> 00:03:39.490] Despite our unique personalities, certain behaviors tend to arise again and again under certain environmental conditions.
+[00:03:40.070 --> 00:03:42.330] In church, people tend to talk in whispers.
+[00:03:42.530 --> 00:03:45.230] On a dark street, people act wary and guarded.
+[00:03:45.630 --> 00:03:49.890] In this way, the most common form of change is not internal, but external.
+[00:03:50.170 --> 00:03:54.730] We are changed by the world around us. Every habit is context dependent.
+[00:03:55.570 --> 00:04:01.370] In 1936, psychologist Kurt Lewin wrote a simple equation that makes a powerful statement.
+[00:04:01.710 --> 00:04:07.030] Behavior is a function of the person in their environment, or B equals FPE.
+[00:04:07.710 --> 00:04:10.990] It didn't take long for Lewin's equation to be tested in business.
+[00:04:11.350 --> 00:04:23.450] In 1952, the economist Hawkins Stern described a phenomenon he called suggestion impulse buying, which is triggered when a shopper sees a product for the first time and visualizes the need for it.
+[00:04:23.790 --> 00:04:30.650] In other words, customers will occasionally buy products not because they want them, but because of how they are presented to them.
+[00:04:31.250 --> 00:04:35.870] For example, items at eye level tend to be purchased more than those down near the floor.
+[00:04:36.150 --> 00:04:46.030] For this reason, you'll find expensive brand names featured in easy -to -reach locations on store shelves because they drive the most profit, while cheaper alternatives are tucked away in harder -to -reach spots.
 [00:04:46.370 --> 00:04:49.690] The same goes for end caps, which are the units at the end of aisles.
-[00:04:50.370 --> 00:04:55.950] End caps are money -making machines for retailers because they are obvious locations that encounter a lot of foot traffic.
-[00:04:56.170 --> 00:05:01.750] For example, 45 % of Coca -Cola sales come specifically from end -of -the -aisle racks.
-[00:05:02.550 --> 00:05:07.290] The more obviously available a product or service is, the more likely you are to try it.
-[00:05:07.470 --> 00:05:12.250] People drink by light because it is in every bar, and visit Starbucks because it is on every corner.
+[00:04:50.670 --> 00:04:55.950] End caps are money -making machines for retailers because they are obvious locations that encounter a lot of foot traffic.
+[00:04:56.290 --> 00:05:01.750] For example, 45 % of Coca -Cola sales come specifically from end -of -the -aisle racks.
+[00:05:02.550 --> 00:05:07.310] The more obviously available a product or service is, the more likely you are to try it.
+[00:05:07.470 --> 00:05:12.250] People drink by light because it is in every bar and visit Starbucks because it is on every corner.
 [00:05:12.450 --> 00:05:14.630] We like to think that we are in control.
 [00:05:15.190 --> 00:05:19.050] If we choose water over soda, we assume it is because we wanted to do so.
-[00:05:19.370 --> 00:05:25.170] The truth, however, is that many of the actions we take each day are shaped not by purposeful drive and choice,
-[00:05:25.350 --> 00:05:27.110] but by the most obvious option.
-[00:05:27.830 --> 00:05:31.950] Every living being has its own methods for sensing and understanding the world.
-[00:05:32.290 --> 00:05:34.510] Eagles have remarkable long -distance vision.
-[00:05:34.850 --> 00:05:38.230] Snakes can smell by tasting the air with their highly sensitive tongues.
-[00:05:38.890 --> 00:05:43.810] Sharks can detect small amounts of electricity and vibrations in the water caused by nearby fish.
-[00:05:44.230 --> 00:05:50.670] Even bacteria have chemoreceptors, tiny sensory cells that allow them to detect toxic chemicals in their environment.
-[00:05:51.090 --> 00:05:54.810] In humans, perception is directed by the sensory nervous system.
+[00:05:19.270 --> 00:05:27.130] The truth, however, is that many of the actions we take each day are shaped not by purposeful drive and choice, but by the most obvious option.
+[00:05:27.890 --> 00:05:34.510] Every living being has its own methods for sensing and understanding the world. Eagles have remarkable long -distance vision.
+[00:05:34.870 --> 00:05:38.230] Snakes can smell by tasting the air with their highly sensitive tongues.
+[00:05:38.970 --> 00:05:43.810] Sharks can detect small amounts of electricity and vibrations in the water caused by nearby fish.
+[00:05:44.230 --> 00:05:50.690] Even bacteria have chemoreceptors, tiny sensory cells that allow them to detect toxic chemicals in their environment.
+[00:05:51.370 --> 00:05:54.830] In humans, perception is directed by the sensory nervous system.

@@ -815,18 +815,746 @@ document.getElementById('dash-sort-fam-btn')?.addEventListener('click', () => {
     renderScoresDashboard();
 });
 
-// Clear All button
+// ── 編輯紀錄 入口 ─────────────────────────────────────────────
 document.getElementById('scores-clear-all-btn')?.addEventListener('click', () => {
-    if (!confirm('⚠️ 清除所有學習記錄？\n\n此操作無法還原，建議先「匯出學習資料」備份。')) return;
-    localStorage.removeItem(ITEM_SCORES_KEY);
-    if (typeof QUIZ_SCORES_KEY !== 'undefined') localStorage.removeItem(QUIZ_SCORES_KEY);
+    openEditRecordsPanel();
+});
+
+// ══════════════════════════════════════════════════════════════
+//  編輯紀錄 面板
+// ══════════════════════════════════════════════════════════════
+
+function openEditRecordsPanel() {
+    const old = document.getElementById('edit-records-overlay');
+    if (old) old.remove();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'edit-records-overlay';
+    overlay.style.cssText = `
+        position:fixed;inset:0;z-index:9000;
+        background:rgba(0,0,0,0.5);
+        display:flex;align-items:center;justify-content:center;
+        padding:20px;
+    `;
+
+    overlay.innerHTML = `
+        <div id="edit-records-panel" style="
+            background:var(--color-card,#fff);
+            border-radius:18px;
+            padding:28px 24px 24px;
+            max-width:360px;width:100%;
+            box-shadow:0 8px 40px rgba(0,0,0,0.22);
+            text-align:center;
+        ">
+            <div style="font-size:1.6em;margin-bottom:6px;">✏️</div>
+            <div style="font-size:1.1em;font-weight:700;margin-bottom:6px;">編輯紀錄</div>
+            <div style="font-size:0.85em;color:var(--color-text-light,#888);margin-bottom:24px;">
+                選擇要執行的操作
+            </div>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+                <button id="edit-records-organize-btn" style="
+                    padding:14px 16px;border-radius:12px;border:none;
+                    background:var(--color-primary,#4a90d9);color:#fff;
+                    font-size:0.95em;font-weight:700;cursor:pointer;
+                    display:flex;align-items:center;justify-content:center;gap:8px;
+                ">
+                    <span>🔍</span><span>整理測驗紀錄</span>
+                </button>
+                <div style="font-size:0.78em;color:var(--color-text-light,#999);margin-top:-6px;margin-bottom:4px;">
+                    比對 timestamp，找出內容有落差的孤立紀錄
+                </div>
+                <button id="edit-records-clear-btn" style="
+                    padding:14px 16px;border-radius:12px;border:none;
+                    background:#e05c5c;color:#fff;
+                    font-size:0.95em;font-weight:700;cursor:pointer;
+                    display:flex;align-items:center;justify-content:center;gap:8px;
+                ">
+                    <span>🗑</span><span>清除測驗紀錄</span>
+                </button>
+                <div style="font-size:0.78em;color:var(--color-text-light,#999);margin-top:-6px;">
+                    刪除全部或指定文章的測驗紀錄
+                </div>
+            </div>
+            <button id="edit-records-close-btn" style="
+                margin-top:20px;padding:9px 24px;border-radius:10px;
+                border:1.5px solid var(--color-border,#ddd);
+                background:transparent;color:var(--color-text,#333);
+                font-size:0.9em;cursor:pointer;
+            ">取消</button>
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    document.getElementById('edit-records-close-btn').addEventListener('click', () => overlay.remove());
+    overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+
+    document.getElementById('edit-records-organize-btn').addEventListener('click', () => {
+        overlay.remove();
+        openOrganizePanel();
+    });
+    document.getElementById('edit-records-clear-btn').addEventListener('click', () => {
+        overlay.remove();
+        openClearPanel();
+    });
+}
+
+
+// ══════════════════════════════════════════════════════════════
+//  🔍 整理測驗紀錄
+// ══════════════════════════════════════════════════════════════
+
+function openOrganizePanel() {
+    const old = document.getElementById('organize-overlay');
+    if (old) old.remove();
+
+    const storyList = typeof stories !== 'undefined' ? stories : [];
+    const majors = [...new Set(storyList.map(s => s['大類'] || 'Uncategorized'))].sort();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'organize-overlay';
+    overlay.style.cssText = `
+        position:fixed;inset:0;z-index:9100;
+        background:rgba(0,0,0,0.5);
+        display:flex;align-items:flex-start;justify-content:center;
+        padding:20px;overflow-y:auto;
+    `;
+
+    // Build major options
+    const majorOptions = majors.map(m =>
+        `<option value="${_escHtml(m)}">${_escHtml(m)}</option>`
+    ).join('');
+
+    overlay.innerHTML = `
+        <div id="organize-panel" style="
+            background:var(--color-card,#fff);
+            border-radius:18px;
+            padding:24px 20px 20px;
+            max-width:480px;width:100%;
+            box-shadow:0 8px 40px rgba(0,0,0,0.22);
+            margin:auto;
+        ">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+                <span style="font-size:1.3em;">🔍</span>
+                <span style="font-size:1.05em;font-weight:700;">整理測驗紀錄</span>
+                <button id="organize-back-btn" style="
+                    margin-left:auto;padding:6px 14px;border-radius:8px;
+                    border:1.5px solid var(--color-border,#ddd);
+                    background:transparent;color:var(--color-text,#333);
+                    font-size:0.85em;cursor:pointer;
+                ">← 返回</button>
+            </div>
+
+            <div style="font-size:0.85em;color:var(--color-text-light,#777);margin-bottom:18px;line-height:1.5;">
+                比對 timestamp 實際內容，找出測驗紀錄中已不存在的孤立句子。
+            </div>
+
+            <!-- 範圍選擇 -->
+            <div style="margin-bottom:16px;">
+                <div style="font-size:0.82em;font-weight:600;color:var(--color-text-light,#888);margin-bottom:8px;">整理範圍</div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                    <button class="org-scope-btn is-active" data-scope="all" style="
+                        padding:7px 14px;border-radius:20px;border:1.5px solid var(--color-primary,#4a90d9);
+                        background:var(--color-primary,#4a90d9);color:#fff;
+                        font-size:0.85em;cursor:pointer;font-weight:600;
+                    ">全部整理</button>
+                    <button class="org-scope-btn" data-scope="major" style="
+                        padding:7px 14px;border-radius:20px;border:1.5px solid var(--color-border,#ddd);
+                        background:transparent;color:var(--color-text,#333);
+                        font-size:0.85em;cursor:pointer;
+                    ">分類整理</button>
+                    <button class="org-scope-btn" data-scope="single" style="
+                        padding:7px 14px;border-radius:20px;border:1.5px solid var(--color-border,#ddd);
+                        background:transparent;color:var(--color-text,#333);
+                        font-size:0.85em;cursor:pointer;
+                    ">個別整理</button>
+                </div>
+            </div>
+
+            <!-- 分類選擇（scope=major 時顯示）-->
+            <div id="org-major-row" style="display:none;margin-bottom:14px;">
+                <select id="org-major-select" style="
+                    width:100%;padding:9px 12px;border-radius:10px;
+                    border:1.5px solid var(--color-border,#ddd);
+                    background:var(--color-bg,#f5f5f5);
+                    font-size:0.9em;color:var(--color-text,#333);
+                ">
+                    <option value="">— 選擇大類 —</option>
+                    ${majorOptions}
+                </select>
+            </div>
+
+            <!-- 文章選擇（scope=single 時顯示）-->
+            <div id="org-article-row" style="display:none;margin-bottom:14px;">
+                <select id="org-major-select-for-single" style="
+                    width:100%;padding:9px 12px;border-radius:10px;
+                    border:1.5px solid var(--color-border,#ddd);
+                    background:var(--color-bg,#f5f5f5);
+                    font-size:0.9em;color:var(--color-text,#333);margin-bottom:8px;
+                ">
+                    <option value="">— 選擇大類 —</option>
+                    ${majorOptions}
+                </select>
+                <select id="org-cat-select" style="
+                    width:100%;padding:9px 12px;border-radius:10px;
+                    border:1.5px solid var(--color-border,#ddd);
+                    background:var(--color-bg,#f5f5f5);
+                    font-size:0.9em;color:var(--color-text,#333);margin-bottom:8px;
+                    display:none;
+                ">
+                    <option value="">— 選擇分類 —</option>
+                </select>
+                <select id="org-article-select" style="
+                    width:100%;padding:9px 12px;border-radius:10px;
+                    border:1.5px solid var(--color-border,#ddd);
+                    background:var(--color-bg,#f5f5f5);
+                    font-size:0.9em;color:var(--color-text,#333);
+                    display:none;
+                ">
+                    <option value="">— 選擇文章 —</option>
+                </select>
+            </div>
+
+            <!-- 掃描按鈕 -->
+            <button id="org-scan-btn" style="
+                width:100%;padding:12px;border-radius:12px;border:none;
+                background:var(--color-primary,#4a90d9);color:#fff;
+                font-size:0.95em;font-weight:700;cursor:pointer;margin-bottom:16px;
+            ">🔍 開始掃描</button>
+
+            <!-- 掃描結果 -->
+            <div id="org-results-area" style="display:none;">
+                <div id="org-results-summary" style="
+                    font-size:0.85em;padding:10px 14px;border-radius:10px;
+                    background:rgba(0,0,0,0.04);margin-bottom:12px;
+                    color:var(--color-text,#333);
+                "></div>
+                <div id="org-results-list" style="max-height:340px;overflow-y:auto;"></div>
+                <div id="org-action-bar" style="
+                    display:none;margin-top:14px;
+                    display:flex;gap:10px;justify-content:flex-end;
+                ">
+                    <button id="org-delete-all-btn" style="
+                        padding:9px 18px;border-radius:10px;border:none;
+                        background:#e05c5c;color:#fff;font-size:0.88em;font-weight:700;cursor:pointer;
+                    ">🗑 全部刪除</button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    // ── Back button ──
+    document.getElementById('organize-back-btn').addEventListener('click', () => {
+        overlay.remove();
+        openEditRecordsPanel();
+    });
+    overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+
+    // ── Scope buttons ──
+    let currentScope = 'all';
+    overlay.querySelectorAll('.org-scope-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            overlay.querySelectorAll('.org-scope-btn').forEach(b => {
+                b.style.background = 'transparent';
+                b.style.color = 'var(--color-text,#333)';
+                b.style.borderColor = 'var(--color-border,#ddd)';
+            });
+            btn.style.background = 'var(--color-primary,#4a90d9)';
+            btn.style.color = '#fff';
+            btn.style.borderColor = 'var(--color-primary,#4a90d9)';
+            currentScope = btn.dataset.scope;
+            document.getElementById('org-major-row').style.display   = currentScope === 'major'  ? '' : 'none';
+            document.getElementById('org-article-row').style.display = currentScope === 'single' ? '' : 'none';
+            document.getElementById('org-results-area').style.display = 'none';
+        });
+    });
+
+    // ── Single: cascade selects ──
+    const storyList2 = typeof stories !== 'undefined' ? stories : [];
+
+    document.getElementById('org-major-select-for-single').addEventListener('change', function() {
+        const major = this.value;
+        const catSel = document.getElementById('org-cat-select');
+        const artSel = document.getElementById('org-article-select');
+        catSel.innerHTML = '<option value="">— 選擇分類 —</option>';
+        artSel.innerHTML = '<option value="">— 選擇文章 —</option>';
+        artSel.style.display = 'none';
+        if (!major) { catSel.style.display = 'none'; return; }
+        const cats = [...new Set(storyList2.filter(s => (s['大類']||'Uncategorized') === major).map(s => s['分類']?.[0]||'Uncategorized'))].sort();
+        cats.forEach(c => { const o = document.createElement('option'); o.value = c; o.textContent = c; catSel.appendChild(o); });
+        catSel.style.display = '';
+    });
+
+    document.getElementById('org-cat-select').addEventListener('change', function() {
+        const major = document.getElementById('org-major-select-for-single').value;
+        const cat = this.value;
+        const artSel = document.getElementById('org-article-select');
+        artSel.innerHTML = '<option value="">— 選擇文章 —</option>';
+        if (!cat) { artSel.style.display = 'none'; return; }
+        const arts = storyList2.filter(s => (s['大類']||'Uncategorized') === major && (s['分類']?.[0]||'Uncategorized') === cat).map(s => s['標題']).sort();
+        arts.forEach(t => { const o = document.createElement('option'); o.value = t; o.textContent = t; artSel.appendChild(o); });
+        artSel.style.display = '';
+    });
+
+    // ── Scan button ──
+    document.getElementById('org-scan-btn').addEventListener('click', async () => {
+        const scanBtn = document.getElementById('org-scan-btn');
+        scanBtn.textContent = '⏳ 掃描中…';
+        scanBtn.disabled = true;
+
+        // Build target article list
+        let targets = []; // [{ cat, title }]
+        const itemData = loadItemScores();
+
+        if (currentScope === 'all') {
+            Object.keys(itemData).forEach(k => {
+                const [cat, title] = k.split('||');
+                if (title) targets.push({ cat, title, key: k });
+            });
+        } else if (currentScope === 'major') {
+            const major = document.getElementById('org-major-select').value;
+            if (!major) { scanBtn.textContent = '🔍 開始掃描'; scanBtn.disabled = false; showNotification('請先選擇大類', 'warning'); return; }
+            Object.keys(itemData).forEach(k => {
+                const [cat, title] = k.split('||');
+                if (!title) return;
+                const s = storyList2.find(s => s['標題'] === title);
+                if (s && (s['大類']||'Uncategorized') === major) targets.push({ cat, title, key: k });
+            });
+        } else {
+            const title = document.getElementById('org-article-select').value;
+            if (!title) { scanBtn.textContent = '🔍 開始掃描'; scanBtn.disabled = false; showNotification('請先選擇文章', 'warning'); return; }
+            const cat = document.getElementById('org-cat-select').value;
+            const key = `${cat}||${title}`;
+            if (itemData[key]) targets.push({ cat, title, key });
+        }
+
+        if (targets.length === 0) {
+            scanBtn.textContent = '🔍 開始掃描';
+            scanBtn.disabled = false;
+            document.getElementById('org-results-area').style.display = '';
+            document.getElementById('org-results-summary').textContent = '此範圍內沒有測驗紀錄。';
+            document.getElementById('org-results-list').innerHTML = '';
+            document.getElementById('org-action-bar').style.display = 'none';
+            return;
+        }
+
+        // Scan each article
+        const orphans = []; // { key, cat, title, type, text }
+
+        for (const { cat, title, key } of targets) {
+            const entry = itemData[key];
+            if (!entry) continue;
+
+            // Check sentences against timestamp
+            let tsData = null;
+            if (typeof getTimestampForStory === 'function') {
+                try { tsData = await getTimestampForStory(title); } catch(e) {}
+            }
+
+            const norm = t => t.trim().replace(/[.,?!'"``""'']/g, '').toLowerCase();
+
+            // noteSentences
+            if (entry.noteSentences) {
+                const tsSentences = tsData ? new Set(tsData.map(l => norm(l.sentence))) : null;
+                Object.keys(entry.noteSentences).forEach(text => {
+                    const isOrphan = tsSentences ? !tsSentences.has(norm(text)) : false;
+                    if (isOrphan) orphans.push({ key, cat, title, type: 'noteSentences', typeLabel: 'Note 句子', text });
+                });
+            }
+
+            // articleSentences
+            if (entry.articleSentences) {
+                const tsSentences = tsData ? new Set(tsData.map(l => norm(l.sentence))) : null;
+                Object.keys(entry.articleSentences).forEach(text => {
+                    const isOrphan = tsSentences ? !tsSentences.has(norm(text)) : false;
+                    if (isOrphan) orphans.push({ key, cat, title, type: 'articleSentences', typeLabel: '文章句子', text });
+                });
+            }
+
+            // noteWords / articleWords — orphan if story no longer exists
+            const storyExists = storyList2.some(s => s['標題'] === title);
+            if (!storyExists) {
+                ['noteWords','articleWords'].forEach(itype => {
+                    if (!entry[itype]) return;
+                    const typeLabel = itype === 'noteWords' ? 'Note 單字' : '文章單字';
+                    Object.keys(entry[itype]).forEach(text => {
+                        orphans.push({ key, cat, title, type: itype, typeLabel, text });
+                    });
+                });
+            }
+        }
+
+        scanBtn.textContent = '🔍 開始掃描';
+        scanBtn.disabled = false;
+
+        // Render results
+        document.getElementById('org-results-area').style.display = '';
+        const summaryEl = document.getElementById('org-results-summary');
+        const listEl    = document.getElementById('org-results-list');
+        const actionBar = document.getElementById('org-action-bar');
+
+        if (orphans.length === 0) {
+            summaryEl.innerHTML = '✅ 沒有發現孤立紀錄，所有測驗記錄與 timestamp 一致！';
+            listEl.innerHTML = '';
+            actionBar.style.display = 'none';
+            return;
+        }
+
+        summaryEl.innerHTML = `⚠️ 發現 <strong>${orphans.length}</strong> 筆孤立紀錄（測驗記錄中的句子已不存在於 timestamp）`;
+        actionBar.style.display = 'flex';
+
+        // Group by title
+        const grouped = {};
+        orphans.forEach(o => {
+            if (!grouped[o.key]) grouped[o.key] = { title: o.title, cat: o.cat, items: [] };
+            grouped[o.key].items.push(o);
+        });
+
+        listEl.innerHTML = '';
+        Object.values(grouped).forEach(group => {
+            const section = document.createElement('div');
+            section.style.cssText = 'margin-bottom:14px;border:1px solid var(--color-border,#eee);border-radius:12px;overflow:hidden;';
+
+            const header = document.createElement('div');
+            header.style.cssText = 'padding:10px 14px;background:rgba(0,0,0,0.04);display:flex;align-items:center;gap:8px;';
+            header.innerHTML = `
+                <span style="font-size:0.9em;font-weight:700;flex:1;">📄 ${_escHtml(group.title)}</span>
+                <span style="font-size:0.78em;color:#e05c5c;font-weight:600;">${group.items.length} 筆</span>
+                <button class="org-del-article-btn" data-key="${_escHtml(group.items[0].key)}" style="
+                    padding:4px 10px;border-radius:7px;border:none;
+                    background:#e05c5c;color:#fff;font-size:0.78em;cursor:pointer;font-weight:600;
+                ">全刪</button>
+            `;
+            section.appendChild(header);
+
+            group.items.forEach(orphan => {
+                const row = document.createElement('div');
+                row.style.cssText = 'padding:8px 14px;display:flex;align-items:flex-start;gap:8px;border-top:1px solid var(--color-border,#eee);';
+                row.dataset.orphanKey  = orphan.key;
+                row.dataset.orphanType = orphan.type;
+                row.dataset.orphanText = orphan.text;
+                row.innerHTML = `
+                    <span style="font-size:0.72em;padding:2px 7px;border-radius:10px;background:rgba(224,92,92,0.12);color:#c0392b;white-space:nowrap;margin-top:2px;">${_escHtml(orphan.typeLabel)}</span>
+                    <span style="font-size:0.83em;flex:1;line-height:1.5;color:var(--color-text,#333);">${_escHtml(orphan.text)}</span>
+                    <button class="org-del-one-btn" style="
+                        padding:4px 9px;border-radius:7px;border:none;
+                        background:rgba(224,92,92,0.12);color:#c0392b;
+                        font-size:0.78em;cursor:pointer;white-space:nowrap;
+                    ">刪除</button>
+                `;
+                section.appendChild(row);
+            });
+
+            listEl.appendChild(section);
+        });
+
+        // ── Delete one ──
+        listEl.querySelectorAll('.org-del-one-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const row  = btn.closest('[data-orphan-key]');
+                const key  = row.dataset.orphanKey;
+                const type = row.dataset.orphanType;
+                const text = row.dataset.orphanText;
+                _deleteOrphan(key, type, text);
+                row.remove();
+                _updateOrgSummary(listEl, summaryEl, actionBar);
+            });
+        });
+
+        // ── Delete article group ──
+        listEl.querySelectorAll('.org-del-article-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const key     = btn.dataset.key;
+                const section = btn.closest('div[style*="margin-bottom"]');
+                const rows    = section.querySelectorAll('[data-orphan-key]');
+                rows.forEach(row => _deleteOrphan(row.dataset.orphanKey, row.dataset.orphanType, row.dataset.orphanText));
+                section.remove();
+                _updateOrgSummary(listEl, summaryEl, actionBar);
+            });
+        });
+
+        // ── Delete all ──
+        document.getElementById('org-delete-all-btn').addEventListener('click', () => {
+            if (!confirm(`確定要刪除全部 ${orphans.length} 筆孤立紀錄？`)) return;
+            orphans.forEach(o => _deleteOrphan(o.key, o.type, o.text));
+            listEl.innerHTML = '';
+            summaryEl.innerHTML = `✅ 已刪除 ${orphans.length} 筆孤立紀錄。`;
+            actionBar.style.display = 'none';
+        });
+    });
+}
+
+function _deleteOrphan(key, type, text) {
+    const data = loadItemScores();
+    if (data[key]?.[type]?.[text]) {
+        delete data[key][type][text];
+        saveItemScores(data);
+    }
+}
+
+function _updateOrgSummary(listEl, summaryEl, actionBar) {
+    const remaining = listEl.querySelectorAll('[data-orphan-key]').length;
+    if (remaining === 0) {
+        summaryEl.innerHTML = '✅ 所有孤立紀錄已清除！';
+        actionBar.style.display = 'none';
+    } else {
+        summaryEl.innerHTML = `⚠️ 剩餘 <strong>${remaining}</strong> 筆孤立紀錄`;
+    }
+}
+
+
+// ══════════════════════════════════════════════════════════════
+//  🗑 清除測驗紀錄
+// ══════════════════════════════════════════════════════════════
+
+function openClearPanel() {
+    const old = document.getElementById('clear-records-overlay');
+    if (old) old.remove();
+
+    const storyList = typeof stories !== 'undefined' ? stories : [];
+    const itemData  = loadItemScores();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'clear-records-overlay';
+    overlay.style.cssText = `
+        position:fixed;inset:0;z-index:9100;
+        background:rgba(0,0,0,0.5);
+        display:flex;align-items:flex-start;justify-content:center;
+        padding:20px;overflow-y:auto;
+    `;
+
+    // Build tree: major → category → articles
+    const majors = [...new Set(storyList.map(s => s['大類'] || 'Uncategorized'))].sort();
+
+    let treeHtml = '';
+    majors.forEach(major => {
+        const cats = [...new Set(storyList.filter(s => (s['大類']||'Uncategorized') === major).map(s => s['分類']?.[0]||'Uncategorized'))].sort();
+        let catHtml = '';
+        cats.forEach(cat => {
+            const articles = storyList.filter(s => (s['大類']||'Uncategorized') === major && (s['分類']?.[0]||'Uncategorized') === cat).map(s => s['標題']).sort();
+            let artHtml = '';
+            articles.forEach(title => {
+                const key = `${cat}||${title}`;
+                const hasData = !!itemData[key];
+                const countTotal = hasData ? _countRecords(itemData[key]) : 0;
+                artHtml += `
+                    <div class="clr-article-row" style="
+                        padding:8px 12px 8px 28px;
+                        display:flex;align-items:center;gap:8px;
+                        border-top:1px solid var(--color-border,#f0f0f0);
+                        opacity:${hasData ? '1' : '0.4'};
+                    ">
+                        <input type="checkbox" class="clr-art-check" data-key="${_escHtml(key)}" data-title="${_escHtml(title)}"
+                            ${!hasData ? 'disabled' : ''} style="width:16px;height:16px;cursor:pointer;flex-shrink:0;">
+                        <span style="flex:1;font-size:0.88em;">📄 ${_escHtml(title)}</span>
+                        ${hasData ? `<span style="font-size:0.75em;color:var(--color-text-light,#999);">${countTotal} 筆</span>` : '<span style="font-size:0.75em;color:var(--color-text-light,#bbb);">無紀錄</span>'}
+                    </div>
+                `;
+            });
+
+            catHtml += `
+                <div class="clr-cat-group" style="margin-bottom:4px;">
+                    <div class="clr-cat-header" style="
+                        padding:7px 12px 7px 16px;
+                        display:flex;align-items:center;gap:8px;
+                        background:rgba(0,0,0,0.03);cursor:pointer;
+                    ">
+                        <span class="clr-cat-toggle" style="font-size:0.7em;color:var(--color-text-light,#999);">▼</span>
+                        <input type="checkbox" class="clr-cat-check" style="width:15px;height:15px;cursor:pointer;flex-shrink:0;">
+                        <span style="font-size:0.88em;font-weight:600;flex:1;">📁 ${_escHtml(cat)}</span>
+                    </div>
+                    <div class="clr-cat-body">${artHtml}</div>
+                </div>
+            `;
+        });
+
+        treeHtml += `
+            <div class="clr-major-group" style="margin-bottom:8px;border:1px solid var(--color-border,#eee);border-radius:12px;overflow:hidden;">
+                <div class="clr-major-header" style="
+                    padding:10px 14px;background:rgba(0,0,0,0.05);
+                    display:flex;align-items:center;gap:8px;cursor:pointer;
+                ">
+                    <span class="clr-major-toggle" style="font-size:0.7em;color:var(--color-text-light,#999);">▼</span>
+                    <input type="checkbox" class="clr-major-check" style="width:16px;height:16px;cursor:pointer;flex-shrink:0;">
+                    <span style="font-size:0.95em;font-weight:700;flex:1;">📚 ${_escHtml(major)}</span>
+                </div>
+                <div class="clr-major-body">${catHtml}</div>
+            </div>
+        `;
+    });
+
+    overlay.innerHTML = `
+        <div style="
+            background:var(--color-card,#fff);
+            border-radius:18px;
+            padding:24px 20px 20px;
+            max-width:480px;width:100%;
+            box-shadow:0 8px 40px rgba(0,0,0,0.22);
+            margin:auto;
+        ">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+                <span style="font-size:1.3em;">🗑</span>
+                <span style="font-size:1.05em;font-weight:700;">清除測驗紀錄</span>
+                <button id="clear-back-btn" style="
+                    margin-left:auto;padding:6px 14px;border-radius:8px;
+                    border:1.5px solid var(--color-border,#ddd);
+                    background:transparent;color:var(--color-text,#333);
+                    font-size:0.85em;cursor:pointer;
+                ">← 返回</button>
+            </div>
+            <div style="font-size:0.82em;color:var(--color-text-light,#999);margin-bottom:16px;">
+                勾選要刪除的文章，或直接點「清除全部」
+            </div>
+
+            <!-- 全選 + 清除全部 -->
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--color-border,#eee);">
+                <label style="display:flex;align-items:center;gap:6px;font-size:0.88em;cursor:pointer;">
+                    <input type="checkbox" id="clr-select-all" style="width:16px;height:16px;"> 全選
+                </label>
+                <div style="flex:1;"></div>
+                <button id="clr-delete-selected-btn" style="
+                    padding:8px 16px;border-radius:10px;border:none;
+                    background:#e05c5c;color:#fff;font-size:0.85em;font-weight:700;cursor:pointer;
+                    opacity:0.4;pointer-events:none;
+                " disabled>🗑 刪除勾選</button>
+                <button id="clr-delete-all-btn" style="
+                    padding:8px 16px;border-radius:10px;border:none;
+                    background:#c0392b;color:#fff;font-size:0.85em;font-weight:700;cursor:pointer;
+                ">⚠️ 清除全部</button>
+            </div>
+
+            <!-- 樹狀清單 -->
+            <div id="clr-tree" style="max-height:400px;overflow-y:auto;">
+                ${treeHtml || '<div style="padding:20px;text-align:center;color:var(--color-text-light,#999);font-size:0.88em;">尚無測驗紀錄</div>'}
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    // ── Back ──
+    document.getElementById('clear-back-btn').addEventListener('click', () => {
+        overlay.remove();
+        openEditRecordsPanel();
+    });
+    overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+
+    // ── Collapse/expand major ──
+    overlay.querySelectorAll('.clr-major-header').forEach(header => {
+        header.addEventListener('click', e => {
+            if (e.target.type === 'checkbox') return;
+            const body   = header.nextElementSibling;
+            const toggle = header.querySelector('.clr-major-toggle');
+            const hidden = body.style.display === 'none';
+            body.style.display = hidden ? '' : 'none';
+            toggle.textContent = hidden ? '▼' : '▶';
+        });
+    });
+
+    // ── Collapse/expand cat ──
+    overlay.querySelectorAll('.clr-cat-header').forEach(header => {
+        header.addEventListener('click', e => {
+            if (e.target.type === 'checkbox') return;
+            const body   = header.nextElementSibling;
+            const toggle = header.querySelector('.clr-cat-toggle');
+            const hidden = body.style.display === 'none';
+            body.style.display = hidden ? '' : 'none';
+            toggle.textContent = hidden ? '▼' : '▶';
+        });
+    });
+
+    // ── Major checkbox → check all cats + articles under it ──
+    overlay.querySelectorAll('.clr-major-check').forEach(majorChk => {
+        majorChk.addEventListener('change', () => {
+            const body = majorChk.closest('.clr-major-group').querySelector('.clr-major-body');
+            body.querySelectorAll('.clr-art-check:not(:disabled)').forEach(c => c.checked = majorChk.checked);
+            body.querySelectorAll('.clr-cat-check').forEach(c => c.checked = majorChk.checked);
+            _updateClearDeleteBtn(overlay);
+        });
+    });
+
+    // ── Cat checkbox → check all articles under it ──
+    overlay.querySelectorAll('.clr-cat-check').forEach(catChk => {
+        catChk.addEventListener('change', () => {
+            const body = catChk.closest('.clr-cat-group').querySelector('.clr-cat-body');
+            body.querySelectorAll('.clr-art-check:not(:disabled)').forEach(c => c.checked = catChk.checked);
+            _updateClearDeleteBtn(overlay);
+        });
+    });
+
+    // ── Article checkbox ──
+    overlay.querySelectorAll('.clr-art-check').forEach(chk => {
+        chk.addEventListener('change', () => _updateClearDeleteBtn(overlay));
+    });
+
+    // ── Select all ──
+    document.getElementById('clr-select-all').addEventListener('change', function() {
+        overlay.querySelectorAll('.clr-art-check:not(:disabled)').forEach(c => c.checked = this.checked);
+        overlay.querySelectorAll('.clr-cat-check, .clr-major-check').forEach(c => c.checked = this.checked);
+        _updateClearDeleteBtn(overlay);
+    });
+
+    // ── Delete selected ──
+    document.getElementById('clr-delete-selected-btn').addEventListener('click', () => {
+        const checked = [...overlay.querySelectorAll('.clr-art-check:checked')];
+        if (checked.length === 0) return;
+        if (!confirm(`確定要刪除 ${checked.length} 篇文章的測驗紀錄？\n此操作無法還原。`)) return;
+        const data = loadItemScores();
+        checked.forEach(chk => {
+            delete data[chk.dataset.key];
+            chk.closest('.clr-article-row').style.opacity = '0.3';
+            chk.disabled = true;
+            chk.checked  = false;
+        });
+        saveItemScores(data);
+        _syncClearToFirestore(data);
+        _updateClearDeleteBtn(overlay);
+        showNotification(`已刪除 ${checked.length} 篇文章的測驗紀錄。`, 'success');
+        renderScoresDashboard();
+    });
+
+    // ── Delete all ──
+    document.getElementById('clr-delete-all-btn').addEventListener('click', () => {
+        if (!confirm('⚠️ 清除所有學習記錄？\n\n此操作無法還原，建議先「匯出學習資料」備份。')) return;
+        localStorage.removeItem(ITEM_SCORES_KEY);
+        if (typeof QUIZ_SCORES_KEY !== 'undefined') localStorage.removeItem(QUIZ_SCORES_KEY);
+        _syncClearToFirestore({});
+        overlay.remove();
+        renderScoresDashboard();
+        showNotification('已清除所有測驗紀錄。', 'success');
+    });
+}
+
+function _countRecords(entry) {
+    let n = 0;
+    ['noteWords','noteSentences','articleWords','articleSentences'].forEach(t => {
+        if (entry[t]) n += Object.keys(entry[t]).length;
+    });
+    return n;
+}
+
+function _updateClearDeleteBtn(overlay) {
+    const count  = overlay.querySelectorAll('.clr-art-check:checked').length;
+    const btn    = document.getElementById('clr-delete-selected-btn');
+    const allChk = document.getElementById('clr-select-all');
+    const total  = overlay.querySelectorAll('.clr-art-check:not(:disabled)').length;
+    btn.disabled = count === 0;
+    btn.style.opacity       = count > 0 ? '1' : '0.4';
+    btn.style.pointerEvents = count > 0 ? 'auto' : 'none';
+    btn.textContent = count > 0 ? `🗑 刪除勾選（${count}）` : '🗑 刪除勾選';
+    allChk.indeterminate = count > 0 && count < total;
+    allChk.checked       = total > 0 && count === total;
+}
+
+function _syncClearToFirestore(data) {
     if (typeof currentUser !== 'undefined' && currentUser) {
         db.collection('userNotes').doc(currentUser.uid)
-          .set({ itemScores: {}, quizScores: {} }, { merge: true })
+          .set({ itemScores: data, quizScores: {} }, { merge: true })
           .catch(err => console.error('Score clear error:', err));
     }
-    renderScoresDashboard();
-});
+}
 
 // ── 匯出學習資料 ─────────────────────────────────────────────
 

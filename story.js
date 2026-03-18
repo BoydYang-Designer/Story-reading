@@ -830,6 +830,12 @@ async function playSentenceSnippet(sentenceText, storyTitle) {
     }
     noteAudioPlayer.pause();
 
+    // iOS Chrome Fix: 在所有 await 之前同步解鎖 AudioContext。
+    // await getTimestampForStory() 會離開手勢堆疊，之後 resume() 靜默失敗。
+    if (typeof WebAudioEngine !== 'undefined' && WebAudioEngine.isSupported()) {
+        WebAudioEngine.unlock();
+    }
+
     // 暫停主播放器
     if (isPlaying) {
         pauseAudio();
@@ -1603,11 +1609,17 @@ async function playWordAudio(word) {
     const cleanWord = word.trim().toLowerCase().replace(/^[.,?!:;'"]+|[.,?!:;'"]+$/g, '');
     if (!cleanWord) return;
 
-    // ── 層級一：直接嘗試 GitHub audio_files MP3 ──────────────────────────
+    // iOS Chrome Fix: new Audio(src).play() 在跨域 MP3 上靜音。
+    // 若 quiz.js 已載入，直接使用共用的 _quizPlayWord（AudioContext 路徑，已修復）。
+    if (typeof _quizPlayWord === 'function') {
+        _quizPlayWord(cleanWord);
+        return;
+    }
+
+    // Fallback（quiz.js 未載入時）：直接嘗試 GitHub audio_files MP3
     const src = `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(cleanWord)}.mp3`;
     const au = new Audio(src);
 
-    // 監聽 error 事件（404 或網路失敗）→ 降級 TTS
     au.addEventListener('error', () => {
         console.warn(`[playWordAudio] MP3 not found for "${cleanWord}", using TTS.`);
         showAudioSourceHint('tts');
@@ -1619,7 +1631,6 @@ async function playWordAudio(word) {
             showAudioSourceHint('mp3');
         })
         .catch(() => {
-            // play() 被瀏覽器阻擋（非 404），也降級 TTS
             console.warn(`[playWordAudio] play() blocked for "${cleanWord}", using TTS.`);
             showAudioSourceHint('tts');
             _speakTTS(word);

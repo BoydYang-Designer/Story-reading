@@ -12,6 +12,37 @@ const QUIZ_SCORES_KEY = 'readingChallengeQuizScores';
 // 層級二：Web Speech API（瀏覽器合成語音，最後保底）
 // ─────────────────────────────────────────────────────────────────────────────
 
+// ── AudioContext 全域解鎖（iOS Chrome 必要）────────────────────────────────
+// 第一次用戶觸碰時預先建立並 resume AudioContext，確保後續所有播放都能正常運作。
+// 同時解鎖 WebAudioEngine（背面句子音訊）與 _quizAudioCtx（單字音訊）。
+// 此監聽器只執行一次，執行後自動移除。
+(function _installAudioCtxUnlocker() {
+    const _unlock = () => {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) return;
+        // 解鎖 quiz 單字發音用的 AudioContext
+        if (!window._quizAudioCtx || window._quizAudioCtx.state === 'closed') {
+            window._quizAudioCtx = new AC();
+        }
+        if (window._quizAudioCtx.state === 'suspended') {
+            window._quizAudioCtx.resume().catch(() => {});
+        }
+        // 解鎖 WebAudioEngine（背面句子/Article 音訊）的 AudioContext
+        if (typeof WebAudioEngine !== 'undefined' && WebAudioEngine.isSupported()) {
+            WebAudioEngine.unlock();
+        }
+        document.removeEventListener('touchstart', _unlock, true);
+        document.removeEventListener('touchend',   _unlock, true);
+        document.removeEventListener('click',      _unlock, true);
+    };
+    document.addEventListener('touchstart', _unlock, true);
+    document.addEventListener('touchend',   _unlock, true);
+    document.addEventListener('click',      _unlock, true);
+})();
+
+// ── 單字播放用 generation counter（防止舊的 async 呼叫搶佔新播放）──────────
+let _quizPlayWordGen = 0;
+
 /**
  * Quiz 共用單字發音函式（兩層降級）
  * @param {string} word               要播放的單字
@@ -22,45 +53,98 @@ async function _quizPlayWord(word, btn = null, onEnd = null) {
     const clean = word.trim().toLowerCase().replace(/^[.,?!:;'"]+|[.,?!:;'"]+$/g, '');
     if (!clean) { if (onEnd) onEnd(); return; }
 
+    // 每次呼叫遞增 generation；若 async 過程中 generation 已改變，代表有新播放請求
+    // 舊呼叫應靜默中止，避免雙重播放或按鈕狀態錯亂
+    const myGen = ++_quizPlayWordGen;
+    const isStale = () => myGen !== _quizPlayWordGen;
+
+    // iOS Chrome Fix: 在手勢堆疊內同步建立並 resume AudioContext。
+    // 若等到 await fetch() 之後才 resume，iOS 已離開手勢堆疊，resume 靜默失敗。
+    const _AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (_AudioCtx) {
+        if (!window._quizAudioCtx || window._quizAudioCtx.state === 'closed') {
+            window._quizAudioCtx = new _AudioCtx();
+        }
+        if (window._quizAudioCtx.state === 'suspended') {
+            window._quizAudioCtx.resume().catch(() => {});
+        }
+    }
+
     const BASE = 'https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/';
 
+    // 層級三：Web Speech TTS（Chrome for iOS 有已知靜音 bug，作為最後保底）
     function _tts() {
-        if (!('speechSynthesis' in window)) { if (onEnd) onEnd(); return; }
+        if (isStale()) return;
+        if (!('speechSynthesis' in window)) { if (btn) btn.classList.remove('is-playing-voice'); if (onEnd) onEnd(); return; }
         window.speechSynthesis.cancel();
         const u = new SpeechSynthesisUtterance(clean);
         u.lang = 'en-US';
         u.rate = 0.9;
         u.onend = () => { if (btn) btn.classList.remove('is-playing-voice'); if (onEnd) onEnd(); };
+        u.onerror = () => { if (btn) btn.classList.remove('is-playing-voice'); if (onEnd) onEnd(); };
         if (btn) btn.classList.add('is-playing-voice');
         window.speechSynthesis.speak(u);
+        // Chrome for iOS: speechSynthesis 常靜音，偵測後移除按鈕狀態
+        setTimeout(() => {
+            if (btn && !window.speechSynthesis.speaking) {
+                btn.classList.remove('is-playing-voice');
+                if (onEnd) onEnd();
+            }
+        }, 600);
     }
 
-    // 層級一：GitHub MP3（大寫首字 / 小寫 兩候選，找不到直接 TTS，不嘗試詞形還原）
+    // 層級二：fetch → AudioContext decode（解決 Chrome iOS new Audio() 跨域靜音問題）
+    async function _fetchAndPlay(src) {
+        try {
+            const resp = await fetch(src);
+            if (!resp.ok) return false;
+            if (isStale()) return true; // 已被新請求取代，靜默中止（回傳 true 阻止 TTS）
+            const arrayBuf = await resp.arrayBuffer();
+            if (isStale()) return true;
+            // AudioContext 已在手勢堆疊內建立並 resume，這裡直接取用
+            const ctx = window._quizAudioCtx;
+            if (!ctx) return false;
+            if (ctx.state === 'suspended') await ctx.resume();
+            if (isStale()) return true;
+            const decoded = await ctx.decodeAudioData(arrayBuf);
+            if (isStale()) return true;
+            // 停止上一個仍在播放的 source（若有）
+            if (window._quizCurrentSource) {
+                try { window._quizCurrentSource.stop(); } catch (_) {}
+            }
+            const source = ctx.createBufferSource();
+            window._quizCurrentSource = source;
+            source.buffer = decoded;
+            source.connect(ctx.destination);
+            if (btn) btn.classList.add('is-playing-voice');
+            if (typeof showAudioSourceHint === 'function') showAudioSourceHint('mp3');
+            source.start(0);
+            source.onended = () => {
+                if (window._quizCurrentSource === source) window._quizCurrentSource = null;
+                if (btn) btn.classList.remove('is-playing-voice');
+                if (onEnd) onEnd();
+            };
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+
+    // 層級一：GitHub MP3（大寫首字 / 小寫 兩候選）
     const capitalized = clean.charAt(0).toUpperCase() + clean.slice(1);
     const candidates = [...new Set([capitalized, clean])];
-    let tried = 0;
 
-    function _tryGithub() {
-        if (tried >= candidates.length) {
-            if (typeof showAudioSourceHint === 'function') showAudioSourceHint('tts');
-            _tts();
-            return;
-        }
-        const src = BASE + encodeURIComponent(candidates[tried++]) + '.mp3';
-        const au = new Audio(src);
-        let settled = false;
-        const onFail = () => { if (settled) return; settled = true; _tryGithub(); };
-        au.onerror = onFail;
-        au.oncanplay = () => {
-            settled = true;
-            if (typeof showAudioSourceHint === 'function') showAudioSourceHint('mp3');
-        };
-        if (btn) btn.classList.add('is-playing-voice');
-        au.play().catch(onFail);
-        au.addEventListener('ended', () => { if (btn) btn.classList.remove('is-playing-voice'); if (onEnd) onEnd(); }, { once: true });
+    for (const candidate of candidates) {
+        if (isStale()) return; // 已被新請求取代
+        const src = BASE + encodeURIComponent(candidate) + '.mp3';
+        const ok = await _fetchAndPlay(src);
+        if (ok) return;
     }
 
-    _tryGithub();
+    // 所有 MP3 候選失敗 → TTS 保底
+    if (isStale()) return;
+    if (typeof showAudioSourceHint === 'function') showAudioSourceHint('tts');
+    _tts();
 }
 
 
@@ -1368,28 +1452,6 @@ function showFlashcard() {
     // 切換卡片時取消上一個 speechSynthesis，避免疊音
     if ('speechSynthesis' in window) window.speechSynthesis.cancel();
 
-    function _playSpeech() {
-        if (!('speechSynthesis' in window)) { audioBtn.classList.remove('is-playing-voice'); return; }
-        window.speechSynthesis.cancel();
-        const u = new SpeechSynthesisUtterance(item.text);
-        u.lang  = 'en-US';
-        u.onend = () => audioBtn.classList.remove('is-playing-voice');
-        audioBtn.classList.add('is-playing-voice');
-        window.speechSynthesis.speak(u);
-    }
-
-    function _playGithubWord(onFallback) {
-        const wordSrc   = `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(item.text.trim())}.mp3`;
-        const wordAudio = new Audio(wordSrc);
-        wordAudio.play().catch(() => {
-            audioBtn.classList.remove('is-playing-voice');
-            if (onFallback) onFallback();
-        });
-        wordAudio.addEventListener('ended', () => {
-            audioBtn.classList.remove('is-playing-voice');
-        }, { once: true });
-    }
-
     function _playWordAudio() {
         // Flashcard 模式：播放不計入 replayCount，不影響熟悉度扣分
         audioBtn.classList.remove('needs-tap');
@@ -1405,13 +1467,13 @@ function showFlashcard() {
         // 若播完後按鈕還顯示 needs-tap 就移除
         audioBtn.classList.remove('needs-tap');
     });
-    // iOS 封鎖偵測：短暫延遲後若沒有播放跡象，改為 pulse 提示等待使用者點擊
+    // iOS 封鎖偵測：等待 async fetch 完成後才顯示 pulse 提示（3s 給慢速網路足夠時間）
     setTimeout(() => {
         if (!audioBtn.classList.contains('is-playing-voice') &&
             !window.speechSynthesis?.speaking) {
             audioBtn.classList.add('needs-tap');
         }
-    }, 300);
+    }, 3000);
 
     // ── 背面：整句音檔 + ✏️ ────────────────────────────────────
     const backAudioBtn      = document.getElementById('flashcard-back-audio-btn');
@@ -2719,99 +2781,82 @@ function _speakReorderWord(word) {
     _quizPlayWord(clean);
 }
 
-function _playGithubMp3(clean) {
-    // 若輸入含空格（多個單字），拆開依序播放
+// _playGithubMp3: 单字或多字 — 統一用 AudioContext 播放，解決 Chrome iOS 靜音問題
+async function _playGithubMp3(clean) {
     const words = clean.trim().split(/\s+/).filter(Boolean);
     if (words.length > 1) {
-        _playGithubMp3Sequence(words, 0);
+        await _playGithubMp3Sequence(words, 0);
         return;
     }
-
-    // 單字候選：首字大寫 → 全小寫 → 原始字串（若與前兩者不同）→ fallback Web Speech
-    const BASE        = 'https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/';
-    const capitalized = clean.charAt(0).toUpperCase() + clean.slice(1).toLowerCase();
-    const lower       = clean.toLowerCase();
-    // 加入原始字串作為第三候選，處理全大寫縮寫（如 "AI"、"USA"）
-    const candidates  = [...new Set([capitalized, lower, clean.trim()])];
-    let tried = 0;
-
-    function attempt() {
-        if (tried >= candidates.length) {
-            if (typeof showAudioSourceHint === 'function') showAudioSourceHint('tts');
-            _speakWithWebSpeech(clean);
-            return;
-        }
-        const filename = candidates[tried++];
-        const src = BASE + encodeURIComponent(filename) + '.mp3';
-        const au = new Audio(src);
-        let settled = false;
-
-        const onFail = () => {
-            if (settled) return;
-            settled = true;
-            attempt();
-        };
-
-        au.onerror   = onFail;
-        au.oncanplay = () => {
-            settled = true;
-            if (typeof showAudioSourceHint === 'function') showAudioSourceHint('mp3');
-        };
-        au.play().catch(onFail);
-        // 播完後不需要特別處理，單字很短會自然結束
-    }
-
-    attempt();
+    // 單字：直接用共用發音函式
+    await _quizPlayWord(clean);
 }
 
-function _playGithubMp3Sequence(words, index) {
+async function _playGithubMp3Sequence(words, index) {
     if (index >= words.length) return;
     const word  = words[index];
     const clean = word.replace(/^[^a-zA-Z]+|[^a-zA-Z]+$/g, '').trim();
-    if (!clean) { _playGithubMp3Sequence(words, index + 1); return; }
+    if (!clean) { await _playGithubMp3Sequence(words, index + 1); return; }
+
+    // iOS Chrome Fix: resume AudioContext synchronously before any await
+    const _AC = window.AudioContext || window.webkitAudioContext;
+    if (_AC) {
+        if (!window._quizAudioCtx || window._quizAudioCtx.state === 'closed') {
+            window._quizAudioCtx = new _AC();
+        }
+        if (window._quizAudioCtx.state === 'suspended') {
+            window._quizAudioCtx.resume().catch(() => {});
+        }
+    }
 
     const BASE        = 'https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/';
     const capitalized = clean.charAt(0).toUpperCase() + clean.slice(1).toLowerCase();
     const lower       = clean.toLowerCase();
-    // 加入原始字串作為第三候選，處理全大寫縮寫（如 "AI"、"USA"）
     const candidates  = [...new Set([capitalized, lower, clean.trim()])];
-    let tried = 0;
 
-    function attempt() {
-        if (tried >= candidates.length) {
-            // 這個字找不到 mp3，用 Web Speech 念這個字，然後繼續播下一個
-            if (typeof showAudioSourceHint === 'function') showAudioSourceHint('tts');
-            const u = new SpeechSynthesisUtterance(clean);
-            u.lang = 'en-US';
-            u.rate = 0.9;
-            u.onend = () => _playGithubMp3Sequence(words, index + 1);
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                window.speechSynthesis.speak(u);
-            }
-            return;
-        }
-        const filename = candidates[tried++];
-        const src = BASE + encodeURIComponent(filename) + '.mp3';
-        const au  = new Audio(src);
-        let settled = false;
-
-        const onFail = () => {
-            if (settled) return;
-            settled = true;
-            attempt();
-        };
-
-        au.onerror   = onFail;
-        au.oncanplay = () => {
-            settled = true;
+    let played = false;
+    for (const candidate of candidates) {
+        const src = BASE + encodeURIComponent(candidate) + '.mp3';
+        try {
+            const resp = await fetch(src);
+            if (!resp.ok) continue;
+            const arrayBuf = await resp.arrayBuffer();
+            const ctx = window._quizAudioCtx;
+            if (!ctx) break;
+            if (ctx.state === 'suspended') await ctx.resume();
+            const decoded = await ctx.decodeAudioData(arrayBuf);
+            const source  = ctx.createBufferSource();
+            source.buffer = decoded;
+            source.connect(ctx.destination);
             if (typeof showAudioSourceHint === 'function') showAudioSourceHint('mp3');
-        };
-        au.onended   = () => _playGithubMp3Sequence(words, index + 1); // 播完接下一個字
-        au.play().catch(onFail);
+            await new Promise(resolve => {
+                source.onended = resolve;
+                source.start(0);
+            });
+            played = true;
+            break;
+        } catch (e) { continue; }
     }
 
-    attempt();
+    if (!played) {
+        // 找不到 MP3 → TTS 備用這個字
+        if (typeof showAudioSourceHint === 'function') showAudioSourceHint('tts');
+        if ('speechSynthesis' in window) {
+            await new Promise(resolve => {
+                const u = new SpeechSynthesisUtterance(clean);
+                u.lang = 'en-US';
+                u.rate = 0.9;
+                u.onend = resolve;
+                u.onerror = resolve;
+                window.speechSynthesis.cancel();
+                window.speechSynthesis.speak(u);
+                setTimeout(resolve, 2000); // 防御性超時
+            });
+        }
+    }
+
+    // 播完這個字→繼續播下一個
+    await _playGithubMp3Sequence(words, index + 1);
 }
 
 function _speakWithWebSpeech(clean) {
@@ -3889,23 +3934,6 @@ function _setupFcplusFrontAudio(item) {
     if (!audioBtn) return;
     if ('speechSynthesis' in window) window.speechSynthesis.cancel();
 
-    function _playSpeech() {
-        if (!('speechSynthesis' in window)) return;
-        window.speechSynthesis.cancel();
-        const u = new SpeechSynthesisUtterance(item.text);
-        u.lang  = 'en-US';
-        u.onend = () => audioBtn.classList.remove('is-playing-voice');
-        audioBtn.classList.add('is-playing-voice');
-        window.speechSynthesis.speak(u);
-    }
-
-    function _playGithubWord(onFallback) {
-        const src = `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(item.text.trim())}.mp3`;
-        const au  = new Audio(src);
-        au.play().catch(() => { audioBtn.classList.remove('is-playing-voice'); if (onFallback) onFallback(); });
-        au.addEventListener('ended', () => audioBtn.classList.remove('is-playing-voice'), { once: true });
-    }
-
     function _playWord() {
         if (!_fcplusSubmitted) _trackReplay();
         _quizPlayWord(item.text, audioBtn);
@@ -3921,21 +3949,13 @@ function _setupFcplusFrontAudio(item) {
 
     // Auto-play first time（三層降級）
     _quizPlayWord(item.text, audioBtn);
-    // iOS 封鎖偵測
+    // iOS 封鎖偵測：等待 async fetch 完成後才顯示 pulse 提示（3s 給慢速網路足夠時間）
     setTimeout(() => {
         if (!audioBtn.classList.contains('is-playing-voice') &&
             !window.speechSynthesis?.speaking) {
             audioBtn.classList.add('needs-tap');
         }
-    }, 300);
-    if (false) { // 原 else 分支保留結構，避免後續 } 匹配錯誤
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel();
-            const u = new SpeechSynthesisUtterance(item.text);
-            u.lang = 'en-US';
-            window.speechSynthesis.speak(u);
-        }
-    }
+    }, 3000);
 }
 
 // ── Submit ────────────────────────────────────────────────────

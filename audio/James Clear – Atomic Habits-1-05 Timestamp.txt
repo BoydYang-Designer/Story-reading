@@ -1,95 +1,80 @@
-[00:00:01.300 --> 00:00:04.180] Problem number three. Goals restrict your happiness.
-[00:00:05.240 --> 00:00:07.940] The implicit assumption behind any goal is this.
+[00:00:01.300 --> 00:00:07.940] Problem number three. Goals restrict your happiness. The implicit assumption behind any goal is this.
 [00:00:08.320 --> 00:00:10.340] Once I reach my goal, then I'll be happy.
 [00:00:10.720 --> 00:00:16.120] The problem with a goals -first mentality is that you're continually putting happiness off until the next milestone.
 [00:00:16.640 --> 00:00:19.320] I've slipped into this trap so many times I've lost count.
 [00:00:19.600 --> 00:00:22.880] For years, happiness was always something for my future self to enjoy.
-[00:00:23.080 --> 00:00:30.160] I promised myself that once I gained 20 pounds of muscle or after my business was featured in the New York Times, then I could finally relax.
-[00:00:30.880 --> 00:00:34.040] Furthermore, goals create an either -or conflict.
-[00:00:34.340 --> 00:00:38.600] Either you achieve your goal and are successful, or you fail and you are a disappointment.
+[00:00:23.160 --> 00:00:34.060] I promised myself that once I gained 20 pounds of muscle or after my business was featured in the New York Times, then I could finally relax. Furthermore, goals create an either -or conflict.
+[00:00:34.420 --> 00:00:38.600] Either you achieve your goal and are successful, or you fail and you are a disappointment.
 [00:00:38.980 --> 00:00:43.640] You mentally box yourself into a narrow version of happiness. This is misguided.
-[00:00:43.840 --> 00:00:49.480] It is unlikely that your actual path through life will match the exact journey you had in mind when you set out.
-[00:00:49.580 --> 00:00:55.260] It makes no sense to restrict your satisfaction to one scenario when there are many paths to success.
-[00:00:55.940 --> 00:00:58.780] A systems -first mentality provides the antidote.
+[00:00:43.960 --> 00:00:49.480] It is unlikely that your actual path through life will match the exact journey you had in mind when you set out.
+[00:00:49.700 --> 00:00:58.800] It makes no sense to restrict your satisfaction to one scenario when there are many paths to success. A systems -first mentality provides the antidote.
 [00:00:59.120 --> 00:01:04.860] When you fall in love with the process rather than the product, you don't have to wait to give yourself permission to be happy.
 [00:01:04.980 --> 00:01:07.700] You can be satisfied anytime your system is running.
 [00:01:08.160 --> 00:01:15.960] And a system can be successful in many different forms, not just the first one you envision. Problem number four.
-[00:01:16.520 --> 00:01:18.720] Goals are at odds with long -term progress.
+[00:01:16.500 --> 00:01:18.720] Goals are at odds with long -term progress.
 [00:01:19.640 --> 00:01:23.200] Finally, a goal -oriented mindset can create a yo -yo effect.
-[00:01:23.620 --> 00:01:28.180] Many runners work hard for months, but as soon as they cross the finish line, they stop training.
-[00:01:28.440 --> 00:01:30.560] The race is no longer there to motivate them.
-[00:01:30.960 --> 00:01:36.380] When all of your hard work is focused on a particular goal, what is left to push you forward after you achieve it?
-[00:01:36.920 --> 00:01:41.540] This is why many people find themselves reverting to their old habits after accomplishing a goal.
-[00:01:42.400 --> 00:01:44.900] The purpose of setting goals is to win the game.
-[00:01:45.120 --> 00:01:48.320] The purpose of building systems is to continue playing the game.
-[00:01:48.840 --> 00:01:51.460] True long -term thinking is goalless thinking.
-[00:01:51.760 --> 00:01:53.720] It's not about any single accomplishment.
-[00:01:53.800 --> 00:01:57.180] It's about the cycle of endless refinement and continuous improvement.
-[00:01:57.640 --> 00:02:06.800] Ultimately, it is your commitment to the process that will determine your progress. A System of Atomic Habits
-[00:02:08.000 --> 00:02:13.120] If you're having trouble changing your habits, the problem isn't you. The problem is your system.
-[00:02:13.680 --> 00:02:20.420] Bad habits repeat themselves again and again, not because you don't want to change, but because you have the wrong system for change.
-[00:02:20.940 --> 00:02:23.440] You do not rise to the level of your goals.
-[00:02:23.600 --> 00:02:25.700] You fall to the level of your systems.
+[00:01:23.620 --> 00:01:28.160] Many runners work hard for months, but as soon as they cross the finish line, they stop training.
+[00:01:30.580 --> 00:01:36.380] When all of your hard work is focused on a particular goal, what is left to push you forward after you achieve it?
+[00:01:36.900 --> 00:01:41.560] This is why many people find themselves reverting to their old habits after accomplishing a goal.
+[00:01:42.380 --> 00:01:44.880] The purpose of setting goals is to win the game.
+[00:01:45.120 --> 00:01:53.700] The purpose of building systems is to continue playing the game. True long -term thinking is goalless thinking. It's not about any single accomplishment.
+[00:01:53.780 --> 00:01:57.160] It's about the cycle of endless refinement and continuous improvement.
+[00:01:57.700 --> 00:02:01.980] Ultimately, it is your commitment to the process that will determine your progress.
+[00:02:07.720 --> 00:02:13.120] If you're having trouble changing your habits, the problem isn't you. The problem is your system.
+[00:02:13.740 --> 00:02:20.420] Bad habits repeat themselves again and again, not because you don't want to change, but because you have the wrong system for change.
+[00:02:20.960 --> 00:02:23.440] You do not rise to the level of your goals.
+[00:02:23.600 --> 00:02:25.680] You fall to the level of your systems.
 [00:02:27.120 --> 00:02:32.120] Focusing on the overall system, rather than a single goal, is one of the core themes of this book.
-[00:02:32.440 --> 00:02:35.440] It is also one of the deeper meanings behind the word atomic.
-[00:02:36.160 --> 00:02:43.060] By now, you have probably realized that an atomic habit refers to a tiny change, a marginal gain, a 1 % improvement.
+[00:02:32.420 --> 00:02:35.440] It is also one of the deeper meanings behind the word atomic.
+[00:02:36.180 --> 00:02:43.060] By now, you have probably realized that an atomic habit refers to a tiny change, a marginal gain, a 1 % improvement.
 [00:02:43.480 --> 00:02:47.020] But atomic habits are not just any old habits, however small.
-[00:02:47.420 --> 00:02:50.320] They are little habits that are part of a larger system.
-[00:02:50.720 --> 00:02:56.860] Just as atoms are the building blocks of molecules, atomic habits are the building blocks of remarkable results.
-[00:02:57.720 --> 00:02:59.920] Habits are like the atoms of our lives.
-[00:03:00.260 --> 00:03:04.000] Each one is a fundamental unit that contributes to your overall improvement.
-[00:03:04.460 --> 00:03:07.380] At first, these tiny routines seem insignificant.
-[00:03:07.660 --> 00:03:15.360] But soon, they build on each other and fuel bigger wins that multiply to a degree that far outweighs the cost of their initial investment.
-[00:03:15.640 --> 00:03:17.580] They are both small and mighty.
-[00:03:18.300 --> 00:03:25.560] This is the meaning of the phrase atomic habits, a regular practice or routine that is not only small and easy to do,
+[00:02:47.420 --> 00:02:50.340] They are little habits that are part of a larger system.
+[00:02:50.340 --> 00:02:56.860] Just as atoms are the building blocks of molecules, atomic habits are the building blocks of remarkable results.
+[00:02:57.680 --> 00:02:59.920] Habits are like the atoms of our lives.
+[00:03:00.200 --> 00:03:07.340] Each one is a fundamental unit that contributes to your overall improvement. At first, these tiny routines seem insignificant.
+[00:03:07.400 --> 00:03:17.560] But soon, they build on each other and fuel bigger wins that multiply to a degree that far outweighs the cost of their initial investment. They are both small and mighty.
+[00:03:18.260 --> 00:03:25.560] This is the meaning of the phrase atomic habits, a regular practice or routine that is not only small and easy to do,
 [00:03:25.700 --> 00:03:34.760] but also the source of incredible power, a component of the system of compound growth. Chapter Summary
-[00:03:36.220 --> 00:03:38.860] Habits are the compound interest of self -improvement.
-[00:03:39.200 --> 00:03:42.600] Getting 1 % better every day counts for a lot in the long run.
-[00:03:43.800 --> 00:03:45.460] Habits are a double -edged sword.
-[00:03:45.800 --> 00:03:50.880] They can work for you or against you, which is why understanding the details is essential.
-[00:03:52.500 --> 00:03:57.100] Small changes often appear to make no difference until you cross a critical threshold.
-[00:03:57.440 --> 00:04:02.820] The most powerful outcomes of any compounding process are delayed. You need to be patient.
-[00:04:04.340 --> 00:04:08.220] An atomic habit is a little habit that is part of a larger system.
-[00:04:08.220 --> 00:04:14.600] Just as atoms are the building blocks of molecules, atomic habits are the building blocks of remarkable results.
+[00:03:36.180 --> 00:03:38.860] Habits are the compound interest of self -improvement.
+[00:03:39.160 --> 00:03:45.460] Getting 1 % better every day counts for a lot in the long run. Habits are a double -edged sword.
+[00:03:45.760 --> 00:03:50.880] They can work for you or against you, which is why understanding the details is essential.
+[00:03:52.460 --> 00:03:57.100] Small changes often appear to make no difference until you cross a critical threshold.
+[00:03:57.540 --> 00:04:02.820] The most powerful outcomes of any compounding process are delayed. You need to be patient.
+[00:04:04.300 --> 00:04:08.220] An atomic habit is a little habit that is part of a larger system.
+[00:04:08.220 --> 00:04:11.200] Just as atoms are the building blocks of molecules,
+[00:04:11.800 --> 00:04:14.600] atomic habits are the building blocks of remarkable results.
 [00:04:15.800 --> 00:04:20.980] If you want better results, then forget about setting goals. Focus on your system instead.
 [00:04:22.540 --> 00:04:24.980] You do not rise to the level of your goals.
-[00:04:25.200 --> 00:04:27.140] You fall to the level of your systems.
-[00:04:31.710 --> 00:04:36.950] Chapter 2 How Your Habits Shape Your Identity Why
-[00:04:38.870 --> 00:04:42.570] is it so easy to repeat bad habits and so hard to form good ones?
+[00:04:25.160 --> 00:04:32.630] You fall to the level of your systems. Chapter 2.
+[00:04:33.090 --> 00:04:39.450] How Your Habits Shape Your Identity Why is it
+[00:04:39.450 --> 00:04:42.570] so easy to repeat bad habits and so hard to form good ones?
 [00:04:43.270 --> 00:04:47.610] Few things can have a more powerful impact on your life than improving your daily habits.
-[00:04:47.950 --> 00:04:53.070] And yet, it is likely that this time next year, you'll be doing the same thing rather than something better.
-[00:04:54.070 --> 00:05:00.790] It often feels difficult to keep good habits going for more than a few days, even with sincere effort and the occasional burst of motivation.
-[00:05:00.790 --> 00:05:07.910] Habits like exercise, meditation, journaling, and cooking are reasonable for a day or two and then become a hassle.
-[00:05:08.750 --> 00:05:14.190] However, once your habits are established, they seem to stick around forever, especially the unwanted ones.
-[00:05:14.610 --> 00:05:21.230] Despite our best intentions, unhealthy habits like eating junk food, watching too much television, procrastinating,
-[00:05:21.450 --> 00:05:23.730] and smoking can feel impossible to break.
-[00:05:24.690 --> 00:05:26.990] Changing our habits is challenging for two reasons.
-[00:05:27.450 --> 00:05:29.630] One, we try to change the wrong thing.
-[00:05:30.170 --> 00:05:33.030] And two, we try to change our habits in the wrong way.
-[00:05:33.490 --> 00:05:35.830] In this chapter, I'll address the first point.
-[00:05:36.090 --> 00:05:38.630] In the chapters that follow, I'll answer the second.
+[00:04:47.950 --> 00:04:53.090] And yet, it is likely that this time next year, you'll be doing the same thing rather than something better.
+[00:04:54.070 --> 00:05:00.810] It often feels difficult to keep good habits going for more than a few days, even with sincere effort and the occasional burst of motivation.
+[00:05:00.810 --> 00:05:07.910] Habits like exercise, meditation, journaling, and cooking are reasonable for a day or two and then become a hassle.
+[00:05:08.690 --> 00:05:14.210] However, once your habits are established, they seem to stick around forever, especially the unwanted ones.
+[00:05:14.590 --> 00:05:23.730] Despite our best intentions, unhealthy habits like eating junk food, watching too much television, procrastinating, and smoking can feel impossible to break.
+[00:05:24.650 --> 00:05:26.990] Changing our habits is challenging for two reasons.
+[00:05:26.990 --> 00:05:29.690] One, we try to change the wrong thing.
+[00:05:29.910 --> 00:05:33.030] And two, we try to change our habits in the wrong way.
+[00:05:33.510 --> 00:05:35.810] In this chapter, I'll address the first point.
+[00:05:36.090 --> 00:05:38.610] In the chapters that follow, I'll answer the second.
 [00:05:39.750 --> 00:05:42.530] Our first mistake is that we try to change the wrong thing.
-[00:05:42.990 --> 00:05:47.650] To understand what I mean, consider that there are three levels at which change can occur.
-[00:05:47.970 --> 00:05:50.130] You can imagine them like the layers of an onion.
-[00:05:50.670 --> 00:05:56.990] An image and graphical representation of these layers is available at atomichabits .com slash media.
-[00:05:57.950 --> 00:06:00.430] The first layer is changing your outcomes.
-[00:06:00.870 --> 00:06:06.290] This level is concerned with changing your results, losing weight, publishing a book, winning a championship.
-[00:06:06.810 --> 00:06:09.590] Most of the goals you set are associated with this level.
-[00:06:10.290 --> 00:06:12.310] The second layer is changing your process.
-[00:06:12.690 --> 00:06:22.190] This level is concerned with changing your habits and systems, implementing a new routine at the gym, decluttering your desk for better workflow, developing a meditation practice.
-[00:06:22.690 --> 00:06:25.510] Most of the habits you build are associated with this level.
-[00:06:26.370 --> 00:06:29.210] The third and deepest layer is changing your identity.
-[00:06:29.910 --> 00:06:36.870] This level is concerned with changing your beliefs, your worldview, your self -image, your judgments about yourself and others.
-[00:06:37.450 --> 00:06:42.010] Most of the beliefs, assumptions, and biases that you hold are associated with this level.
-[00:06:43.110 --> 00:06:44.550] Outcomes are about what you get.
-[00:06:45.370 --> 00:06:46.810] Processes are about what you do.
-[00:06:47.330 --> 00:06:48.870] Identity is about what you believe.
-[00:06:49.410 --> 00:06:51.470] When it comes to building habits that last.
-[00:06:51.670 --> 00:06:58.070] When it comes to building a system of 1 % improvements, the problem is not that one level is better or worse than another.
-[00:06:58.410 --> 00:07:00.890] All levels of change are useful in their own way.
-[00:07:01.390 --> 00:07:03.710] The problem is the direction of change.
-[00:07:04.170 --> 00:07:09.150] Many people begin the process of changing their habits by focusing on what they want to achieve.
-[00:07:09.430 --> 00:07:11.830] This leads to outcome -based habits.
-[00:07:12.150 --> 00:07:15.170] The alternative is to build identity -based habits.
-[00:07:15.430 --> 00:07:19.090] With this approach, we start by focusing on who we wish to become.
+[00:05:43.010 --> 00:05:47.650] To understand what I mean, consider that there are three levels at which change can occur.
+[00:05:47.950 --> 00:05:50.110] You can imagine them like the layers of an onion.
+[00:05:50.690 --> 00:06:00.430] An image and graphical representation of these layers is available at atomichabits .com The first layer is changing your outcomes.
+[00:06:00.890 --> 00:06:06.270] This level is concerned with changing your results, losing weight, publishing a book, winning a championship.
+[00:06:06.810 --> 00:06:12.290] Most of the goals you set are associated with this level. The second layer is changing your process.
+[00:06:12.710 --> 00:06:18.790] This level is concerned with changing your habits and systems, implementing a new routine at the gym, decluttering
+[00:06:18.790 --> 00:06:22.170] your desk for better workflow, developing a meditation practice.
+[00:06:22.710 --> 00:06:25.510] Most of the habits you build are associated with this level.
+[00:06:26.330 --> 00:06:29.210] The third and deepest layer is changing your identity.
+[00:06:29.870 --> 00:06:36.850] This level is concerned with changing your beliefs, your worldview, your self -image, your judgments about yourself and others.
+[00:06:37.410 --> 00:06:48.850] Most of the beliefs, assumptions, and biases that you hold are associated with this level. Outcomes are about what you get. Processes are about what you do. Identity is about what you believe.
+[00:06:48.850 --> 00:06:54.250] When it comes to building habits that last, when it comes to building a system of 1 % improvements,
+[00:06:54.690 --> 00:06:58.070] the problem is not that one level is better or worse than another.
+[00:06:58.430 --> 00:07:03.710] All levels of change are useful in their own way. The problem is the direction of change.
+[00:07:04.190 --> 00:07:11.830] Many people begin the process of changing their habits by focusing on what they want to achieve. This leads to outcome -based habits.
+[00:07:12.070 --> 00:07:15.170] The alternative is to build identity -based habits.
+[00:07:15.410 --> 00:07:19.110] With this approach, we start by focusing on who we wish to become.
 [00:07:19.410 --> 00:07:25.430] Again, an example of the difference between these two is available at atomichabits .com slash media.
