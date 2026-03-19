@@ -395,36 +395,34 @@ function importData(file) {
                 return;
             }
             
-            // Import saved words (merge)
+            // B-03 修正：匯入後使用 parseFirestoreData 轉成正確的 Set 格式
+            // 原本用陣列合併，與 savedWords 的 { words: Set, phrases: Set, sentences: Set } 格式不符
             if (data.savedWords) {
-                Object.keys(data.savedWords).forEach(category => {
+                // 先把匯入資料轉成正確格式
+                const importedParsed = parseFirestoreData(data.savedWords);
+
+                // 逐一合併到現有 savedWords
+                Object.keys(importedParsed).forEach(category => {
                     if (!savedWords[category]) {
                         savedWords[category] = {};
                     }
-                    Object.keys(data.savedWords[category]).forEach(story => {
+                    Object.keys(importedParsed[category]).forEach(story => {
                         if (!savedWords[category][story]) {
-                            savedWords[category][story] = [];
+                            // 該篇文章不存在，直接複製一份新的 Set（不共用參考）
+                            const src = importedParsed[category][story];
+                            savedWords[category][story] = {
+                                words:     new Set(src.words),
+                                phrases:   new Set(src.phrases),
+                                sentences: new Set(src.sentences)
+                            };
+                        } else {
+                            // 該篇文章已存在，用 Set.add 合併，不覆蓋現有資料
+                            const src = importedParsed[category][story];
+                            const dst = savedWords[category][story];
+                            if (src.words)     src.words.forEach(w => dst.words.add(w));
+                            if (src.phrases)   src.phrases.forEach(p => dst.phrases.add(p));
+                            if (src.sentences) src.sentences.forEach(s => dst.sentences.add(s));
                         }
-                        
-                        // Handle both array format (localStorage) and object format (Firestore)
-                        let importedWords = data.savedWords[category][story];
-                        
-                        // If it's a Firestore object format, convert to array
-                        if (importedWords && typeof importedWords === 'object' && !Array.isArray(importedWords)) {
-                            // Firestore format: { "0": "word1", "1": "word2", ... }
-                            importedWords = Object.values(importedWords);
-                        }
-                        
-                        // Make sure it's an array
-                        if (!Array.isArray(importedWords)) {
-                            console.warn(`Skipping invalid data for ${category}/${story}`);
-                            return;
-                        }
-                        
-                        // BUG-A12 修正：改用 _deduplicateWords 以內容去重，
-                        // 修正 Set 對物件型 Note 無法正確去重的問題
-                        const combined = [...savedWords[category][story], ...importedWords];
-                        savedWords[category][story] = _deduplicateWords(combined);
                     });
                 });
                 saveWordsToStorage();

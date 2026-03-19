@@ -145,11 +145,11 @@ async function loadItemScoresFromFirestore() {
     try {
         const doc = await db.collection('userNotes').doc(currentUser.uid).get();
         if (doc.exists && doc.data().itemScores) {
-            // 載入時自動清理舊格式，確保熟悉度計算正確
-            // 若有清理到資料，saveItemScores 會同步回 Firestore（一次性，之後不再觸發）
-            const cleaned = cleanLegacyFields(doc.data().itemScores);
-            localStorage.setItem(ITEM_SCORES_KEY, JSON.stringify(cleaned));
-            saveItemScores(cleaned);
+            // B-08 修正：移除自動呼叫 cleanLegacyFields
+            // 舊格式清理屬於過渡期工具，不應在每次登入時自動執行並寫回 Firestore
+            // 若需要手動清理，可在 DevTools console 執行：cleanLegacyFields(loadItemScores())
+            const scores = doc.data().itemScores;
+            localStorage.setItem(ITEM_SCORES_KEY, JSON.stringify(scores));
         }
     } catch (e) { console.error('Item scores load error:', e); }
 }

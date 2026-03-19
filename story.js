@@ -22,7 +22,7 @@ const subCategoryList = document.getElementById('sub-category-list');
 const subCategoryHeader = document.getElementById('sub-category-header');
 const backToMajorBtn = document.getElementById('back-to-major-view');
 const continueReadingContainer = document.getElementById('continue-reading-container');
-const categoryList = document.getElementById('category-list');
+const categoryList = document.getElementById('title-list'); // B-01 修正：HTML 中 id 為 title-list
 const categoryTitle = document.getElementById('category-title');
 const titleList = document.getElementById('title-list');
 const playbackTitle = document.getElementById('playback-title');
@@ -30,7 +30,7 @@ const textContainer = document.getElementById('text-container');
 const audio = document.getElementById('audio');
 const backToCategoryBtn = document.getElementById('back-to-category');
 const playPauseBtn = document.getElementById('play-pause');
-const backToHomeBtn = document.getElementById('back-to-home');
+// B-02 修正：#back-to-home 在 HTML 中不存在，已移除此取值
 const backToSubCategoryBtn = document.getElementById('back-to-sub-category');
 const rewindBtn = document.getElementById('rewind-5');
 const forwardBtn = document.getElementById('forward-5');
@@ -42,8 +42,7 @@ const stagedWordsContainer = document.getElementById('staged-words-container');
 const clearStagingBtn = document.getElementById('clear-staging-btn');
 const copyStagedBtn = document.getElementById('copy-staged-btn');
 
-// --- New Timestamp Feature Element ---
-const toggleTimestampBtn = document.getElementById('toggle-timestamp-btn');
+// B-07 修正：#toggle-timestamp-btn 在 HTML 中不存在，已移除此取值
 
 
 // Note view elements
@@ -188,24 +187,20 @@ function setAudioTimeAccurate(targetTime) {
             audio.currentTime = targetExact;
             retryCount++;
         } else {
+            // B-10 修正：不管成功或失敗，立刻清除 interval，不再等待 3 秒 timeout
             clearInterval(_verifyIntervalId);
             _verifyIntervalId = null;
+            if (_verifyTimeoutId) {
+                clearTimeout(_verifyTimeoutId);
+                _verifyTimeoutId = null;
+            }
             if (timeDiff > 0.15) {
                 console.error(`[Time Set Failed] After ${MAX_RETRIES} retries, still off by ${timeDiff.toFixed(3)}s`);
             } else {
                 console.log(`[Time Set OK] Positioned at ${actualTime.toFixed(3)}s (diff: ${timeDiff.toFixed(3)}s)`);
             }
         }
-    }, 80); // ✅ 縮短為 80ms（原 100ms），更快收斂
-
-    // 3 秒後強制清除（原 5 秒，縮短避免佔用資源）
-    _verifyTimeoutId = setTimeout(() => {
-        if (_verifyIntervalId) {
-            clearInterval(_verifyIntervalId);
-            _verifyIntervalId = null;
-        }
-        _verifyTimeoutId = null;
-    }, 3000);
+    }, 80); // 80ms 間隔
 }
 
 // ============================================
@@ -220,9 +215,16 @@ function showLoginView() {
     appContainer.classList.add('is-hidden');
     loginView.classList.remove('is-hidden');
     
-    // Hide all internal app views as a cleanup step
-    [homeView, categoryView, playbackView, noteView].forEach(el => {
-        el.classList.add('is-hidden');
+    // B-11 修正：補齊所有可能顯示的 view，避免登出時殘留畫面
+    const customArticlesView = document.getElementById('custom-articles-view');
+    const quizView = document.getElementById('quiz-view');
+    const scoresDashboardView = document.getElementById('scores-dashboard-view');
+    const audioEditorManagerView = document.getElementById('audio-editor-manager-view');
+    const itemDetailView = document.getElementById('item-detail-view');
+    [homeView, subCategoryView, categoryView, playbackView, noteView,
+     dataManagerView, customArticlesView, quizView, scoresDashboardView,
+     audioEditorManagerView, itemDetailView].forEach(el => {
+        if (el) el.classList.add('is-hidden');
     });
 
     // Reset any ongoing playback state
@@ -1139,16 +1141,49 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
                 voiceBtn.classList.add('is-playing-voice');
 
                 if (type === 'sentences') {
-                    playSentenceSnippet(itemText, noteViewTitle);
-
-                    // Listen for playback end to restore button
-                    const restoreOnEnd = () => {
-                        voiceBtn.classList.remove('is-playing-voice');
-                        noteAudioPlayer.removeEventListener('pause', restoreOnEnd);
-                        noteAudioPlayer.removeEventListener('ended', restoreOnEnd);
-                    };
-                    noteAudioPlayer.addEventListener('pause', restoreOnEnd, { once: true });
-                    noteAudioPlayer.addEventListener('ended', restoreOnEnd, { once: true });
+                    // B-04 修正：改用 WebAudioEngine 的 onEnd callback 還原按鈕狀態
+                    // 原本監聽 noteAudioPlayer 的 pause/ended，但 WebAudioEngine 不觸發這些事件
+                    if (typeof WebAudioEngine !== 'undefined' && WebAudioEngine.isSupported()) {
+                        (async () => {
+                            const tsData = await getTimestampForStory(noteViewTitle);
+                            if (!tsData || tsData.length === 0) {
+                                voiceBtn.classList.remove('is-playing-voice');
+                                showNotification('Timestamp data not found.', 'error');
+                                return;
+                            }
+                            const normalize = (t) => t.trim().replace(/[.,?!'"]/g, '').toLowerCase();
+                            const match = tsData.find(line => normalize(line.sentence) === normalize(itemText));
+                            if (!match) {
+                                voiceBtn.classList.remove('is-playing-voice');
+                                showNotification('Could not find sentence in timestamp.', 'warning');
+                                return;
+                            }
+                            const adjusted = (typeof getNoteAdjustedTiming === 'function')
+                                ? getNoteAdjustedTiming(noteViewTitle, itemText, match.start, match.end)
+                                : { start: match.start, end: match.end };
+                            const audioSrc = 'audio/' + encodeURIComponent(noteViewTitle.trim()) + '.mp3';
+                            WebAudioEngine.playSnippet({
+                                src: audioSrc,
+                                start: adjusted.start,
+                                end: adjusted.end,
+                                onEnd: () => voiceBtn.classList.remove('is-playing-voice'),
+                                onError: () => {
+                                    voiceBtn.classList.remove('is-playing-voice');
+                                    showNotification('Could not play audio for this sentence.', 'error');
+                                }
+                            });
+                        })();
+                    } else {
+                        // Fallback：WebAudioEngine 不支援時，沿用原本流程
+                        playSentenceSnippet(itemText, noteViewTitle);
+                        const restoreOnEnd = () => {
+                            voiceBtn.classList.remove('is-playing-voice');
+                            noteAudioPlayer.removeEventListener('pause', restoreOnEnd);
+                            noteAudioPlayer.removeEventListener('ended', restoreOnEnd);
+                        };
+                        noteAudioPlayer.addEventListener('pause', restoreOnEnd, { once: true });
+                        noteAudioPlayer.addEventListener('ended', restoreOnEnd, { once: true });
+                    }
                 } else {
                     // 嘗試播放 GitHub MP3，若找不到則降級 TTS
                     const cleanItem = itemText.trim();
@@ -2651,9 +2686,7 @@ function skipToPrevSentence() {
 }
 
 // Button listeners
-if (backToHomeBtn) {
-    backToHomeBtn.addEventListener('click', () => { stopAudioAndReset(); showView(homeView); });
-}
+// B-02 修正：backToHomeBtn 已移除，此事件綁定不再需要
 
 // --- 修改開始 ---
 
@@ -3361,14 +3394,37 @@ firebase.auth().onAuthStateChanged(async (user) => {
             await loadAudioAdjustmentsFromFirestore();
             await loadQuizScoresFromFirestore();
             await loadItemScoresFromFirestore();
+            // B-05 修正：合併前詢問使用者，選否則直接丟棄 Guest 資料
             if (guestNotesRaw) {
-                console.log("Found guest notes in local storage. Merging...");
                 const guestNotesParsed = JSON.parse(guestNotesRaw);
                 const guestNotes = parseFirestoreData(guestNotesParsed);
-                savedWords = mergeNotes(guestNotes, savedWords);
-                await saveWordsToFirestore();
+
+                // 計算 Guest 筆記總筆數，讓使用者知道有多少資料
+                let guestCount = 0;
+                for (const cat in guestNotes) {
+                    for (const title in guestNotes[cat]) {
+                        const d = guestNotes[cat][title];
+                        guestCount += (d.words?.size || 0) + (d.phrases?.size || 0) + (d.sentences?.size || 0);
+                    }
+                }
+
+                const doMerge = guestCount > 0
+                    ? confirm(`發現 Guest 模式留下的筆記（共 ${guestCount} 筆）。
+要合併到你的帳號嗎？
+
+選「確定」→ 合併
+選「取消」→ 直接丟棄`)
+                    : false;
+
+                if (doMerge) {
+                    savedWords = mergeNotes(guestNotes, savedWords);
+                    await saveWordsToFirestore();
+                    console.log('Merge successful and local guest notes cleared.');
+                } else {
+                    console.log('User declined merge. Guest notes discarded.');
+                }
+                // 不管選哪個，都清除本地 Guest 資料
                 localStorage.removeItem(SAVED_WORDS_KEY);
-                console.log("Merge successful and local guest notes cleared.");
             }
             await showAppView(user);
         } catch (error) {
