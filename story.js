@@ -322,6 +322,11 @@ function showView(view) {
         appContainer.classList.remove('is-hidden');
     }
     
+    // 切換到閱讀頁時，停止 WebAudioEngine（清除 Quiz 殘留音訊，避免空白鍵誤播舊句子）
+    if (view === playbackView && typeof WebAudioEngine !== 'undefined') {
+        WebAudioEngine.stop();
+    }
+
     view.classList.remove('is-hidden');
     document.body.classList.toggle('note-view-active', view === noteView);
 }
