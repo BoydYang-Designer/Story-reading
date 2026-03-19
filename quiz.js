@@ -172,6 +172,7 @@ let quizState = {
     // difficulty & question count — shared across ALL modes
     difficulty: 'mix',         // 'easy' | 'medium' | 'hard' | 'mix' (legacy, kept for sentence/article modes)
     selectedCefrLevels: new Set(['a1a2', 'b1b2', 'c1c2']), // multi-select CEFR for Words & Phrases modes
+    selectedDifficulties: new Set(['easy', 'medium', 'hard']), // multi-select for Dictation & Reorder
     questionCount: 10,         // 5 | 10 (UI 支援的選項)
 };
 
@@ -838,6 +839,9 @@ document.querySelectorAll('.quiz-source-btn').forEach(btn => {
 const _CEFR_KEYS = new Set(['a1a2', 'b1b2', 'c1c2']);
 // Modes that use CEFR multi-select
 const _CEFR_MODES = new Set(['flashcard', 'fcplus']);
+// Modes that use sentence difficulty multi-select (easy/medium/hard)
+const _DIFF_MODES = new Set(['dictation', 'reorder']);
+const _DIFF_KEYS  = new Set(['easy', 'medium', 'hard']);
 
 /** Re-render all diff-btn active states for a given mode based on selectedCefrLevels */
 function _syncCefrButtons(mode) {
@@ -853,6 +857,18 @@ function _syncCefrButtons(mode) {
     });
 }
 
+/** Re-render all diff-btn active states for dictation/reorder based on selectedDifficulties */
+function _syncDiffButtons(mode) {
+    document.querySelectorAll(`.quiz-diff-btn[data-mode="${mode}"]`).forEach(b => {
+        const diff = b.dataset.diff;
+        if (diff === 'mix') {
+            b.classList.toggle('is-active', quizState.selectedDifficulties.size === 3);
+        } else if (_DIFF_KEYS.has(diff)) {
+            b.classList.toggle('is-active', quizState.selectedDifficulties.has(diff));
+        }
+    });
+}
+
 document.querySelectorAll('.quiz-diff-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -862,12 +878,9 @@ document.querySelectorAll('.quiz-diff-btn').forEach(btn => {
         // ── CEFR multi-select path (Flashcard & Flashcard+) ──────
         if (_CEFR_MODES.has(mode)) {
             if (diff === 'mix') {
-                // Mix = select all three
                 quizState.selectedCefrLevels = new Set(['a1a2', 'b1b2', 'c1c2']);
             } else if (_CEFR_KEYS.has(diff)) {
-                // diff is already a CEFR key — toggle it
                 if (quizState.selectedCefrLevels.has(diff)) {
-                    // Deselect — but keep at least one selected
                     if (quizState.selectedCefrLevels.size > 1) {
                         quizState.selectedCefrLevels.delete(diff);
                     }
@@ -879,7 +892,29 @@ document.querySelectorAll('.quiz-diff-btn').forEach(btn => {
             return;
         }
 
-        // ── Original single-select path (Dictation, Cloze…) ──────
+        // ── Sentence difficulty multi-select path (Dictation & Reorder) ──────
+        if (_DIFF_MODES.has(mode)) {
+            if (diff === 'mix') {
+                // Mix = select all three
+                quizState.selectedDifficulties = new Set(['easy', 'medium', 'hard']);
+            } else if (_DIFF_KEYS.has(diff)) {
+                if (quizState.selectedDifficulties.has(diff)) {
+                    // Deselect — but keep at least one selected
+                    if (quizState.selectedDifficulties.size > 1) {
+                        quizState.selectedDifficulties.delete(diff);
+                    }
+                } else {
+                    quizState.selectedDifficulties.add(diff);
+                }
+            }
+            // Sync legacy difficulty string for article mode fallback
+            quizState.difficulty = quizState.selectedDifficulties.size === 3 ? 'mix'
+                : [...quizState.selectedDifficulties][0];
+            _syncDiffButtons(mode);
+            return;
+        }
+
+        // ── Original single-select path (other modes) ──────
         document.querySelectorAll(`.quiz-diff-btn[data-mode="${mode}"]`)
             .forEach(b => b.classList.remove('is-active'));
         btn.classList.add('is-active');
@@ -1682,7 +1717,9 @@ async function startDictation() {
 
     let filteredQ = filterBySentenceDifficulty(questions, quizState.difficulty);
     if (filteredQ.length === 0) {
-        showNotification(`No ${quizState.difficulty} sentences found in your notes.`, 'warning');
+        const sel = quizState.selectedDifficulties;
+        const diffLabel = (!sel || sel.size === 3) ? 'matching' : [...sel].join('/');
+        showNotification(`No ${diffLabel} sentences found in your notes.`, 'warning');
         return;
     }
 
@@ -1879,6 +1916,15 @@ function filterByWordDifficulty(items, diff) {
 
 // Filter sentence items by difficulty setting
 function filterBySentenceDifficulty(items, diff) {
+    // ── New path: use quizState.selectedDifficulties (Set) if all three not selected ──
+    const sel = quizState.selectedDifficulties;
+    if (sel && sel.size > 0 && sel.size < 3) {
+        return items.filter(item => {
+            const wc = (item.sentence || item).trim().split(/\s+/).length;
+            return sel.has(getDifficultyLabel(wc).diff);
+        });
+    }
+    // Legacy / fallback: string-based single-select
     if (diff === 'mix') return items;
     return items.filter(item => {
         const wc = (item.sentence || item).trim().split(/\s+/).length;
@@ -1900,15 +1946,15 @@ async function startArticleQuiz() {
     }
 
     // Filter by difficulty
-    const diff = quizState.difficulty || 'mix';
+    const sel = quizState.selectedDifficulties;
     const allSentences = tsData.filter(l => l.sentence && l.sentence.trim().length > 3);
-    const pool = diff === 'mix' ? allSentences : allSentences.filter(l => {
+    const pool = (!sel || sel.size === 0 || sel.size === 3) ? allSentences : allSentences.filter(l => {
         const wc = l.sentence.trim().split(/\s+/).length;
-        return getDifficultyLabel(wc).diff === diff;
+        return sel.has(getDifficultyLabel(wc).diff);
     });
 
     if (pool.length < 2) {
-        const diffLabel = diff === 'mix' ? '' : ` (${diff})`;
+        const diffLabel = (!sel || sel.size === 3) ? '' : ` (${[...sel].join('/')})`;
         showNotification(`Not enough${diffLabel} sentences in this article.`, 'warning');
         return;
     }
@@ -2652,14 +2698,15 @@ async function startReorder(source) {
             showNotification('Timestamp file not found for this article.', 'error');
             return;
         }
-        const diff = quizState.difficulty;
+        const sel = quizState.selectedDifficulties;
         const rawPool = tsData.filter(l => {
             if (!l.sentence || l.sentence.trim().split(/\s+/).length < 4) return false;
-            if (diff === 'mix') return true;
-            return getDifficultyLabel(l.sentence.trim().split(/\s+/).length).diff === diff;
+            if (!sel || sel.size === 0 || sel.size === 3) return true;
+            return sel.has(getDifficultyLabel(l.sentence.trim().split(/\s+/).length).diff);
         });
         if (rawPool.length === 0) {
-            showNotification(`No ${diff === 'mix' ? '' : diff + ' '}sentences found in this article.`, 'warning');
+            const diffLabel = (!sel || sel.size === 3) ? '' : [...sel].join('/') + ' ';
+            showNotification(`No ${diffLabel}sentences found in this article.`, 'warning');
             return;
         }
         const pool = shuffle(rawPool).slice(0, quizState.questionCount || 10);
@@ -2676,15 +2723,16 @@ async function startReorder(source) {
         // From Note — 用 titleName 抓 timestamp，比對句子找 start/end
         const title = quizState.titleName;
         const items = getAllNoteItems(quizState.scope, quizState.categoryName, title);
-        const diff = quizState.difficulty;
+        const sel = quizState.selectedDifficulties;
         const allNoteSents = Array.from(items.sentences || [])
             .filter(s => s.trim().split(/\s+/).length >= 4);
-        const filteredNoteSents = diff === 'mix' ? allNoteSents : allNoteSents.filter(s => {
+        const filteredNoteSents = (!sel || sel.size === 0 || sel.size === 3) ? allNoteSents : allNoteSents.filter(s => {
             const wc = s.trim().split(/\s+/).length;
-            return getDifficultyLabel(wc).diff === diff;
+            return sel.has(getDifficultyLabel(wc).diff);
         });
         if (filteredNoteSents.length === 0) {
-            showNotification(`No ${diff === 'mix' ? '' : diff + ' '}sentences in your notes.`, 'warning');
+            const diffLabel = (!sel || sel.size === 3) ? '' : [...sel].join('/') + ' ';
+            showNotification(`No ${diffLabel}sentences in your notes.`, 'warning');
             return;
         }
 
