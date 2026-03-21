@@ -333,8 +333,8 @@ h1 {
   border: none;
   color: var(--color-text-light); /* 圖示預設顏色 */
   border-radius: 50%; /* 圓形按鈕 */
-  width: 48px;
-  height: 48px;
+  width: 58px;
+  height: 58px;
   padding: 0;
   display: flex;
   justify-content: center;
@@ -362,8 +362,8 @@ h1 {
 
 /* 主要的播放/暫停按鈕 */
 #play-pause {
-  width: 54px;
-  height: 54px;
+  width: 64px;
+  height: 64px;
   background-color: var(--color-primary);
   color: var(--color-surface); /* 圖示顏色為白色 */
 }
@@ -374,8 +374,8 @@ h1 {
 
 /* SVG 圖示本身的樣式 */
 .playback-actions svg {
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   stroke-width: 1.5; /* 讓線條細一點,更精緻 */
   fill: currentColor;
   stroke: currentColor;
@@ -464,9 +464,9 @@ button.secondary:hover {
 .note-nav-btn {
     display: flex;
     align-items: center;
-    gap: 6px;
-    padding: 8px 16px !important;
-    font-size: 14px !important;
+    gap: 5px;
+    padding: 6px 12px !important;
+    font-size: 12px !important;
     white-space: nowrap;
 }
 
@@ -1339,8 +1339,8 @@ button.secondary:hover {
     }
     
     .playback-actions svg {
-        width: 22px;
-        height: 22px;
+        width: 26px;
+        height: 26px;
     }
     
     /* 5. Navigation Buttons */
@@ -1466,8 +1466,8 @@ button.secondary:hover {
     }
     
     .note-nav-btn {
-        padding: 8px 14px !important;
-        font-size: 13px !important;
+        padding: 5px 10px !important;
+        font-size: 11px !important;
     }
     
     /* Note Statistics */
