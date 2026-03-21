@@ -1844,6 +1844,103 @@ copyStagedBtn.addEventListener('click', () => {
     }
 });
 
+// ── Staging Play Button ────────────────────────────────────────────────────────
+// 策略：
+//   單一單字 → 先試 GitHub audio_files MP3（2s timeout）→ 失敗降級 TTS
+//   片段/多詞/整句 → 直接 TTS 朗讀
+// ──────────────────────────────────────────────────────────────────────────────
+const playStagedBtn = document.getElementById('play-staged-btn');
+
+/** TTS 朗讀一段文字，播完後執行 onDone */
+function _playStagedViaTTS(text, onDone) {
+    if (!('speechSynthesis' in window)) {
+        showNotification('此瀏覽器不支援 TTS。', 'error');
+        onDone();
+        return;
+    }
+    window.speechSynthesis.cancel();
+    const utt = new SpeechSynthesisUtterance(text.trim());
+    utt.lang = 'en-US';
+    utt.rate = 0.9;
+    utt.onend = onDone;
+    utt.onerror = onDone;
+    window.speechSynthesis.speak(utt);
+    showAudioSourceHint('tts');
+}
+
+/** 單字：先試 MP3，2 秒超時或失敗就降級 TTS */
+function _playStagedSingleWord(word, onDone) {
+    const clean = word.trim().toLowerCase().replace(/^[.,?!:;'"]+|[.,?!:;'"]+$/g, '');
+    if (!clean) { onDone(); return; }
+
+    // 若 quiz.js 共用函數可用，優先走 AudioContext 路徑（解決 iOS Chrome 跨域）
+    if (typeof _quizPlayWord === 'function') {
+        _quizPlayWord(clean);
+        showAudioSourceHint('mp3');
+        setTimeout(onDone, 2500); // _quizPlayWord 無 callback，用估算時長
+        return;
+    }
+
+    const src = `https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/${encodeURIComponent(clean)}.mp3`;
+    const au = new Audio(src);
+    let settled = false;
+
+    const fallback = () => {
+        if (settled) return;
+        settled = true;
+        au.pause();
+        _playStagedViaTTS(word, onDone);
+    };
+
+    const fallbackTimer = setTimeout(fallback, 2000); // 2 秒超時切 TTS
+
+    au.addEventListener('error', () => {
+        clearTimeout(fallbackTimer);
+        fallback();
+    }, { once: true });
+
+    au.addEventListener('ended', () => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(fallbackTimer);
+        onDone();
+    }, { once: true });
+
+    au.play()
+        .then(() => { showAudioSourceHint('mp3'); })
+        .catch(() => {
+            clearTimeout(fallbackTimer);
+            fallback();
+        });
+}
+
+if (playStagedBtn) playStagedBtn.addEventListener('click', () => {
+    const stagedWords = Array.from(stagedWordsContainer.querySelectorAll('.staged-word'));
+    if (stagedWords.length === 0) return;
+
+    const fullText = stagedWords.map(el => el.textContent).join(' ').trim();
+    if (!fullText) return;
+
+    playStagedBtn.disabled = true;
+    playStagedBtn.classList.add('is-playing-staged');
+
+    const onDone = () => {
+        playStagedBtn.disabled = false;
+        playStagedBtn.classList.remove('is-playing-staged');
+    };
+
+    // 判斷是否為單一單字（只有一個 staged 元素且內容無空格）
+    const isSingleWord = stagedWords.length === 1 && !/\s/.test(stagedWords[0].textContent.trim());
+
+    if (isSingleWord) {
+        _playStagedSingleWord(fullText, onDone);
+    } else {
+        // 片段、多詞、整句 → 直接 TTS
+        _playStagedViaTTS(fullText, onDone);
+    }
+});
+// ── End Staging Play Button ───────────────────────────────────────────────────
+
 // ── BUG-3 修正：playAudioSnippet ────────────────────────────────────────────
 // 問題：iOS Safari 要求 audio.play() 在使用者手勢的同步 call stack 中呼叫。
 //       當 audio.readyState < 2（HAVE_CURRENT_DATA），設定 currentTime 後
