@@ -333,8 +333,8 @@ h1 {
   border: none;
   color: var(--color-text-light); /* 圖示預設顏色 */
   border-radius: 50%; /* 圓形按鈕 */
-  width: 58px;
-  height: 58px;
+  width: 68px;
+  height: 68px;
   padding: 0;
   display: flex;
   justify-content: center;
@@ -362,8 +362,8 @@ h1 {
 
 /* 主要的播放/暫停按鈕 */
 #play-pause {
-  width: 64px;
-  height: 64px;
+  width: 76px;
+  height: 76px;
   background-color: var(--color-primary);
   color: var(--color-surface); /* 圖示顏色為白色 */
 }
@@ -374,8 +374,8 @@ h1 {
 
 /* SVG 圖示本身的樣式 */
 .playback-actions svg {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   stroke-width: 1.5; /* 讓線條細一點,更精緻 */
   fill: currentColor;
   stroke: currentColor;
@@ -390,7 +390,19 @@ h1 {
 #play-pause.is-playing .icon-pause { display: block; }
 
 
-.navigation-actions { display: flex; gap: 10px; justify-content: center; align-items: center; }
+.navigation-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 上一則 / Note / Quiz / 下一則 — 縮小 */
+.navigation-actions button {
+  padding: 5px 12px !important;
+  font-size: 12px !important;
+  border-radius: 9999px;
+}
 
 /* 5. Buttons
 ------------------------------------------ */
@@ -433,7 +445,7 @@ button.secondary:hover {
 }
 #add-to-note-btn:hover { background-color: #ede3d7; }
 
-#play-pause { min-width: 80px; text-align: center; }
+#play-pause { min-width: 76px; text-align: center; }
 
 /* 6. Enhanced Note View Styles
 ------------------------------------------ */
@@ -1350,24 +1362,30 @@ button.secondary:hover {
     }
     
     .playback-actions button {
-        width: 44px;
-        height: 44px;
+        width: 60px;
+        height: 60px;
     }
     
     #play-pause {
-        width: 50px;
-        height: 50px;
+        width: 70px;
+        height: 70px;
     }
     
     .playback-actions svg {
-        width: 26px;
-        height: 26px;
+        width: 30px;
+        height: 30px;
     }
     
     /* 5. Navigation Buttons */
     .navigation-actions {
         flex-wrap: wrap;
         gap: 6px;
+    }
+
+    /* 手機版 navigation-actions 按鈕覆寫，不被 button { padding:8px 16px } 蓋掉 */
+    .navigation-actions button {
+        padding: 5px 11px !important;
+        font-size: 12px !important;
     }
     
     button {
@@ -2119,18 +2137,18 @@ button.secondary:hover {
     }
     
     .playback-actions button {
-        width: 38px;
-        height: 38px;
+        width: 52px;
+        height: 52px;
     }
     
     #play-pause {
-        width: 42px;
-        height: 42px;
+        width: 60px;
+        height: 60px;
     }
     
     .navigation-actions button {
-        padding: 6px 12px;
-        font-size: 12px;
+        padding: 5px 11px !important;
+        font-size: 12px !important;
     }
 }
 
