@@ -1776,6 +1776,7 @@ let detailViewState = {
     sortBy:       'fam',      // 'fam' | 'alpha' | 'recent'
     sortDir:      'asc',      // for fam: asc = 低熟悉度優先（需練習）
     fromNote:     false,
+    filter:       'all',      // 'all' | 'tested' | 'untested'
 };
 
 /**
@@ -1830,6 +1831,7 @@ async function openDetailView(categoryName, titleName) {
     detailViewState.tab          = 'noteWords';
     detailViewState.sortBy       = 'fam';
     detailViewState.sortDir      = 'asc';
+    detailViewState.filter       = 'all';
 
     document.getElementById('detail-view-title').textContent = titleName;
     renderDetailView();
@@ -1844,7 +1846,7 @@ async function openDetailView(categoryName, titleName) {
 }
 
 function renderDetailView() {
-    const { categoryName, titleName, tab, sortBy, sortDir } = detailViewState;
+    const { categoryName, titleName, tab, sortBy, sortDir, filter } = detailViewState;
     const data  = loadItemScores();
     const key   = `${categoryName}||${titleName}`;
     const entry = data[key] || {};
@@ -1930,33 +1932,64 @@ function renderDetailView() {
         return sortDir === 'asc' ? a.famScore - b.famScore : b.famScore - a.famScore;
     });
 
-    // Summary bar
+    // Summary bar（用全量 items 計算統計，filter 只影響列表顯示）
     const tested   = items.filter(i => i.hasPractice).length;
     const untested = items.length - tested;
     const avgFam   = items.length > 0
         ? Math.round(items.reduce((s, i) => s + i.famScore, 0) / items.length) : 0;
     const famClass = avgFam >= 60 ? 'chip-ok' : avgFam >= 30 ? 'chip-warn' : 'chip-danger';
 
+    const chipAll      = filter === 'all';
+    const chipTested   = filter === 'tested';
+    const chipUntested = filter === 'untested';
+
     document.getElementById('detail-summary-bar').innerHTML = `
-        <span class="detail-sum-chip">📝 共 ${items.length} 項</span>
-        <span class="detail-sum-chip">✅ 已測 ${tested}</span>
-        <span class="detail-sum-chip ${untested > 0 ? 'chip-warn' : ''}">⬜ 未測 ${untested}</span>
-        <span class="detail-sum-chip ${famClass}">熟悉度 ${avgFam}%</span>
+        <span class="detail-sum-chip ${chipAll      ? 'chip-active' : ''}" data-filter="all">📝 共 ${items.length} 項</span>
+        <span class="detail-sum-chip ${chipTested   ? 'chip-active' : ''}" data-filter="tested">✅ 已測 ${tested}</span>
+        <span class="detail-sum-chip ${chipUntested ? 'chip-active' : ''} ${untested > 0 ? 'chip-warn' : ''}" data-filter="untested">⬜ 未測 ${untested}</span>
+        <span class="detail-sum-chip ${famClass}" data-filter="fam">熟悉度 ${avgFam}%</span>
     `;
+
+    // 綁定 chip click 事件
+    document.querySelectorAll('#detail-summary-bar .detail-sum-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+            const f = chip.dataset.filter;
+            if (f === 'fam') {
+                // 點熟悉度 chip → 切換排序
+                if (detailViewState.sortBy === 'fam') {
+                    detailViewState.sortDir = detailViewState.sortDir === 'asc' ? 'desc' : 'asc';
+                } else {
+                    detailViewState.sortBy  = 'fam';
+                    detailViewState.sortDir = 'asc';
+                }
+            } else {
+                // 同一個 filter 再點一次 → 取消（回到 all）
+                detailViewState.filter = (detailViewState.filter === f) ? 'all' : f;
+            }
+            renderDetailView();
+        });
+    });
+
+    // Apply filter to display list
+    let displayItems = items;
+    if (filter === 'tested')   displayItems = items.filter(i => i.hasPractice);
+    if (filter === 'untested') displayItems = items.filter(i => !i.hasPractice);
 
     // Items list
     const listEl = document.getElementById('detail-items-list');
-    if (items.length === 0) {
+    if (displayItems.length === 0) {
         listEl.innerHTML = `<div class="detail-empty">
-            ${tab === 'noteWords'        ? '此文章尚無筆記單字' :
-              tab === 'noteSentences'    ? '此文章尚無筆記句子' :
-              tab === 'articleWords'     ? '尚無 Article 單字測驗記錄（Flashcard/Flashcard+ Article 模式）' :
-              '尚無 Article 句子測驗記錄（Dictation/Reorder Article 模式）'}
+            ${filter !== 'all'
+                ? (filter === 'tested' ? '目前沒有已測驗的項目' : '目前沒有未測驗的項目')
+                : (tab === 'noteWords'        ? '此文章尚無筆記單字' :
+                   tab === 'noteSentences'    ? '此文章尚無筆記句子' :
+                   tab === 'articleWords'     ? '尚無 Article 單字測驗記錄（Flashcard/Flashcard+ Article 模式）' :
+                   '尚無 Article 句子測驗記錄（Dictation/Reorder Article 模式）')}
         </div>`;
         return;
     }
 
-    listEl.innerHTML = items.map(item => buildDetailItemHtml(item, tab)).join('');
+    listEl.innerHTML = displayItems.map(item => buildDetailItemHtml(item, tab)).join('');
 }
 
 function buildDetailItemHtml(item, tab) {
@@ -2064,7 +2097,8 @@ document.getElementById('detail-view-read-btn')?.addEventListener('click', () =>
 
 document.querySelectorAll('.detail-tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-        detailViewState.tab = btn.dataset.tab;
+        detailViewState.tab    = btn.dataset.tab;
+        detailViewState.filter = 'all';  // tab 切換時重設篩選
         renderDetailView();
     });
 });
