@@ -216,32 +216,30 @@ function _calcSourceFam(srcRec) {
 }
 
 /**
- * 根據 itemType 計算加權熟悉度（0–100）
- * 只有一個來源有資料時直接用該來源，不強制扣分
+ * 根據 itemType 計算熟悉度（0–100）
+ *
+ * 計分模式（只計算「正式考核」來源）：
+ *   單字（noteWords / articleWords）       → 只計 fcplus（Flashcard+ Spell the word）
+ *   句子（noteSentences / articleSentences）→ 只計 reorder（Rearrange the sentence）
+ *
+ * fc / dictation / articleListen 等其他模式仍會記錄到 localStorage，
+ * 但不影響熟悉度分數，純屬練習記錄。
  */
 function calcWeightedFamiliarity(rec, itemType) {
     if (!rec) return 0;
 
-    let w1Key, w2Key, w1, w2; // w1=30%, w2=70%
-
     if (itemType === 'noteWords' || itemType === 'articleWords') {
-        w1Key = 'fc'; w2Key = 'fcplus'; w1 = 0.3; w2 = 0.7;
-    } else if (itemType === 'noteSentences') {
-        w1Key = 'dictation'; w2Key = 'reorder'; w1 = 0.3; w2 = 0.7;
-    } else if (itemType === 'articleSentences') {
-        w1Key = 'articleListen'; w2Key = 'reorder'; w1 = 0.3; w2 = 0.7;
+        // 單字：只看 fcplus（Flashcard+ Spell the word）
+        const f = _calcSourceFam(rec['fcplus']);
+        return f !== null ? f : 0;
+    } else if (itemType === 'noteSentences' || itemType === 'articleSentences') {
+        // 句子：只看 reorder（Rearrange the sentence）
+        const f = _calcSourceFam(rec['reorder']);
+        return f !== null ? f : 0;
     } else {
         // fallback：舊格式 { correct, wrong }
         return calcFamiliarityLegacy(rec);
     }
-
-    const f1 = _calcSourceFam(rec[w1Key]);
-    const f2 = _calcSourceFam(rec[w2Key]);
-
-    if (f1 !== null && f2 !== null) return Math.round(f1 * w1 + f2 * w2);
-    if (f2 !== null) return f2;
-    if (f1 !== null) return f1;
-    return 0;
 }
 
 /**
@@ -259,12 +257,13 @@ function calcFamiliarityLegacy(rec) {
 }
 
 /**
- * 判斷 rec 是否有任何測驗記錄
+ * 判斷 rec 是否有正式考核記錄（fcplus 或 reorder）
+ * fc / dictation / articleListen 視為練習，不算「測驗過」
  */
 function _recHasPractice(rec) {
     if (!rec) return false;
-    const sources = ['fc','fcplus','dictation','reorder','articleListen'];
-    return sources.some(s => rec[s] && (rec[s].correct + rec[s].wrong) > 0);
+    return (rec['fcplus']  && (rec['fcplus'].correct  + rec['fcplus'].wrong)  > 0)
+        || (rec['reorder'] && (rec['reorder'].correct + rec['reorder'].wrong) > 0);
 }
 
 /**
@@ -380,9 +379,18 @@ function calcArticleFamSummary(categoryName, titleName) {
     else if (noteSentAvg !== null) noteAvg = noteSentAvg;
 
     const noteTestedWordCount = allNoteWords.length > 0
-        ? allNoteWords.filter(t => testedNoteWords[t]).length : fallbackWordItems.filter(i => (i.correct + i.wrong) > 0).length;
+        ? allNoteWords.filter(t => {
+            const r = testedNoteWords[t];
+            return r && r['fcplus'] && (r['fcplus'].correct + r['fcplus'].wrong) > 0;
+        }).length
+        : fallbackWordItems.filter(i => i['fcplus'] && (i['fcplus'].correct + i['fcplus'].wrong) > 0).length;
+
     const noteTestedSentCount = allNoteSents.length > 0
-        ? allNoteSents.filter(t => testedNoteSents[t]).length : fallbackSentItems.filter(i => (i.correct + i.wrong) > 0).length;
+        ? allNoteSents.filter(t => {
+            const r = testedNoteSents[t];
+            return r && r['reorder'] && (r['reorder'].correct + r['reorder'].wrong) > 0;
+        }).length
+        : fallbackSentItems.filter(i => i['reorder'] && (i['reorder'].correct + i['reorder'].wrong) > 0).length;
 
     const noteUntestedWordCount = noteWordTotal - noteTestedWordCount;
     const noteUntestedSentCount = noteSentTotal - noteTestedSentCount;
@@ -414,10 +422,21 @@ function calcArticleFamSummary(categoryName, titleName) {
 
     const artTotal   = artWordTotal + artSentTotal;
 
+    // ── 正式考核覆蓋率（只計 fcplus / reorder）────────────────
+    // 單字覆蓋率
+    const wordTestedTotal = noteTestedWordCount
+        + artWordItems.filter(i => i['fcplus'] && (i['fcplus'].correct + i['fcplus'].wrong) > 0).length;
+    const wordTotal = noteWordTotal + artWordTotal;
+
+    // 句子覆蓋率
+    const artSentTestedCount = artSentItems.filter(
+        i => i['reorder'] && (i['reorder'].correct + i['reorder'].wrong) > 0
+    ).length;
+    const sentTestedTotal = noteTestedSentCount + artSentTestedCount;
+    const sentTotal = noteSentTotal + artSentTotal;
+
     const totalItems  = noteTotal + artTotal;
-    const totalTested = noteTestedWordCount + noteTestedSentCount
-                      + artWordItems.filter(i => (i.correct + i.wrong) > 0).length
-                      + artSentItems.filter(i => (i.correct + i.wrong) > 0).length;
+    const totalTested = wordTestedTotal + sentTestedTotal;
 
     let famAvg = null;
     if (noteAvg !== null && artAvg !== null) famAvg = Math.round((noteAvg + artAvg) / 2);
@@ -434,6 +453,9 @@ function calcArticleFamSummary(categoryName, titleName) {
         noteTotal, artTotal,
         artWordTotal, artSentTotal, testedSentCount, untestedSentCount,
         totalItems, totalTested,
+        // 分開的覆蓋率（只計正式考核：fcplus / reorder）
+        wordTestedTotal, wordTotal,
+        sentTestedTotal, sentTotal,
         hasPractice: totalItems > 0
     };
 }
@@ -765,7 +787,8 @@ function _buildArticleRowHtml(article) {
     const { title, cat, summary } = article;
     const { noteAvg, noteWordAvg, noteSentAvg, artWordAvg, artSentAvg,
             noteWordTotal, noteSentTotal, noteTestedWordCount, noteTestedSentCount,
-            testedSentCount, untestedSentCount, totalItems, totalTested } = summary;
+            testedSentCount, untestedSentCount,
+            wordTestedTotal, wordTotal, sentTestedTotal, sentTotal } = summary;
 
     function famChip(avg, topLabel, subInfo) {
         if (avg === null || avg === undefined) {
@@ -791,31 +814,31 @@ function _buildArticleRowHtml(article) {
     const totalSents = (testedSentCount ?? 0) + (untestedSentCount ?? 0);
     const sentInfo   = totalSents > 0 ? `${testedSentCount ?? 0}/${totalSents}` : '';
 
-    // ── 測驗覆蓋率進度條 ──────────────────────────────────────
-    let coverageBarHtml = '';
-    if (totalItems > 0) {
-        const pct     = Math.round((totalTested / totalItems) * 100);
-        const untested = totalItems - totalTested;
-        // 顏色：全部測過綠、一半以上黃、否則橘紅
-        const barColor = pct >= 100 ? '#50b86c'
-                       : pct >= 50  ? '#ddb83c'
-                       : '#e05c5c';
-        const label = untested === 0
-            ? `✓ 全部已測驗（${totalTested}/${totalItems}）`
-            : `未測驗 ${untested} 題（${pct}% 已完成）`;
-        coverageBarHtml = `
+    // ── 兩條覆蓋率進度條（只計正式考核：fcplus / reorder）────
+    function buildCoverageBar(tested, total, icon, label) {
+        if (total === 0) return '';
+        const pct      = Math.round((tested / total) * 100);
+        const untested = total - tested;
+        const barColor = pct >= 100 ? '#50b86c' : pct >= 50 ? '#ddb83c' : '#e05c5c';
+        const text = untested === 0
+            ? `${icon} 全部完成（${tested}/${total}）`
+            : `${icon} ${label} ${untested} 未測（${pct}%）`;
+        return `
         <div class="browser-coverage-wrap">
             <div class="browser-coverage-bar-track">
                 <div class="browser-coverage-bar-fill" style="width:${pct}%;background:${barColor}"></div>
             </div>
-            <span class="browser-coverage-label">${label}</span>
+            <span class="browser-coverage-label">${text}</span>
         </div>`;
     }
+
+    const wordBarHtml = buildCoverageBar(wordTestedTotal, wordTotal, '🔤', '單字');
+    const sentBarHtml = buildCoverageBar(sentTestedTotal, sentTotal, '📝', '句子');
 
     return `<div class="browser-article-row" data-title="${_escHtml(title)}" data-cat="${_escHtml(cat)}">
         <div class="browser-article-main">
             <div class="browser-article-title">${_escHtml(title)}</div>
-            ${coverageBarHtml}
+            ${wordBarHtml}${sentBarHtml}
         </div>
         <div class="browser-article-chips">
             ${famChip(noteWordAvg, '📝 N.單字', noteWordInfo)}
