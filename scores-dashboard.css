@@ -623,25 +623,6 @@
     background: var(--color-surface);
     border: 1px solid var(--color-border);
     color: var(--color-text-light);
-    cursor: pointer;
-    transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.1s;
-    user-select: none;
-}
-
-.detail-sum-chip:hover {
-    border-color: var(--color-primary);
-    color: var(--color-text);
-    background: var(--color-accent-subtle, rgba(99,149,255,0.07));
-}
-
-.detail-sum-chip:active {
-    transform: scale(0.96);
-}
-
-.detail-sum-chip.chip-active {
-    background: var(--color-primary);
-    border-color: var(--color-primary);
-    color: #fff;
 }
 
 .detail-sum-chip.chip-warn   { border-color: rgba(220,180,60,0.5);  color: #7a5e08; background: rgba(220,180,60,0.08); }
@@ -1195,4 +1176,5 @@
 .detail-src-chip.fam-green  { background: rgba(80,184,108,0.12); border-color: rgba(80,184,108,0.3); color: #2e7d51; }
 .detail-src-chip.fam-yellow { background: rgba(224,160,60,0.12);  border-color: rgba(224,160,60,0.3);  color: #8a5f00; }
 .detail-src-chip.fam-red    { background: rgba(224,92,92,0.12);   border-color: rgba(224,92,92,0.3);   color: #8b1a1a; }
-.detail-src-chip.detail-src-none { background: rgba(0,0,0,0.04); border-color: var(--color-border); color: var(--color-text-light); }
+.detail-src-chip.detail-src-none     { background: rgba(0,0,0,0.04); border-color: var(--color-border); color: var(--color-text-light); }
+.detail-src-chip.detail-src-practice { background: rgba(0,0,0,0.04); border-color: var(--color-border); color: var(--color-text-light); font-style: italic; }
