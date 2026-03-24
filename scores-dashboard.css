@@ -311,6 +311,49 @@
     }
 }
 
+/* ── 測驗覆蓋率進度條 ─────────────────────────────────────── */
+
+.browser-coverage-wrap {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+    min-width: 0;
+}
+
+.browser-coverage-bar-track {
+    flex-shrink: 0;
+    width: 72px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--color-border);
+    overflow: hidden;
+}
+
+.browser-coverage-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.3s ease;
+}
+
+.browser-coverage-label {
+    font-size: 0.66rem;
+    color: var(--color-text-light);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+}
+
+@media (max-width: 600px) {
+    .browser-coverage-bar-track {
+        width: 52px;
+    }
+    .browser-coverage-label {
+        font-size: 0.62rem;
+    }
+}
+
 /* 手機：最多顯示兩行，超過截斷 */
 @media (hover: none) {
     .browser-article-title {

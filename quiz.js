@@ -338,64 +338,157 @@ function shuffle(arr) {
     return a;
 }
 
+// ── 間隔重複參數設定（可依需求調整）────────────────────────────
+const SR_CONFIG = {
+    // 記憶底板：即使再久沒複習，有效熟悉度最多只降到這個值。
+    // 代表「學過就是學過，不會完全忘記」。建議範圍：20–40。
+    decayFloor: 30,
+
+    // 艾賓浩斯半衰期（天）：熟悉度越高記得越久
+    halfLifeHigh: 30,   // 原始熟悉度 ≥ 70%
+    halfLifeMid:  14,   // 原始熟悉度 40–69%
+    halfLifeLow:   7,   // 原始熟悉度 < 40%
+
+    // 已測驗題的桶加權（剩餘 5% 配額的分配比例）
+    weightNeedWork: 0.70,   // 桶 B：有效熟悉度 < 40%
+    weightOk:       0.20,   // 桶 C：有效熟悉度 40–69%
+    weightFamiliar: 0.05,   // 桶 D：有效熟悉度 ≥ 70%
+
+    // 未測驗題（桶 A）保證佔出題比例
+    // 0.95 = 只要有未測驗題，95% 的題數保證從桶 A 取
+    untestedFillRatio: 0.95,
+};
+
 /**
- * 依熟悉度加權抽題
- * 優先順序：未測驗(6×) > 熟悉度<30%(4×) > 熟悉度30-59%(2×) > 熟悉度>=60%(1×)
+ * 計算題目的「有效熟悉度」（已考慮時間衰減，但有記憶底板）
+ *
+ * 衰減公式（帶底板）：
+ *   effectiveFam = floor + (rawFam - floor) × 2^(-days / halfLife)
+ *   → days=0 時：effectiveFam = rawFam（剛測完，完整保留）
+ *   → days→∞ 時：effectiveFam → floor（最多衰減到底板，不再下降）
+ *   → 學過的題永遠比未測驗（null）更優先
+ */
+function calcEffectiveFamiliarity(rec, itemType) {
+    if (!rec || !_recHasPractice(rec)) {
+        return { rawFam: null, effectiveFam: null, daysSince: Infinity };
+    }
+
+    // 取得原始熟悉度
+    let rawFam;
+    if (typeof calcWeightedFamiliarity === 'function' && itemType) {
+        rawFam = calcWeightedFamiliarity(rec, itemType);
+    } else {
+        const sources = ['fc','fcplus','dictation','reorder','articleListen'];
+        const vals = sources.map(s => {
+            const sr = rec[s];
+            if (!sr) return null;
+            const total = (sr.correct || 0) + (sr.wrong || 0);
+            return total > 0 ? Math.round((1 - sr.wrong / total) * 100) : null;
+        }).filter(v => v !== null);
+        rawFam = vals.length > 0 ? Math.round(vals.reduce((a, b) => a + b, 0) / vals.length) : 0;
+    }
+
+    // 取得上次測驗日期
+    const lastSeen = rec.lastSeen || null;
+    const days = lastSeen ? Math.floor((Date.now() - new Date(lastSeen).getTime()) / 86400000) : 0;
+
+    // 依原始熟悉度選擇半衰期
+    let halfLife;
+    if (rawFam >= 70)      halfLife = SR_CONFIG.halfLifeHigh;
+    else if (rawFam >= 40) halfLife = SR_CONFIG.halfLifeMid;
+    else                   halfLife = SR_CONFIG.halfLifeLow;
+
+    // 底板不超過 rawFam（避免答錯率高的題被虛假拉高）
+    const floor = Math.min(SR_CONFIG.decayFloor, rawFam);
+    const decayFactor = Math.pow(2, -days / halfLife);
+    const effectiveFam = Math.round(floor + (rawFam - floor) * decayFactor);
+
+    return { rawFam, effectiveFam, daysSince: days };
+}
+
+/**
+ * 分桶優先抽題（間隔重複版）
+ *
+ * 桶 A（95%）：從未測驗（effectiveFam === null）→ 最高優先
+ * 桶 B（剩餘 × 70%）：有效熟悉度 < 40%（含衰減後停在底板的題）
+ * 桶 C（剩餘 × 20%）：有效熟悉度 40–69%
+ * 桶 D（剩餘 × 5%） ：有效熟悉度 ≥ 70%（幾乎不出）
+ *
+ * 學過的題（effectiveFam 有值）永遠不進桶 A，
+ * 即使衰減到底板（30%）也只落在桶 B，優先度低於未測驗。
  */
 function weightedSample(pool, n, keyFn, categoryName, titleName, itemType) {
     if (!pool || pool.length === 0) return [];
     n = Math.min(n, pool.length);
 
-    // 讀取 itemScores（熟悉度的真正來源）
+    // 讀取 itemScores
     let itemScores = {};
     try { itemScores = JSON.parse(localStorage.getItem('readingChallengeItemScores') || '{}'); } catch (e) {}
 
-    // 依 categoryName||titleName 查詢此文章的 itemScore
-    const storeKey = `${categoryName}||${titleName}`;
+    const storeKey    = `${categoryName}||${titleName}`;
     const typeDataMap = (itemScores[storeKey] && itemType)
         ? (itemScores[storeKey][itemType] || {})
         : {};
 
-    const weighted = pool.map(item => {
+    // 將每題分到對應的桶
+    const bucketA = []; // 從未測驗
+    const bucketB = []; // 有效熟悉度 < 40%
+    const bucketC = []; // 有效熟悉度 40–69%
+    const bucketD = []; // 有效熟悉度 ≥ 70%
+
+    for (const item of pool) {
         const text = keyFn ? keyFn(item) : String(item);
         const rec  = typeDataMap[text] || null;
+        const { effectiveFam } = calcEffectiveFamiliarity(rec, itemType);
 
-        let fam = null;
-        if (rec) {
-            if (typeof calcWeightedFamiliarity === 'function' && itemType) {
-                fam = calcWeightedFamiliarity(rec, itemType);
-            } else {
-                // fallback：平均所有有記錄的來源
-                const sources = ['fc','fcplus','dictation','reorder','articleListen'];
-                const vals = sources.map(s => {
-                    const sr = rec[s];
-                    if (!sr) return null;
-                    const total = (sr.correct || 0) + (sr.wrong || 0);
-                    return total > 0 ? Math.round((1 - sr.wrong / total) * 100) : null;
-                }).filter(v => v !== null);
-                if (vals.length > 0) fam = Math.round(vals.reduce((a, b) => a + b, 0) / vals.length);
-            }
-        }
-
-        let weight;
-        if (fam === null)  weight = 6;  // ⬜ 從未測驗
-        else if (fam < 30) weight = 4;  // 🔴 需練習
-        else if (fam < 60) weight = 2;  // 🟡 普通
-        else               weight = 1;  // 🟢 熟悉
-        return { item, weight };
-    });
-    const reservoir = [];
-    for (const { item, weight } of weighted) {
-        const r = Math.pow(Math.random(), 1 / weight);
-        if (reservoir.length < n) {
-            reservoir.push({ item, r });
-            if (reservoir.length === n) reservoir.sort((a, b) => a.r - b.r);
-        } else if (r > reservoir[0].r) {
-            reservoir[0] = { item, r };
-            reservoir.sort((a, b) => a.r - b.r);
-        }
+        if (effectiveFam === null)   bucketA.push(item);
+        else if (effectiveFam < 40)  bucketB.push(item);
+        else if (effectiveFam < 70)  bucketC.push(item);
+        else                         bucketD.push(item);
     }
-    return shuffle(reservoir.map(e => e.item));
+
+    // 桶 A 優先填滿 untestedFillRatio 比例，剩餘配額給 B/C/D
+    const wantFromA = Math.min(bucketA.length, Math.ceil(n * SR_CONFIG.untestedFillRatio));
+    const remaining = n - wantFromA;
+
+    function weightedPickFromBuckets(buckets, weights, totalWant) {
+        if (totalWant <= 0) return [];
+        const totalWeight = weights.reduce((a, b) => a + b, 0);
+        let allocs = weights.map(w => Math.round(totalWant * w / totalWeight));
+        let diff = totalWant - allocs.reduce((a, b) => a + b, 0);
+        for (let i = 0; diff !== 0; i = (i + 1) % allocs.length) {
+            if (diff > 0 && allocs[i] < buckets[i].length) { allocs[i]++; diff--; }
+            if (diff < 0 && allocs[i] > 0)                 { allocs[i]--; diff++; }
+        }
+        const result = [];
+        for (let i = 0; i < buckets.length; i++) {
+            result.push(...shuffle(buckets[i]).slice(0, Math.min(allocs[i], buckets[i].length)));
+        }
+        const shortage = totalWant - result.length;
+        if (shortage > 0) {
+            const extras = [];
+            for (let i = 0; i < buckets.length; i++) {
+                extras.push(...buckets[i].slice(Math.min(allocs[i], buckets[i].length)));
+            }
+            result.push(...shuffle(extras).slice(0, shortage));
+        }
+        return result;
+    }
+
+    const fromA   = shuffle(bucketA).slice(0, wantFromA);
+    const fromBCD = weightedPickFromBuckets(
+        [bucketB, bucketC, bucketD],
+        [SR_CONFIG.weightNeedWork, SR_CONFIG.weightOk, SR_CONFIG.weightFamiliar],
+        remaining
+    );
+
+    const total = [...fromA, ...fromBCD];
+    if (total.length < n) {
+        const used = new Set(total);
+        total.push(...shuffle(pool.filter(item => !used.has(item))).slice(0, n - total.length));
+    }
+
+    return shuffle(total.slice(0, n));
 }
 
 function getNoteData(categoryName, titleName) {

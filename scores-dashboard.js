@@ -765,7 +765,7 @@ function _buildArticleRowHtml(article) {
     const { title, cat, summary } = article;
     const { noteAvg, noteWordAvg, noteSentAvg, artWordAvg, artSentAvg,
             noteWordTotal, noteSentTotal, noteTestedWordCount, noteTestedSentCount,
-            testedSentCount, untestedSentCount } = summary;
+            testedSentCount, untestedSentCount, totalItems, totalTested } = summary;
 
     function famChip(avg, topLabel, subInfo) {
         if (avg === null || avg === undefined) {
@@ -791,9 +791,31 @@ function _buildArticleRowHtml(article) {
     const totalSents = (testedSentCount ?? 0) + (untestedSentCount ?? 0);
     const sentInfo   = totalSents > 0 ? `${testedSentCount ?? 0}/${totalSents}` : '';
 
+    // ── 測驗覆蓋率進度條 ──────────────────────────────────────
+    let coverageBarHtml = '';
+    if (totalItems > 0) {
+        const pct     = Math.round((totalTested / totalItems) * 100);
+        const untested = totalItems - totalTested;
+        // 顏色：全部測過綠、一半以上黃、否則橘紅
+        const barColor = pct >= 100 ? '#50b86c'
+                       : pct >= 50  ? '#ddb83c'
+                       : '#e05c5c';
+        const label = untested === 0
+            ? `✓ 全部已測驗（${totalTested}/${totalItems}）`
+            : `未測驗 ${untested} 題（${pct}% 已完成）`;
+        coverageBarHtml = `
+        <div class="browser-coverage-wrap">
+            <div class="browser-coverage-bar-track">
+                <div class="browser-coverage-bar-fill" style="width:${pct}%;background:${barColor}"></div>
+            </div>
+            <span class="browser-coverage-label">${label}</span>
+        </div>`;
+    }
+
     return `<div class="browser-article-row" data-title="${_escHtml(title)}" data-cat="${_escHtml(cat)}">
         <div class="browser-article-main">
             <div class="browser-article-title">${_escHtml(title)}</div>
+            ${coverageBarHtml}
         </div>
         <div class="browser-article-chips">
             ${famChip(noteWordAvg, '📝 N.單字', noteWordInfo)}
