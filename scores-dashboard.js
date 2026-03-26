@@ -218,12 +218,24 @@ function _calcSourceFam(srcRec) {
 /**
  * 根據 itemType 計算熟悉度（0–100）
  *
- * 計分模式（只計算「正式考核」來源）：
- *   單字（noteWords / articleWords）       → 只計 fcplus（Flashcard+ Spell the word）
- *   句子（noteSentences / articleSentences）→ 只計 reorder（Rearrange the sentence）
+ * 計分規則：
+ *   noteWords / articleWords
+ *     → 只計 fcplus（Spell the word，最高難度）100%
  *
- * fc / dictation / articleListen 等其他模式仍會記錄到 localStorage，
- * 但不影響熟悉度分數，純屬練習記錄。
+ *   noteSentences
+ *     → reorder 70%（Rearrange，難度高）
+ *        + dictation 30%（聽音選句，難度低）
+ *        若其中一個來源無資料，則由另一個單獨補滿 100%。
+ *
+ *   articleSentences
+ *     → reorder 70%
+ *        + articleListen 或 dictation 中較高者（取 max）30%
+ *        若其中一個來源無資料，則由另一個單獨補滿 100%。
+ *
+ * 設計原則：
+ *   - 只有「有資料的來源」才參與加權，防止「未測驗 = 0 分」拉低真實成績
+ *   - reorder 是難度最高的正式考核，保持最大權重
+ *   - dictation / articleListen 難度較低，以較小比重輔助計分
  */
 function calcWeightedFamiliarity(rec, itemType) {
     if (!rec) return 0;
@@ -232,10 +244,41 @@ function calcWeightedFamiliarity(rec, itemType) {
         // 單字：只看 fcplus（Flashcard+ Spell the word）
         const f = _calcSourceFam(rec['fcplus']);
         return f !== null ? f : 0;
-    } else if (itemType === 'noteSentences' || itemType === 'articleSentences') {
-        // 句子：只看 reorder（Rearrange the sentence）
-        const f = _calcSourceFam(rec['reorder']);
-        return f !== null ? f : 0;
+
+    } else if (itemType === 'noteSentences') {
+        // 句子（筆記）：reorder 70% + dictation 30%
+        const fReorder   = _calcSourceFam(rec['reorder']);
+        const fDictation = _calcSourceFam(rec['dictation']);
+
+        if (fReorder !== null && fDictation !== null) {
+            return Math.round(fReorder * 0.70 + fDictation * 0.30);
+        } else if (fReorder !== null) {
+            return fReorder;
+        } else if (fDictation !== null) {
+            return fDictation;
+        }
+        return 0;
+
+    } else if (itemType === 'articleSentences') {
+        // 句子（文章）：reorder 70% + max(articleListen, dictation) 30%
+        const fReorder   = _calcSourceFam(rec['reorder']);
+        const fArtListen = _calcSourceFam(rec['articleListen']);
+        const fDictation = _calcSourceFam(rec['dictation']);
+
+        // 取 articleListen / dictation 中分數較高的作為輔助分
+        const fAux = (fArtListen !== null && fDictation !== null)
+            ? Math.max(fArtListen, fDictation)
+            : (fArtListen !== null ? fArtListen : fDictation);
+
+        if (fReorder !== null && fAux !== null) {
+            return Math.round(fReorder * 0.70 + fAux * 0.30);
+        } else if (fReorder !== null) {
+            return fReorder;
+        } else if (fAux !== null) {
+            return fAux;
+        }
+        return 0;
+
     } else {
         // fallback：舊格式 { correct, wrong }
         return calcFamiliarityLegacy(rec);
@@ -257,13 +300,22 @@ function calcFamiliarityLegacy(rec) {
 }
 
 /**
- * 判斷 rec 是否有正式考核記錄（fcplus 或 reorder）
- * fc / dictation / articleListen 視為練習，不算「測驗過」
+ * 判斷 rec 是否有正式考核記錄
+ *
+ * 新版：dictation（noteSentences）和 articleListen（articleSentences）
+ * 也算正式考核，不再只視為「練習記錄」。
+ *
+ * 正式考核來源對照表：
+ *   noteWords / articleWords     → fcplus
+ *   noteSentences                → reorder、dictation
+ *   articleSentences             → reorder、articleListen、dictation
  */
 function _recHasPractice(rec) {
     if (!rec) return false;
-    return (rec['fcplus']  && (rec['fcplus'].correct  + rec['fcplus'].wrong)  > 0)
-        || (rec['reorder'] && (rec['reorder'].correct + rec['reorder'].wrong) > 0);
+    return (rec['fcplus']        && (rec['fcplus'].correct        + rec['fcplus'].wrong)        > 0)
+        || (rec['reorder']       && (rec['reorder'].correct       + rec['reorder'].wrong)       > 0)
+        || (rec['dictation']     && (rec['dictation'].correct     + rec['dictation'].wrong)     > 0)
+        || (rec['articleListen'] && (rec['articleListen'].correct + rec['articleListen'].wrong) > 0);
 }
 
 /**
@@ -385,12 +437,18 @@ function calcArticleFamSummary(categoryName, titleName) {
         }).length
         : fallbackWordItems.filter(i => i['fcplus'] && (i['fcplus'].correct + i['fcplus'].wrong) > 0).length;
 
+    // ▶ 修改：dictation 也算「測驗過」
     const noteTestedSentCount = allNoteSents.length > 0
         ? allNoteSents.filter(t => {
             const r = testedNoteSents[t];
-            return r && r['reorder'] && (r['reorder'].correct + r['reorder'].wrong) > 0;
+            if (!r) return false;
+            return (r['reorder']   && (r['reorder'].correct   + r['reorder'].wrong)   > 0)
+                || (r['dictation'] && (r['dictation'].correct + r['dictation'].wrong) > 0);
         }).length
-        : fallbackSentItems.filter(i => i['reorder'] && (i['reorder'].correct + i['reorder'].wrong) > 0).length;
+        : fallbackSentItems.filter(i =>
+            (i['reorder']   && (i['reorder'].correct   + i['reorder'].wrong)   > 0)
+         || (i['dictation'] && (i['dictation'].correct + i['dictation'].wrong) > 0)
+        ).length;
 
     const noteUntestedWordCount = noteWordTotal - noteTestedWordCount;
     const noteUntestedSentCount = noteSentTotal - noteTestedSentCount;
@@ -428,9 +486,11 @@ function calcArticleFamSummary(categoryName, titleName) {
         + artWordItems.filter(i => i['fcplus'] && (i['fcplus'].correct + i['fcplus'].wrong) > 0).length;
     const wordTotal = noteWordTotal + artWordTotal;
 
-    // 句子覆蓋率
-    const artSentTestedCount = artSentItems.filter(
-        i => i['reorder'] && (i['reorder'].correct + i['reorder'].wrong) > 0
+    // ▶ 修改：articleListen / dictation 也算「測驗過」
+    const artSentTestedCount = artSentItems.filter(i =>
+        (i['reorder']       && (i['reorder'].correct       + i['reorder'].wrong)       > 0)
+     || (i['articleListen'] && (i['articleListen'].correct + i['articleListen'].wrong) > 0)
+     || (i['dictation']     && (i['dictation'].correct     + i['dictation'].wrong)     > 0)
     ).length;
     const sentTestedTotal = noteTestedSentCount + artSentTestedCount;
     const sentTotal = noteSentTotal + artSentTotal;
