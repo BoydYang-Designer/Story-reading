@@ -106,6 +106,7 @@ let _canplaythroughHandler = null;
 let hasTimestampFile = false;
 let lastHighlightedSentence = null;
 let timestampUpdateRafId = null; // For smooth scrolling animation
+let sentenceElementMap = new Map(); // FIX: cache start→element to avoid per-frame querySelector
 
 // Binary search: find the active sentence index for a given currentTime
 function findActiveSentenceIndex(time) {
@@ -2161,6 +2162,13 @@ function renderTimestampContent() {
     });
     textContainer.appendChild(frag);
     lastHighlightedSentence = null;
+
+    // FIX: 預先建立 start → DOM element 的 Map，避免 timestampUpdateLoop 每次句子切換都做 O(n) querySelector 掃描
+    sentenceElementMap = new Map();
+    textContainer.querySelectorAll('.timestamp-sentence').forEach(el => {
+        sentenceElementMap.set(el.dataset.start, el);
+    });
+
     computeScrollMax();
     // 插入 ✏️ 編輯按鈕（由 timestamp-editor.js 提供）
     if (typeof attachTsEditButtons === 'function' && currentStoryTitle) {
@@ -2223,18 +2231,46 @@ function computeScrollTarget(element) {
     return elemRect.top - containerRect.top + textContainer.scrollTop - targetPosition;
 }
 
+// FIX: 改用 JS lerp 滾動取代 CSS scrollBehavior:smooth，
+// 避免 CSS smooth 動畫期間高光已切換但畫面還在移動的視覺延遲。
+let _lerpScrollRafId = null;
+
 function smoothScrollTo(target, instant = false) {
     const clamped = Math.max(0, Math.min(target, scrollMax));
+
     if (instant) {
+        if (_lerpScrollRafId) { cancelAnimationFrame(_lerpScrollRafId); _lerpScrollRafId = null; }
         textContainer.style.scrollBehavior = 'auto';
         textContainer.scrollTop = clamped;
-        // restore smooth after one frame
         requestAnimationFrame(() => { textContainer.style.scrollBehavior = ''; });
-    } else {
-        textContainer.style.scrollBehavior = 'smooth';
-        textContainer.scrollTop = clamped;
+        return;
     }
+
+    // lerp 每幀步進：速度係數 0.18（值越大越快，0.1~0.25 為合理範圍）
+    if (_lerpScrollRafId) cancelAnimationFrame(_lerpScrollRafId);
+    textContainer.style.scrollBehavior = 'auto'; // 確保 CSS smooth 不干擾
+
+    function step() {
+        const current = textContainer.scrollTop;
+        const diff = clamped - current;
+        if (Math.abs(diff) < 1) {
+            textContainer.scrollTop = clamped;
+            _lerpScrollRafId = null;
+            return;
+        }
+        textContainer.scrollTop = current + diff * 0.18;
+        _lerpScrollRafId = requestAnimationFrame(step);
+    }
+    _lerpScrollRafId = requestAnimationFrame(step);
 }
+
+// ── Highlight timing correction ───────────────────────────────────────────────
+// Whisper 生成的 timestamp 標記的是「字幕顯示時間」，比實際語音起點早約 250ms。
+// 實測此音檔：Timestamp start 比音訊語音早 200~260ms（平均中位 ~250ms）。
+// 加入補償值讓高光晚觸發，對齊真正的語音起點。
+// 可透過 UI 的「時間調整」功能微調；此處為全域預設值。
+const HIGHLIGHT_OFFSET_SEC = 0.25; // 250ms，可依需求調整
+// ─────────────────────────────────────────────────────────────────────────────
 
 function timestampUpdateLoop() {
     if (!isPlaying || !isTimestampMode || !isFinite(audio.duration) || audio.duration === 0) {
@@ -2242,15 +2278,39 @@ function timestampUpdateLoop() {
         return;
     }
 
-    const currentTime = audio.currentTime;
-    
+    // FIX: 用補償後的時間做 binary search，讓高光對齊實際語音而非 Whisper 的早標時間點
+    const currentTime = audio.currentTime - HIGHLIGHT_OFFSET_SEC;
+
     // Binary search highlight
-    const idx = findActiveSentenceIndex(currentTime);
+    let idx = findActiveSentenceIndex(currentTime);
+
+    // FIX: 句子間空白時間（end < t < next.start）保留上一句高光，
+    // 避免高光在兩句之間閃滅讓讀者失去定位感。
+    // 只有在下一句真正開始後才切換，完全沒有句子（開頭/結尾靜音）才清除。
+    if (idx === -1) {
+        // 找出「最近剛結束」的句子：currentTime > end 且距離最近
+        let bestIdx = -1;
+        let bestDist = Infinity;
+        for (let i = 0; i < timestampData.length; i++) {
+            const d = currentTime - timestampData[i].end;
+            if (d > 0 && d < bestDist) { bestDist = d; bestIdx = i; }
+        }
+        // 若與下一句的距離 < 3 秒（句間停頓），保持上一句高光不清除
+        const nextIdx = bestIdx + 1;
+        const nextStart = (nextIdx < timestampData.length) ? timestampData[nextIdx].start : Infinity;
+        const gapToNext = nextStart - currentTime;
+        if (bestIdx !== -1 && gapToNext < 3.0) {
+            idx = bestIdx; // 保留前一句
+        }
+    }
+
     const activeSentence = idx !== -1 ? timestampData[idx] : null;
+
+    // FIX: 使用預建 Map，O(1) 取得 DOM element，取代每次 querySelector O(n) 掃描
     const sentenceElement = activeSentence
-        ? textContainer.querySelector(`[data-start="${activeSentence.start}"]`)
+        ? (sentenceElementMap.get(String(activeSentence.start)) || null)
         : null;
-    
+
     if (sentenceElement && sentenceElement !== lastHighlightedSentence) {
         if (lastHighlightedSentence) lastHighlightedSentence.classList.remove('is-current');
         sentenceElement.classList.add('is-current');
@@ -2381,10 +2441,11 @@ async function loadData() {
 function timeToSeconds(timeStr) {
     const parts = timeStr.split(':');
     const secondsParts = parts[2].split('.');
+    const hours   = parseInt(parts[0], 10);          // FIX: 加入小時欄位，避免長音檔（>60 分）高光錯位
     const minutes = parseInt(parts[1], 10);
     const seconds = parseInt(secondsParts[0], 10);
     const milliseconds = parseInt(secondsParts[1], 10);
-    return (minutes * 60) + seconds + (milliseconds / 1000);
+    return (hours * 3600) + (minutes * 60) + seconds + (milliseconds / 1000);
 }
 
 function parseTimestampText(text) {
