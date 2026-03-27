@@ -2224,6 +2224,11 @@ function stopTimestampUpdateLoop() {
 let cachedScrollTarget = -1;
 let lastHighlightedSentenceIndex = -1;
 
+// --- 暫停時自由滾動模式 ---
+// 暫停時設為 true，允許使用者自由滾動；播放時重設為 false，恢復聚焦模式
+let userIsScrollingManually = false;
+let _manualScrollTimeout = null;
+
 function computeScrollTarget(element) {
     const containerRect = textContainer.getBoundingClientRect();
     const elemRect = element.getBoundingClientRect();
@@ -2236,6 +2241,9 @@ function computeScrollTarget(element) {
 let _lerpScrollRafId = null;
 
 function smoothScrollTo(target, instant = false) {
+    // 暫停時使用者自由滾動中，不強制跳回聚焦位置
+    if (userIsScrollingManually) return;
+
     const clamped = Math.max(0, Math.min(target, scrollMax));
 
     if (instant) {
@@ -2317,8 +2325,11 @@ function timestampUpdateLoop() {
         lastHighlightedSentence = sentenceElement;
 
         // Recompute scroll target only when sentence changes
+        // 若使用者正在手動滾動（暫停中捲過），播放後第一次切換句子才重設回聚焦模式
         cachedScrollTarget = computeScrollTarget(sentenceElement);
-        smoothScrollTo(cachedScrollTarget);
+        if (!userIsScrollingManually) {
+            smoothScrollTo(cachedScrollTarget);
+        }
 
     } else if (!activeSentence && lastHighlightedSentence) {
         lastHighlightedSentence.classList.remove('is-current');
@@ -2831,6 +2842,8 @@ function stopAudioAndReset() {
   currentStoryTitle = null;
   currentCategoryName = null;
   playbackPositionBeforeNote = 0;
+  userIsScrollingManually = false;
+  if (_manualScrollTimeout) { clearTimeout(_manualScrollTimeout); _manualScrollTimeout = null; }
 
   isTimestampMode = true;
   lastHighlightedSentence = null;
@@ -2843,13 +2856,22 @@ function stopAudioAndReset() {
   if (_tsBtn) _tsBtn.style.display = 'none';
 }
 
-function pauseAudio() {
+function pauseAudio(byUser = false) {
     audio.pause();
     isPlaying = false;
     playPauseBtn.classList.remove('is-playing');
     saveLastPlaybackState();
     stopTimestampUpdateLoop();
     stopJsonModeHighlightLoop();
+    // 只有使用者主動按暫停，才允許自由滾動；系統內部呼叫不觸發
+    if (byUser) {
+        userIsScrollingManually = true;
+        // 立刻取消 lerp 滾動動畫，否則動畫會繼續把畫面拉回去
+        if (_lerpScrollRafId) {
+            cancelAnimationFrame(_lerpScrollRafId);
+            _lerpScrollRafId = null;
+        }
+    }
 }
 
 // --- New Helper Functions for Timestamp Navigation ---
@@ -2960,7 +2982,7 @@ forwardBtn.addEventListener('click', () => {
 
 playPauseBtn.addEventListener('click', () => {
     if (isPlaying) {
-        pauseAudio();
+        pauseAudio(true); // 使用者主動暫停，啟用自由滾動
     } else {
         audio.play().catch(e => console.error("Play failed:", e));
     }
@@ -3018,6 +3040,16 @@ audio.addEventListener('play', () => {
     isPlaying = true; 
     playPauseBtn.classList.add('is-playing'); 
     saveLastPlaybackState();
+    // 恢復播放時，關閉自由滾動，立刻跳回目前高亮句子
+    userIsScrollingManually = false;
+    if (_manualScrollTimeout) { clearTimeout(_manualScrollTimeout); _manualScrollTimeout = null; }
+    // 重新從 lastHighlightedSentence 計算捲動目標，確保即使暫停期間未切換句子也能正確聚焦
+    if (lastHighlightedSentence) {
+        cachedScrollTarget = computeScrollTarget(lastHighlightedSentence);
+    }
+    if (cachedScrollTarget >= 0) {
+        smoothScrollTo(cachedScrollTarget, true); // 瞬間跳回聚焦位置
+    }
     // Clear any pending snippet stop timer when full playback starts
     if (snippetStopTimeout) {
         clearTimeout(snippetStopTimeout);
