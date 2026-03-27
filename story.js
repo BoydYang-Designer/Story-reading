@@ -91,8 +91,6 @@ let noteViewTitle = null;
 let playbackPositionBeforeNote = 0;
 let currentUser = null; // To hold the logged-in user object
 let currentNoteOrigin = 'menu'; // NEW: Tracks how user entered the note view ('menu' or 'story')
-let quizState = window.quizState || {};   // 允許 quiz.js 控制 isPaused
-
 
 // --- New State Variables for Sentence Playback ---
 let timestampCache = {};
@@ -3651,8 +3649,8 @@ firebase.auth().onAuthStateChanged(async (user) => {
             await loadWordsFromFirestore();
             await loadCustomArticlesFromFirestore();
             await loadAudioAdjustmentsFromFirestore();
-            await loadQuizScoresFromFirestore();
-            await loadItemScoresFromFirestore();
+            //await loadQuizScoresFromFirestore();
+            //await loadItemScoresFromFirestore();
             // B-05 修正：合併前詢問使用者，選否則直接丟棄 Guest 資料
             if (guestNotesRaw) {
                 const guestNotesParsed = JSON.parse(guestNotesRaw);
