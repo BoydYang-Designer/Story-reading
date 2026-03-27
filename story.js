@@ -462,10 +462,13 @@ async function loadWordsFromFirestore() {
             console.log("No data found in Firestore for this user.");
             savedWords = {};
         }
-    } catch (error) {
-        console.error("Error loading notes from Firestore:", error);
-        throw new Error("Failed to load user notes from Firestore.");
-    }
+} catch (error) {
+    console.error("Error loading notes from Firestore:", error);
+    console.error("Error code:", error.code);
+    console.error("Error message:", error.message);
+    alert("載入筆記失敗: " + (error.message || error.code || "未知錯誤"));
+    // throw new Error...  可以先註解掉，避免一直跳警報
+}
 }
 
 async function saveWordsToFirestore() {
