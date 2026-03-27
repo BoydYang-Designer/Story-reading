@@ -787,7 +787,11 @@ async function getTimestampForStory(title) {
         const response = await fetch(url);
         if (response.ok) {
             const text = await response.text();
-            const data = parseTimestampText(text); // Uses existing parser
+            const rawData = parseTimestampText(text); // Uses existing parser
+            // 套用 localStorage tsOverride
+            const data = (typeof applyTsOverride === 'function')
+                ? applyTsOverride(title, rawData)
+                : rawData;
             timestampCache[title] = data;
             return data;
         } else {
@@ -1476,6 +1480,52 @@ if (backFromAudioEditorBtn) {
     backFromAudioEditorBtn.addEventListener('click', () => showView(homeView));
 }
 
+// ── 新功能：匯出修改版 .txt / 比對 GitHub ──────────────────────
+document.getElementById('aem-export-ts-btn')?.addEventListener('click', () => {
+    // 讓使用者選擇要匯出哪篇文章（從 tsOverride 中有記錄的文章挑選）
+    const tsOv = (typeof loadTsOverride === 'function') ? loadTsOverride() : {};
+    const titles = Object.keys(tsOv);
+    if (titles.length === 0) {
+        if (typeof showNotification === 'function') showNotification('目前沒有任何暫存的 Timestamp 修改', 'warning');
+        return;
+    }
+    // 若只有一篇，直接匯出；否則顯示選擇提示
+    let title;
+    if (titles.length === 1) {
+        title = titles[0];
+    } else {
+        const options = titles.map((t, i) => `${i + 1}. ${t}`).join('\n');
+        const input = prompt(`請輸入要匯出的文章編號：\n\n${options}`);
+        const idx = parseInt(input, 10) - 1;
+        if (isNaN(idx) || idx < 0 || idx >= titles.length) {
+            if (typeof showNotification === 'function') showNotification('取消匯出', 'info');
+            return;
+        }
+        title = titles[idx];
+    }
+    if (typeof exportTimestampTxt === 'function') exportTimestampTxt(title);
+});
+
+document.getElementById('aem-compare-github-btn')?.addEventListener('click', () => {
+    const tsOv = (typeof loadTsOverride === 'function') ? loadTsOverride() : {};
+    const titles = Object.keys(tsOv);
+    if (titles.length === 0) {
+        if (typeof showNotification === 'function') showNotification('目前沒有任何暫存的 Timestamp 修改', 'warning');
+        return;
+    }
+    let title;
+    if (titles.length === 1) {
+        title = titles[0];
+    } else {
+        const options = titles.map((t, i) => `${i + 1}. ${t}`).join('\n');
+        const input = prompt(`請輸入要比對的文章編號：\n\n${options}`);
+        const idx = parseInt(input, 10) - 1;
+        if (isNaN(idx) || idx < 0 || idx >= titles.length) return;
+        title = titles[idx];
+    }
+    if (typeof openTsCompare === 'function') openTsCompare(title);
+});
+
 addManualWordBtn.addEventListener('click', () => {
     const newWord = newWordInput.value.trim();
     if (newWord && noteViewCategory && noteViewTitle) {
@@ -1807,6 +1857,9 @@ addToNoteBtn.addEventListener('click', () => {
 // --- 新增 Back to Titles 邏輯 ---
 if (backToCategoryBtn) {
     backToCategoryBtn.addEventListener('click', () => {
+        // 離開文章：自動關閉編輯模式，下次進入文章是乾淨狀態
+        if (typeof resetTsEditMode === 'function') resetTsEditMode();
+
         // Custom article mode: return to custom articles view
         if (backToCategoryBtn._customArticleMode) {
             restoreAudioControls();
@@ -2109,6 +2162,10 @@ function renderTimestampContent() {
     textContainer.appendChild(frag);
     lastHighlightedSentence = null;
     computeScrollMax();
+    // 插入 ✏️ 編輯按鈕（由 timestamp-editor.js 提供）
+    if (typeof attachTsEditButtons === 'function' && currentStoryTitle) {
+        attachTsEditButtons(currentStoryTitle);
+    }
 }
 
 
@@ -2359,15 +2416,19 @@ function parseTimestampText(text) {
 
 
 
-// === 修正後的正確版本 ===
+// === 修正後的正確版本（已整合 tsOverride）===
 async function loadTimestampForStory(title) {
 const url = `https://raw.githubusercontent.com/BoydYang-Designer/Story-reading/main/audio/${encodeURIComponent(title.trim())} Timestamp.txt`;
 
-    try {  // <--- 【請補上這一行】
+    try {
         const response = await fetch(url);
         if (response.ok) {
             const text = await response.text();
-            timestampData = parseTimestampText(text);
+            const rawData = parseTimestampText(text);
+            // 套用 localStorage tsOverride（文字與時間的暫存修改）
+            timestampData = (typeof applyTsOverride === 'function')
+                ? applyTsOverride(title, rawData)
+                : rawData;
             hasTimestampFile = timestampData.length > 0;
         } else {
             console.warn(`Timestamp file not found for "${title}" (404)`);
@@ -2655,6 +2716,10 @@ async function showPlayback(index, startTime = 0, maintainTimestampMode = false)
   // 等待新故事的時間戳檔案載入
   await loadTimestampForStory(currentStoryTitle); // 這會更新 hasTimestampFile 和按鈕可見性
 
+  // 根據是否有 timestamp 檔案，顯示/隱藏頂部 ✏️ 編輯模式按鈕
+  const tsEditModeBtn = document.getElementById('ts-edit-mode-btn');
+  if (tsEditModeBtn) tsEditModeBtn.style.display = hasTimestampFile ? '' : 'none';
+
   // Always use timestamp mode; fallback to plain text if no timestamp file
   if (hasTimestampFile) {
       renderTimestampContent();
@@ -2710,6 +2775,11 @@ function stopAudioAndReset() {
   lastHighlightedSentence = null;
   lastHighlightedWords = [];
   lastActiveSentenceStart = -1;
+
+  // 離開文章時關閉編輯模式，並隱藏頂部 ✏️ 按鈕
+  if (typeof resetTsEditMode === 'function') resetTsEditMode();
+  const _tsBtn = document.getElementById('ts-edit-mode-btn');
+  if (_tsBtn) _tsBtn.style.display = 'none';
 }
 
 function pauseAudio() {
@@ -2956,6 +3026,8 @@ progressBar.addEventListener('input', () => {
 document.addEventListener('keydown', (event) => {
   if (!playbackView.classList.contains('is-hidden')) {
     if (event.target.tagName === 'INPUT') return;
+    // 編輯模式開啟時，停用鍵盤快捷鍵（避免干擾句子編輯操作）
+    if (typeof isTsEditModeActive === 'function' && isTsEditModeActive()) return;
     if (event.code === 'Space') { event.preventDefault(); playPauseBtn.click(); }
     if (event.code === 'ArrowLeft') { event.preventDefault(); rewindBtn.click(); }
     if (event.code === 'ArrowRight') { event.preventDefault(); forwardBtn.click(); }
