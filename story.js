@@ -460,13 +460,10 @@ async function loadWordsFromFirestore() {
             console.log("No data found in Firestore for this user.");
             savedWords = {};
         }
-} catch (error) {
-    console.error("Error loading notes from Firestore:", error);
-    console.error("Error code:", error.code);
-    console.error("Error message:", error.message);
-    alert("載入筆記失敗: " + (error.message || error.code || "未知錯誤"));
-    // throw new Error...  可以先註解掉，避免一直跳警報
-}
+    } catch (error) {
+        console.error("Error loading notes from Firestore:", error);
+        throw new Error("Failed to load user notes from Firestore.");
+    }
 }
 
 async function saveWordsToFirestore() {
@@ -2275,27 +2272,6 @@ function smoothScrollTo(target, instant = false) {
 const HIGHLIGHT_OFFSET_SEC = 0.25; // 250ms，可依需求調整
 // ─────────────────────────────────────────────────────────────────────────────
 
-// 自動滾動到目前句子的核心函式（支援暫停時自由滾動）
-function scrollToCurrentSentence() {
-    const currentEl = document.querySelector('.timestamp-sentence.is-current') ||
-                      document.querySelector('.sentence.current') ||
-                      document.querySelector('.current-sentence') ||
-                      document.querySelector('.highlight');
-
-    if (!currentEl) return;
-
-    // 關鍵：quiz 暫停時不自動滾動，讓使用者可以自由上下滑
-    if (quizState.isPaused === true) {
-        return;
-    }
-
-    currentEl.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center'   // 置中顯示目前句子
-    });
-}
-
-
 function timestampUpdateLoop() {
     if (!isPlaying || !isTimestampMode || !isFinite(audio.duration) || audio.duration === 0) {
         timestampUpdateRafId = null;
@@ -2340,13 +2316,14 @@ function timestampUpdateLoop() {
         sentenceElement.classList.add('is-current');
         lastHighlightedSentence = sentenceElement;
 
-        // 只在非暫停狀態時自動滾動
-        if (!quizState.isPaused) {
-            scrollToCurrentSentence();
-        }
+        // Recompute scroll target only when sentence changes
+        cachedScrollTarget = computeScrollTarget(sentenceElement);
+        smoothScrollTo(cachedScrollTarget);
+
     } else if (!activeSentence && lastHighlightedSentence) {
         lastHighlightedSentence.classList.remove('is-current');
         lastHighlightedSentence = null;
+        cachedScrollTarget = -1;
     }
 
     timestampUpdateRafId = requestAnimationFrame(timestampUpdateLoop);
@@ -2836,7 +2813,7 @@ async function showPlayback(index, startTime = 0, maintainTimestampMode = false)
   };
   _canplaythroughHandler = onLoaded;
   audio.addEventListener('canplaythrough', onLoaded);
-quizState.isPaused = false;
+
   showView(playbackView);
 }
 // ===== END OF MODIFIED FUNCTION =====
@@ -2873,9 +2850,6 @@ function pauseAudio() {
     saveLastPlaybackState();
     stopTimestampUpdateLoop();
     stopJsonModeHighlightLoop();
-    
-    // 暫停時允許自由滾動文章
-    quizState.isPaused = true;
 }
 
 // --- New Helper Functions for Timestamp Navigation ---
@@ -3044,18 +3018,17 @@ audio.addEventListener('play', () => {
     isPlaying = true; 
     playPauseBtn.classList.add('is-playing'); 
     saveLastPlaybackState();
-    
-    // 開始播放 → 恢復自動對焦滾動
-    quizState.isPaused = false;
-    
+    // Clear any pending snippet stop timer when full playback starts
+    if (snippetStopTimeout) {
+        clearTimeout(snippetStopTimeout);
+        snippetStopTimeout = null;
+    }
     if (isTimestampMode && hasTimestampFile) {
         timestampUpdateLoop();
     }
 });
 
 audio.addEventListener('pause', () => { 
-    // 暫停時允許自由滾動
-    quizState.isPaused = true;
     if (isPlaying) {
         pauseAudio();
     }
@@ -3649,8 +3622,8 @@ firebase.auth().onAuthStateChanged(async (user) => {
             await loadWordsFromFirestore();
             await loadCustomArticlesFromFirestore();
             await loadAudioAdjustmentsFromFirestore();
-            //await loadQuizScoresFromFirestore();
-            //await loadItemScoresFromFirestore();
+            await loadQuizScoresFromFirestore();
+            await loadItemScoresFromFirestore();
             // B-05 修正：合併前詢問使用者，選否則直接丟棄 Guest 資料
             if (guestNotesRaw) {
                 const guestNotesParsed = JSON.parse(guestNotesRaw);
