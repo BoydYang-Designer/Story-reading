@@ -417,6 +417,13 @@ let _tsEditorState = {
     originalEnd:   0,
     audioSrc:      null,
     onSave:        null,
+    // 上下文資訊（顯示用）
+    prevEnd:       null,   // 前一句的結束時間（秒），null 表示第一句
+    nextStart:     null,   // 後一句的開始時間（秒），null 表示最後一句
+    prevStart:     null,   // 前一句的開始時間（秒），備用
+    nextEnd:       null,   // 後一句的結束時間（秒），備用
+    audioDuration: null,   // MP3 總時長（秒）
+    totalSentences: 0,     // 句子總數
 };
 let _tsEditorSnippetTimer = null;
 
@@ -430,7 +437,10 @@ let _tsEditorSnippetTimer = null;
  *   audioSrc       mp3 路徑
  *   onSave         儲存後 callback()
  */
-function openTsEditor({ title, index, sentence, start, end, audioSrc, onSave }) {
+function openTsEditor({ title, index, sentence, start, end, audioSrc, onSave,
+                        prevEnd = null, nextStart = null,
+                        prevStart = null, nextEnd = null,
+                        audioDuration = null, totalSentences = 0 }) {
     // 先讀取可能已有的 override
     const overrides = getTsOverrideForTitle(title);
     const existing  = overrides[String(index)];
@@ -445,6 +455,12 @@ function openTsEditor({ title, index, sentence, start, end, audioSrc, onSave }) 
         originalEnd:      existing ? existing.originalEnd      : end,
         audioSrc,
         onSave,
+        prevEnd,
+        nextStart,
+        prevStart,
+        nextEnd,
+        audioDuration,
+        totalSentences,
     };
 
     _renderTsEditorModal();
@@ -474,12 +490,51 @@ function _renderTsEditorModal() {
 
     const st = _tsEditorState;
 
+    // 建立上下文資訊列
+    const sentenceLabel = st.totalSentences > 0
+        ? `第 ${st.index + 1} 句 / 共 ${st.totalSentences} 句`
+        : `第 ${st.index + 1} 句`;
+
+    const fmtTime = (sec) => {
+        if (sec === null || sec === undefined) return '—';
+        const m = Math.floor(sec / 60);
+        const s = (sec % 60).toFixed(3).padStart(6, '0');
+        return `${m}:${s}`;
+    };
+
+    const durationHtml = st.audioDuration !== null
+        ? `<span class="ts-ctx-item ts-ctx-total">🎵 MP3 總長：${fmtTime(st.audioDuration)}</span>`
+        : '';
+
+    // 前句結束
+    const prevEndHtml = st.prevEnd !== null
+        ? `<span class="ts-ctx-item ts-ctx-prev" title="前一句結束時間">⬆ 前句結束：${fmtTime(st.prevEnd)}</span>`
+        : `<span class="ts-ctx-item ts-ctx-prev ts-ctx-dim">⬆ 前句：第一句</span>`;
+
+    // 本句 START / END（id 讓 _updateTsEditorDisplay 可即時更新）
+    const thisStartHtml = `<span class="ts-ctx-item ts-ctx-this ts-ctx-this-start" id="ts-ctx-this-start" title="本句開始時間">▶ 本句開始：${fmtTime(st.start)}</span>`;
+    const thisEndHtml   = `<span class="ts-ctx-item ts-ctx-this ts-ctx-this-end"   id="ts-ctx-this-end"   title="本句結束時間">⏹ 本句結束：${fmtTime(st.end)}</span>`;
+
+    // 後句開始
+    const nextHtml = st.nextStart !== null
+        ? `<span class="ts-ctx-item ts-ctx-next" title="後一句開始時間">⬇ 後句開始：${fmtTime(st.nextStart)}</span>`
+        : `<span class="ts-ctx-item ts-ctx-next ts-ctx-dim">⬇ 後句：最後一句</span>`;
+
     box.innerHTML = `
         <div class="ts-editor-header">
             <span class="ts-editor-icon">✏️</span>
             <span class="ts-editor-title">編輯句子</span>
+            <span class="ts-editor-index-badge">${sentenceLabel}</span>
             <button class="ts-editor-close-btn" id="ts-editor-close">✕</button>
         </div>
+
+        <div class="ts-ctx-bar">
+            ${prevEndHtml}
+            ${thisStartHtml}
+            ${thisEndHtml}
+            ${nextHtml}
+        </div>
+        ${durationHtml ? `<div class="ts-ctx-duration-row">${durationHtml}</div>` : ''}
 
         <div class="ts-editor-section-label">句子文字</div>
         <textarea id="ts-editor-text" class="ts-editor-textarea" rows="3">${escapeHtml(st.sentence)}</textarea>
@@ -489,21 +544,25 @@ function _renderTsEditorModal() {
 
         <div class="ts-editor-time-row">
             <span class="ts-editor-time-label">START</span>
-            <button class="ts-adj-btn" data-target="start" data-delta="-0.5">−0.5s</button>
-            <button class="ts-adj-btn" data-target="start" data-delta="-0.1">−0.1s</button>
-            <span class="ts-editor-time-value" id="ts-start-val">0.000s</span>
-            <button class="ts-adj-btn" data-target="start" data-delta="0.1">+0.1s</button>
-            <button class="ts-adj-btn" data-target="start" data-delta="0.5">+0.5s</button>
+            <div class="ts-adj-group">
+                <button class="ts-adj-btn" data-target="start" data-delta="-0.5">−0.5s</button>
+                <button class="ts-adj-btn" data-target="start" data-delta="-0.1">−0.1s</button>
+                <span class="ts-editor-time-value" id="ts-start-val">0.000s</span>
+                <button class="ts-adj-btn" data-target="start" data-delta="0.1">+0.1s</button>
+                <button class="ts-adj-btn" data-target="start" data-delta="0.5">+0.5s</button>
+            </div>
             <span class="ts-editor-time-diff" id="ts-start-diff"></span>
         </div>
 
         <div class="ts-editor-time-row">
             <span class="ts-editor-time-label">END</span>
-            <button class="ts-adj-btn" data-target="end" data-delta="-0.5">−0.5s</button>
-            <button class="ts-adj-btn" data-target="end" data-delta="-0.1">−0.1s</button>
-            <span class="ts-editor-time-value" id="ts-end-val">0.000s</span>
-            <button class="ts-adj-btn" data-target="end" data-delta="0.1">+0.1s</button>
-            <button class="ts-adj-btn" data-target="end" data-delta="0.5">+0.5s</button>
+            <div class="ts-adj-group">
+                <button class="ts-adj-btn" data-target="end" data-delta="-0.5">−0.5s</button>
+                <button class="ts-adj-btn" data-target="end" data-delta="-0.1">−0.1s</button>
+                <span class="ts-editor-time-value" id="ts-end-val">0.000s</span>
+                <button class="ts-adj-btn" data-target="end" data-delta="0.1">+0.1s</button>
+                <button class="ts-adj-btn" data-target="end" data-delta="0.5">+0.5s</button>
+            </div>
             <span class="ts-editor-time-diff" id="ts-end-diff"></span>
         </div>
 
@@ -558,13 +617,30 @@ function _renderTsEditorModal() {
         _stopTsEditorPreview();
     });
 
-    // 儲存
+    // 儲存（含重疊偵測）
     box.querySelector('#ts-editor-save-btn').addEventListener('click', () => {
         _stopTsEditorPreview();
         const st = _tsEditorState;
         const newText = textarea.value.trim();
         if (!newText) { showNotification('句子文字不能為空', 'warning'); return; }
         st.sentence = newText;
+
+        // ── 時間重疊偵測 ─────────────────────────────────────────
+        const warnings = [];
+        if (st.prevEnd !== null && st.start < st.prevEnd) {
+            warnings.push(`⚠️ START (${st.start.toFixed(3)}s) 早於前句結束時間 (${st.prevEnd.toFixed(3)}s)，會造成時間重疊！`);
+        }
+        if (st.nextStart !== null && st.end > st.nextStart) {
+            warnings.push(`⚠️ END (${st.end.toFixed(3)}s) 晚於後句開始時間 (${st.nextStart.toFixed(3)}s)，會造成時間重疊！`);
+        }
+        if (st.audioDuration !== null && st.end > st.audioDuration) {
+            warnings.push(`⚠️ END (${st.end.toFixed(3)}s) 超出 MP3 總時長 (${st.audioDuration.toFixed(3)}s)！`);
+        }
+        if (warnings.length > 0) {
+            const proceed = confirm(warnings.join('\n') + '\n\n確定仍要儲存？');
+            if (!proceed) return;
+        }
+        // ──────────────────────────────────────────────────────────
 
         setTsOverride(
             st.title, st.index,
@@ -604,9 +680,32 @@ function _updateTsEditorDisplay() {
     const textHintEl  = document.getElementById('ts-editor-text-hint');
     if (!startEl) return;
 
+    const fmtTime = (sec) => {
+        if (sec === null || sec === undefined) return '—';
+        const m = Math.floor(sec / 60);
+        const s = (sec % 60).toFixed(3).padStart(6, '0');
+        return `${m}:${s}`;
+    };
+
     startEl.textContent = st.start.toFixed(3) + 's';
     endEl.textContent   = st.end.toFixed(3) + 's';
     durEl.textContent   = `Duration: ${(st.end - st.start).toFixed(3)}s`;
+
+    // 即時更新 context bar 的本句時間
+    const ctxStart = document.getElementById('ts-ctx-this-start');
+    const ctxEnd   = document.getElementById('ts-ctx-this-end');
+    if (ctxStart) ctxStart.textContent = `▶ 本句開始：${fmtTime(st.start)}`;
+    if (ctxEnd)   ctxEnd.textContent   = `⏹ 本句結束：${fmtTime(st.end)}`;
+
+    // 重疊警示：context bar 標色
+    if (ctxStart) {
+        const overlapPrev = st.prevEnd !== null && st.start < st.prevEnd;
+        ctxStart.classList.toggle('ts-ctx-overlap', overlapPrev);
+    }
+    if (ctxEnd) {
+        const overlapNext = st.nextStart !== null && st.end > st.nextStart;
+        ctxEnd.classList.toggle('ts-ctx-overlap', overlapNext);
+    }
 
     const startDiff = Math.round((st.start - st.originalStart) * 1000) / 1000;
     const endDiff   = Math.round((st.end   - st.originalEnd  ) * 1000) / 1000;
@@ -688,6 +787,13 @@ function attachTsEditButtons(title) {
     const sentences = textContainer.querySelectorAll('.timestamp-sentence');
     const audioSrc  = `audio/${encodeURIComponent(title.trim())}.mp3`;
 
+    // 取得 MP3 總時長（若 audio element 已載入）
+    const audioEl = document.getElementById('audio');
+    const audioDuration = (audioEl && isFinite(audioEl.duration) && audioEl.duration > 0)
+        ? audioEl.duration : null;
+
+    const totalSentences = (typeof timestampData !== 'undefined') ? timestampData.length : sentences.length;
+
     sentences.forEach((p, idx) => {
         // 避免重複插入
         if (p.querySelector('.ts-edit-inline-btn')) return;
@@ -702,15 +808,41 @@ function attachTsEditButtons(title) {
 
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
-            const line = (typeof timestampData !== 'undefined') ? timestampData[idx] : null;
+            const data = (typeof timestampData !== 'undefined') ? timestampData : null;
+            const line = data ? data[idx] : null;
             if (!line) return;
+
+            // 取得前後句時間，優先讀取 override（確保顯示的是最新編輯值）
+            const ov = getTsOverrideForTitle(title);
+
+            const prevLine = (data && idx > 0) ? data[idx - 1] : null;
+            const nextLine = (data && idx < data.length - 1) ? data[idx + 1] : null;
+
+            const prevOv   = prevLine ? ov[String(idx - 1)] : null;
+            const nextOv   = nextLine ? ov[String(idx + 1)] : null;
+
+            const prevEnd   = prevLine   ? (prevOv   ? prevOv.end   : prevLine.end)   : null;
+            const prevStart = prevLine   ? (prevOv   ? prevOv.start : prevLine.start) : null;
+            const nextStart = nextLine   ? (nextOv   ? nextOv.start : nextLine.start) : null;
+            const nextEnd   = nextLine   ? (nextOv   ? nextOv.end   : nextLine.end)   : null;
+
+            // 動態取得最新 MP3 時長（可能在 attachTsEditButtons 後才載入完成）
+            const latestDuration = (audioEl && isFinite(audioEl.duration) && audioEl.duration > 0)
+                ? audioEl.duration : audioDuration;
+
             openTsEditor({
                 title,
-                index:    idx,
-                sentence: line.sentence,
-                start:    line.start,
-                end:      line.end,
+                index:         idx,
+                sentence:      line.sentence,
+                start:         line.start,
+                end:           line.end,
                 audioSrc,
+                prevEnd,
+                prevStart,
+                nextStart,
+                nextEnd,
+                audioDuration: latestDuration,
+                totalSentences,
                 onSave:   () => {
                     btn.classList.add('is-overridden');
                     btn.innerHTML = '✏️✓';
