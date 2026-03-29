@@ -852,7 +852,7 @@ document.getElementById('back-to-note-from-quiz').addEventListener('click', () =
 // ── Mode Card + Subpanel Logic ────────────────────────────────
 
 // Track which subpanel source is selected per mode
-const subpanelSource = { flashcard: 'note', dictation: 'note', reorder: 'note', fcplus: 'note' };
+const subpanelSource = { flashcard: 'note', dictation: 'note', reorder: 'note', fcplus: 'note', 'voice-reorder': 'note' };
 
 // Helper: close all subpanels and un-expand all cards
 function closeAllSubpanels() {
@@ -933,7 +933,7 @@ const _CEFR_KEYS = new Set(['a1a2', 'b1b2', 'c1c2']);
 // Modes that use CEFR multi-select
 const _CEFR_MODES = new Set(['flashcard', 'fcplus']);
 // Modes that use sentence difficulty multi-select (easy/medium/hard)
-const _DIFF_MODES = new Set(['dictation', 'reorder']);
+const _DIFF_MODES = new Set(['dictation', 'reorder', 'voice-reorder']);
 const _DIFF_KEYS  = new Set(['easy', 'medium', 'hard']);
 
 /** Re-render all diff-btn active states for a given mode based on selectedCefrLevels */
@@ -1041,6 +1041,22 @@ document.getElementById('quiz-mode-reorder').addEventListener('click', () => {
 
 document.getElementById('start-reorder-btn').addEventListener('click', () => {
     startReorder(subpanelSource.reorder || 'note');
+});
+
+// Voice Reorder: toggle subpanel
+document.getElementById('quiz-mode-voice-reorder').addEventListener('click', () => {
+    const panel = document.getElementById('subpanel-voice-reorder');
+    const card  = document.getElementById('quiz-mode-voice-reorder');
+    const isOpen = !panel.classList.contains('is-hidden');
+    closeAllSubpanels();
+    if (!isOpen) {
+        panel.classList.remove('is-hidden');
+        card.classList.add('is-expanded');
+    }
+});
+
+document.getElementById('start-voice-reorder-btn').addEventListener('click', () => {
+    startVoiceReorder(subpanelSource['voice-reorder'] || 'note');
 });
 
 document.getElementById('start-dictation-btn').addEventListener('click', () => {
@@ -4423,3 +4439,849 @@ document.addEventListener('keydown', (e) => {
 });
 
 console.log('✅ Flashcard+ loaded.');
+
+
+// ============================================================
+//  VOICE REORDER MODE — voice-reorder.js (integrated)
+//  Listen to a sentence → say words one by one to rebuild it
+//  Fallback: tap chips manually
+// ============================================================
+
+// ── Levenshtein distance ────────────────────────────────────
+function _vrLevenshtein(a, b) {
+    const m = a.length, n = b.length;
+    const dp = Array.from({ length: m + 1 }, (_, i) =>
+        Array.from({ length: n + 1 }, (_, j) => (i === 0 ? j : j === 0 ? i : 0))
+    );
+    for (let i = 1; i <= m; i++)
+        for (let j = 1; j <= n; j++)
+            dp[i][j] = a[i-1] === b[j-1]
+                ? dp[i-1][j-1]
+                : 1 + Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]);
+    return dp[m][n];
+}
+
+// ── Stop-words to forgive in layer-3 matching ──────────────
+const _VR_SKIP = new Set(['a','an','the','in','on','at','to','of','for','and','or','but','is','was','it','he','she','they','we','i','his','her','their','my','your','its']);
+
+/**
+ * Match heard transcript against remaining pool words.
+ * Returns pool array index (not word index) of best match, or -1.
+ * Layer 1: exact | Layer 2: Levenshtein ≤ threshold | Layer 3: skip-word pass-through
+ */
+function _vrMatchWord(heard, poolWords) {
+    const tokens = heard.toLowerCase().replace(/[.,?!'"-]/g, '').split(/\s+/).filter(Boolean);
+    for (const hw of tokens) {
+        for (let pi = 0; pi < poolWords.length; pi++) {
+            const cw = poolWords[pi].replace(/[.,?!'"-]/g, '').toLowerCase();
+            // Layer 1
+            if (hw === cw) return pi;
+            // Layer 2
+            const dist = _vrLevenshtein(hw, cw);
+            const thresh = cw.length <= 3 ? 1 : cw.length <= 6 ? 2 : 3;
+            if (dist <= thresh) return pi;
+        }
+        // Layer 3: if heard word is a skip-word, try again with next token
+        if (_VR_SKIP.has(hw)) continue;
+    }
+    return -1;
+}
+
+// ── State ───────────────────────────────────────────────────
+let _vrState = {
+    sentences: [],       // [{text, start, end}] or [{text}]
+    qIndex: 0,
+    correct: 0,
+    total: 0,
+    wrongItems: [],
+    // per-question
+    words: [],           // original tokens (display)
+    poolOrder: [],       // shuffled indices into words[] still in pool
+    answer: [],          // placed word indices in order
+    done: false,
+    skipped: false,
+    hasAudio: false,     // true when article has timestamp MP3
+    audioSrc: '',
+    currentTs: null,     // {start, end} of current sentence
+};
+
+let _vrRecognition = null;
+let _vrIsRecording = false;
+const _VrSpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+// ── DOM refs (resolved lazily after HTML is in DOM) ─────────
+function _vrEl(id) { return document.getElementById(id); }
+
+// ── Tokenise ───────────────────────────────────────────────
+function _vrTokenize(sentence) {
+    return sentence.match(/\S+/g) || [];
+}
+
+// ── hideAllQuizAreas helper (same pattern as other modes) ──
+function _vrHideAllAreas() {
+    document.querySelectorAll('#quiz-session > div[id$="-area"]').forEach(el => el.classList.add('is-hidden'));
+    // Also hide generic ones
+    ['quiz-flashcard-area','quiz-fcplus-area','quiz-cloze-area','quiz-dictation-area',
+     'quiz-article-listen-area','quiz-article-cloze-area','quiz-reorder-area','quiz-voice-reorder-area'
+    ].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.add('is-hidden');
+    });
+}
+
+// ════════════════════════════════════════════════════════════
+//  ENTRY POINT
+// ════════════════════════════════════════════════════════════
+async function startVoiceReorder(source) {
+    quizState.mode = 'voice-reorder';
+
+    // ── Gather sentences ─────────────────────────────────────
+    let sentences = [];
+    let hasAudio  = false;
+    let audioSrc  = '';
+    let tsData    = [];
+
+    if (source === 'article') {
+        // Need titleName & timestamp file
+        if (!quizState.titleName) {
+            showNotification('Please select an article first.', 'warning');
+            return;
+        }
+        tsData = await getTimestampForStory(quizState.titleName);
+        if (!tsData || tsData.length === 0) {
+            showNotification('No timestamp file for this article. Cannot use From Article.', 'warning');
+            return;
+        }
+        // Filter by difficulty (use l.sentence — actual field name in timestamp data)
+        const diffFilter = quizState.selectedDifficulties;
+        const filtered = tsData.filter(line => {
+            const sent = (line.sentence || '').trim();
+            if (!sent) return false;
+            const wc = _vrTokenize(sent).length;
+            const diff = wc <= 7 ? 'easy' : wc <= 13 ? 'medium' : 'hard';
+            return diffFilter.size === 3 || diffFilter.has(diff);
+        });
+        if (filtered.length === 0) {
+            showNotification('No sentences match the selected difficulty.', 'warning');
+            return;
+        }
+        sentences = filtered.map(l => ({ text: l.sentence.trim(), start: l.start, end: l.end }));
+
+        // Set audio src
+        const story = stories.find(s => s['標題'] === quizState.titleName);
+        const major = story?.['大類'] || quizState.categoryName || '';
+        audioSrc = `audio/${quizState.titleName}.mp3`;
+        _setQuizAudioSrc(audioSrc);
+        hasAudio = true;
+
+    } else {
+        // From Note: use saved sentences
+        const items = getAllNoteItems(quizState.scope, quizState.categoryName, quizState.titleName);
+        const noteSentences = items.sentences || [];
+        if (noteSentences.length === 0) {
+            showNotification('No sentences saved for this article yet.', 'warning');
+            return;
+        }
+        // Filter by difficulty (word count)
+        const diffFilter = quizState.selectedDifficulties;
+        const filtered = noteSentences.filter(s => {
+            const text = typeof s === 'string' ? s : s.text || '';
+            const wc = _vrTokenize(text).length;
+            const diff = wc <= 7 ? 'easy' : wc <= 13 ? 'medium' : 'hard';
+            return diffFilter.size === 3 || diffFilter.has(diff);
+        });
+        if (filtered.length === 0) {
+            showNotification('No sentences match the selected difficulty.', 'warning');
+            return;
+        }
+        sentences = filtered.map(s => ({
+            text: typeof s === 'string' ? s : s.text || '',
+        }));
+        hasAudio = false;
+    }
+
+    // Weighted sample
+    const n = quizState.questionCount || 10;
+    const sampled = shuffle(sentences).slice(0, Math.min(n, sentences.length));
+
+    _vrState.sentences  = sampled;
+    _vrState.qIndex     = 0;
+    _vrState.correct    = 0;
+    _vrState.total      = sampled.length;
+    _vrState.wrongItems = [];
+    _vrState.hasAudio   = hasAudio;
+    _vrState.audioSrc   = audioSrc;
+
+    // Reset shared quizState for result screen
+    quizState.answeredQuestions = [];
+    quizState.correct = 0;
+    quizState.wrong   = 0;
+    quizState.wrongItems = [];
+
+    // Show session
+    quizMenu.classList.add('is-hidden');
+    quizResult.classList.add('is-hidden');
+    quizSession.classList.remove('is-hidden');
+
+    _vrHideAllAreas();
+    _vrEl('quiz-voice-reorder-area').classList.remove('is-hidden');
+
+    _vrUpdateProgress();
+    _vrLoadQuestion();
+}
+
+// ════════════════════════════════════════════════════════════
+//  LOAD QUESTION
+// ════════════════════════════════════════════════════════════
+function _vrLoadQuestion() {
+    _vrStopRecording();
+    const item = _vrState.sentences[_vrState.qIndex];
+    _resetReplayCount();
+
+    _vrState.words     = _vrTokenize(item.text);
+    _vrState.poolOrder = shuffle(_vrState.words.map((_, i) => i));
+    _vrState.answer    = [];
+    _vrState.done      = false;
+    _vrState.skipped   = false;
+    _vrState.currentTs = (item.start !== undefined) ? { start: item.start, end: item.end } : null;
+
+    // Reset UI
+    _vrEl('vr-feedback').className = 'quiz-feedback';
+    _vrEl('vr-feedback').textContent = '';
+    _vrEl('vr-heard-text').textContent = '';
+    _vrEl('vr-mic-label').textContent = 'Tap mic & say the whole sentence';
+    _vrEl('vr-check-btn').textContent = 'Check ✓';
+    _vrEl('vr-check-btn').style.display = '';
+
+    _vrRenderAnswerZone();
+    _vrRenderPool();
+
+    // Auto-play sentence
+    _vrPlaySentence(true);
+}
+
+// ── Play sentence ──────────────────────────────────────────
+function _vrPlaySentence(isAuto) {
+    if (!isAuto) _trackReplay();
+    const playBtn = _vrEl('vr-play-btn');
+    const item = _vrState.sentences[_vrState.qIndex];
+
+    if (_vrState.hasAudio && _vrState.currentTs) {
+        playBtn.querySelector('span:first-child').textContent = '⏸';
+        playSnippet({
+            start: _vrState.currentTs.start,
+            end:   _vrState.currentTs.end,
+            onEnd: () => { playBtn.querySelector('span:first-child').textContent = '▶'; }
+        });
+    } else {
+        // TTS fallback
+        if (!('speechSynthesis' in window)) return;
+        speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(item.text);
+        u.lang = 'en-US'; u.rate = 0.85;
+        playBtn.querySelector('span:first-child').textContent = '⏸';
+        u.onend = () => { playBtn.querySelector('span:first-child').textContent = '▶'; };
+        speechSynthesis.speak(u);
+    }
+}
+
+// ════════════════════════════════════════════════════════════
+//  VR DRAG SYSTEM — 自由拖曳（對齊 Reorder 模式）
+// ════════════════════════════════════════════════════════════
+
+let _vrDrag = {
+    active: false, ghost: null, source: null,
+    poolIdx: null, answerPos: null, word: null,
+    startX: 0, startY: 0,
+    originEl: null,
+};
+const _VR_DRAG_THRESHOLD = 6;
+
+function _vrDragStart(e, source, poolIdx, answerPos, word) {
+    if (_vrState.done) return;
+    const point = e.touches ? e.touches[0] : e;
+    _vrDrag.startX    = point.clientX;
+    _vrDrag.startY    = point.clientY;
+    _vrDrag.source    = source;
+    _vrDrag.poolIdx   = poolIdx;
+    _vrDrag.answerPos = answerPos;
+    _vrDrag.word      = word;
+    _vrDrag.active    = false;
+    _vrDrag.originEl  = e.currentTarget;
+
+    const ghost = document.createElement('div');
+    ghost.className = 'vr-chip answer-chip reorder-drag-ghost';
+    ghost.textContent = word;
+    ghost.style.display = 'none';
+    document.body.appendChild(ghost);
+    _vrDrag.ghost = ghost;
+}
+
+function _vrDragMove(e) {
+    if (!_vrDrag.ghost) return;
+    const point = e.touches ? e.touches[0] : e;
+    const dx = point.clientX - _vrDrag.startX;
+    const dy = point.clientY - _vrDrag.startY;
+
+    if (!_vrDrag.active && Math.sqrt(dx * dx + dy * dy) > _VR_DRAG_THRESHOLD) {
+        _vrDrag.active = true;
+        _vrDrag.ghost.style.display = '';
+        if (_vrDrag.originEl) _vrDrag.originEl.classList.add('is-dragging');
+        _vrUpdateInsertIndicator(point.clientX, point.clientY);
+    }
+    if (_vrDrag.active) {
+        e.preventDefault();
+        _vrDrag.ghost.style.left = (point.clientX - _vrDrag.ghost.offsetWidth  / 2) + 'px';
+        _vrDrag.ghost.style.top  = (point.clientY - _vrDrag.ghost.offsetHeight / 2) + 'px';
+        _vrUpdateInsertIndicator(point.clientX, point.clientY);
+    }
+}
+
+function _vrDragEnd(e) {
+    if (!_vrDrag.ghost) return;
+    const point = e.changedTouches ? e.changedTouches[0] : e;
+
+    if (_vrDrag.active) {
+        const insertPos = _vrGetInsertPosition(point.clientX, point.clientY);
+        _vrRemoveInsertIndicator();
+        _vrDrag.ghost.remove();
+        _vrDrag.ghost = null;
+
+        if (insertPos !== null) {
+            if (_vrDrag.source === 'answer') {
+                // 答案區內重排
+                _vrState.answer.splice(_vrDrag.answerPos, 1);
+                const finalPos = insertPos > _vrDrag.answerPos ? insertPos - 1 : insertPos;
+                _vrState.answer.splice(finalPos, 0, _vrDrag.poolIdx);
+            } else {
+                // pool → 答案區：插入指定位置並發音
+                _vrState.poolOrder = _vrState.poolOrder.filter(i => i !== _vrDrag.poolIdx);
+                _vrState.answer.splice(insertPos, 0, _vrDrag.poolIdx);
+                if (_vrWordSpeakEnabled) _quizPlayWord(_vrDrag.word);
+            }
+        } else if (_vrDrag.source === 'answer') {
+            // 拖出區外 → 退回 pool
+            const wordIdx = _vrState.answer.splice(_vrDrag.answerPos, 1)[0];
+            _vrState.poolOrder.push(wordIdx);
+        }
+        _vrDrag.active = false;
+
+    } else {
+        // 點擊（未超過 threshold）
+        _vrDrag.ghost.remove();
+        _vrDrag.ghost = null;
+        _vrDrag.active = false;
+
+        if (_vrDrag.source === 'pool') {
+            const idx = _vrDrag.poolIdx;
+            if (_vrState.answer.includes(idx)) { _vrResetDrag(); return; }
+            _vrState.answer.push(idx);
+            _vrState.poolOrder = _vrState.poolOrder.filter(i => i !== idx);
+            if (_vrWordSpeakEnabled) _quizPlayWord(_vrDrag.word);
+        } else {
+            // answer chip 點擊 → 退回 pool
+            const wordIdx = _vrState.answer.splice(_vrDrag.answerPos, 1)[0];
+            _vrState.poolOrder.push(wordIdx);
+        }
+    }
+
+    _vrShowFeedback('', '');
+    _vrEl('vr-heard-text').textContent = '';
+    _vrRenderAnswerZone();
+    _vrRenderPool();
+
+    if (_vrState.answer.length === _vrState.words.length && !_vrState.done) {
+        _vrOnAllPlaced();
+    }
+
+    _vrResetDrag();
+}
+
+function _vrResetDrag() {
+    _vrDrag = { active: false, ghost: null, source: null, poolIdx: null, answerPos: null, word: null, startX: 0, startY: 0, originEl: null };
+}
+
+// ── VR 插入位置計算（多行支援）────────────────────────────────
+function _vrGetInsertPosition(clientX, clientY) {
+    const zone = _vrEl('vr-answer-zone');
+    const rect = zone.getBoundingClientRect();
+    if (clientX < rect.left - 40 || clientX > rect.right  + 40 ||
+        clientY < rect.top  - 40 || clientY > rect.bottom + 40) {
+        return null;
+    }
+    const chips = [...zone.querySelectorAll('.vr-chip.answer-chip')];
+    if (chips.length === 0) return 0;
+
+    // 分行（midY 差距 ≤ 10px 視為同一行）
+    const rows = [];
+    let curRow = [], curTop = null;
+    for (const chip of chips) {
+        const r = chip.getBoundingClientRect();
+        const midY = r.top + r.height / 2;
+        if (curTop === null || Math.abs(midY - curTop) <= 10) {
+            curRow.push({ el: chip, rect: r });
+            if (curTop === null) curTop = midY;
+        } else {
+            rows.push(curRow);
+            curRow = [{ el: chip, rect: r }];
+            curTop = midY;
+        }
+    }
+    if (curRow.length) rows.push(curRow);
+
+    // 找最近的一行
+    let bestRow = rows[0], bestDist = Infinity;
+    for (const row of rows) {
+        const top = row[0].rect.top, bot = row[0].rect.bottom;
+        const dist = clientY < top ? top - clientY : clientY > bot ? clientY - bot : 0;
+        if (dist < bestDist) { bestDist = dist; bestRow = row; }
+    }
+
+    // 依 X 軸決定插入位置
+    for (let k = 0; k < bestRow.length; k++) {
+        const r = bestRow[k].rect;
+        if (clientX < r.left + r.width / 2) return chips.indexOf(bestRow[k].el);
+    }
+    return chips.indexOf(bestRow[bestRow.length - 1].el) + 1;
+}
+
+// ── VR 插入指示器 ─────────────────────────────────────────────
+let _vrInsertIndicatorEl = null;
+
+function _vrUpdateInsertIndicator(clientX, clientY) {
+    const zone = _vrEl('vr-answer-zone');
+    const pos  = _vrGetInsertPosition(clientX, clientY);
+    if (pos === null) { _vrRemoveInsertIndicator(); zone.classList.remove('drag-over'); return; }
+    zone.classList.add('drag-over');
+    if (!_vrInsertIndicatorEl) {
+        _vrInsertIndicatorEl = document.createElement('div');
+        _vrInsertIndicatorEl.className = 'reorder-insert-indicator';
+    }
+    const chips = [...zone.querySelectorAll('.vr-chip.answer-chip')];
+    if (chips.length === 0 || pos >= chips.length) {
+        zone.appendChild(_vrInsertIndicatorEl);
+    } else {
+        zone.insertBefore(_vrInsertIndicatorEl, chips[pos]);
+    }
+    // 左右相鄰 chip 搖晃提示
+    _vrClearNeighborHighlight();
+    const leftChip  = chips[pos - 1] ?? null;
+    const rightChip = chips[pos]     ?? null;
+    if (leftChip)  leftChip.classList.add('is-neighbor-left');
+    if (rightChip) rightChip.classList.add('is-neighbor-right');
+}
+
+function _vrClearNeighborHighlight() {
+    const zone = _vrEl('vr-answer-zone');
+    if (!zone) return;
+    zone.querySelectorAll('.is-neighbor-left, .is-neighbor-right').forEach(el => {
+        el.classList.remove('is-neighbor-left', 'is-neighbor-right');
+    });
+}
+
+function _vrRemoveInsertIndicator() {
+    const zone = _vrEl('vr-answer-zone');
+    if (zone) zone.classList.remove('drag-over');
+    if (_vrInsertIndicatorEl?.parentNode) _vrInsertIndicatorEl.parentNode.removeChild(_vrInsertIndicatorEl);
+    _vrInsertIndicatorEl = null;
+    _vrClearNeighborHighlight();
+}
+
+// 全域 pointer/touch 事件（拖曳離開元素後仍有效）
+document.addEventListener('pointermove', (e) => { if (_vrDrag.ghost) _vrDragMove(e); }, { passive: false });
+document.addEventListener('pointerup',   (e) => { if (_vrDrag.ghost) _vrDragEnd(e); });
+document.addEventListener('touchmove',   (e) => { if (_vrDrag.ghost && _vrDrag.active) e.preventDefault(); }, { passive: false });
+
+// ── Render answer zone ────────────────────────────────────
+function _vrRenderAnswerZone(latestIdx) {
+    const zone = _vrEl('vr-answer-zone');
+    zone.innerHTML = '';
+    if (_vrState.answer.length === 0) {
+        const hint = document.createElement('span');
+        hint.className = 'vr-answer-empty';
+        hint.textContent = 'Drag or tap words below to build the sentence…';
+        zone.appendChild(hint);
+        return;
+    }
+    _vrState.answer.forEach((wordIdx, pos) => {
+        const chip = document.createElement('span');
+        chip.className = 'vr-chip answer-chip' + (wordIdx === latestIdx ? ' just-arrived' : '');
+        chip.textContent = _vrState.words[wordIdx];
+        chip.style.touchAction = 'none';
+        chip.addEventListener('pointerdown', (e) => {
+            if (_vrState.done) return;
+            e.currentTarget.setPointerCapture(e.pointerId);
+            _vrDragStart(e, 'answer', wordIdx, pos, _vrState.words[wordIdx]);
+        });
+        zone.appendChild(chip);
+    });
+}
+
+// ── Render word pool ──────────────────────────────────────
+function _vrRenderPool() {
+    const pool = _vrEl('vr-word-pool');
+    pool.innerHTML = '';
+    if (_vrState.poolOrder.length === 0) {
+        pool.innerHTML = '<div style="padding:8px;color:var(--color-text-light);text-align:center;font-size:0.88em;">All words placed ✓</div>';
+        return;
+    }
+    _vrState.poolOrder.forEach(idx => {
+        const chip = document.createElement('span');
+        chip.className = 'vr-chip pool-chip';
+        chip.textContent = _vrState.words[idx];
+        chip.dataset.wordIdx = idx;
+        chip.style.touchAction = 'none';
+        chip.addEventListener('pointerdown', (e) => {
+            if (_vrState.done) return;
+            e.currentTarget.setPointerCapture(e.pointerId);
+            _vrDragStart(e, 'pool', idx, null, _vrState.words[idx]);
+        });
+        pool.appendChild(chip);
+    });
+}
+
+// ── Place word（供語音路徑呼叫；點擊/拖曳統一由 _vrDragEnd 處理）──
+function _vrPlaceWord(wordIdx) {
+    if (_vrState.done) return;
+    if (_vrState.answer.includes(wordIdx)) return;
+
+    _vrState.answer.push(wordIdx);
+    _vrState.poolOrder = _vrState.poolOrder.filter(i => i !== wordIdx);
+    _vrShowFeedback('', '');
+    _vrEl('vr-heard-text').textContent = '';
+    _vrRenderAnswerZone(wordIdx);
+    _vrRenderPool();
+
+    if (_vrWordSpeakEnabled) _quizPlayWord(_vrState.words[wordIdx]);
+
+    if (_vrState.answer.length === _vrState.words.length) {
+        _vrOnAllPlaced();
+    }
+}
+
+// ── Undo last ─────────────────────────────────────────────
+function _vrUndoLast() {
+    if (_vrState.done || _vrState.answer.length === 0) return;
+    const last = _vrState.answer.pop();
+    _vrState.poolOrder.push(last);
+    _vrShowFeedback('', '');
+    _vrEl('vr-heard-text').textContent = '';
+    _vrRenderAnswerZone();
+    _vrRenderPool();
+}
+
+// ── All words placed → prompt check ──────────────────────
+function _vrOnAllPlaced() {
+    _vrStopRecording();
+    _vrEl('vr-mic-label').textContent = 'All words placed — tap Check!';
+}
+
+// ── Check answer ──────────────────────────────────────────
+function _vrCheckAnswer() {
+    if (_vrState.done) {
+        // Next question
+        _vrState.qIndex++;
+        if (_vrState.qIndex >= _vrState.total) {
+            _vrFinish();
+        } else {
+            _vrUpdateProgress();
+            _vrLoadQuestion();
+        }
+        return;
+    }
+
+    _vrState.done = true;
+    _vrStopRecording();
+
+    const userText   = _vrState.answer.map(i => _vrState.words[i]).join(' ');
+    const correctText = _vrState.words.join(' ');
+    const isCorrect  = !_vrState.skipped && userText === correctText;
+
+    if (isCorrect) {
+        _vrState.correct++;
+        _vrEl('vr-answer-zone').classList.add('vr-correct-flash');
+        _vrShowFeedback('ok', '✓ Perfect!');
+    } else {
+        _vrShowFeedback('wrong', `Answer: ${correctText}`);
+        _vrState.wrongItems.push(correctText);
+    }
+
+    // Track in answeredQuestions so result review works
+    quizState.answeredQuestions.push({
+        question: correctText,
+        userAnswer: userText,
+        correct: isCorrect,
+        mode: 'voice-reorder',
+    });
+
+    _vrEl('vr-check-btn').textContent = 'Next →';
+    _vrEl('vr-mic-label').textContent = 'Tap Next for the next sentence.';
+}
+
+// ── Finish ─────────────────────────────────────────────────
+function _vrFinish() {
+    _vrStopRecording();
+
+    quizState.correct    = _vrState.correct;
+    quizState.wrong      = _vrState.total - _vrState.correct;
+    quizState.wrongItems = _vrState.wrongItems;
+
+    showQuizResult('voice-reorder', _vrState.correct, _vrState.total, _vrState.wrongItems);
+}
+
+// ── Progress ──────────────────────────────────────────────
+function _vrUpdateProgress() {
+    const done  = _vrState.qIndex;
+    const total = _vrState.total;
+    const pct   = total > 0 ? Math.round((done / total) * 100) : 0;
+    const progText = _vrEl('quiz-progress-text');
+    const progFill = _vrEl('quiz-progress-fill');
+    if (progText) progText.textContent = `${done + 1} / ${total}`;
+    if (progFill) progFill.style.width = pct + '%';
+}
+
+// ── Feedback ──────────────────────────────────────────────
+function _vrShowFeedback(type, msg) {
+    const el = _vrEl('vr-feedback');
+    if (!msg) { el.className = 'quiz-feedback'; el.textContent = ''; return; }
+    el.className = `quiz-feedback is-visible ${type === 'ok' ? 'correct' : type === 'wrong' ? 'wrong' : ''}`;
+    el.textContent = msg;
+}
+
+// ════════════════════════════════════════════════════════════
+//  SPEECH RECOGNITION
+// ════════════════════════════════════════════════════════════
+function _vrStartRecording() {
+    if (!_VrSpeechRecognition) {
+        showNotification('Speech recognition not supported. Please use Chrome or Safari.', 'warning');
+        return;
+    }
+    _vrStopRecording();
+
+    _vrRecognition = new _VrSpeechRecognition();
+    _vrRecognition.lang = 'en-US';
+    _vrRecognition.continuous = false;
+    _vrRecognition.interimResults = true;
+    _vrRecognition.maxAlternatives = 5;
+
+    _vrRecognition.onresult = (e) => {
+        let interim = '';
+        let finalResult = '';
+        for (let i = e.resultIndex; i < e.results.length; i++) {
+            if (e.results[i].isFinal) {
+                for (let k = 0; k < e.results[i].length; k++) {
+                    finalResult += ' ' + e.results[i][k].transcript;
+                }
+            } else {
+                interim = e.results[i][0].transcript;
+            }
+        }
+        if (interim) _vrEl('vr-heard-text').textContent = `Heard: "${interim}"…`;
+        if (finalResult.trim()) {
+            _vrEl('vr-heard-text').textContent = `Heard: "${finalResult.trim()}"`;
+            _vrProcessSpeech(finalResult.trim());
+        }
+    };
+
+    _vrRecognition.onerror = (e) => {
+        _vrStopRecording();
+        if (e.error === 'no-speech') {
+            _vrShowFeedback('warn', 'No speech detected — tap mic and try again.');
+        } else if (e.error === 'not-allowed') {
+            showNotification('Microphone permission denied.', 'warning');
+        }
+    };
+
+    _vrRecognition.onend = () => {
+        // Auto-restart if still in recording state (continuous simulation)
+        if (_vrIsRecording && !_vrState.done) {
+            try { _vrRecognition.start(); } catch(e) { _vrSetMicOff(); }
+        } else {
+            _vrSetMicOff();
+        }
+    };
+
+    try {
+        _vrRecognition.start();
+        _vrIsRecording = true;
+        _vrEl('vr-mic-btn').classList.add('is-recording');
+        _vrEl('vr-mic-label').textContent = '🔴 Recording… tap to stop';
+    } catch(e) {
+        showNotification('Could not start microphone. Try again.', 'warning');
+    }
+}
+
+function _vrStopRecording() {
+    _vrIsRecording = false;
+    if (_vrRecognition) {
+        try { _vrRecognition.stop(); } catch(e) {}
+        _vrRecognition = null;
+    }
+    _vrSetMicOff();
+}
+
+function _vrSetMicOff() {
+    const btn = _vrEl('vr-mic-btn');
+    if (btn) btn.classList.remove('is-recording');
+    const lbl = _vrEl('vr-mic-label');
+    if (lbl && !_vrState.done) lbl.textContent = 'Tap mic & say the whole sentence';
+}
+
+function _vrProcessSpeech(heard) {
+    if (_vrState.done) return;
+
+    // ── 整句比對：LCS + Levenshtein 近似匹配 ─────────────────
+    // 只比對 poolOrder（尚未放入的字），避免已放入的字被重複匹配
+
+    const heardTokens = heard.toLowerCase()
+        .replace(/[.,?!'";\-]/g, '')
+        .split(/\s+/)
+        .filter(Boolean);
+
+    if (heardTokens.length === 0) {
+        _vrShowFeedback('warn', 'No speech detected — tap mic and try again.');
+        return;
+    }
+
+    const poolIndices = [..._vrState.poolOrder];
+    const poolWords   = poolIndices.map(i =>
+        _vrState.words[i].replace(/[.,?!'";\-]/g, '').toLowerCase()
+    );
+
+    function _approxEq(a, b) {
+        if (a === b) return true;
+        const thresh = b.length <= 3 ? 1 : b.length <= 6 ? 2 : 3;
+        return _vrLevenshtein(a, b) <= thresh;
+    }
+
+    // LCS dp（heardTokens vs poolWords）
+    const H = heardTokens.length, C = poolWords.length;
+    const dp = Array.from({ length: H + 1 }, () => new Array(C + 1).fill(0));
+    for (let i = 1; i <= H; i++) {
+        for (let j = 1; j <= C; j++) {
+            dp[i][j] = _approxEq(heardTokens[i - 1], poolWords[j - 1])
+                ? dp[i - 1][j - 1] + 1
+                : Math.max(dp[i - 1][j], dp[i][j - 1]);
+        }
+    }
+
+    // Backtrack 找出哪些 poolWords 位置被匹配到
+    const matchedPoolPos = new Set();
+    let i = H, j = C;
+    while (i > 0 && j > 0) {
+        if (_approxEq(heardTokens[i - 1], poolWords[j - 1])) {
+            matchedPoolPos.add(j - 1);
+            i--; j--;
+        } else if (dp[i - 1][j] >= dp[i][j - 1]) {
+            i--;
+        } else {
+            j--;
+        }
+    }
+
+    if (matchedPoolPos.size === 0) {
+        _vrShowFeedback('warn', `Couldn't match — try speaking more clearly.`);
+        return;
+    }
+
+    // 收集匹配到的 word index，按原始句子順序排序後插入答案區末尾
+    const toPlace = [];
+    matchedPoolPos.forEach(pi => toPlace.push(poolIndices[pi]));
+    toPlace.sort((a, b) => a - b);
+
+    toPlace.forEach(wordIdx => {
+        _vrState.answer.push(wordIdx);
+        _vrState.poolOrder = _vrState.poolOrder.filter(x => x !== wordIdx);
+    });
+
+    if (toPlace.length === 0) {
+        _vrShowFeedback('warn', 'Words already placed. Say the remaining words.');
+        return;
+    }
+
+    _vrRenderAnswerZone(toPlace[toPlace.length - 1]);
+    _vrRenderPool();
+
+    if (_vrState.answer.length === _vrState.words.length) {
+        _vrShowFeedback('', '');
+        _vrOnAllPlaced();
+    } else {
+        const remaining = _vrState.words.length - _vrState.answer.length;
+        _vrShowFeedback('warn', `${toPlace.length} word${toPlace.length > 1 ? 's' : ''} placed — ${remaining} more to go.`);
+    }
+}
+
+// ════════════════════════════════════════════════════════════
+//  EVENT LISTENERS (bound once after page load)
+// ════════════════════════════════════════════════════════════
+
+// Mic toggle
+document.getElementById('vr-mic-btn').addEventListener('click', () => {
+    if (_vrState.done) return;
+    if (_vrIsRecording) {
+        _vrStopRecording();
+    } else {
+        _vrStartRecording();
+    }
+});
+
+// Play / Replay button
+document.getElementById('vr-play-btn').addEventListener('click', () => {
+    _vrPlaySentence(false);
+});
+document.getElementById('vr-replay-btn').addEventListener('click', () => {
+    _vrPlaySentence(false);
+});
+
+// Undo
+document.getElementById('vr-undo-btn').addEventListener('click', _vrUndoLast);
+
+// Clear all
+document.getElementById('vr-clear-btn').addEventListener('click', () => {
+    if (_vrState.done) return;
+    // Push all answer words back to pool
+    while (_vrState.answer.length > 0) {
+        const last = _vrState.answer.pop();
+        _vrState.poolOrder.push(last);
+    }
+    _vrShowFeedback('', '');
+    _vrEl('vr-heard-text').textContent = '';
+    _vrRenderAnswerZone();
+    _vrRenderPool();
+});
+
+// Check / Next
+document.getElementById('vr-check-btn').addEventListener('click', _vrCheckAnswer);
+
+// Word sound toggle
+let _vrWordSpeakEnabled = true;
+
+function _vrUpdateWordSpeakBtn() {
+    const btn = _vrEl('vr-word-speak-toggle');
+    if (!btn) return;
+    const iconEl = btn.querySelector('.reorder-ctrl-icon');
+    if (_vrWordSpeakEnabled) {
+        btn.classList.remove('reorder-ctrl-word-sound--off');
+        btn.classList.add('reorder-ctrl-word-sound--on');
+        if (iconEl) iconEl.textContent = '🔊';
+    } else {
+        btn.classList.remove('reorder-ctrl-word-sound--on');
+        btn.classList.add('reorder-ctrl-word-sound--off');
+        if (iconEl) iconEl.textContent = '🔇';
+    }
+}
+
+document.getElementById('vr-word-speak-toggle').addEventListener('click', () => {
+    _vrWordSpeakEnabled = !_vrWordSpeakEnabled;
+    _vrUpdateWordSpeakBtn();
+});
+
+// Exit button (shared quiz-exit-btn) already handled globally; add voice-reorder stop
+
+document.getElementById('quiz-exit-btn').addEventListener('click', () => {
+    if (quizState.mode === 'voice-reorder') {
+        _vrStopRecording();
+    }
+});
+
+console.log('✅ Voice Reorder loaded.');

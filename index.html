@@ -207,6 +207,105 @@
       font-size: 0.82em; color: var(--color-text-light);
       margin-left: auto; flex-shrink: 0;
     }
+    /* ── Voice Reorder Mode ─────────────────────────────────── */
+    .vr-answer-label, .vr-pool-label {
+      font-size: 0.72em; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.07em; color: var(--color-text-light, #8a7f74);
+      margin: 12px 0 5px;
+    }
+    .vr-pool-hint {
+      font-weight: 400; text-transform: none; letter-spacing: 0; font-size: 0.9em;
+      color: var(--color-text-light, #8a7f74);
+    }
+    .vr-answer-zone {
+      min-height: 52px;
+      border: 2px dashed var(--color-border, #ece6de);
+      border-radius: 10px;
+      padding: 10px 12px;
+      display: flex; flex-wrap: wrap; gap: 7px; align-items: center;
+      background: #fff;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .vr-answer-zone.vr-correct-flash {
+      border-color: #4caf50; background: #e8f5e9;
+    }
+    .vr-answer-empty {
+      font-size: 0.83em; color: #ccc; width: 100%; text-align: center;
+    }
+    .vr-word-pool {
+      display: flex; flex-wrap: wrap; gap: 7px;
+      background: var(--color-bg-alt, #f0ede8);
+      border-radius: 10px; padding: 12px;
+      min-height: 44px;
+    }
+    /* Shared chip style */
+    .vr-chip {
+      padding: 6px 11px; border-radius: 6px; font-size: 0.9em; font-weight: 500;
+      cursor: pointer; user-select: none; transition: transform 0.1s, opacity 0.18s, background 0.12s;
+      border: 1.5px solid transparent;
+    }
+    .vr-chip.pool-chip {
+      background: var(--color-bg, #faf8f5);
+      border-color: var(--color-border, #ece6de);
+      color: var(--color-text, #2d2a26);
+    }
+    .vr-chip.pool-chip:hover { background: #e5e0d8; }
+    .vr-chip.answer-chip {
+      background: var(--color-primary, #7a6b5a);
+      color: #fff;
+      border-color: var(--color-primary-dark, #5c4f40);
+    }
+    .vr-chip.answer-chip:active { opacity: 0.75; }
+    /* VR — 拖曳中的 chip 半透明佔位 */
+    .vr-chip.is-dragging {
+      opacity: 0.35;
+      pointer-events: none;
+    }
+    /* VR — 答案區接受拖曳時邊框高亮 */
+    .vr-answer-zone.drag-over {
+      border-color: var(--color-primary, #7a6b5a);
+      background: var(--color-accent-light, #f5ece0);
+    }
+    /* VR — 左右相鄰 chip 輕微位移（插入位置提示）*/
+    .vr-chip.answer-chip.is-neighbor-left  { transform: translateX(-3px); transition: transform 0.1s; }
+    .vr-chip.answer-chip.is-neighbor-right { transform: translateX( 3px); transition: transform 0.1s; }
+    .vr-chip.just-arrived { animation: vr-pop 0.18s ease; }
+    @keyframes vr-pop {
+      0%   { transform: scale(1.18); }
+      100% { transform: scale(1); }
+    }
+    /* Mic row */
+    .vr-mic-row {
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      margin: 14px 0 6px;
+    }
+    .vr-mic-btn {
+      width: 68px; height: 68px; border-radius: 50%;
+      border: 3px solid var(--color-primary, #7a6b5a);
+      background: #fff; color: var(--color-primary, #7a6b5a);
+      font-size: 26px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s, box-shadow 0.15s;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .vr-mic-btn:hover { background: var(--color-accent-light, #f5ece0); }
+    .vr-mic-btn.is-recording {
+      background: #e53935; border-color: #e53935; color: #fff;
+      animation: vr-pulse 1s ease-out infinite;
+    }
+    @keyframes vr-pulse {
+      0%   { box-shadow: 0 0 0 0   rgba(229,57,53,0.35); }
+      70%  { box-shadow: 0 0 0 12px rgba(229,57,53,0); }
+      100% { box-shadow: 0 0 0 0   rgba(229,57,53,0); }
+    }
+    .vr-mic-label {
+      font-size: 0.82em; color: var(--color-text-light, #8a7f74); text-align: center;
+    }
+    .vr-heard-text {
+      font-size: 0.85em; color: var(--color-primary, #7a6b5a);
+      font-style: italic; text-align: center; min-height: 1.3em;
+    }
+
   </style>
 </head>
 <body>
@@ -540,6 +639,13 @@
                 <div class="quiz-mode-desc">Rearrange the sentence</div>
             </div>
 
+            <!-- Voice Reorder -->
+            <div class="quiz-mode-card" id="quiz-mode-voice-reorder">
+                <div class="quiz-mode-icon">🎤</div>
+                <div class="quiz-mode-name">Voice Reorder</div>
+                <div class="quiz-mode-desc">Say words to rebuild the sentence</div>
+            </div>
+
         </div>
 
         <!-- Expandable sub-panels (one per mode that supports source selection) -->
@@ -674,6 +780,41 @@
                 </div>
             </div>
             <button class="quiz-next-btn" id="start-reorder-btn">Start →</button>
+        </div>
+
+        <!-- Voice Reorder sub-panel -->
+        <div class="quiz-subpanel is-hidden" id="subpanel-voice-reorder">
+            <div class="quiz-subpanel-source-row">
+                <button class="quiz-source-btn is-active" data-source="note" data-mode="voice-reorder">📝 From Note</button>
+                <button class="quiz-source-btn" data-source="article" data-mode="voice-reorder">📖 From Article</button>
+            </div>
+            <div class="quiz-note-options is-hidden" id="voice-reorder-note-options">
+                <div class="quiz-subpanel-source-row">
+                    <button class="quiz-diff-btn is-active" data-diff="mix" data-mode="voice-reorder">Mix</button>
+                    <button class="quiz-diff-btn" data-diff="easy" data-mode="voice-reorder">🟢 Easy</button>
+                    <button class="quiz-diff-btn" data-diff="medium" data-mode="voice-reorder">🟡 Medium</button>
+                    <button class="quiz-diff-btn" data-diff="hard" data-mode="voice-reorder">🔴 Hard</button>
+                </div>
+                <div class="quiz-subpanel-source-row">
+                    <button class="quiz-count-btn is-active" data-count="10" data-mode="voice-reorder">10 題</button>
+                    <button class="quiz-count-btn" data-count="5" data-mode="voice-reorder">5 題</button>
+                </div>
+            </div>
+            <div class="quiz-article-options is-hidden" id="voice-reorder-article-options">
+                <div class="quiz-subpanel-source-row">
+                    <button class="quiz-diff-btn is-active" data-diff="mix" data-mode="voice-reorder">Mix</button>
+                    <button class="quiz-diff-btn" data-diff="easy" data-mode="voice-reorder">🟢 Easy</button>
+                    <button class="quiz-diff-btn" data-diff="medium" data-mode="voice-reorder">🟡 Medium</button>
+                    <button class="quiz-diff-btn" data-diff="hard" data-mode="voice-reorder">🔴 Hard</button>
+                </div>
+                <div class="quiz-subpanel-source-row">
+                    <button class="quiz-count-btn is-active" data-count="10" data-mode="voice-reorder">10 題</button>
+                    <button class="quiz-count-btn" data-count="5" data-mode="voice-reorder">5 題</button>
+                </div>
+            </div>
+            <button class="quiz-next-btn" id="start-voice-reorder-btn">Start 🎤 →</button>
+        </div>
+
         </div>
 
     </div>
@@ -820,6 +961,61 @@
             <div class="quiz-options" id="article-cloze-options"></div>
             <div class="quiz-feedback" id="article-cloze-feedback"></div>
             <button class="quiz-next-btn is-hidden" id="article-cloze-next">Next →</button>
+        </div>
+
+        <!-- Voice Reorder Mode -->
+        <div id="quiz-voice-reorder-area" class="is-hidden">
+            <!-- Sentence play button (no text shown) -->
+            <div class="quiz-card">
+                <button class="dictation-play-btn" id="vr-play-btn">
+                    <span class="dictation-play-icon">▶</span>
+                    <span>Play Sentence</span>
+                </button>
+                <div class="dictation-hint" id="vr-play-hint">Listen, then say each word to place it</div>
+            </div>
+
+            <!-- Answer zone -->
+            <div class="vr-answer-label">Your answer</div>
+            <div class="vr-answer-zone" id="vr-answer-zone">
+                <span class="vr-answer-empty" id="vr-answer-empty">Say a word to place it here…</span>
+            </div>
+
+            <!-- Mic button -->
+            <div class="vr-mic-row">
+                <button class="vr-mic-btn" id="vr-mic-btn" title="Tap to start / stop recording">🎤</button>
+                <div class="vr-mic-label" id="vr-mic-label">Tap mic to speak</div>
+                <div class="vr-heard-text" id="vr-heard-text"></div>
+            </div>
+
+            <!-- Word bank -->
+            <div class="vr-pool-label">Word bank <span class="vr-pool-hint">(tap to place manually)</span></div>
+            <div class="vr-word-pool" id="vr-word-pool"></div>
+
+            <!-- Controls row -->
+            <div class="reorder-controls">
+                <button class="reorder-ctrl-btn reorder-ctrl-back" id="vr-undo-btn" title="Undo last word">
+                    <span class="reorder-ctrl-icon">⌫</span>
+                    <span class="reorder-ctrl-label">Undo</span>
+                </button>
+                <button class="reorder-ctrl-btn reorder-ctrl-clear" id="vr-clear-btn" title="Clear all">
+                    <span class="reorder-ctrl-icon">↺</span>
+                    <span class="reorder-ctrl-label">Clear</span>
+                </button>
+                <button class="reorder-ctrl-btn reorder-ctrl-play" id="vr-replay-btn">
+                    <span class="reorder-ctrl-icon">▶</span>
+                    <span class="reorder-ctrl-label">Replay</span>
+                </button>
+                <button class="reorder-ctrl-btn reorder-ctrl-word-sound reorder-ctrl-word-sound--on" id="vr-word-speak-toggle" title="開關單字點擊發音">
+                    <span class="reorder-ctrl-icon">🔊</span>
+                    <span class="reorder-ctrl-label">Word</span>
+                </button>
+            </div>
+
+            <!-- Feedback + submit -->
+            <div class="quiz-feedback" id="vr-feedback"></div>
+            <div class="reorder-submit-row">
+                <button class="quiz-btn quiz-btn-correct reorder-check-full" id="vr-check-btn">Check ✓</button>
+            </div>
         </div>
 
         <!-- Reorder Mode -->
