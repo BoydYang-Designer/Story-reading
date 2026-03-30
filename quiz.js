@@ -5137,9 +5137,9 @@ function _vrStartRecording() {
             _vrBestTranscript = current;
         }
 
-        // 顯示當前預覽（用 current，讓使用者看到最新識別狀態）
-        if (current) {
-            _vrEl('vr-heard-text').textContent = `Heard: "${current}"…`;
+        // 顯示預覽用 _vrBestTranscript（和停止後送入比對的來源一致）
+        if (_vrBestTranscript) {
+            _vrEl('vr-heard-text').textContent = `Heard: "${_vrBestTranscript}"…`;
         }
     };
 
@@ -5206,11 +5206,16 @@ function _vrSetMicOff() {
 function _vrProcessSpeech(heard) {
     if (_vrState.done) return;
 
-    // ── 整句比對：LCS + Levenshtein 近似匹配 ─────────────────
-    // 只比對 poolOrder（尚未放入的字），避免已放入的字被重複匹配
+    // ── 按照 heard 的語序，逐一從 pool 找字放入答案區 ──────────
+    // 規則：
+    //   1. 依 heardTokens 順序逐一掃描
+    //   2. 每個 token 在目前剩餘 pool 裡找第一個近似匹配
+    //   3. 找到 → 從 pool 移除，依序 push 進 answer（維持說話語序）
+    //   4. 找不到（pool 沒有該字）→ 跳過，繼續下一個 token
+    //   5. pool 裡同一個字只能被匹配一次（先到先得）
 
     const heardTokens = heard.toLowerCase()
-        .replace(/[.,?!'";\-]/g, '')
+        .replace(/[.,?!'";\-:]/g, '')
         .split(/\s+/)
         .filter(Boolean);
 
@@ -5219,62 +5224,44 @@ function _vrProcessSpeech(heard) {
         return;
     }
 
-    const poolIndices = [..._vrState.poolOrder];
-    const poolWords   = poolIndices.map(i =>
-        _vrState.words[i].replace(/[.,?!'";\-]/g, '').toLowerCase()
-    );
-
     function _approxEq(a, b) {
         if (a === b) return true;
-        if (_vrStrictMode) return false;  // Strict 模式：完全相同才算
+        if (_vrStrictMode) return false;
         const thresh = b.length <= 3 ? 1 : b.length <= 6 ? 2 : 3;
         return _vrLevenshtein(a, b) <= thresh;
     }
 
-    // LCS dp（heardTokens vs poolWords）
-    const H = heardTokens.length, C = poolWords.length;
-    const dp = Array.from({ length: H + 1 }, () => new Array(C + 1).fill(0));
-    for (let i = 1; i <= H; i++) {
-        for (let j = 1; j <= C; j++) {
-            dp[i][j] = _approxEq(heardTokens[i - 1], poolWords[j - 1])
-                ? dp[i - 1][j - 1] + 1
-                : Math.max(dp[i - 1][j], dp[i][j - 1]);
+    // 工作用 pool（splice 用，不直接動 _vrState.poolOrder）
+    const workingPool = [..._vrState.poolOrder];
+    const toPlace = [];
+
+    for (const token of heardTokens) {
+        let foundAt = -1;
+        for (let k = 0; k < workingPool.length; k++) {
+            const poolWord = _vrState.words[workingPool[k]]
+                .replace(/[.,?!'";\-:]/g, '').toLowerCase();
+            if (_approxEq(token, poolWord)) {
+                foundAt = k;
+                break;
+            }
         }
+        if (foundAt !== -1) {
+            toPlace.push(workingPool[foundAt]);
+            workingPool.splice(foundAt, 1); // 移除避免重複匹配
+        }
+        // 找不到 → 跳過，繼續
     }
 
-    // Backtrack 找出哪些 poolWords 位置被匹配到
-    const matchedPoolPos = new Set();
-    let i = H, j = C;
-    while (i > 0 && j > 0) {
-        if (_approxEq(heardTokens[i - 1], poolWords[j - 1])) {
-            matchedPoolPos.add(j - 1);
-            i--; j--;
-        } else if (dp[i - 1][j] >= dp[i][j - 1]) {
-            i--;
-        } else {
-            j--;
-        }
-    }
-
-    if (matchedPoolPos.size === 0) {
-        _vrShowFeedback('warn', `Couldn't match — try speaking more clearly.`);
+    if (toPlace.length === 0) {
+        _vrShowFeedback('warn', `Couldn't match any words — try speaking more clearly.`);
         return;
     }
 
-    // 收集匹配到的 word index，按原始句子順序排序後插入答案區末尾
-    const toPlace = [];
-    matchedPoolPos.forEach(pi => toPlace.push(poolIndices[pi]));
-    toPlace.sort((a, b) => a - b);
-
+    // 依 heard 語序寫入答案區
     toPlace.forEach(wordIdx => {
         _vrState.answer.push(wordIdx);
         _vrState.poolOrder = _vrState.poolOrder.filter(x => x !== wordIdx);
     });
-
-    if (toPlace.length === 0) {
-        _vrShowFeedback('warn', 'Words already placed. Say the remaining words.');
-        return;
-    }
 
     _vrRenderAnswerZone(toPlace[toPlace.length - 1]);
     _vrRenderPool();
