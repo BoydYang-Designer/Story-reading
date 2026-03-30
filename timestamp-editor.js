@@ -1484,3 +1484,151 @@ const _tsCompareCloseBtn = document.getElementById('ts-compare-close-btn');
 if (_tsCompareCloseBtn) _tsCompareCloseBtn.addEventListener('click', closeTsCompare);
 
 console.log('✅ Timestamp Editor loaded (replaces audio-editor.js).');
+
+// ══════════════════════════════════════════════════════════════
+//  勾選式文章選擇器 Dialog
+//  供「匯出 Timestamp」與「比對 GitHub」共用
+//  opts:
+//    titles       string[]     — 可選的文章標題清單
+//    heading      string       — dialog 標題文字
+//    confirmLabel string       — 確認按鈕文字（「匯出」/「比對」）
+//    singleSelect boolean      — true = 單選模式（比對用）
+//    onConfirm    fn(selected) — 確認後呼叫，傳入勾選的 title 陣列
+// ══════════════════════════════════════════════════════════════
+function showTsPickerDialog({ titles, heading, confirmLabel, singleSelect = false, onConfirm }) {
+    // 若已有舊 dialog 先移除
+    const old = document.getElementById('ts-picker-dialog');
+    if (old) old.remove();
+
+    // ── 計算每篇的修改筆數 ──────────────────────────────────────
+    const tsOv = loadTsOverride();
+
+    // ── 建立 overlay ────────────────────────────────────────────
+    const overlay = document.createElement('div');
+    overlay.id = 'ts-picker-dialog';
+    overlay.style.cssText = `
+        position:fixed;inset:0;z-index:9999;
+        background:rgba(0,0,0,.45);
+        display:flex;align-items:center;justify-content:center;
+        padding:16px;
+    `;
+
+    const box = document.createElement('div');
+    box.style.cssText = `
+        background:var(--color-surface, #fff);
+        border-radius:14px;
+        padding:24px 20px 20px;
+        width:100%;max-width:420px;
+        max-height:80vh;
+        display:flex;flex-direction:column;
+        box-shadow:0 8px 32px rgba(0,0,0,.18);
+    `;
+
+    // 標題列
+    const header = document.createElement('div');
+    header.style.cssText = 'display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;';
+    header.innerHTML = `
+        <span style="font-weight:700;font-size:1.05em;">${heading}</span>
+        <button id="ts-picker-close" style="background:none;border:none;font-size:1.3em;cursor:pointer;line-height:1;">✕</button>
+    `;
+
+    // 全選 / 取消全選（多選模式才顯示）
+    let selectAllRow = null;
+    if (!singleSelect) {
+        selectAllRow = document.createElement('div');
+        selectAllRow.style.cssText = 'display:flex;gap:8px;margin-bottom:10px;';
+        selectAllRow.innerHTML = `
+            <button id="ts-picker-all" style="flex:1;padding:6px;border-radius:8px;border:1px solid var(--color-border,#ddd);background:var(--color-bg,#f5f5f5);cursor:pointer;font-size:.88em;">全選</button>
+            <button id="ts-picker-none" style="flex:1;padding:6px;border-radius:8px;border:1px solid var(--color-border,#ddd);background:var(--color-bg,#f5f5f5);cursor:pointer;font-size:.88em;">取消全選</button>
+        `;
+    }
+
+    // 文章清單（可捲動）
+    const listWrap = document.createElement('div');
+    listWrap.style.cssText = 'overflow-y:auto;flex:1;margin-bottom:16px;display:flex;flex-direction:column;gap:6px;';
+
+    titles.forEach((t, i) => {
+        const entryCount = Object.keys(tsOv[t] || {}).length;
+        const row = document.createElement('label');
+        row.style.cssText = `
+            display:flex;align-items:center;gap:10px;
+            padding:10px 12px;border-radius:10px;
+            background:var(--color-bg,#f9f9f9);
+            cursor:pointer;border:1.5px solid transparent;
+            transition:border-color .15s;
+        `;
+        row.dataset.title = t;
+
+        const input = document.createElement('input');
+        input.type = singleSelect ? 'radio' : 'checkbox';
+        input.name = 'ts-picker-item';
+        input.value = t;
+        input.style.cssText = 'width:16px;height:16px;flex-shrink:0;accent-color:var(--color-primary,#4a7c59);';
+
+        const label = document.createElement('span');
+        label.style.cssText = 'flex:1;font-size:.93em;line-height:1.3;';
+        label.textContent = t;
+
+        const badge = document.createElement('span');
+        badge.style.cssText = `
+            font-size:.78em;padding:2px 7px;border-radius:20px;
+            background:var(--color-primary-light,#e8f5e9);
+            color:var(--color-primary,#4a7c59);white-space:nowrap;flex-shrink:0;
+        `;
+        badge.textContent = `${entryCount} 筆`;
+
+        input.addEventListener('change', () => {
+            row.style.borderColor = input.checked ? 'var(--color-primary,#4a7c59)' : 'transparent';
+        });
+
+        row.append(input, label, badge);
+        listWrap.appendChild(row);
+    });
+
+    // 底部按鈕
+    const footer = document.createElement('div');
+    footer.style.cssText = 'display:flex;gap:10px;justify-content:flex-end;';
+    footer.innerHTML = `
+        <button id="ts-picker-cancel" style="padding:9px 20px;border-radius:9px;border:1px solid var(--color-border,#ddd);background:none;cursor:pointer;">取消</button>
+        <button id="ts-picker-confirm" style="padding:9px 20px;border-radius:9px;border:none;background:var(--color-primary,#4a7c59);color:#fff;font-weight:600;cursor:pointer;">${confirmLabel}</button>
+    `;
+
+    // 組裝
+    box.append(header);
+    if (selectAllRow) box.append(selectAllRow);
+    box.append(listWrap, footer);
+    overlay.appendChild(box);
+    document.body.appendChild(overlay);
+
+    // ── 事件 ────────────────────────────────────────────────────
+    const close = () => overlay.remove();
+
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
+    box.querySelector('#ts-picker-close').addEventListener('click', close);
+    box.querySelector('#ts-picker-cancel').addEventListener('click', close);
+
+    if (!singleSelect) {
+        box.querySelector('#ts-picker-all').addEventListener('click', () => {
+            listWrap.querySelectorAll('input[type=checkbox]').forEach(cb => {
+                cb.checked = true;
+                cb.closest('label').style.borderColor = 'var(--color-primary,#4a7c59)';
+            });
+        });
+        box.querySelector('#ts-picker-none').addEventListener('click', () => {
+            listWrap.querySelectorAll('input[type=checkbox]').forEach(cb => {
+                cb.checked = false;
+                cb.closest('label').style.borderColor = 'transparent';
+            });
+        });
+    }
+
+    box.querySelector('#ts-picker-confirm').addEventListener('click', () => {
+        const selected = [...listWrap.querySelectorAll('input:checked')].map(cb => cb.value);
+        if (selected.length === 0) {
+            if (typeof showNotification === 'function') showNotification('請至少勾選一篇文章', 'warning');
+            return;
+        }
+        close();
+        onConfirm(selected);
+    });
+}

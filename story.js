@@ -1483,28 +1483,29 @@ if (backFromAudioEditorBtn) {
 
 // ── 新功能：匯出修改版 .txt / 比對 GitHub ──────────────────────
 document.getElementById('aem-export-ts-btn')?.addEventListener('click', () => {
-    // 讓使用者選擇要匯出哪篇文章（從 tsOverride 中有記錄的文章挑選）
     const tsOv = (typeof loadTsOverride === 'function') ? loadTsOverride() : {};
     const titles = Object.keys(tsOv);
     if (titles.length === 0) {
         if (typeof showNotification === 'function') showNotification('目前沒有任何暫存的 Timestamp 修改', 'warning');
         return;
     }
-    // 若只有一篇，直接匯出；否則顯示選擇提示
-    let title;
-    if (titles.length === 1) {
-        title = titles[0];
-    } else {
-        const options = titles.map((t, i) => `${i + 1}. ${t}`).join('\n');
-        const input = prompt(`請輸入要匯出的文章編號：\n\n${options}`);
-        const idx = parseInt(input, 10) - 1;
-        if (isNaN(idx) || idx < 0 || idx >= titles.length) {
-            if (typeof showNotification === 'function') showNotification('取消匯出', 'info');
-            return;
-        }
-        title = titles[idx];
+    // 勾選式多選匯出
+    if (typeof showTsPickerDialog === 'function') {
+        showTsPickerDialog({
+            titles,
+            heading: '選擇要匯出的文章',
+            confirmLabel: '匯出',
+            onConfirm: async (selected) => {
+                for (const t of selected) {
+                    if (typeof exportTimestampTxt === 'function') await exportTimestampTxt(t);
+                }
+                if (selected.length > 1) {
+                    if (typeof showNotification === 'function')
+                        showNotification(`✓ 已匯出 ${selected.length} 篇文章的 Timestamp`, 'success');
+                }
+            }
+        });
     }
-    if (typeof exportTimestampTxt === 'function') exportTimestampTxt(title);
 });
 
 document.getElementById('aem-compare-github-btn')?.addEventListener('click', () => {
@@ -1514,17 +1515,20 @@ document.getElementById('aem-compare-github-btn')?.addEventListener('click', () 
         if (typeof showNotification === 'function') showNotification('目前沒有任何暫存的 Timestamp 修改', 'warning');
         return;
     }
-    let title;
-    if (titles.length === 1) {
-        title = titles[0];
-    } else {
-        const options = titles.map((t, i) => `${i + 1}. ${t}`).join('\n');
-        const input = prompt(`請輸入要比對的文章編號：\n\n${options}`);
-        const idx = parseInt(input, 10) - 1;
-        if (isNaN(idx) || idx < 0 || idx >= titles.length) return;
-        title = titles[idx];
+    // 比對只能一篇，但改用勾選 UI（單選）
+    if (typeof showTsPickerDialog === 'function') {
+        showTsPickerDialog({
+            titles,
+            heading: '選擇要比對的文章',
+            confirmLabel: '比對',
+            singleSelect: true,
+            onConfirm: (selected) => {
+                if (selected.length > 0 && typeof openTsCompare === 'function') {
+                    openTsCompare(selected[0]);
+                }
+            }
+        });
     }
-    if (typeof openTsCompare === 'function') openTsCompare(title);
 });
 
 addManualWordBtn.addEventListener('click', () => {
