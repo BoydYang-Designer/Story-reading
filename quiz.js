@@ -5113,7 +5113,8 @@ function _vrStartRecording() {
     }
 
     // 清空 pending buffer（本次全新錄音）
-    _vrPendingFinal = '';
+    _vrPendingFinal   = '';
+    _vrPendingInterim = '';
 
     _vrRecognition = new _VrSpeechRecognition();
     _vrRecognition.lang            = 'en-US';
@@ -5131,8 +5132,9 @@ function _vrStartRecording() {
                 interim = e.results[i][0].transcript;
             }
         }
-        // 錄音中只顯示預覽，不放入答案
-        const preview = interim || _vrPendingFinal.trim();
+        // ★ interim 直接存進變數，停止時與 final 合併，不需再從畫面讀回
+        _vrPendingInterim = interim;
+        const preview = (_vrPendingFinal.trim() + ' ' + interim).trim();
         if (preview) {
             _vrEl('vr-heard-text').textContent = `Heard: "${preview}"…`;
         }
@@ -5171,32 +5173,26 @@ function _vrStopRecordingSilent() {
         try { _vrRecognition.stop(); } catch(e) {}
         _vrRecognition = null;
     }
-    _vrPendingFinal = '';
+    _vrPendingFinal   = '';
+    _vrPendingInterim = '';
     _vrSetMicOff();
 }
 
 function _vrStopRecording() {
-    // ★ Fix: 停止前先抓畫面上最新的 heard preview（含尚未 final 的 interim 字）
-    // 因為 stop() 之後瀏覽器可能來不及把最後幾個字變成 final result 回傳，
-    // 但畫面上的即時預覽已是完整句子，用它來比對最準確。
-    let heardPreview = (_vrEl('vr-heard-text').textContent || '')
-        .replace(/^Heard:\s*"/, '')   // 去掉前綴 Heard: "
-        .replace(/"\s*[…\.]*$/, '')   // 去掉結尾的 closing " 以及其後的 … 或 ...（句子內的句點保留）
-        .trim();
-
     _vrIsRecording = false;
     if (_vrRecognition) {
         try { _vrRecognition.stop(); } catch(e) {}
         _vrRecognition = null;
     }
     _vrSetMicOff();
-    // 優先用畫面預覽（最完整），其次用 _vrPendingFinal
-    const heard = heardPreview || _vrPendingFinal.trim();
+    // ★ 直接用變數合併 final + interim，乾淨可靠，不從畫面讀回
+    const heard = (_vrPendingFinal.trim() + ' ' + _vrPendingInterim).trim();
     if (heard) {
         _vrEl('vr-heard-text').textContent = `Heard: "${heard}"`;
         _vrProcessSpeech(heard);
     }
-    _vrPendingFinal = '';
+    _vrPendingFinal   = '';
+    _vrPendingInterim = '';
 }
 
 function _vrSetMicOff() {
@@ -5373,7 +5369,8 @@ document.getElementById('vr-strict-toggle').addEventListener('click', () => {
 });
 
 // 模組級 pending buffer（讓 _vrStartRecording 每次重置它）
-let _vrPendingFinal = '';
+let _vrPendingFinal   = '';
+let _vrPendingInterim = '';  // ★ 即時 interim，停止時與 final 合併比對
 
 // Exit button (shared quiz-exit-btn) already handled globally; add voice-reorder stop
 
