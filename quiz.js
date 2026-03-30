@@ -4447,6 +4447,30 @@ console.log('✅ Flashcard+ loaded.');
 //  Fallback: tap chips manually
 // ============================================================
 
+// ── 數字文字 ↔ 阿拉伯數字 對照表 ───────────────────────────────
+// 說 "ten" 池子是 "10"，或說 "10" 池子是 "ten"，都能正確匹配
+const _VR_NUM_MAP = {
+    'zero':'0','one':'1','two':'2','three':'3','four':'4',
+    'five':'5','six':'6','seven':'7','eight':'8','nine':'9',
+    'ten':'10','eleven':'11','twelve':'12','thirteen':'13','fourteen':'14',
+    'fifteen':'15','sixteen':'16','seventeen':'17','eighteen':'18','nineteen':'19',
+    'twenty':'20','thirty':'30','forty':'40','fifty':'50',
+    'sixty':'60','seventy':'70','eighty':'80','ninety':'90',
+    'hundred':'100','thousand':'1000','million':'1000000',
+};
+// 反向表：數字 → 文字
+const _VR_NUM_MAP_REV = Object.fromEntries(Object.entries(_VR_NUM_MAP).map(([k,v]) => [v,k]));
+
+/**
+ * 將單字統一正規化：數字文字 → 阿拉伯數字（作為比對用的標準形式）
+ * "ten" → "10"，"10" → "10"，"hello" → "hello"
+ */
+function _vrNormalizeNum(w) {
+    if (_VR_NUM_MAP[w]) return _VR_NUM_MAP[w];   // 文字 → 數字
+    if (_VR_NUM_MAP_REV[w]) return w;              // 已是數字，保留
+    return w;
+}
+
 // ── Levenshtein distance ────────────────────────────────────
 function _vrLevenshtein(a, b) {
     const m = a.length, n = b.length;
@@ -5210,6 +5234,7 @@ function _vrProcessSpeech(heard) {
     // 規則：
     //   1. 依 heardTokens 順序逐一掃描
     //   2. 每個 token 在目前剩餘 pool 裡找第一個近似匹配
+    //      （比對前先做數字正規化，"ten"↔"10" 視為相同）
     //   3. 找到 → 從 pool 移除，依序 push 進 answer（維持說話語序）
     //   4. 找不到（pool 沒有該字）→ 跳過，繼續下一個 token
     //   5. pool 裡同一個字只能被匹配一次（先到先得）
@@ -5225,10 +5250,12 @@ function _vrProcessSpeech(heard) {
     }
 
     function _approxEq(a, b) {
-        if (a === b) return true;
+        // 先統一數字形式再比對（"ten" vs "10" 或 "10" vs "ten" 都算相同）
+        const na = _vrNormalizeNum(a), nb = _vrNormalizeNum(b);
+        if (na === nb) return true;
         if (_vrStrictMode) return false;
-        const thresh = b.length <= 3 ? 1 : b.length <= 6 ? 2 : 3;
-        return _vrLevenshtein(a, b) <= thresh;
+        const thresh = nb.length <= 3 ? 1 : nb.length <= 6 ? 2 : 3;
+        return _vrLevenshtein(na, nb) <= thresh;
     }
 
     // 工作用 pool（splice 用，不直接動 _vrState.poolOrder）
