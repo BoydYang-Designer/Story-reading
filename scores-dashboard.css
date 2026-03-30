@@ -1178,3 +1178,69 @@
 .detail-src-chip.fam-red    { background: rgba(224,92,92,0.12);   border-color: rgba(224,92,92,0.3);   color: #8b1a1a; }
 .detail-src-chip.detail-src-none     { background: rgba(0,0,0,0.04); border-color: var(--color-border); color: var(--color-text-light); }
 .detail-src-chip.detail-src-practice { background: rgba(0,0,0,0.04); border-color: var(--color-border); color: var(--color-text-light); font-style: italic; }
+
+/* ── 出題桶標籤（加權優先規則整合）─────────────────────────── */
+
+.detail-item-bucket {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 5px;
+    padding-top: 5px;
+    border-top: 1px solid var(--color-border);
+}
+
+.bucket-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: 20px;
+    border: 1.5px solid transparent;
+    white-space: nowrap;
+}
+
+/* 桶 A：未測驗 → 藍色（最高優先） */
+.bucket-chip.bucket-a {
+    background: rgba(25, 118, 210, 0.10);
+    border-color: rgba(25, 118, 210, 0.35);
+    color: #1565c0;
+}
+
+/* 桶 B：需加強 → 橘紅色 */
+.bucket-chip.bucket-b {
+    background: rgba(229, 57, 53, 0.10);
+    border-color: rgba(229, 57, 53, 0.35);
+    color: #c62828;
+}
+
+/* 桶 C：進步中 → 橙色 */
+.bucket-chip.bucket-c {
+    background: rgba(245, 124, 0, 0.10);
+    border-color: rgba(245, 124, 0, 0.35);
+    color: #e65100;
+}
+
+/* 桶 D：已熟悉 → 綠色 */
+.bucket-chip.bucket-d {
+    background: rgba(56, 142, 60, 0.10);
+    border-color: rgba(56, 142, 60, 0.35);
+    color: #2e7d32;
+}
+
+.bucket-decay-note {
+    font-size: 0.68rem;
+    color: var(--color-text-light);
+    font-weight: 400;
+}
+
+.bucket-priority-note {
+    font-size: 0.68rem;
+    color: var(--color-text-light);
+    font-weight: 400;
+    margin-left: auto;
+    white-space: nowrap;
+}

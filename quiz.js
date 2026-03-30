@@ -4740,6 +4740,7 @@ function _vrDragMove(e) {
 function _vrDragEnd(e) {
     if (!_vrDrag.ghost) return;
     const point = e.changedTouches ? e.changedTouches[0] : e;
+    let _dragPlacedIdx = null; // 記錄本次拖曳放入的 wordIdx（用於進場動畫）
 
     if (_vrDrag.active) {
         const insertPos = _vrGetInsertPosition(point.clientX, point.clientY);
@@ -4757,6 +4758,7 @@ function _vrDragEnd(e) {
                 // pool → 答案區：插入指定位置並發音
                 _vrState.poolOrder = _vrState.poolOrder.filter(i => i !== _vrDrag.poolIdx);
                 _vrState.answer.splice(insertPos, 0, _vrDrag.poolIdx);
+                _dragPlacedIdx = _vrDrag.poolIdx; // ← 記錄以觸發動畫
                 if (_vrWordSpeakEnabled) _quizPlayWord(_vrDrag.word);
             }
         } else if (_vrDrag.source === 'answer') {
@@ -4778,6 +4780,15 @@ function _vrDragEnd(e) {
             _vrState.answer.push(idx);
             _vrState.poolOrder = _vrState.poolOrder.filter(i => i !== idx);
             if (_vrWordSpeakEnabled) _quizPlayWord(_vrDrag.word);
+            _vrShowFeedback('', '');
+            _vrEl('vr-heard-text').textContent = '';
+            _vrRenderAnswerZone(idx);   // ← 傳 idx 觸發進場動畫
+            _vrRenderPool();
+            if (_vrState.answer.length === _vrState.words.length && !_vrState.done) {
+                _vrOnAllPlaced();
+            }
+            _vrResetDrag();
+            return;
         } else {
             // answer chip 點擊 → 退回 pool
             const wordIdx = _vrState.answer.splice(_vrDrag.answerPos, 1)[0];
@@ -4787,7 +4798,7 @@ function _vrDragEnd(e) {
 
     _vrShowFeedback('', '');
     _vrEl('vr-heard-text').textContent = '';
-    _vrRenderAnswerZone();
+    _vrRenderAnswerZone(_dragPlacedIdx ?? undefined);
     _vrRenderPool();
 
     if (_vrState.answer.length === _vrState.words.length && !_vrState.done) {
@@ -4903,11 +4914,32 @@ function _vrRenderAnswerZone(latestIdx) {
         zone.appendChild(hint);
         return;
     }
+
+    // 找出 latestIdx 在答案陣列中的位置（用於觸發左右鄰居動畫）
+    const latestPos = (latestIdx !== undefined && latestIdx !== null)
+        ? _vrState.answer.indexOf(latestIdx) : -1;
+
     _vrState.answer.forEach((wordIdx, pos) => {
         const chip = document.createElement('span');
-        chip.className = 'vr-chip answer-chip' + (wordIdx === latestIdx ? ' just-arrived' : '');
+        let cls = 'vr-chip answer-chip';
+        if (wordIdx === latestIdx) {
+            cls += ' just-arrived';
+        } else if (latestPos >= 0 && pos === latestPos - 1) {
+            cls += ' vr-neighbor-left';
+        } else if (latestPos >= 0 && pos === latestPos + 1) {
+            cls += ' vr-neighbor-right';
+        }
+        chip.className = cls;
         chip.textContent = _vrState.words[wordIdx];
         chip.style.touchAction = 'none';
+
+        // 鄰居動畫只播一次，結束後移除 class
+        if (cls.includes('vr-neighbor-')) {
+            chip.addEventListener('animationend', () => {
+                chip.classList.remove('vr-neighbor-left', 'vr-neighbor-right');
+            }, { once: true });
+        }
+
         chip.addEventListener('pointerdown', (e) => {
             if (_vrState.done) return;
             e.currentTarget.setPointerCapture(e.pointerId);
@@ -5064,22 +5096,25 @@ function _vrStartRecording() {
     _vrRecognition.interimResults = true;
     _vrRecognition.maxAlternatives = 5;
 
+    // 暫存本次錄音累積的最終結果（onend 後才放入答案）
+    let _vrPendingFinal = '';
+
     _vrRecognition.onresult = (e) => {
         let interim = '';
-        let finalResult = '';
         for (let i = e.resultIndex; i < e.results.length; i++) {
             if (e.results[i].isFinal) {
                 for (let k = 0; k < e.results[i].length; k++) {
-                    finalResult += ' ' + e.results[i][k].transcript;
+                    _vrPendingFinal += ' ' + e.results[i][k].transcript;
                 }
             } else {
                 interim = e.results[i][0].transcript;
             }
         }
-        if (interim) _vrEl('vr-heard-text').textContent = `Heard: "${interim}"…`;
-        if (finalResult.trim()) {
-            _vrEl('vr-heard-text').textContent = `Heard: "${finalResult.trim()}"`;
-            _vrProcessSpeech(finalResult.trim());
+        // 錄音中只顯示預覽，不放入答案
+        if (interim) {
+            _vrEl('vr-heard-text').textContent = `Heard: "${interim}"…`;
+        } else if (_vrPendingFinal.trim()) {
+            _vrEl('vr-heard-text').textContent = `Heard: "${_vrPendingFinal.trim()}"…`;
         }
     };
 
@@ -5093,12 +5128,19 @@ function _vrStartRecording() {
     };
 
     _vrRecognition.onend = () => {
-        // Auto-restart if still in recording state (continuous simulation)
+        // 錄音自然結束：若仍在錄音狀態且題目未完成 → 重啟繼續收音
         if (_vrIsRecording && !_vrState.done) {
             try { _vrRecognition.start(); } catch(e) { _vrSetMicOff(); }
-        } else {
-            _vrSetMicOff();
+            return;
         }
+        // 錄音已被使用者停止 → 現在才把暫存結果放入答案
+        _vrSetMicOff();
+        const heard = _vrPendingFinal.trim();
+        if (heard) {
+            _vrEl('vr-heard-text').textContent = `Heard: "${heard}"`;
+            _vrProcessSpeech(heard);
+        }
+        _vrPendingFinal = '';
     };
 
     try {

@@ -2019,6 +2019,45 @@ function renderDetailView() {
     listEl.innerHTML = items.map(item => buildDetailItemHtml(item, tab)).join('');
 }
 
+/**
+ * 計算 item 的出題優先桶（對應 quiz.js weightedSample 的分桶規則）
+ * 回傳 { bucket, label, cssClass, effectiveFam, rawFam, daysSince }
+ */
+function _getItemBucketInfo(rec, itemType) {
+    // 無 calcEffectiveFamiliarity 時的簡易回退
+    let effectiveFam = null;
+    let rawFam = null;
+    let days = 0;
+
+    if (rec && _recHasPractice(rec)) {
+        rawFam = typeof calcWeightedFamiliarity === 'function'
+            ? calcWeightedFamiliarity(rec, itemType)
+            : null;
+
+        if (rawFam !== null) {
+            const lastSeen = rec.lastSeen || null;
+            days = lastSeen
+                ? Math.floor((Date.now() - new Date(lastSeen).getTime()) / 86400000)
+                : 0;
+            // 半衰期（和 quiz.js SR_CONFIG 一致）
+            const halfLife = rawFam >= 70 ? 30 : rawFam >= 40 ? 14 : 7;
+            const decayFloor = 30;
+            const floor = Math.min(decayFloor, rawFam);
+            effectiveFam = Math.round(floor + (rawFam - floor) * Math.pow(2, -days / halfLife));
+        }
+    }
+
+    if (effectiveFam === null) {
+        return { bucket: 'A', label: '🆕 未測驗', cssClass: 'bucket-a', effectiveFam: null, rawFam: null, days: 0 };
+    } else if (effectiveFam < 40) {
+        return { bucket: 'B', label: '💪 需加強', cssClass: 'bucket-b', effectiveFam, rawFam, days };
+    } else if (effectiveFam < 70) {
+        return { bucket: 'C', label: '📈 進步中', cssClass: 'bucket-c', effectiveFam, rawFam, days };
+    } else {
+        return { bucket: 'D', label: '✅ 已熟悉', cssClass: 'bucket-d', effectiveFam, rawFam, days };
+    }
+}
+
 function buildDetailItemHtml(item, tab) {
     // 未測驗佔位（僅 articleSentences tab 的未知句子）
     if (item.isPlaceholder) {
@@ -2048,11 +2087,23 @@ function buildDetailItemHtml(item, tab) {
            <span class="detail-stat days-stat">📅 ${daysAgo}</span>`
         : `<span class="detail-stat untested-stat">未測驗</span>`;
 
+    // ── 出題桶標籤（加權規則整合）────────────────────────────
+    const bucketInfo = _getItemBucketInfo(rec, tab);
+    const decayNote  = (bucketInfo.rawFam !== null && bucketInfo.rawFam !== bucketInfo.effectiveFam)
+        ? `<span class="bucket-decay-note">原始 ${bucketInfo.rawFam}% → 衰減後 ${bucketInfo.effectiveFam}% (${bucketInfo.days}天)</span>`
+        : (bucketInfo.effectiveFam !== null
+            ? `<span class="bucket-decay-note">有效熟悉度 ${bucketInfo.effectiveFam}%</span>`
+            : '');
+
+    const bucketHtml = `<div class="detail-item-bucket">
+        <span class="bucket-chip ${bucketInfo.cssClass}">${bucketInfo.label}</span>
+        ${decayNote}
+        <span class="bucket-priority-note">${_bucketPriorityNote(bucketInfo.bucket)}</span>
+    </div>`;
+
     // ── 子來源明細 ────────────────────────────────────────────
     let sourceHtml = '';
     if (rec && hasPractice) {
-        // scoring:true  → 決定熟悉度分數的正式來源
-        // scoring:false → 純練習記錄，不計入熟悉度
         let sources = [];
         if (tab === 'noteWords' || tab === 'articleWords') {
             sources = [
@@ -2095,8 +2146,19 @@ function buildDetailItemHtml(item, tab) {
             <div class="detail-score-bar ${colorClass}" style="width:${famScore}%"></div>
         </div>
         <div class="detail-item-stats">${statsHtml}</div>
+        ${bucketHtml}
         ${sourceHtml}
     </div>`;
+}
+
+function _bucketPriorityNote(bucket) {
+    switch (bucket) {
+        case 'A': return '出題機率 ★★★★★ (95%)';
+        case 'B': return '出題機率 ★★★★☆ (剩餘×70%)';
+        case 'C': return '出題機率 ★★★☆☆ (剩餘×20%)';
+        case 'D': return '出題機率 ★☆☆☆☆ (剩餘×5%)';
+        default:  return '';
+    }
 }
 
 // ── Detail view event listeners ──────────────────────────────

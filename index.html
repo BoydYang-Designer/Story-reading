@@ -269,10 +269,25 @@
     /* VR — 左右相鄰 chip 輕微位移（插入位置提示）*/
     .vr-chip.answer-chip.is-neighbor-left  { transform: translateX(-3px); transition: transform 0.1s; }
     .vr-chip.answer-chip.is-neighbor-right { transform: translateX( 3px); transition: transform 0.1s; }
-    .vr-chip.just-arrived { animation: vr-pop 0.18s ease; }
+    /* just-arrived：scale + 向上飛入 */
+    .vr-chip.just-arrived { animation: vr-pop 0.22s cubic-bezier(0.34,1.56,0.64,1); }
     @keyframes vr-pop {
-      0%   { transform: scale(1.18); }
-      100% { transform: scale(1); }
+      0%   { transform: scale(0.6) translateY(8px); opacity: 0.4; }
+      60%  { transform: scale(1.12) translateY(-2px); opacity: 1; }
+      100% { transform: scale(1) translateY(0); opacity: 1; }
+    }
+    /* 左右鄰居：輕微讓位動畫（只播一次）*/
+    .vr-chip.vr-neighbor-left  { animation: vr-nudge-left  0.28s ease; }
+    .vr-chip.vr-neighbor-right { animation: vr-nudge-right 0.28s ease; }
+    @keyframes vr-nudge-left {
+      0%   { transform: translateX(0); }
+      40%  { transform: translateX(-6px); }
+      100% { transform: translateX(0); }
+    }
+    @keyframes vr-nudge-right {
+      0%   { transform: translateX(0); }
+      40%  { transform: translateX(6px); }
+      100% { transform: translateX(0); }
     }
     /* Mic row */
     .vr-mic-row {
