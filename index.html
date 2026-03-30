@@ -320,6 +320,13 @@
       font-size: 0.85em; color: var(--color-primary, #7a6b5a);
       font-style: italic; text-align: center; min-height: 1.3em;
     }
+    /* Strict / Fuzzy toggle */
+    .reorder-ctrl-strict--on {
+      background: var(--color-accent-light, #f5ece0);
+      border-color: var(--color-primary, #7a6b5a);
+      color: var(--color-primary, #7a6b5a);
+      font-weight: 700;
+    }
 
   </style>
 </head>
@@ -1020,9 +1027,9 @@
                     <span class="reorder-ctrl-icon">▶</span>
                     <span class="reorder-ctrl-label">Replay</span>
                 </button>
-                <button class="reorder-ctrl-btn reorder-ctrl-word-sound reorder-ctrl-word-sound--on" id="vr-word-speak-toggle" title="開關單字點擊發音">
-                    <span class="reorder-ctrl-icon">🔊</span>
-                    <span class="reorder-ctrl-label">Word</span>
+                <button class="reorder-ctrl-btn reorder-ctrl-strict" id="vr-strict-toggle" title="切換 Strict / Fuzzy 比對模式">
+                    <span class="reorder-ctrl-icon">🌊</span>
+                    <span class="reorder-ctrl-label">Fuzzy</span>
                 </button>
             </div>
 

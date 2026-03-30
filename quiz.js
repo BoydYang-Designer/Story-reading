@@ -4634,7 +4634,7 @@ async function startVoiceReorder(source) {
 //  LOAD QUESTION
 // ════════════════════════════════════════════════════════════
 function _vrLoadQuestion() {
-    _vrStopRecording();
+    _vrStopRecordingSilent();
     const item = _vrState.sentences[_vrState.qIndex];
     _resetReplayCount();
 
@@ -5004,7 +5004,7 @@ function _vrUndoLast() {
 
 // ── All words placed → prompt check ──────────────────────
 function _vrOnAllPlaced() {
-    _vrStopRecording();
+    _vrStopRecordingSilent();
     _vrEl('vr-mic-label').textContent = 'All words placed — tap Check!';
 }
 
@@ -5023,7 +5023,7 @@ function _vrCheckAnswer() {
     }
 
     _vrState.done = true;
-    _vrStopRecording();
+    _vrStopRecordingSilent();
 
     const userText   = _vrState.answer.map(i => _vrState.words[i]).join(' ');
     const correctText = _vrState.words.join(' ');
@@ -5052,7 +5052,7 @@ function _vrCheckAnswer() {
 
 // ── Finish ─────────────────────────────────────────────────
 function _vrFinish() {
-    _vrStopRecording();
+    _vrStopRecordingSilent();
 
     quizState.correct    = _vrState.correct;
     quizState.wrong      = _vrState.total - _vrState.correct;
@@ -5088,59 +5088,52 @@ function _vrStartRecording() {
         showNotification('Speech recognition not supported. Please use Chrome or Safari.', 'warning');
         return;
     }
-    _vrStopRecording();
+    // 先停掉舊的 recognition（不清空答案，純粹重啟 API）
+    if (_vrRecognition) {
+        try { _vrRecognition.stop(); } catch(e) {}
+        _vrRecognition = null;
+    }
+
+    // 清空 pending buffer（本次全新錄音）
+    _vrPendingFinal = '';
 
     _vrRecognition = new _VrSpeechRecognition();
-    _vrRecognition.lang = 'en-US';
-    _vrRecognition.continuous = false;
-    _vrRecognition.interimResults = true;
+    _vrRecognition.lang            = 'en-US';
+    _vrRecognition.continuous      = true;   // 持續錄音，停頓不自動結束
+    _vrRecognition.interimResults  = true;
     _vrRecognition.maxAlternatives = 5;
-
-    // 暫存本次錄音累積的最終結果（onend 後才放入答案）
-    let _vrPendingFinal = '';
 
     _vrRecognition.onresult = (e) => {
         let interim = '';
         for (let i = e.resultIndex; i < e.results.length; i++) {
             if (e.results[i].isFinal) {
-                for (let k = 0; k < e.results[i].length; k++) {
-                    _vrPendingFinal += ' ' + e.results[i][k].transcript;
-                }
+                // 只取第一個（最高信心）候選
+                _vrPendingFinal += ' ' + e.results[i][0].transcript;
             } else {
                 interim = e.results[i][0].transcript;
             }
         }
         // 錄音中只顯示預覽，不放入答案
-        if (interim) {
-            _vrEl('vr-heard-text').textContent = `Heard: "${interim}"…`;
-        } else if (_vrPendingFinal.trim()) {
-            _vrEl('vr-heard-text').textContent = `Heard: "${_vrPendingFinal.trim()}"…`;
+        const preview = interim || _vrPendingFinal.trim();
+        if (preview) {
+            _vrEl('vr-heard-text').textContent = `Heard: "${preview}"…`;
         }
     };
 
     _vrRecognition.onerror = (e) => {
-        _vrStopRecording();
-        if (e.error === 'no-speech') {
-            _vrShowFeedback('warn', 'No speech detected — tap mic and try again.');
-        } else if (e.error === 'not-allowed') {
+        if (e.error === 'no-speech') return; // continuous 模式下 no-speech 不算錯，繼續等
+        _vrStopRecordingSilent();
+        if (e.error === 'not-allowed') {
             showNotification('Microphone permission denied.', 'warning');
         }
     };
 
     _vrRecognition.onend = () => {
-        // 錄音自然結束：若仍在錄音狀態且題目未完成 → 重啟繼續收音
+        // continuous 模式下 onend 只在「使用者主動停止」後才到這裡
+        // （若仍在 _vrIsRecording 狀態表示被系統意外中斷，嘗試重啟）
         if (_vrIsRecording && !_vrState.done) {
             try { _vrRecognition.start(); } catch(e) { _vrSetMicOff(); }
-            return;
         }
-        // 錄音已被使用者停止 → 現在才把暫存結果放入答案
-        _vrSetMicOff();
-        const heard = _vrPendingFinal.trim();
-        if (heard) {
-            _vrEl('vr-heard-text').textContent = `Heard: "${heard}"`;
-            _vrProcessSpeech(heard);
-        }
-        _vrPendingFinal = '';
     };
 
     try {
@@ -5153,6 +5146,17 @@ function _vrStartRecording() {
     }
 }
 
+function _vrStopRecordingSilent() {
+    // 內部停止：只關閉 API，不觸發 pending 比對（供 _vrOnAllPlaced / _vrFinish / _vrCheckAnswer 使用）
+    _vrIsRecording = false;
+    if (_vrRecognition) {
+        try { _vrRecognition.stop(); } catch(e) {}
+        _vrRecognition = null;
+    }
+    _vrPendingFinal = '';
+    _vrSetMicOff();
+}
+
 function _vrStopRecording() {
     _vrIsRecording = false;
     if (_vrRecognition) {
@@ -5160,6 +5164,13 @@ function _vrStopRecording() {
         _vrRecognition = null;
     }
     _vrSetMicOff();
+    // 使用者主動停止 → 把累積的 pending 送去比對
+    const heard = _vrPendingFinal.trim();
+    if (heard) {
+        _vrEl('vr-heard-text').textContent = `Heard: "${heard}"`;
+        _vrProcessSpeech(heard);
+    }
+    _vrPendingFinal = '';
 }
 
 function _vrSetMicOff() {
@@ -5192,6 +5203,7 @@ function _vrProcessSpeech(heard) {
 
     function _approxEq(a, b) {
         if (a === b) return true;
+        if (_vrStrictMode) return false;  // Strict 模式：完全相同才算
         const thresh = b.length <= 3 ? 1 : b.length <= 6 ? 2 : 3;
         return _vrLevenshtein(a, b) <= thresh;
     }
@@ -5261,8 +5273,20 @@ function _vrProcessSpeech(heard) {
 document.getElementById('vr-mic-btn').addEventListener('click', () => {
     if (_vrState.done) return;
     if (_vrIsRecording) {
+        // 正在錄音時再點 → 停止並比對
         _vrStopRecording();
     } else {
+        // 若已有答案（上一次錄音結果），再點麥克風 = 重說
+        // → 清空答案區退回池子、清空 Heard、重新開始
+        if (_vrState.answer.length > 0) {
+            while (_vrState.answer.length > 0) {
+                _vrState.poolOrder.push(_vrState.answer.pop());
+            }
+            _vrEl('vr-heard-text').textContent = '';
+            _vrShowFeedback('', '');
+            _vrRenderAnswerZone();
+            _vrRenderPool();
+        }
         _vrStartRecording();
     }
 });
@@ -5295,34 +5319,41 @@ document.getElementById('vr-clear-btn').addEventListener('click', () => {
 // Check / Next
 document.getElementById('vr-check-btn').addEventListener('click', _vrCheckAnswer);
 
-// Word sound toggle
-let _vrWordSpeakEnabled = true;
+// Word sound — 預設關閉（Voice Reorder 放字時不自動發音）
+let _vrWordSpeakEnabled = false;
 
-function _vrUpdateWordSpeakBtn() {
-    const btn = _vrEl('vr-word-speak-toggle');
+// Strict / Fuzzy 切換
+let _vrStrictMode = false;  // 預設 Fuzzy
+
+function _vrUpdateStrictBtn() {
+    const btn = _vrEl('vr-strict-toggle');
     if (!btn) return;
     const iconEl = btn.querySelector('.reorder-ctrl-icon');
-    if (_vrWordSpeakEnabled) {
-        btn.classList.remove('reorder-ctrl-word-sound--off');
-        btn.classList.add('reorder-ctrl-word-sound--on');
-        if (iconEl) iconEl.textContent = '🔊';
+    const lblEl  = btn.querySelector('.reorder-ctrl-label');
+    if (_vrStrictMode) {
+        btn.classList.add('reorder-ctrl-strict--on');
+        if (iconEl) iconEl.textContent = '🎯';
+        if (lblEl)  lblEl.textContent  = 'Strict';
     } else {
-        btn.classList.remove('reorder-ctrl-word-sound--on');
-        btn.classList.add('reorder-ctrl-word-sound--off');
-        if (iconEl) iconEl.textContent = '🔇';
+        btn.classList.remove('reorder-ctrl-strict--on');
+        if (iconEl) iconEl.textContent = '🌊';
+        if (lblEl)  lblEl.textContent  = 'Fuzzy';
     }
 }
 
-document.getElementById('vr-word-speak-toggle').addEventListener('click', () => {
-    _vrWordSpeakEnabled = !_vrWordSpeakEnabled;
-    _vrUpdateWordSpeakBtn();
+document.getElementById('vr-strict-toggle').addEventListener('click', () => {
+    _vrStrictMode = !_vrStrictMode;
+    _vrUpdateStrictBtn();
 });
+
+// 模組級 pending buffer（讓 _vrStartRecording 每次重置它）
+let _vrPendingFinal = '';
 
 // Exit button (shared quiz-exit-btn) already handled globally; add voice-reorder stop
 
 document.getElementById('quiz-exit-btn').addEventListener('click', () => {
     if (quizState.mode === 'voice-reorder') {
-        _vrStopRecording();
+        _vrStopRecordingSilent();
     }
 });
 
