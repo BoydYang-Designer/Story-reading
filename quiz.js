@@ -4538,7 +4538,16 @@ function _vrEl(id) { return document.getElementById(id); }
 
 // ── Tokenise ───────────────────────────────────────────────
 function _vrTokenize(sentence) {
-    return sentence.match(/\S+/g) || [];
+    const raw = sentence.match(/\S+/g) || [];
+    // 去除每個 token 的句首句尾標點，讓 chip 顯示更乾淨
+    return raw.map(w => w.replace(/^[.,?!:;'"'""\-]+|[.,?!:;'"'""\-]+$/g, '').trim()).filter(Boolean);
+}
+
+// ── 比對用正規化：去除所有標點並統一連字符 ──────────────────────
+// "self-esteem" → "selfesteem"，語音說 "self esteem" → token "self"+"esteem"
+// 會透過 _vrClean 都變成無標點形式，再做 hyphen-aware 匹配
+function _vrClean(w) {
+    return w.replace(/[.,?!'"'"";:\-]/g, '').toLowerCase().trim();
 }
 
 // ── hideAllQuizAreas helper (same pattern as other modes) ──
@@ -5234,13 +5243,15 @@ function _vrProcessSpeech(heard) {
     // 規則：
     //   1. 依 heardTokens 順序逐一掃描
     //   2. 每個 token 在目前剩餘 pool 裡找第一個近似匹配
-    //      （比對前先做數字正規化，"ten"↔"10" 視為相同）
+    //      - 比對前用 _vrClean() 去除標點（"self-esteem" → "selfesteem"）
+    //      - 數字正規化（"ten" ↔ "10"）
+    //      - 連字符單字跨 token 匹配（說 "self esteem" 匹配池子的 "self-esteem"）
     //   3. 找到 → 從 pool 移除，依序 push 進 answer（維持說話語序）
     //   4. 找不到（pool 沒有該字）→ 跳過，繼續下一個 token
     //   5. pool 裡同一個字只能被匹配一次（先到先得）
 
     const heardTokens = heard.toLowerCase()
-        .replace(/[.,?!'";\-:]/g, '')
+        .replace(/[.,?!'"'"";:]/g, '')   // 去標點但保留 - 讓後面 _vrClean 統一處理
         .split(/\s+/)
         .filter(Boolean);
 
@@ -5262,21 +5273,52 @@ function _vrProcessSpeech(heard) {
     const workingPool = [..._vrState.poolOrder];
     const toPlace = [];
 
-    for (const token of heardTokens) {
+    let t = 0; // heardTokens 的游標
+    while (t < heardTokens.length) {
+        const token = _vrClean(heardTokens[t]);
         let foundAt = -1;
+
+        // ── 先嘗試單 token 匹配 ────────────────────────────────
         for (let k = 0; k < workingPool.length; k++) {
-            const poolWord = _vrState.words[workingPool[k]]
-                .replace(/[.,?!'";\-:]/g, '').toLowerCase();
+            const poolWord = _vrClean(_vrState.words[workingPool[k]]);
             if (_approxEq(token, poolWord)) {
                 foundAt = k;
                 break;
             }
         }
+
         if (foundAt !== -1) {
             toPlace.push(workingPool[foundAt]);
-            workingPool.splice(foundAt, 1); // 移除避免重複匹配
+            workingPool.splice(foundAt, 1);
+            t++;
+            continue;
         }
-        // 找不到 → 跳過，繼續
+
+        // ── 單 token 找不到：嘗試合併後續 token 匹配連字符單字 ──
+        // 例如說 "self" "esteem" → 合併成 "selfesteem" 去匹配 "self-esteem"
+        let merged = token;
+        let consumed = 1;
+        let mergedFound = false;
+
+        for (let extra = t + 1; extra < Math.min(t + 4, heardTokens.length); extra++) {
+            merged += _vrClean(heardTokens[extra]);
+            consumed++;
+            for (let k = 0; k < workingPool.length; k++) {
+                const poolWord = _vrClean(_vrState.words[workingPool[k]]);
+                if (_approxEq(merged, poolWord)) {
+                    toPlace.push(workingPool[k]);
+                    workingPool.splice(k, 1);
+                    t += consumed; // 跳過已合併的 tokens
+                    mergedFound = true;
+                    break;
+                }
+            }
+            if (mergedFound) break;
+        }
+
+        if (!mergedFound) {
+            t++; // 找不到 → 跳過
+        }
     }
 
     if (toPlace.length === 0) {
