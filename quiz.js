@@ -5180,8 +5180,8 @@ function _vrStopRecording() {
     // 因為 stop() 之後瀏覽器可能來不及把最後幾個字變成 final result 回傳，
     // 但畫面上的即時預覽已是完整句子，用它來比對最準確。
     let heardPreview = (_vrEl('vr-heard-text').textContent || '')
-        .replace(/^Heard:\s*"/, '')
-        .replace(/"…?$/, '')
+        .replace(/^Heard:\s*"/, '')   // 去掉前綴 Heard: "
+        .replace(/"\s*[…\.]*$/, '')   // 去掉結尾的 closing " 以及其後的 … 或 ...（句子內的句點保留）
         .trim();
 
     _vrIsRecording = false;
