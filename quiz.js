@@ -5112,31 +5112,34 @@ function _vrStartRecording() {
         _vrRecognition = null;
     }
 
-    // 清空 pending buffer（本次全新錄音）
-    _vrPendingFinal   = '';
-    _vrPendingInterim = '';
+    // 清空 transcript 記錄（本次全新錄音）
+    _vrBestTranscript = '';
 
     _vrRecognition = new _VrSpeechRecognition();
     _vrRecognition.lang            = 'en-US';
-    _vrRecognition.continuous      = true;   // 持續錄音，停頓不自動結束
+    _vrRecognition.continuous      = true;
     _vrRecognition.interimResults  = true;
-    _vrRecognition.maxAlternatives = 5;
+    _vrRecognition.maxAlternatives = 1;
 
     _vrRecognition.onresult = (e) => {
-        let interim = '';
-        for (let i = e.resultIndex; i < e.results.length; i++) {
-            if (e.results[i].isFinal) {
-                // 只取第一個（最高信心）候選
-                _vrPendingFinal += ' ' + e.results[i][0].transcript;
-            } else {
-                interim = e.results[i][0].transcript;
-            }
+        // ★ 每次從完整的 e.results[0..length-1] 重新拼接
+        // 不用 resultIndex 累加，避免 iOS 漏掉中間 final segment 的問題
+        let current = '';
+        for (let i = 0; i < e.results.length; i++) {
+            current += ' ' + e.results[i][0].transcript;
         }
-        // ★ interim 直接存進變數，停止時與 final 合併，不需再從畫面讀回
-        _vrPendingInterim = interim;
-        const preview = (_vrPendingFinal.trim() + ' ' + interim).trim();
-        if (preview) {
-            _vrEl('vr-heard-text').textContent = `Heard: "${preview}"…`;
+        current = current.trim();
+
+        // 保留字數最多的版本（防止 iOS final 確認後 e.results 縮短）
+        const currentWords = current.split(/\s+/).filter(Boolean).length;
+        const bestWords    = _vrBestTranscript.split(/\s+/).filter(Boolean).length;
+        if (currentWords >= bestWords) {
+            _vrBestTranscript = current;
+        }
+
+        // 顯示當前預覽（用 current，讓使用者看到最新識別狀態）
+        if (current) {
+            _vrEl('vr-heard-text').textContent = `Heard: "${current}"…`;
         }
     };
 
@@ -5173,8 +5176,7 @@ function _vrStopRecordingSilent() {
         try { _vrRecognition.stop(); } catch(e) {}
         _vrRecognition = null;
     }
-    _vrPendingFinal   = '';
-    _vrPendingInterim = '';
+    _vrBestTranscript = '';
     _vrSetMicOff();
 }
 
@@ -5185,14 +5187,13 @@ function _vrStopRecording() {
         _vrRecognition = null;
     }
     _vrSetMicOff();
-    // ★ 直接用變數合併 final + interim，乾淨可靠，不從畫面讀回
-    const heard = (_vrPendingFinal.trim() + ' ' + _vrPendingInterim).trim();
+    // ★ 直接用 _vrBestTranscript：歷史最長、最完整的識別結果
+    const heard = _vrBestTranscript.trim();
     if (heard) {
         _vrEl('vr-heard-text').textContent = `Heard: "${heard}"`;
         _vrProcessSpeech(heard);
     }
-    _vrPendingFinal   = '';
-    _vrPendingInterim = '';
+    _vrBestTranscript = '';
 }
 
 function _vrSetMicOff() {
@@ -5368,9 +5369,10 @@ document.getElementById('vr-strict-toggle').addEventListener('click', () => {
     _vrUpdateStrictBtn();
 });
 
-// 模組級 pending buffer（讓 _vrStartRecording 每次重置它）
-let _vrPendingFinal   = '';
-let _vrPendingInterim = '';  // ★ 即時 interim，停止時與 final 合併比對
+// ★ 語音識別唯一資料來源：歷史最長 transcript
+// 每次 onresult 從完整 e.results 重新讀取，取字數最多的版本保留
+// 解決 iOS Web Speech API 在 continuous 模式下 final 可能漏字的問題
+let _vrBestTranscript = '';
 
 // Exit button (shared quiz-exit-btn) already handled globally; add voice-reorder stop
 
