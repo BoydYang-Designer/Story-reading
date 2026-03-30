@@ -5489,4 +5489,53 @@ document.getElementById('quiz-exit-btn').addEventListener('click', () => {
     }
 });
 
+// ── Voice Reorder 鍵盤快捷鍵 ──────────────────────────────────
+// Space  → Replay（重播句子）
+// Enter  → Check / Next（檢查答案 或 下一題）
+// M      → Mic toggle（開始/停止錄音）
+// Z      → Undo（撤回最後一個字）
+// X      → Clear all（清空答案區）
+document.addEventListener('keydown', (e) => {
+    // 只在 voice-reorder 模式有效
+    const vrArea = document.getElementById('quiz-voice-reorder-area');
+    if (!vrArea || vrArea.classList.contains('is-hidden')) return;
+    // 若焦點在 input / textarea，不攔截
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+    if (e.code === 'Space') {
+        e.preventDefault();
+        // 播放或重播句子（對應 vr-play-btn / vr-replay-btn）
+        const replayBtn = document.getElementById('vr-replay-btn');
+        const playBtn   = document.getElementById('vr-play-btn');
+        const btn = (replayBtn && !replayBtn.classList.contains('is-hidden'))
+            ? replayBtn : playBtn;
+        if (btn && !btn.disabled) btn.click();
+
+    } else if (e.code === 'Enter') {
+        e.preventDefault();
+        // Check 或 Next
+        const checkBtn = document.getElementById('vr-check-btn');
+        if (checkBtn && checkBtn.style.display !== 'none' && !checkBtn.disabled) {
+            checkBtn.click();
+        }
+
+    } else if (e.code === 'KeyM') {
+        e.preventDefault();
+        // Mic toggle：開始錄音 / 停止錄音
+        const micBtn = document.getElementById('vr-mic-btn');
+        if (micBtn && !_vrState.done) micBtn.click();
+
+    } else if (e.code === 'KeyZ') {
+        e.preventDefault();
+        // Undo 最後一個字
+        if (!_vrState.done) _vrUndoLast();
+
+    } else if (e.code === 'KeyX') {
+        e.preventDefault();
+        // Clear all
+        const clearBtn = document.getElementById('vr-clear-btn');
+        if (clearBtn && !_vrState.done) clearBtn.click();
+    }
+});
+
 console.log('✅ Voice Reorder loaded.');
