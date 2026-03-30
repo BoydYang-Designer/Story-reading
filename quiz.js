@@ -241,7 +241,7 @@ function _trackReplay() {
 let _snippetStopTimer = null;
 let _snippetTimeUpdateHandler = null;
 
-function playSnippet({ start, end, onStart, onEnd }) {
+function playSnippet({ start, end, onStart, onEnd, onLoading }) {
     // ── 停止任何正在播放的片段 ──────────────────────────────
     if (_snippetStopTimer) {
         clearTimeout(_snippetStopTimer);
@@ -265,12 +265,15 @@ function playSnippet({ start, end, onStart, onEnd }) {
             return;
         }
 
-        if (onStart) onStart();
+        // onLoading 在送出請求時立即呼叫（表示可能需要下載）
+        // onStart  在音訊實際開始播放時才呼叫
+        if (onLoading) onLoading();
         WebAudioEngine.playSnippet({
             src,
             start,
             end,
-            onEnd:  onEnd  || undefined,
+            onStart: onStart || undefined,
+            onEnd:   onEnd   || undefined,
             onError: (err) => {
                 console.error('[Quiz] WebAudioEngine error:', err);
                 if (onEnd) onEnd();
@@ -4694,17 +4697,60 @@ function _vrLoadQuestion() {
 }
 
 // ── Play sentence ──────────────────────────────────────────
+// _vrAudioLoading: 防止重複點擊在載入中時再次觸發
+let _vrAudioLoading = false;
+
+/**
+ * 設定 VR 播放按鈕的三種狀態：
+ *   'loading' → 🔄 載入中（旋轉動畫）
+ *   'playing' → ⏸ 播放中
+ *   'idle'    → ▶ 待機
+ */
+function _vrSetPlayBtnState(state) {
+    const playBtn  = _vrEl('vr-play-btn');
+    const replayBtn = _vrEl('vr-replay-btn');
+    if (!playBtn) return;
+    const iconEl = playBtn.querySelector('span:first-child');
+    if (state === 'loading') {
+        if (iconEl) iconEl.textContent = '⏳';
+        playBtn.classList.add('is-loading');
+        playBtn.disabled = true;
+        if (replayBtn) { replayBtn.classList.add('is-loading'); replayBtn.disabled = true; }
+        // 顯示 feedback 提示用戶正在載入
+        _vrShowFeedback('info', '⏳ Loading audio…');
+    } else if (state === 'playing') {
+        if (iconEl) iconEl.textContent = '⏸';
+        playBtn.classList.remove('is-loading');
+        playBtn.disabled = false;
+        if (replayBtn) { replayBtn.classList.remove('is-loading'); replayBtn.disabled = false; }
+        // 清除載入提示（只在還顯示載入訊息時清除，避免蓋掉其他 feedback）
+        const fb = _vrEl('vr-feedback');
+        if (fb && fb.textContent.includes('Loading audio')) {
+            _vrShowFeedback('', '');
+        }
+    } else { // idle
+        if (iconEl) iconEl.textContent = '▶';
+        playBtn.classList.remove('is-loading');
+        playBtn.disabled = false;
+        if (replayBtn) { replayBtn.classList.remove('is-loading'); replayBtn.disabled = false; }
+        const fb = _vrEl('vr-feedback');
+        if (fb && fb.textContent.includes('Loading audio')) {
+            _vrShowFeedback('', '');
+        }
+    }
+}
+
 function _vrPlaySentence(isAuto) {
     if (!isAuto) _trackReplay();
-    const playBtn = _vrEl('vr-play-btn');
     const item = _vrState.sentences[_vrState.qIndex];
 
     if (_vrState.hasAudio && _vrState.currentTs) {
-        playBtn.querySelector('span:first-child').textContent = '⏸';
         playSnippet({
-            start: _vrState.currentTs.start,
-            end:   _vrState.currentTs.end,
-            onEnd: () => { playBtn.querySelector('span:first-child').textContent = '▶'; }
+            start:     _vrState.currentTs.start,
+            end:       _vrState.currentTs.end,
+            onLoading: () => { _vrSetPlayBtnState('loading'); },
+            onStart:   () => { _vrSetPlayBtnState('playing'); },
+            onEnd:     () => { _vrSetPlayBtnState('idle'); },
         });
     } else {
         // TTS fallback
@@ -4712,8 +4758,9 @@ function _vrPlaySentence(isAuto) {
         speechSynthesis.cancel();
         const u = new SpeechSynthesisUtterance(item.text);
         u.lang = 'en-US'; u.rate = 0.85;
-        playBtn.querySelector('span:first-child').textContent = '⏸';
-        u.onend = () => { playBtn.querySelector('span:first-child').textContent = '▶'; };
+        _vrSetPlayBtnState('playing');
+        u.onend  = () => { _vrSetPlayBtnState('idle'); };
+        u.onerror = () => { _vrSetPlayBtnState('idle'); };
         speechSynthesis.speak(u);
     }
 }
@@ -5127,7 +5174,11 @@ function _vrUpdateProgress() {
 function _vrShowFeedback(type, msg) {
     const el = _vrEl('vr-feedback');
     if (!msg) { el.className = 'quiz-feedback'; el.textContent = ''; return; }
-    el.className = `quiz-feedback is-visible ${type === 'ok' ? 'correct' : type === 'wrong' ? 'wrong' : ''}`;
+    const typeClass = type === 'ok' ? 'correct'
+                    : type === 'wrong' ? 'wrong'
+                    : type === 'info'  ? 'loading-hint'
+                    : '';
+    el.className = `quiz-feedback is-visible ${typeClass}`;
     el.textContent = msg;
 }
 
