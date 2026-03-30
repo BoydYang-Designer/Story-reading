@@ -5176,14 +5176,22 @@ function _vrStopRecordingSilent() {
 }
 
 function _vrStopRecording() {
+    // ★ Fix: 停止前先抓畫面上最新的 heard preview（含尚未 final 的 interim 字）
+    // 因為 stop() 之後瀏覽器可能來不及把最後幾個字變成 final result 回傳，
+    // 但畫面上的即時預覽已是完整句子，用它來比對最準確。
+    let heardPreview = (_vrEl('vr-heard-text').textContent || '')
+        .replace(/^Heard:\s*"/, '')
+        .replace(/"…?$/, '')
+        .trim();
+
     _vrIsRecording = false;
     if (_vrRecognition) {
         try { _vrRecognition.stop(); } catch(e) {}
         _vrRecognition = null;
     }
     _vrSetMicOff();
-    // 使用者主動停止 → 把累積的 pending 送去比對
-    const heard = _vrPendingFinal.trim();
+    // 優先用畫面預覽（最完整），其次用 _vrPendingFinal
+    const heard = heardPreview || _vrPendingFinal.trim();
     if (heard) {
         _vrEl('vr-heard-text').textContent = `Heard: "${heard}"`;
         _vrProcessSpeech(heard);
