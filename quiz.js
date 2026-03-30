@@ -5038,13 +5038,31 @@ function _vrCheckAnswer() {
         _vrState.wrongItems.push(correctText);
     }
 
-    // Track in answeredQuestions so result review works
+    // Track in answeredQuestions — 欄位對齊 showQuizResult 期望格式
     quizState.answeredQuestions.push({
-        question: correctText,
-        userAnswer: userText,
-        correct: isCorrect,
-        mode: 'voice-reorder',
+        type:      'sentence',
+        question:  correctText,
+        selected:  userText,       // result screen 用 item.selected 顯示「Your answer」
+        correct:   correctText,    // result screen 用 item.correct 顯示正確答案（字串）
+        isCorrect,                 // result screen 用 item.isCorrect 判斷對錯 CSS
+        start:     _vrState.currentTs?.start ?? null,
+        end:       _vrState.currentTs?.end   ?? null,
+        title:     quizState.titleName ?? null,
     });
+
+    // Bug 2 Fix: 記錄 item-level 分數到 scores dashboard
+    if (typeof recordItemResult === 'function') {
+        const _vrItemType = (_vrState.hasAudio) ? 'articleSentences' : 'noteSentences';
+        recordItemResult(
+            quizState.categoryName,
+            quizState.titleName,
+            _vrItemType,
+            correctText,
+            isCorrect,
+            _quizReplayCount,
+            'reorder'   // 存入 'reorder' source key，納入熟悉度計算
+        );
+    }
 
     _vrEl('vr-check-btn').textContent = 'Next →';
     _vrEl('vr-mic-label').textContent = 'Tap Next for the next sentence.';
