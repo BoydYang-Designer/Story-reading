@@ -328,6 +328,51 @@
       font-weight: 700;
     }
 
+    /* ── VR Status Bar ── */
+    .vr-status-card {
+      padding: 10px 16px !important;
+    }
+    .vr-status-bar {
+      display: flex; align-items: center; gap: 10px;
+      min-height: 38px;
+      padding: 6px 10px;
+      border-radius: 8px;
+      background: var(--color-bg-soft, #f5f0eb);
+      transition: background 0.3s, color 0.3s;
+    }
+    .vr-status-bar.vr-status--loading {
+      background: #fff8e1;
+    }
+    .vr-status-bar.vr-status--playing {
+      background: #e8f5e9;
+    }
+    .vr-status-icon {
+      font-size: 1.3em;
+      flex-shrink: 0;
+      line-height: 1;
+    }
+    .vr-status-icon.vr-spin {
+      display: inline-block;
+      animation: vr-icon-spin 0.9s linear infinite;
+    }
+    @keyframes vr-icon-spin {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+    .vr-status-text {
+      font-size: 0.88em;
+      color: var(--color-text, #4a3f35);
+      line-height: 1.35;
+    }
+    .vr-status-bar.vr-status--loading .vr-status-text {
+      color: #b8860b;
+      font-weight: 600;
+    }
+    .vr-status-bar.vr-status--playing .vr-status-text {
+      color: #2e7d32;
+      font-weight: 600;
+    }
+
   </style>
 </head>
 <body>
@@ -680,7 +725,6 @@
             </div>
             <div class="quiz-note-options is-hidden" id="flashcard-note-options">
                 <div class="quiz-subpanel-source-row">
-                    <button class="quiz-diff-btn is-active" data-diff="mix" data-mode="flashcard">Mix</button>
                     <button class="quiz-diff-btn" data-diff="a1a2" data-mode="flashcard">🟢 A1-A2</button>
                     <button class="quiz-diff-btn" data-diff="b1b2" data-mode="flashcard">🟡 B1-B2</button>
                     <button class="quiz-diff-btn" data-diff="c1c2" data-mode="flashcard">🔴 C1-C2</button>
@@ -692,7 +736,6 @@
             </div>
             <div class="quiz-article-options is-hidden" id="flashcard-article-options">
                 <div class="quiz-subpanel-source-row">
-                    <button class="quiz-diff-btn is-active" data-diff="mix" data-mode="flashcard">Mix</button>
                     <button class="quiz-diff-btn" data-diff="a1a2" data-mode="flashcard">🟢 A1-A2</button>
                     <button class="quiz-diff-btn" data-diff="b1b2" data-mode="flashcard">🟡 B1-B2</button>
                     <button class="quiz-diff-btn" data-diff="c1c2" data-mode="flashcard">🔴 C1-C2</button>
@@ -713,7 +756,6 @@
             </div>
             <div class="quiz-note-options is-hidden" id="fcplus-note-options">
                 <div class="quiz-subpanel-source-row">
-                    <button class="quiz-diff-btn is-active" data-diff="mix" data-mode="fcplus">Mix</button>
                     <button class="quiz-diff-btn" data-diff="a1a2" data-mode="fcplus">🟢 A1-A2</button>
                     <button class="quiz-diff-btn" data-diff="b1b2" data-mode="fcplus">🟡 B1-B2</button>
                     <button class="quiz-diff-btn" data-diff="c1c2" data-mode="fcplus">🔴 C1-C2</button>
@@ -725,7 +767,6 @@
             </div>
             <div class="quiz-article-options is-hidden" id="fcplus-article-options">
                 <div class="quiz-subpanel-source-row">
-                    <button class="quiz-diff-btn is-active" data-diff="mix" data-mode="fcplus">Mix</button>
                     <button class="quiz-diff-btn" data-diff="a1a2" data-mode="fcplus">🟢 A1-A2</button>
                     <button class="quiz-diff-btn" data-diff="b1b2" data-mode="fcplus">🟡 B1-B2</button>
                     <button class="quiz-diff-btn" data-diff="c1c2" data-mode="fcplus">🔴 C1-C2</button>
@@ -746,7 +787,6 @@
             </div>
             <div class="quiz-note-options is-hidden" id="dictation-note-options">
                 <div class="quiz-subpanel-source-row">
-                    <button class="quiz-diff-btn is-active" data-diff="mix" data-mode="dictation">Mix</button>
                     <button class="quiz-diff-btn" data-diff="easy" data-mode="dictation">🟢 Easy</button>
                     <button class="quiz-diff-btn" data-diff="medium" data-mode="dictation">🟡 Medium</button>
                     <button class="quiz-diff-btn" data-diff="hard" data-mode="dictation">🔴 Hard</button>
@@ -758,7 +798,6 @@
             </div>
             <div class="quiz-article-options is-hidden" id="dictation-article-options">
                 <div class="quiz-subpanel-source-row">
-                    <button class="quiz-diff-btn is-active" data-diff="mix" data-mode="dictation">Mix</button>
                     <button class="quiz-diff-btn" data-diff="easy" data-mode="dictation">🟢 Easy</button>
                     <button class="quiz-diff-btn" data-diff="medium" data-mode="dictation">🟡 Medium</button>
                     <button class="quiz-diff-btn" data-diff="hard" data-mode="dictation">🔴 Hard</button>
@@ -779,7 +818,6 @@
             </div>
             <div class="quiz-note-options is-hidden" id="reorder-note-options">
                 <div class="quiz-subpanel-source-row">
-                    <button class="quiz-diff-btn is-active" data-diff="mix" data-mode="reorder">Mix</button>
                     <button class="quiz-diff-btn" data-diff="easy" data-mode="reorder">🟢 Easy</button>
                     <button class="quiz-diff-btn" data-diff="medium" data-mode="reorder">🟡 Medium</button>
                     <button class="quiz-diff-btn" data-diff="hard" data-mode="reorder">🔴 Hard</button>
@@ -791,7 +829,6 @@
             </div>
             <div class="quiz-article-options is-hidden" id="reorder-article-options">
                 <div class="quiz-subpanel-source-row">
-                    <button class="quiz-diff-btn is-active" data-diff="mix" data-mode="reorder">Mix</button>
                     <button class="quiz-diff-btn" data-diff="easy" data-mode="reorder">🟢 Easy</button>
                     <button class="quiz-diff-btn" data-diff="medium" data-mode="reorder">🟡 Medium</button>
                     <button class="quiz-diff-btn" data-diff="hard" data-mode="reorder">🔴 Hard</button>
@@ -812,7 +849,6 @@
             </div>
             <div class="quiz-note-options is-hidden" id="voice-reorder-note-options">
                 <div class="quiz-subpanel-source-row">
-                    <button class="quiz-diff-btn is-active" data-diff="mix" data-mode="voice-reorder">Mix</button>
                     <button class="quiz-diff-btn" data-diff="easy" data-mode="voice-reorder">🟢 Easy</button>
                     <button class="quiz-diff-btn" data-diff="medium" data-mode="voice-reorder">🟡 Medium</button>
                     <button class="quiz-diff-btn" data-diff="hard" data-mode="voice-reorder">🔴 Hard</button>
@@ -824,7 +860,6 @@
             </div>
             <div class="quiz-article-options is-hidden" id="voice-reorder-article-options">
                 <div class="quiz-subpanel-source-row">
-                    <button class="quiz-diff-btn is-active" data-diff="mix" data-mode="voice-reorder">Mix</button>
                     <button class="quiz-diff-btn" data-diff="easy" data-mode="voice-reorder">🟢 Easy</button>
                     <button class="quiz-diff-btn" data-diff="medium" data-mode="voice-reorder">🟡 Medium</button>
                     <button class="quiz-diff-btn" data-diff="hard" data-mode="voice-reorder">🔴 Hard</button>
@@ -987,13 +1022,18 @@
 
         <!-- Voice Reorder Mode -->
         <div id="quiz-voice-reorder-area" class="is-hidden">
-            <!-- Sentence play button (no text shown) -->
-            <div class="quiz-card">
-                <button class="dictation-play-btn" id="vr-play-btn">
+            <!-- Status bar: shows audio state (loading / playing / idle instruction) -->
+            <div class="quiz-card vr-status-card" id="vr-status-card">
+                <!-- Hidden play btn kept for JS compatibility, not visible to user -->
+                <button class="dictation-play-btn is-hidden" id="vr-play-btn" tabindex="-1" aria-hidden="true">
                     <span class="dictation-play-icon">▶</span>
                     <span>Play Sentence</span>
                 </button>
-                <div class="dictation-hint" id="vr-play-hint">Listen, then say each word to place it</div>
+                <div class="vr-status-bar" id="vr-status-bar">
+                    <span class="vr-status-icon" id="vr-status-icon">▶</span>
+                    <span class="vr-status-text" id="vr-status-text">Play Sentence / Listen, then say each word to place it</span>
+                </div>
+                <div class="dictation-hint is-hidden" id="vr-play-hint">Listen, then say each word to place it</div>
             </div>
 
             <!-- Answer zone -->
@@ -1002,16 +1042,16 @@
                 <span class="vr-answer-empty" id="vr-answer-empty">Say a word to place it here…</span>
             </div>
 
-            <!-- Mic button -->
-            <div class="vr-mic-row">
-                <button class="vr-mic-btn" id="vr-mic-btn" title="Tap to start / stop recording">🎤</button>
-                <div class="vr-mic-label" id="vr-mic-label">Tap mic to speak</div>
-                <div class="vr-heard-text" id="vr-heard-text"></div>
-            </div>
-
-            <!-- Word bank -->
+            <!-- Word bank (moved above mic) -->
             <div class="vr-pool-label">Word bank <span class="vr-pool-hint">(tap to place manually)</span></div>
             <div class="vr-word-pool" id="vr-word-pool"></div>
+
+            <!-- Mic button (moved below word bank) -->
+            <div class="vr-mic-row">
+                <button class="vr-mic-btn" id="vr-mic-btn" title="Tap to start / stop recording">🎤</button>
+                <div class="vr-mic-label" id="vr-mic-label">Tap mic & say the whole sentence</div>
+                <div class="vr-heard-text" id="vr-heard-text"></div>
+            </div>
 
             <!-- Controls row -->
             <div class="reorder-controls">

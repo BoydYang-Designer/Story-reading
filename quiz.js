@@ -4663,6 +4663,7 @@ async function startVoiceReorder(source) {
     _vrEl('quiz-voice-reorder-area').classList.remove('is-hidden');
 
     _vrUpdateProgress();
+    _vrUpdateStrictBtn();   // 初始化時同步按鈕 UI（預設 Strict）
     _vrLoadQuestion();
 }
 
@@ -4707,32 +4708,61 @@ let _vrAudioLoading = false;
  *   'idle'    → ▶ 待機
  */
 function _vrSetPlayBtnState(state) {
-    const playBtn  = _vrEl('vr-play-btn');
+    const playBtn   = _vrEl('vr-play-btn');
     const replayBtn = _vrEl('vr-replay-btn');
-    if (!playBtn) return;
-    const iconEl = playBtn.querySelector('span:first-child');
-    if (state === 'loading') {
-        if (iconEl) iconEl.textContent = '⏳';
-        playBtn.classList.add('is-loading');
-        playBtn.disabled = true;
-        if (replayBtn) { replayBtn.classList.add('is-loading'); replayBtn.disabled = true; }
-        // 顯示 feedback 提示用戶正在載入
-        _vrShowFeedback('info', '⏳ Loading audio…');
-    } else if (state === 'playing') {
-        if (iconEl) iconEl.textContent = '⏸';
-        playBtn.classList.remove('is-loading');
-        playBtn.disabled = false;
-        if (replayBtn) { replayBtn.classList.remove('is-loading'); replayBtn.disabled = false; }
-        // 清除載入提示（只在還顯示載入訊息時清除，避免蓋掉其他 feedback）
-        const fb = _vrEl('vr-feedback');
-        if (fb && fb.textContent.includes('Loading audio')) {
-            _vrShowFeedback('', '');
+    const statusBar  = document.getElementById('vr-status-bar');
+    const statusIcon = document.getElementById('vr-status-icon');
+    const statusText = document.getElementById('vr-status-text');
+
+    // ── 更新隱藏的 play btn（JS 內部仍使用）──
+    if (playBtn) {
+        const iconEl = playBtn.querySelector('span:first-child');
+        if (state === 'loading') {
+            if (iconEl) iconEl.textContent = '⏳';
+            playBtn.classList.add('is-loading');
+            playBtn.disabled = true;
+        } else if (state === 'playing') {
+            if (iconEl) iconEl.textContent = '⏸';
+            playBtn.classList.remove('is-loading');
+            playBtn.disabled = false;
+        } else {
+            if (iconEl) iconEl.textContent = '▶';
+            playBtn.classList.remove('is-loading');
+            playBtn.disabled = false;
         }
-    } else { // idle
-        if (iconEl) iconEl.textContent = '▶';
-        playBtn.classList.remove('is-loading');
-        playBtn.disabled = false;
-        if (replayBtn) { replayBtn.classList.remove('is-loading'); replayBtn.disabled = false; }
+    }
+
+    // ── Replay btn ──
+    if (replayBtn) {
+        if (state === 'loading') {
+            replayBtn.classList.add('is-loading'); replayBtn.disabled = true;
+        } else {
+            replayBtn.classList.remove('is-loading'); replayBtn.disabled = false;
+        }
+    }
+
+    // ── 更新 Status Bar（上方可見狀態區）──
+    if (statusBar && statusIcon && statusText) {
+        statusBar.classList.remove('vr-status--loading', 'vr-status--playing');
+        statusIcon.classList.remove('vr-spin');
+
+        if (state === 'loading') {
+            statusBar.classList.add('vr-status--loading');
+            statusIcon.textContent = '⏳';
+            statusIcon.classList.add('vr-spin');
+            statusText.textContent = 'Loading audio…';
+        } else if (state === 'playing') {
+            statusBar.classList.add('vr-status--playing');
+            statusIcon.textContent = '🔊';
+            statusText.textContent = 'Playing… listen carefully';
+        } else { // idle
+            statusIcon.textContent = '▶';
+            statusText.textContent = 'Play Sentence / Listen, then say each word to place it';
+        }
+    }
+
+    // ── 清除舊的 feedback loading 訊息 ──
+    if (state !== 'loading') {
         const fb = _vrEl('vr-feedback');
         if (fb && fb.textContent.includes('Loading audio')) {
             _vrShowFeedback('', '');
@@ -5453,7 +5483,7 @@ document.getElementById('vr-check-btn').addEventListener('click', _vrCheckAnswer
 let _vrWordSpeakEnabled = false;
 
 // Strict / Fuzzy 切換
-let _vrStrictMode = false;  // 預設 Fuzzy
+let _vrStrictMode = true;  // 預設 Strict
 
 function _vrUpdateStrictBtn() {
     const btn = _vrEl('vr-strict-toggle');
@@ -5504,12 +5534,9 @@ document.addEventListener('keydown', (e) => {
 
     if (e.code === 'Space') {
         e.preventDefault();
-        // 播放或重播句子（對應 vr-play-btn / vr-replay-btn）
+        // Space → 直接觸發 Replay（vr-play-btn 已隱藏，僅 replay-btn 供使用者操作）
         const replayBtn = document.getElementById('vr-replay-btn');
-        const playBtn   = document.getElementById('vr-play-btn');
-        const btn = (replayBtn && !replayBtn.classList.contains('is-hidden'))
-            ? replayBtn : playBtn;
-        if (btn && !btn.disabled) btn.click();
+        if (replayBtn && !replayBtn.disabled) replayBtn.click();
 
     } else if (e.code === 'Enter') {
         e.preventDefault();
