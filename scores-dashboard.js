@@ -604,18 +604,23 @@ function _getCatSort(cat) {
 function _sortArticlesByCat(articles, cat) {
     const { key, dir } = _getCatSort(cat);
 
+    // 文章名排序：直接字母比較，不需 summary 數值
+    if (key === 'title') {
+        return [...articles].sort((a, b) =>
+            dir === 'asc'
+                ? a.title.localeCompare(b.title)
+                : b.title.localeCompare(a.title)
+        );
+    }
+
     return [...articles].sort((a, b) => {
-        // 未測驗（null avg）固定排最後，已測驗按熟悉度排列
-        // 對於選定 key：null 表示該維度沒有資料，排在 tested 後、untested 前
         const _getVal = (summary, k) => {
             if (k === 'word') {
-                // 單字：Note + Article 平均
                 const na = summary.noteWordAvg, nb = summary.artWordAvg;
                 if (na !== null && nb !== null) return Math.round((na + nb) / 2);
                 return na ?? nb ?? null;
             }
             if (k === 'sent') {
-                // 句子：Note + Article 平均
                 const na = summary.noteSentAvg, nb = summary.artSentAvg;
                 if (na !== null && nb !== null) return Math.round((na + nb) / 2);
                 return na ?? nb ?? null;
@@ -629,13 +634,10 @@ function _sortArticlesByCat(articles, cat) {
         const fa = _getVal(a.summary, key);
         const fb = _getVal(b.summary, key);
 
-        // 兩者都無資料：字母排序
         if (fa === null && fb === null) return a.title.localeCompare(b.title);
-        // 無資料排後
         if (fa === null) return 1;
         if (fb === null) return -1;
 
-        // asc = 低熟悉度（fam-red）在前；desc = 高熟悉度在前
         return dir === 'asc' ? fa - fb : fb - fa;
     });
 }
@@ -776,10 +778,12 @@ function _renderBrowserSection() {
 function _buildCatSortBtns(cat) {
     const { key, dir } = _getCatSort(cat);
     // asc = 低熟悉度（fam-red）在前；desc = 高熟悉度在前
+    // 文章名排序：asc = A→Z，desc = Z→A
     const arrow = dir === 'asc' ? ' ↓' : ' ↑';
 
     const btns = [
-        { k: 'word',  label: '🔤 單字',    title: '單字熟悉度（低→高）' },
+        { k: 'title', label: '🔤 文章名',   title: '文章名稱 A→Z / Z→A' },
+        { k: 'word',  label: '📖 單字',    title: '單字熟悉度（低→高）' },
         { k: 'sent',  label: '📝 句子',    title: '句子熟悉度（低→高）' },
         { k: 'voice', label: '🎙 口說',    title: '口說熟悉度（低→高）' },
     ];

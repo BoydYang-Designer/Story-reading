@@ -170,9 +170,9 @@ let quizState = {
     // article quiz specific
     articleSubMode: 'listen',  // 'listen' | 'cloze'
     // difficulty & question count — shared across ALL modes
-    difficulty: 'mix',         // 'easy' | 'medium' | 'hard' | 'mix' (legacy, kept for sentence/article modes)
+    difficulty: 'easy',        // 'easy' | 'medium' | 'hard' | 'mix' (legacy, kept for sentence/article modes)
     selectedCefrLevels: new Set(['a1a2', 'b1b2', 'c1c2']), // multi-select CEFR for Words & Phrases modes
-    selectedDifficulties: new Set(['easy', 'medium', 'hard']), // multi-select for Dictation & Reorder
+    selectedDifficulties: new Set(['easy']), // multi-select for Dictation & Reorder — 預設只選 easy
     questionCount: 10,         // 5 | 10 (UI 支援的選項)
 };
 
@@ -810,6 +810,11 @@ function openQuiz(categoryName, titleName, source) {
     setTimeout(() => {
         _syncCefrButtons('flashcard');
         _syncCefrButtons('fcplus');
+        // Sync sentence difficulty buttons (dictation / reorder / voice-reorder)
+        // 預設 easy 已選，確保 UI 與 quizState.selectedDifficulties 同步
+        _syncDiffButtons('dictation');
+        _syncDiffButtons('reorder');
+        _syncDiffButtons('voice-reorder');
     }, 0);
 
     showView(quizView);
@@ -4532,6 +4537,7 @@ let _vrState = {
     hasAudio: false,     // true when article has timestamp MP3
     audioSrc: '',
     currentTs: null,     // {start, end} of current sentence
+    source: 'note',      // 'note' | 'article' — 記錄出題來源，供 recordItemResult 判斷 itemType
 };
 
 let _vrRecognition = null;
@@ -4657,6 +4663,7 @@ async function startVoiceReorder(source) {
     _vrState.wrongItems = [];
     _vrState.hasAudio   = hasAudio;
     _vrState.audioSrc   = audioSrc;
+    _vrState.source     = source; // 保存來源，供 _vrCheckAnswer 判斷 itemType 使用
 
     // Reset shared quizState for result screen
     quizState.answeredQuestions = [];
@@ -5175,7 +5182,9 @@ function _vrCheckAnswer() {
 
     // Bug 2 Fix: 記錄 item-level 分數到 scores dashboard
     if (typeof recordItemResult === 'function') {
-        const _vrItemType = (_vrState.hasAudio) ? 'articleSentences' : 'noteSentences';
+        // 使用 _vrState.source（'article'|'note'）判斷 itemType，
+        // 與 startVoiceReorder 的抽題邏輯保持一致，不依賴 hasAudio 狀態
+        const _vrItemType = (_vrState.source === 'article') ? 'articleSentences' : 'noteSentences';
         recordItemResult(
             quizState.categoryName,
             quizState.titleName,

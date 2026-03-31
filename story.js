@@ -319,7 +319,22 @@ function showView(view) {
     [loginView, appContainer, homeView, subCategoryView, categoryView, playbackView, noteView, dataManagerView, customArticlesView, quizView, scoresDashboardView, audioEditorManagerView, itemDetailView].forEach(el => {
         if(el) el.classList.add('is-hidden');
     });
-    
+
+    // ── 離開 quiz view 時清理 quiz 子面板殘留 ──────────────────
+    // 確保下次進入 quiz 時不會看到上一次的 session / result 畫面
+    if (view !== quizView) {
+        const qSession = document.getElementById('quiz-session');
+        const qResult  = document.getElementById('quiz-result');
+        const qMenu    = document.getElementById('quiz-menu');
+        // 只重置子面板；不動 quizState，保留上下文讓下次 openQuiz 重新填入
+        if (qSession) qSession.classList.add('is-hidden');
+        if (qResult)  qResult.classList.add('is-hidden');
+        if (qMenu)    qMenu.classList.remove('is-hidden');
+        // 停止所有 quiz 音訊
+        if (typeof quizAudioPlayer !== 'undefined') quizAudioPlayer.pause();
+        if (typeof WebAudioEngine !== 'undefined') WebAudioEngine.stop();
+    }
+
     // 特殊處理：appContainer 總是包含這些內部視圖
     if (view !== loginView) {
         appContainer.classList.remove('is-hidden');
