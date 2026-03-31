@@ -1392,7 +1392,8 @@ document.getElementById('quiz-retry-btn').addEventListener('click', () => {
         else startFcplus();
     }
     else if (mode === 'dictation')   startDictation();
-    else if (mode === 'reorder')     startReorder(subpanelSource.reorder || 'note');
+    else if (mode === 'reorder')       startReorder(subpanelSource.reorder || 'note');
+    else if (mode === 'voice-reorder') startVoiceReorder(subpanelSource['voice-reorder'] || 'note');
     else if (mode === 'article-listen' || mode === 'article-cloze') startArticleQuiz();
 });
 
@@ -1401,6 +1402,7 @@ document.getElementById('quiz-retry-wrong-btn').addEventListener('click', () => 
     const mode = quizState.mode;
     if (mode === 'dictation')            startDictationRetryWrong();
     else if (mode === 'reorder')         startReorderRetryWrong();
+    else if (mode === 'voice-reorder')   _vrStartRetryWrong();
     else if (mode === 'article-listen')  startArticleRetryWrong();
     else if (mode === 'article-cloze')   startArticleRetryWrong();
     else if (mode === 'fcplus') {        // FC-03 FIX: use FC+ instead of plain Flashcard
@@ -4636,9 +4638,17 @@ async function startVoiceReorder(source) {
         hasAudio = false;
     }
 
-    // Weighted sample
+    // BUG-3 FIX: 使用間隔重複算法（weightedSample）取代純隨機抽題
     const n = quizState.questionCount || 10;
-    const sampled = shuffle(sentences).slice(0, Math.min(n, sentences.length));
+    const _vrItemType = (source === 'article') ? 'articleSentences' : 'noteSentences';
+    const sampled = weightedSample(
+        sentences,
+        n,
+        s => s.text,
+        quizState.categoryName,
+        quizState.titleName,
+        _vrItemType
+    );
 
     _vrState.sentences  = sampled;
     _vrState.qIndex     = 0;
@@ -4689,6 +4699,7 @@ function _vrLoadQuestion() {
     _vrEl('vr-mic-label').textContent = 'Tap mic & say the whole sentence';
     _vrEl('vr-check-btn').textContent = 'Check ✓';
     _vrEl('vr-check-btn').style.display = '';
+    _vrEl('vr-answer-zone').classList.remove('vr-correct-flash'); // BUG-5 FIX: 清除上一題的綠色閃爍
 
     _vrRenderAnswerZone();
     _vrRenderPool();
@@ -4784,11 +4795,13 @@ function _vrPlaySentence(isAuto) {
         });
     } else {
         // TTS fallback
+        // BUG-7 FIX: TTS 路徑也先顯示 loading 狀態，再切換到 playing
         if (!('speechSynthesis' in window)) return;
+        _vrSetPlayBtnState('loading');
         speechSynthesis.cancel();
         const u = new SpeechSynthesisUtterance(item.text);
         u.lang = 'en-US'; u.rate = 0.85;
-        _vrSetPlayBtnState('playing');
+        u.onstart = () => { _vrSetPlayBtnState('playing'); };
         u.onend  = () => { _vrSetPlayBtnState('idle'); };
         u.onerror = () => { _vrSetPlayBtnState('idle'); };
         speechSynthesis.speak(u);
@@ -5189,11 +5202,55 @@ function _vrFinish() {
     showQuizResult('voice-reorder', _vrState.correct, _vrState.total, _vrState.wrongItems);
 }
 
-// ── Progress ──────────────────────────────────────────────
+// ── Retry Wrong (BUG-2 FIX) ──────────────────────────────
+/**
+ * 只練錯的：用 _vrState.wrongItems 重新組成句子清單，重新開始 Voice Reorder。
+ * wrongItems 儲存的是正確句子文字，需重新對應原始資料（保留 start/end 音訊時間戳）。
+ */
+function _vrStartRetryWrong() {
+    if (!_vrState.wrongItems || _vrState.wrongItems.length === 0) {
+        showNotification('No wrong sentences to retry!', 'info');
+        return;
+    }
+
+    const wrongTexts = new Set(_vrState.wrongItems);
+
+    // 從原始 sentences 中過濾出答錯的句子（保留 start/end 資訊）
+    const retrySentences = _vrState.sentences.filter(s => wrongTexts.has(s.text));
+
+    // 若原始 sentences 完全沒有命中（不應發生），直接用文字建立
+    const fallback = _vrState.wrongItems.map(text => ({ text }));
+    const finalSentences = retrySentences.length > 0 ? retrySentences : fallback;
+
+    _vrState.sentences  = shuffle(finalSentences);
+    _vrState.qIndex     = 0;
+    _vrState.correct    = 0;
+    _vrState.total      = finalSentences.length;
+    _vrState.wrongItems = [];
+
+    quizState.answeredQuestions = [];
+    quizState.correct    = 0;
+    quizState.wrong      = 0;
+    quizState.wrongItems = [];
+    quizState.retryWrongOnly = true;
+
+    quizResult.classList.add('is-hidden');
+    quizSession.classList.remove('is-hidden');
+
+    _vrHideAllAreas();
+    _vrEl('quiz-voice-reorder-area').classList.remove('is-hidden');
+
+    _vrUpdateProgress();
+    _vrUpdateStrictBtn();
+    _vrLoadQuestion();
+}
+
+// ── Progress (BUG-6 FIX: 進度條百分比與文字同步) ─────────────
 function _vrUpdateProgress() {
     const done  = _vrState.qIndex;
     const total = _vrState.total;
-    const pct   = total > 0 ? Math.round((done / total) * 100) : 0;
+    // BUG-6 FIX: 使用 (done + 1) 讓進度條與上方文字「N / total」保持一致
+    const pct   = total > 0 ? Math.round(((done + 1) / total) * 100) : 0;
     const progText = _vrEl('quiz-progress-text');
     const progFill = _vrEl('quiz-progress-fill');
     if (progText) progText.textContent = `${done + 1} / ${total}`;

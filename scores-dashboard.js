@@ -246,38 +246,41 @@ function calcWeightedFamiliarity(rec, itemType) {
         return f !== null ? f : 0;
 
     } else if (itemType === 'noteSentences') {
-        // 句子（筆記）：reorder 70% + dictation 30%
-        const fReorder   = _calcSourceFam(rec['reorder']);
-        const fDictation = _calcSourceFam(rec['dictation']);
+        // BUG-4 FIX: 句子（筆記）：reorder 60% + voiceReorder 20% + dictation 20%
+        const fReorder      = _calcSourceFam(rec['reorder']);
+        const fVoiceReorder = _calcSourceFam(rec['voiceReorder']);
+        const fDictation    = _calcSourceFam(rec['dictation']);
 
-        if (fReorder !== null && fDictation !== null) {
-            return Math.round(fReorder * 0.70 + fDictation * 0.30);
-        } else if (fReorder !== null) {
-            return fReorder;
-        } else if (fDictation !== null) {
-            return fDictation;
-        }
-        return 0;
+        // 收集有值的分數，動態調整權重
+        const scores = [];
+        if (fReorder      !== null) scores.push({ val: fReorder,      w: 0.60 });
+        if (fVoiceReorder !== null) scores.push({ val: fVoiceReorder, w: 0.20 });
+        if (fDictation    !== null) scores.push({ val: fDictation,    w: 0.20 });
+
+        if (scores.length === 0) return 0;
+        const totalW = scores.reduce((a, s) => a + s.w, 0);
+        return Math.round(scores.reduce((a, s) => a + s.val * (s.w / totalW), 0));
 
     } else if (itemType === 'articleSentences') {
-        // 句子（文章）：reorder 70% + max(articleListen, dictation) 30%
-        const fReorder   = _calcSourceFam(rec['reorder']);
-        const fArtListen = _calcSourceFam(rec['articleListen']);
-        const fDictation = _calcSourceFam(rec['dictation']);
+        // BUG-4 FIX: 句子（文章）：reorder 60% + voiceReorder 20% + max(articleListen, dictation) 20%
+        const fReorder      = _calcSourceFam(rec['reorder']);
+        const fVoiceReorder = _calcSourceFam(rec['voiceReorder']);
+        const fArtListen    = _calcSourceFam(rec['articleListen']);
+        const fDictation    = _calcSourceFam(rec['dictation']);
 
         // 取 articleListen / dictation 中分數較高的作為輔助分
         const fAux = (fArtListen !== null && fDictation !== null)
             ? Math.max(fArtListen, fDictation)
             : (fArtListen !== null ? fArtListen : fDictation);
 
-        if (fReorder !== null && fAux !== null) {
-            return Math.round(fReorder * 0.70 + fAux * 0.30);
-        } else if (fReorder !== null) {
-            return fReorder;
-        } else if (fAux !== null) {
-            return fAux;
-        }
-        return 0;
+        const scores = [];
+        if (fReorder      !== null) scores.push({ val: fReorder,      w: 0.60 });
+        if (fVoiceReorder !== null) scores.push({ val: fVoiceReorder, w: 0.20 });
+        if (fAux          !== null) scores.push({ val: fAux,          w: 0.20 });
+
+        if (scores.length === 0) return 0;
+        const totalW = scores.reduce((a, s) => a + s.w, 0);
+        return Math.round(scores.reduce((a, s) => a + s.val * (s.w / totalW), 0));
 
     } else {
         // fallback：舊格式 { correct, wrong }
