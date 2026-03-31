@@ -735,6 +735,13 @@ function pickerApplySelection() {
     } else {
         quizStatsBar.innerHTML = '';
     }
+
+    // FIX BUG-02：切換文章時清除舊的 tsDataCache，防止干擾選項跨文章污染
+    if (quizState.titleName) {
+        Object.keys(tsDataCache).forEach(k => {
+            if (k !== quizState.titleName) delete tsDataCache[k];
+        });
+    }
 }
 
 // Event listeners for the three selects
@@ -962,9 +969,8 @@ function _syncCefrButtons(mode) {
 function _syncDiffButtons(mode) {
     document.querySelectorAll(`.quiz-diff-btn[data-mode="${mode}"]`).forEach(b => {
         const diff = b.dataset.diff;
-        if (diff === 'mix') {
-            b.classList.toggle('is-active', quizState.selectedDifficulties.size === 3);
-        } else if (_DIFF_KEYS.has(diff)) {
+        // FIX BUG-06：移除 mix 按鈕邏輯（無對應 HTML 按鈕，功能已移除）
+        if (_DIFF_KEYS.has(diff)) {
             b.classList.toggle('is-active', quizState.selectedDifficulties.has(diff));
         }
     });
@@ -995,10 +1001,8 @@ document.querySelectorAll('.quiz-diff-btn').forEach(btn => {
 
         // ── Sentence difficulty multi-select path (Dictation & Reorder) ──────
         if (_DIFF_MODES.has(mode)) {
-            if (diff === 'mix') {
-                // Mix = select all three
-                quizState.selectedDifficulties = new Set(['easy', 'medium', 'hard']);
-            } else if (_DIFF_KEYS.has(diff)) {
+            // FIX BUG-06：移除 mix 分支（無對應 HTML 按鈕）
+            if (_DIFF_KEYS.has(diff)) {
                 if (quizState.selectedDifficulties.has(diff)) {
                     // Deselect — but keep at least one selected
                     if (quizState.selectedDifficulties.size > 1) {
@@ -1218,6 +1222,7 @@ function showQuizSession(mode) {
     document.getElementById('quiz-article-cloze-area').classList.add('is-hidden');
     document.getElementById('quiz-reorder-area').classList.add('is-hidden');
     document.getElementById('quiz-fcplus-area').classList.add('is-hidden');
+    document.getElementById('quiz-voice-reorder-area').classList.add('is-hidden'); // FIX BUG-01
 
     if (mode === 'flashcard')       flashcardArea.classList.remove('is-hidden');
     if (mode === 'dictation')       dictationArea.classList.remove('is-hidden');
@@ -1225,6 +1230,7 @@ function showQuizSession(mode) {
     if (mode === 'article-cloze')   document.getElementById('quiz-article-cloze-area').classList.remove('is-hidden');
     if (mode === 'reorder')         document.getElementById('quiz-reorder-area').classList.remove('is-hidden');
     if (mode === 'fcplus')          document.getElementById('quiz-fcplus-area').classList.remove('is-hidden');
+    // voice-reorder 由 startVoiceReorder() 內的 _vrHideAllAreas() + remove('is-hidden') 負責
 }
 
 // ── Show Result ───────────────────────────────────────────────
@@ -1977,7 +1983,11 @@ function handleDictationAnswer(selected, correct, btn) {
     });
 
     document.getElementById('dictation-next').classList.remove('is-hidden');
-    if (typeof recordItemResult === 'function') recordItemResult(quizState.categoryName, quizState.titleName, 'noteSentences', correct, isCorrect, _quizReplayCount, 'dictation');
+    // FIX BUG-03：依出題來源判斷 itemType（article 來源應記入 articleSentences）
+    if (typeof recordItemResult === 'function') {
+        const _dtype = (subpanelSource.dictation === 'article') ? 'articleSentences' : 'noteSentences';
+        recordItemResult(quizState.categoryName, quizState.titleName, _dtype, correct, isCorrect, _quizReplayCount, 'dictation');
+    }
 }
 
 document.getElementById('dictation-next').addEventListener('click', () => {
