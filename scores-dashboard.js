@@ -94,7 +94,7 @@ async function _updateArticleSentenceTotal(categoryName, titleName) {
  * @returns {object} 清理後的 data
  */
 function cleanLegacyFields(data) {
-    const sources = ['fc','fcplus','dictation','reorder','articleListen'];
+    const sources = ['fc','fcplus','dictation','reorder','voiceReorder','articleListen'];
     let removedFields = 0, removedRecords = 0;
 
     Object.keys(data).forEach(articleKey => {
@@ -184,7 +184,7 @@ function recordItemResult(categoryName, titleName, itemType, itemText, isCorrect
 
     const text = itemText.trim();
     if (!data[key][itemType][text]) {
-        data[key][itemType][text] = { fc: null, fcplus: null, dictation: null, reorder: null, articleListen: null, firstSeen: _todayStr(), lastSeen: null };
+        data[key][itemType][text] = { fc: null, fcplus: null, dictation: null, reorder: null, voiceReorder: null, articleListen: null, firstSeen: _todayStr(), lastSeen: null };
     }
 
     const rec = data[key][itemType][text];
@@ -286,6 +286,15 @@ function calcWeightedFamiliarity(rec, itemType) {
 }
 
 /**
+ * 計算口說熟悉度（voiceReorder source）
+ * 回傳 0–100，或 null（無資料）
+ */
+function calcVoiceScore(rec) {
+    if (!rec) return null;
+    return _calcSourceFam(rec['voiceReorder']);
+}
+
+/**
  * 舊格式 { correct, wrong } 相容計算（不再用於新資料）
  */
 function calcFamiliarityLegacy(rec) {
@@ -314,6 +323,7 @@ function _recHasPractice(rec) {
     if (!rec) return false;
     return (rec['fcplus']        && (rec['fcplus'].correct        + rec['fcplus'].wrong)        > 0)
         || (rec['reorder']       && (rec['reorder'].correct       + rec['reorder'].wrong)       > 0)
+        || (rec['voiceReorder']  && (rec['voiceReorder'].correct  + rec['voiceReorder'].wrong)  > 0)
         || (rec['dictation']     && (rec['dictation'].correct     + rec['dictation'].wrong)     > 0)
         || (rec['articleListen'] && (rec['articleListen'].correct + rec['articleListen'].wrong) > 0);
 }
@@ -323,7 +333,7 @@ function _recHasPractice(rec) {
  */
 function _recTotals(rec) {
     if (!rec) return { correct: 0, wrong: 0 };
-    const sources = ['fc','fcplus','dictation','reorder','articleListen'];
+    const sources = ['fc','fcplus','dictation','reorder','voiceReorder','articleListen'];
     let correct = 0, wrong = 0;
     sources.forEach(s => {
         if (rec[s]) { correct += rec[s].correct || 0; wrong += rec[s].wrong || 0; }
@@ -349,11 +359,11 @@ function calcNeedScore(itemRecord) {
 function calcFamiliarity(itemRecord, itemType) {
     if (!itemRecord) return 0;
     // 新格式偵測：有任一 source key
-    const hasNewFormat = ['fc','fcplus','dictation','reorder','articleListen'].some(s => itemRecord[s]);
+    const hasNewFormat = ['fc','fcplus','dictation','reorder','voiceReorder','articleListen'].some(s => itemRecord[s]);
     if (hasNewFormat && itemType) return calcWeightedFamiliarity(itemRecord, itemType);
     if (hasNewFormat) {
         // 沒有傳 itemType 時嘗試所有來源平均
-        const vals = ['fc','fcplus','dictation','reorder','articleListen']
+        const vals = ['fc','fcplus','dictation','reorder','voiceReorder','articleListen']
             .map(s => _calcSourceFam(itemRecord[s])).filter(v => v !== null);
         return vals.length > 0 ? Math.round(vals.reduce((a,b)=>a+b,0)/vals.length) : 0;
     }
@@ -495,6 +505,21 @@ function calcArticleFamSummary(categoryName, titleName) {
     const sentTestedTotal = noteTestedSentCount + artSentTestedCount;
     const sentTotal = noteSentTotal + artSentTotal;
 
+    // ── 口說（voiceReorder）──────────────────────────────────
+    // 合併 noteSentences + articleSentences 中有 voiceReorder 記錄的項目
+    const allSentItems = [
+        ...Object.values(entry.noteSentences   || {}),
+        ...Object.values(entry.articleSentences || {}),
+    ];
+    const voiceItems = allSentItems.filter(r =>
+        r['voiceReorder'] && (r['voiceReorder'].correct + r['voiceReorder'].wrong) > 0
+    );
+    const voiceScores = voiceItems.map(r => _calcSourceFam(r['voiceReorder']) ?? 0);
+    const voiceAvg    = voiceScores.length > 0
+        ? Math.round(voiceScores.reduce((a, b) => a + b, 0) / voiceScores.length) : null;
+    const voiceTested = voiceItems.length;
+    const voiceTotal  = allSentItems.length;
+
     const totalItems  = noteTotal + artTotal;
     const totalTested = wordTestedTotal + sentTestedTotal;
 
@@ -516,6 +541,8 @@ function calcArticleFamSummary(categoryName, titleName) {
         // 分開的覆蓋率（只計正式考核：fcplus / reorder）
         wordTestedTotal, wordTotal,
         sentTestedTotal, sentTotal,
+        // 口說
+        voiceAvg, voiceTested, voiceTotal,
         hasPractice: totalItems > 0
     };
 }
@@ -578,10 +605,19 @@ function _sortArticlesByCat(articles, cat) {
         // 未測驗（null avg）固定排最後，已測驗按熟悉度排列
         // 對於選定 key：null 表示該維度沒有資料，排在 tested 後、untested 前
         const _getVal = (summary, k) => {
-            if (k === 'noteWord') return summary.noteWordAvg;
-            if (k === 'noteSent') return summary.noteSentAvg;
-            if (k === 'artWord')  return summary.artWordAvg;
-            if (k === 'artSent')  return summary.artSentAvg;
+            if (k === 'word') {
+                // 單字：Note + Article 平均
+                const a = summary.noteWordAvg, b = summary.artWordAvg;
+                if (a !== null && b !== null) return Math.round((a + b) / 2);
+                return a ?? b ?? null;
+            }
+            if (k === 'sent') {
+                // 句子：Note + Article 平均
+                const a = summary.noteSentAvg, b = summary.artSentAvg;
+                if (a !== null && b !== null) return Math.round((a + b) / 2);
+                return a ?? b ?? null;
+            }
+            if (k === 'voice') return summary.voiceAvg;
             return summary.famAvg;
         };
 
@@ -740,10 +776,9 @@ function _buildCatSortBtns(cat) {
     const arrow = dir === 'asc' ? ' ↓' : ' ↑';
 
     const btns = [
-        { k: 'noteWord', label: '📝 N 單字',    title: 'Note 單字熟悉度（低→高）' },
-        { k: 'noteSent', label: '📝 N 句子',    title: 'Note 句子熟悉度（低→高）' },
-        { k: 'artWord',  label: '🃏 A 單字', title: 'Article 單字熟悉度（低→高）' },
-        { k: 'artSent',  label: '🎧 A 句子', title: 'Article 句子熟悉度（低→高）' },
+        { k: 'word',  label: '🔤 單字',    title: '單字熟悉度（低→高）' },
+        { k: 'sent',  label: '📝 句子',    title: '句子熟悉度（低→高）' },
+        { k: 'voice', label: '🎙 口說',    title: '口說熟悉度（低→高）' },
     ];
 
     return btns.map(b => {
@@ -845,70 +880,65 @@ function _toggleSection(header) {
 
 function _buildArticleRowHtml(article) {
     const { title, cat, summary } = article;
-    const { noteAvg, noteWordAvg, noteSentAvg, artWordAvg, artSentAvg,
-            noteWordTotal, noteSentTotal, noteTestedWordCount, noteTestedSentCount,
-            testedSentCount, untestedSentCount,
-            wordTestedTotal, wordTotal, sentTestedTotal, sentTotal } = summary;
+    const {
+        noteWordAvg, noteSentAvg, artWordAvg, artSentAvg,
+        noteWordTotal, noteSentTotal, noteTestedWordCount, noteTestedSentCount,
+        testedSentCount, untestedSentCount,
+        wordTestedTotal, wordTotal, sentTestedTotal, sentTotal,
+        voiceAvg, voiceTested, voiceTotal
+    } = summary;
 
-    function famChip(avg, topLabel, subInfo) {
-        if (avg === null || avg === undefined) {
-            return `<div class="browser-fam-chip chip-untested">
-                <span class="chip-top-label">${topLabel}</span>
-                <span class="chip-val">—</span>
-            </div>`;
-        }
-        const colorClass = getFamiliarityColor(avg);
-        return `<div class="browser-fam-chip ${colorClass}">
-            <span class="chip-top-label">${topLabel}</span>
-            <span class="chip-val">${avg}%</span>
-            ${subInfo ? `<span class="chip-sub">${subInfo}</span>` : ''}
-            <div class="chip-bar-wrap"><div class="chip-bar" style="width:${avg}%"></div></div>
+    // ── 計算三欄的平均值 ─────────────────────────────────────
+    // 單字欄：Note 單字 + Article 單字 平均
+    let wordAvg = null;
+    if (noteWordAvg !== null && artWordAvg !== null) wordAvg = Math.round((noteWordAvg + artWordAvg) / 2);
+    else if (noteWordAvg !== null) wordAvg = noteWordAvg;
+    else if (artWordAvg  !== null) wordAvg = artWordAvg;
+
+    // 句子欄：Note 句子 + Article 句子 平均
+    let sentAvg = null;
+    if (noteSentAvg !== null && artSentAvg !== null) sentAvg = Math.round((noteSentAvg + artSentAvg) / 2);
+    else if (noteSentAvg !== null) sentAvg = noteSentAvg;
+    else if (artSentAvg  !== null) sentAvg = artSentAvg;
+
+    // ── 覆蓋率文字 ───────────────────────────────────────────
+    const wordCoverage  = wordTotal  > 0 ? `${wordTestedTotal}/${wordTotal}`   : null;
+    const sentCoverage  = sentTotal  > 0 ? `${sentTestedTotal}/${sentTotal}`   : null;
+    const voiceCoverage = voiceTotal > 0 ? `${voiceTested}/${voiceTotal}` : null;
+
+    function pillarHtml(icon, label, avg, coverage, cssClass) {
+        const colorClass = avg !== null ? getFamiliarityColor(avg) : 'chip-untested';
+        const valHtml    = avg !== null
+            ? `<div class="art-pillar-val ${colorClass}">${avg}%</div>`
+            : `<div class="art-pillar-val chip-untested">—</div>`;
+        const barHtml    = avg !== null
+            ? `<div class="art-pillar-bar-track"><div class="art-pillar-bar ${colorClass}" style="width:${avg}%"></div></div>`
+            : `<div class="art-pillar-bar-track"><div class="art-pillar-bar" style="width:0%"></div></div>`;
+        const covHtml    = coverage
+            ? `<div class="art-pillar-cov">${coverage}</div>`
+            : '';
+        return `<div class="art-pillar ${cssClass}">
+            <div class="art-pillar-label">${icon} ${label}</div>
+            ${valHtml}
+            ${barHtml}
+            ${covHtml}
         </div>`;
     }
 
-    // Note 單字已測/總數
-    const noteWordInfo = noteWordTotal > 0 ? `${noteTestedWordCount}/${noteWordTotal}` : '';
-    // Note 句子已測/總數
-    const noteSentInfo = noteSentTotal > 0 ? `${noteTestedSentCount}/${noteSentTotal}` : '';
-    // Article 句子：已測/總數
-    const totalSents = (testedSentCount ?? 0) + (untestedSentCount ?? 0);
-    const sentInfo   = totalSents > 0 ? `${testedSentCount ?? 0}/${totalSents}` : '';
-
-    // ── 兩條覆蓋率進度條（只計正式考核：fcplus / reorder）────
-    function buildCoverageBar(tested, total, icon, label) {
-        if (total === 0) return '';
-        const pct      = Math.round((tested / total) * 100);
-        const untested = total - tested;
-        const barColor = pct >= 100 ? '#50b86c' : pct >= 50 ? '#ddb83c' : '#e05c5c';
-        const text = untested === 0
-            ? `${icon} 全部完成（${tested}/${total}）`
-            : `${icon} ${label} ${untested} 未測（${pct}%）`;
-        return `
-        <div class="browser-coverage-wrap">
-            <div class="browser-coverage-bar-track">
-                <div class="browser-coverage-bar-fill" style="width:${pct}%;background:${barColor}"></div>
-            </div>
-            <span class="browser-coverage-label">${text}</span>
-        </div>`;
-    }
-
-    const wordBarHtml = buildCoverageBar(wordTestedTotal, wordTotal, '🔤', '單字');
-    const sentBarHtml = buildCoverageBar(sentTestedTotal, sentTotal, '📝', '句子');
+    const wordPillar  = pillarHtml('🔤', '單字', wordAvg,  wordCoverage,  'art-pillar-word');
+    const sentPillar  = pillarHtml('📝', '句子', sentAvg,  sentCoverage,  'art-pillar-sent');
+    const voicePillar = pillarHtml('🎙', '口說', voiceAvg, voiceCoverage, 'art-pillar-voice');
 
     return `<div class="browser-article-row" data-title="${_escHtml(title)}" data-cat="${_escHtml(cat)}">
-        <div class="browser-article-main">
-            <div class="browser-article-title">${_escHtml(title)}</div>
-            ${wordBarHtml}${sentBarHtml}
-        </div>
-        <div class="browser-article-chips">
-            ${famChip(noteWordAvg, '📝 N.單字', noteWordInfo)}
-            ${famChip(noteSentAvg, '📝 N.句子', noteSentInfo)}
-            ${famChip(artWordAvg,  '🃏 A.單字')}
-            ${famChip(artSentAvg,  '🎧 A.句子', sentInfo)}
+        <div class="browser-article-title">${_escHtml(title)}</div>
+        <div class="browser-article-pillars">
+            ${wordPillar}
+            ${sentPillar}
+            ${voicePillar}
         </div>
         <div class="browser-article-actions">
-            <button class="browser-quiz-btn" data-title="${_escHtml(title)}" data-cat="${_escHtml(cat)}" title="進入 Quiz">🎯 Quiz</button>
-            <button class="browser-read-btn" data-title="${_escHtml(title)}" data-cat="${_escHtml(cat)}" title="前往文章">📖 閱讀</button>
+            <button class="browser-quiz-btn" data-title="${_escHtml(title)}" data-cat="${_escHtml(cat)}" title="進入 Quiz">🎯</button>
+            <button class="browser-read-btn" data-title="${_escHtml(title)}" data-cat="${_escHtml(cat)}" title="前往文章">📖</button>
         </div>
     </div>`;
 }
@@ -1757,7 +1787,7 @@ function importItemScores(file) {
                             return;
                         }
                         // 合併各 source
-                        ['fc','fcplus','dictation','reorder','articleListen'].forEach(src => {
+                        ['fc','fcplus','dictation','reorder','voiceReorder','articleListen'].forEach(src => {
                             if (!inc[src]) return;
                             if (!cur[src]) { cur[src] = inc[src]; return; }
                             cur[src].correct = (cur[src].correct || 0) + (inc[src].correct || 0);
@@ -1926,52 +1956,78 @@ function renderDetailView() {
         }
     });
 
-    // Get items for current tab
-    const itemMap = entry[tab] || {};
-    let items = Object.entries(itemMap).map(([text, rec]) => {
-        const totals = _recTotals(rec);
-        return {
-            text,
-            correct:     totals.correct,
-            wrong:       totals.wrong,
-            lastSeen:    rec.lastSeen  || null,
-            firstSeen:   rec.firstSeen || null,
-            famScore:    calcWeightedFamiliarity(rec, tab),
-            needScore:   100 - calcWeightedFamiliarity(rec, tab),
-            hasPractice: _recHasPractice(rec),
-            rec,
-        };
-    });
+    let items = [];
 
-    // Add untested items from savedWords (for note tabs)
-    if (tab === 'noteWords' || tab === 'noteSentences') {
-        const noteData = typeof savedWords !== 'undefined'
-            ? (savedWords[categoryName]?.[titleName] || {}) : {};
-        const pool = tab === 'noteWords'
-            ? [...(noteData.words || []), ...(noteData.phrases || [])]
-            : [...(noteData.sentences || [])];
-        pool.forEach(text => {
-            const t = text.trim();
-            if (!itemMap[t]) {
-                items.push({ text: t, correct: 0, wrong: 0, lastSeen: null, firstSeen: null,
-                             famScore: 0, needScore: 100, hasPractice: false, rec: null });
-            }
-        });
-    }
-
-    // Article 句子 tab：加入未測驗的句子（來自 Timestamp 快取）
-    if (tab === 'articleSentences') {
-        const cachedTotal = _getArticleSentenceTotal(categoryName, titleName);
-        const testedCount = items.length;
-        const untestedNeeded = Math.max(0, cachedTotal - testedCount);
-        // 加入佔位（未測驗句子不知道具體文字，只加數量提示）
-        for (let i = 0; i < untestedNeeded; i++) {
-            items.push({
-                text: `（未測驗句子 ${testedCount + i + 1}）`,
-                correct: 0, wrong: 0, lastSeen: null, firstSeen: null,
-                famScore: 0, needScore: 100, hasPractice: false,
-                isPlaceholder: true
+    if (tab === 'voiceReorder') {
+        // ── 口說 tab：合併 noteSentences + articleSentences，以 voiceReorder source 計分 ──
+        ['noteSentences', 'articleSentences'].forEach(itype => {
+            const itemMap = entry[itype] || {};
+            Object.entries(itemMap).forEach(([text, rec]) => {
+                const vr = rec['voiceReorder'];
+                const hasPractice = vr && (vr.correct + vr.wrong) > 0;
+                const famScore = hasPractice ? (_calcSourceFam(vr) ?? 0) : 0;
+                const totals = hasPractice ? { correct: vr.correct, wrong: vr.wrong } : { correct: 0, wrong: 0 };
+                items.push({
+                    text,
+                    correct:     totals.correct,
+                    wrong:       totals.wrong,
+                    lastSeen:    rec.lastSeen || null,
+                    firstSeen:   rec.firstSeen || null,
+                    famScore,
+                    needScore:   100 - famScore,
+                    hasPractice,
+                    rec,
+                    _voiceOnly: true,
+                });
             });
+        });
+    } else {
+        // ── 一般 tab ─────────────────────────────────────────────
+        const itemMap = entry[tab] || {};
+        items = Object.entries(itemMap).map(([text, rec]) => {
+            const totals = _recTotals(rec);
+            return {
+                text,
+                correct:     totals.correct,
+                wrong:       totals.wrong,
+                lastSeen:    rec.lastSeen  || null,
+                firstSeen:   rec.firstSeen || null,
+                famScore:    calcWeightedFamiliarity(rec, tab),
+                needScore:   100 - calcWeightedFamiliarity(rec, tab),
+                hasPractice: _recHasPractice(rec),
+                rec,
+            };
+        });
+
+        // Add untested items from savedWords (for note tabs)
+        if (tab === 'noteWords' || tab === 'noteSentences') {
+            const noteData = typeof savedWords !== 'undefined'
+                ? (savedWords[categoryName]?.[titleName] || {}) : {};
+            const pool = tab === 'noteWords'
+                ? [...(noteData.words || []), ...(noteData.phrases || [])]
+                : [...(noteData.sentences || [])];
+            pool.forEach(text => {
+                const t = text.trim();
+                if (!itemMap[t]) {
+                    items.push({ text: t, correct: 0, wrong: 0, lastSeen: null, firstSeen: null,
+                                 famScore: 0, needScore: 100, hasPractice: false, rec: null });
+                }
+            });
+        }
+
+        // Article 句子 tab：加入未測驗的句子（來自 Timestamp 快取）
+        if (tab === 'articleSentences') {
+            const cachedTotal = _getArticleSentenceTotal(categoryName, titleName);
+            const testedCount = items.length;
+            const untestedNeeded = Math.max(0, cachedTotal - testedCount);
+            for (let i = 0; i < untestedNeeded; i++) {
+                items.push({
+                    text: `（未測驗句子 ${testedCount + i + 1}）`,
+                    correct: 0, wrong: 0, lastSeen: null, firstSeen: null,
+                    famScore: 0, needScore: 100, hasPractice: false,
+                    isPlaceholder: true
+                });
+            }
         }
     }
 
@@ -2007,12 +2063,14 @@ function renderDetailView() {
     // Items list
     const listEl = document.getElementById('detail-items-list');
     if (items.length === 0) {
-        listEl.innerHTML = `<div class="detail-empty">
-            ${tab === 'noteWords'        ? '此文章尚無筆記單字' :
-              tab === 'noteSentences'    ? '此文章尚無筆記句子' :
-              tab === 'articleWords'     ? '尚無 Article 單字測驗記錄（Flashcard/Flashcard+ Article 模式）' :
-              '尚無 Article 句子測驗記錄（Dictation/Reorder Article 模式）'}
-        </div>`;
+        const emptyMsg = {
+            noteWords:        '此文章尚無筆記單字',
+            noteSentences:    '此文章尚無筆記句子',
+            articleWords:     '尚無 Article 單字測驗記錄（Flashcard/Flashcard+ Article 模式）',
+            articleSentences: '尚無 Article 句子測驗記錄（Dictation/Reorder Article 模式）',
+            voiceReorder:     '尚無口說測驗記錄（Voice Reorder 模式）',
+        };
+        listEl.innerHTML = `<div class="detail-empty">${emptyMsg[tab] || '尚無資料'}</div>`;
         return;
     }
 
@@ -2120,6 +2178,10 @@ function buildDetailItemHtml(item, tab) {
                 { key: 'reorder',       label: '🔀 Reorder', scoring: true  },
                 { key: 'articleListen', label: '📖 Listen',   scoring: false },
             ];
+        } else if (tab === 'voiceReorder') {
+            sources = [
+                { key: 'voiceReorder', label: '🎙 Voice', scoring: true },
+            ];
         }
         const srcParts = sources.map(s => {
             const sr = rec[s.key];
@@ -2134,7 +2196,7 @@ function buildDetailItemHtml(item, tab) {
         sourceHtml = `<div class="detail-item-sources">${srcParts}</div>`;
     }
 
-    const isSentence = (tab === 'noteSentences' || tab === 'articleSentences');
+    const isSentence = (tab === 'noteSentences' || tab === 'articleSentences' || tab === 'voiceReorder');
     const textClass  = isSentence ? 'detail-text-sentence' : 'detail-text-word';
 
     return `<div class="detail-item ${colorClass}">

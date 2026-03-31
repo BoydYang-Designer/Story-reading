@@ -266,9 +266,9 @@
 
 .browser-article-row {
     display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 9px 14px 9px 28px;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px 14px 10px 28px;
     border-bottom: 1px solid var(--color-border);
     cursor: pointer;
     transition: background 0.15s;
@@ -283,172 +283,99 @@
     background: var(--color-accent-subtle);
 }
 
-.browser-article-main {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    min-width: 0;
-}
-
 .browser-article-title {
     font-size: 0.82rem;
+    font-weight: 600;
     color: var(--color-text);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    flex: 1;
-    min-width: 0;
+    word-break: break-word;
+    line-height: 1.35;
 }
 
-/* 桌機：hover 顯示全名 */
-@media (hover: hover) {
-    .browser-article-title:hover {
-        white-space: normal;
-        overflow: visible;
-        text-overflow: unset;
-        word-break: break-word;
-    }
-}
+/* ── 三欄 Pillar 佈局 ─────────────────────────────────────── */
 
-/* ── 測驗覆蓋率進度條 ─────────────────────────────────────── */
-
-.browser-coverage-wrap {
-    display: flex;
-    align-items: center;
+.browser-article-pillars {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
     gap: 6px;
-    margin-top: 3px;
-    min-width: 0;
 }
 
-.browser-coverage-bar-track {
-    flex-shrink: 0;
-    width: 72px;
-    height: 4px;
+.art-pillar {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 6px 8px;
+    border-radius: 8px;
+    border: 1.5px solid var(--color-border);
+    background: var(--color-surface);
+    min-width: 0;
+    transition: border-color 0.15s;
+}
+
+.art-pillar-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--color-text-light);
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+}
+
+.art-pillar-val {
+    font-size: 0.95rem;
+    font-weight: 800;
+    line-height: 1.1;
+    padding: 2px 6px;
+    border-radius: 5px;
+    text-align: center;
+    align-self: flex-start;
+    min-width: 42px;
+}
+
+.art-pillar-val.chip-untested {
+    background: transparent;
+    color: var(--color-text-light);
+    font-weight: 400;
+    font-style: italic;
+}
+
+.art-pillar-bar-track {
+    width: 100%;
+    height: 3px;
+    background: rgba(0,0,0,0.08);
     border-radius: 2px;
-    background: var(--color-border);
     overflow: hidden;
 }
 
-.browser-coverage-bar-fill {
+.art-pillar-bar {
     height: 100%;
     border-radius: 2px;
     transition: width 0.3s ease;
 }
 
-.browser-coverage-label {
-    font-size: 0.66rem;
+.art-pillar-bar.fam-green  { background: #50b86c; }
+.art-pillar-bar.fam-yellow { background: #d4ac30; }
+.art-pillar-bar.fam-red    { background: #e05c5c; }
+.art-pillar-bar.chip-untested { background: var(--color-border); }
+
+.art-pillar-cov {
+    font-size: 0.62rem;
     color: var(--color-text-light);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    min-width: 0;
+    opacity: 0.8;
+    text-align: right;
+    margin-top: 1px;
 }
 
-@media (max-width: 600px) {
-    .browser-coverage-bar-track {
-        width: 52px;
-    }
-    .browser-coverage-label {
-        font-size: 0.62rem;
-    }
+/* 各欄有資料時 border 顏色呼應熟悉度 */
+.art-pillar:has(.art-pillar-val.fam-green)  { border-color: rgba(80,184,108,0.35); }
+.art-pillar:has(.art-pillar-val.fam-yellow) { border-color: rgba(220,180,60,0.35); }
+.art-pillar:has(.art-pillar-val.fam-red)    { border-color: rgba(224,92,92,0.35);  }
+
+/* 口說欄特殊底色 */
+.art-pillar-voice {
+    background: rgba(130, 80, 220, 0.04);
 }
-
-/* 手機：最多顯示兩行，超過截斷 */
-@media (hover: none) {
-    .browser-article-title {
-        white-space: normal;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        word-break: break-word;
-    }
-}
-
-/* 手機：article row 改為2行佈局，標題獨佔第一行，chips+按鈕在第二行 */
-@media (max-width: 600px) {
-    .browser-article-row {
-        flex-wrap: wrap;
-        gap: 6px;
-        padding: 8px 12px 8px 20px;
-    }
-
-    .browser-article-main {
-        flex: 1 1 100%;
-        min-width: 0;
-    }
-
-    .browser-article-chips {
-        flex: 1 1 auto;
-        gap: 4px;
-        flex-wrap: nowrap;
-    }
-
-    .browser-fam-chip {
-        width: 52px;
-        padding: 3px 4px 3px;
-        font-size: 0.62rem;
-    }
-
-    .browser-fam-chip .chip-val {
-        font-size: 0.82rem;
-    }
-
-    .browser-fam-chip .chip-top-label {
-        font-size: 0.56rem;
-    }
-
-    .browser-article-actions {
-        flex-shrink: 0;
-        gap: 4px;
-    }
-
-    .browser-quiz-btn,
-    .browser-read-btn {
-        padding: 3px 7px;
-        font-size: 0.68rem;
-    }
-}
-
-.browser-article-fam {
-    font-size: 0.72rem;
-    font-weight: 700;
-    padding: 2px 7px;
-    border-radius: 12px;
-    flex-shrink: 0;
-    border: 1px solid transparent;
-}
-
-.browser-article-fam.fam-green  {
-    background: rgba(80,184,108,0.12);
-    border-color: rgba(80,184,108,0.35);
-    color: #2d8a50;
-}
-.browser-article-fam.fam-yellow {
-    background: rgba(220,180,60,0.12);
-    border-color: rgba(220,180,60,0.35);
-    color: #7a5e08;
-}
-.browser-article-fam.fam-red {
-    background: rgba(224,92,92,0.12);
-    border-color: rgba(224,92,92,0.35);
-    color: #a83030;
-}
-.browser-article-fam.fam-untested {
-    background: transparent;
-    border-color: var(--color-border);
-    color: var(--color-text-light);
-    font-style: italic;
-    font-weight: 400;
-}
-
-.browser-article-chips {
-    display: flex;
-    gap: 5px;
-    flex-shrink: 0;
-}
+.art-pillar-voice:has(.art-pillar-val.fam-green)  { border-color: rgba(80,184,108,0.35);  background: rgba(80,184,108,0.06); }
+.art-pillar-voice:has(.art-pillar-val.fam-yellow) { border-color: rgba(220,180,60,0.35);  background: rgba(220,180,60,0.06); }
+.art-pillar-voice:has(.art-pillar-val.fam-red)    { border-color: rgba(224,92,92,0.35);   background: rgba(224,92,92,0.06); }
 
 /* ── 文章 Row 操作按鈕區 ──────────────────────────────────── */
 
@@ -457,14 +384,30 @@
     align-items: center;
     gap: 5px;
     flex-shrink: 0;
+    justify-content: flex-end;
+}
+
+/* Row top: title + actions in same line */
+.browser-article-row {
+    position: relative;
+}
+
+.browser-article-title {
+    padding-right: 68px; /* leave room for action buttons */
+}
+
+.browser-article-actions {
+    position: absolute;
+    top: 10px;
+    right: 14px;
 }
 
 .browser-quiz-btn,
 .browser-read-btn {
-    padding: 4px 9px;
+    padding: 4px 7px;
     border-radius: 14px;
     border: 1.5px solid transparent;
-    font-size: 0.72rem;
+    font-size: 0.78rem;
     font-weight: 600;
     font-family: inherit;
     cursor: pointer;
@@ -495,64 +438,42 @@
     border-color: #2d8a50;
 }
 
-/* browser-article-arrow removed */
+/* ── 手機 RWD ─────────────────────────────────────────────── */
 
-/* ── Familiarity Chip (in article rows) ─────────────────── */
+@media (max-width: 480px) {
+    .browser-article-pillars {
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 4px;
+    }
 
-.browser-fam-chip {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 58px;
-    padding: 4px 5px 3px;
-    border-radius: 8px;
-    border: 1.5px solid transparent;
-    font-size: 0.65rem;
-    gap: 1px;
+    .art-pillar {
+        padding: 5px 6px;
+    }
+
+    .art-pillar-label {
+        font-size: 0.58rem;
+    }
+
+    .art-pillar-val {
+        font-size: 0.82rem;
+    }
+
+    .browser-article-title {
+        padding-right: 56px;
+        font-size: 0.78rem;
+    }
+
+    .browser-quiz-btn,
+    .browser-read-btn {
+        padding: 3px 5px;
+        font-size: 0.68rem;
+    }
 }
 
-.browser-fam-chip .chip-top-label {
-    font-size: 0.62rem;
-    font-weight: 700;
-    opacity: 0.75;
-    white-space: nowrap;
-    letter-spacing: 0.01em;
-}
-
-.browser-fam-chip .chip-val {
-    font-weight: 800;
-    font-size: 0.9rem;
-    line-height: 1.15;
-}
-
-.browser-fam-chip .chip-sub {
-    font-size: 0.58rem;
-    opacity: 0.7;
-    font-weight: 500;
-    white-space: nowrap;
-    margin-top: 1px;
-}
-
-.browser-fam-chip .chip-bar-wrap {
-    width: 100%;
-    height: 3px;
-    background: rgba(0,0,0,0.08);
-    border-radius: 2px;
-    overflow: hidden;
-    margin-top: 2px;
-}
-
-.browser-fam-chip .chip-bar {
-    height: 100%;
-    border-radius: 2px;
-    transition: width 0.3s ease;
-}
-
-.browser-fam-chip.chip-untested {
-    background: transparent;
-    border-color: var(--color-border);
-    color: var(--color-text-light);
-}
+/* Familiarity color classes for pillar vals */
+.art-pillar-val.fam-green  { background: rgba(80,184,108,0.12); color: #2d8a50; }
+.art-pillar-val.fam-yellow { background: rgba(220,180,60,0.12); color: #7a5e08; }
+.art-pillar-val.fam-red    { background: rgba(224,92,92,0.12);  color: #a83030; }
 
 /* Familiarity color classes */
 .fam-green  { background: rgba(80,184,108,0.10); border-color: rgba(80,184,108,0.35); color: #2d8a50; }
@@ -629,6 +550,71 @@
 .detail-sum-chip.chip-danger { border-color: rgba(224,92,92,0.5);   color: #a83030; background: rgba(224,92,92,0.08); }
 .detail-sum-chip.chip-ok     { border-color: rgba(80,184,108,0.5);  color: #2d8a50; background: rgba(80,184,108,0.08); }
 
+/* ── Detail View — 三欄 Tab 樣式 ─────────────────────────── */
+
+.detail-tabs-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0;
+    margin-bottom: 14px;
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: var(--color-surface);
+}
+
+.detail-tabs-3 .detail-tab-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    padding: 10px 4px;
+    border: none;
+    border-right: 1px solid var(--color-border);
+    background: transparent;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+
+.detail-tabs-3 .detail-tab-btn:last-child {
+    border-right: none;
+}
+
+.detail-tab-icon {
+    font-size: 1.15rem;
+    line-height: 1;
+}
+
+.detail-tab-text {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--color-text-light);
+    letter-spacing: 0.02em;
+}
+
+.detail-tabs-3 .detail-tab-btn.is-active {
+    background: var(--color-primary);
+    color: #fff;
+}
+
+.detail-tabs-3 .detail-tab-btn.is-active .detail-tab-text {
+    color: #fff;
+}
+
+.detail-tabs-3 .detail-tab-btn:hover:not(.is-active) {
+    background: var(--color-accent-subtle);
+}
+
+/* 口說 tab 啟用時用紫色調 */
+.detail-tabs-3 .detail-tab-btn[data-tab="voiceReorder"].is-active {
+    background: linear-gradient(135deg, #7c4dcc, #9c6ee0);
+}
+
+/* ── 原有 detail-tab-groups 保留（向後相容） ─────────────── */
+/* 新版已改用 detail-tabs-3，舊版 detail-tab-groups 保留不刪 */
+
 /* Tabs */
 /* 原有的 detail-tabs 保留向後相容 */
 .detail-tabs {
@@ -698,6 +684,7 @@
     background: var(--color-accent-subtle);
     color: var(--color-text);
 }
+
 
 /* Sort bar */
 .detail-sort-bar {

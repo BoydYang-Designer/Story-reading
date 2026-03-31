@@ -1426,22 +1426,20 @@
     <!-- Summary chips -->
     <div id="detail-summary-bar"></div>
 
-    <!-- Tabs: 兩層結構 Note / Article -->
-    <div class="detail-tab-groups">
-        <div class="detail-tab-group">
-            <div class="detail-tab-group-label">📝 Note</div>
-            <div class="detail-tab-group-btns">
-                <button class="detail-tab-btn is-active" data-tab="noteWords" data-label="Note 單字">單字</button>
-                <button class="detail-tab-btn" data-tab="noteSentences" data-label="Note 句子">句子</button>
-            </div>
-        </div>
-        <div class="detail-tab-group">
-            <div class="detail-tab-group-label">📖 Article</div>
-            <div class="detail-tab-group-btns">
-                <button class="detail-tab-btn" data-tab="articleWords" data-label="Article 單字">單字</button>
-                <button class="detail-tab-btn" data-tab="articleSentences" data-label="Article 句子">句子</button>
-            </div>
-        </div>
+    <!-- Tabs: 三類 單字 / 句子 / 口說 -->
+    <div class="detail-tabs detail-tabs-3">
+        <button class="detail-tab-btn is-active" data-tab="noteWords" data-label="單字">
+            <span class="detail-tab-icon">🔤</span>
+            <span class="detail-tab-text">單字</span>
+        </button>
+        <button class="detail-tab-btn" data-tab="noteSentences" data-label="句子">
+            <span class="detail-tab-icon">📝</span>
+            <span class="detail-tab-text">句子</span>
+        </button>
+        <button class="detail-tab-btn" data-tab="voiceReorder" data-label="口說">
+            <span class="detail-tab-icon">🎙</span>
+            <span class="detail-tab-text">口說</span>
+        </button>
     </div>
 
     <!-- Sort bar -->

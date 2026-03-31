@@ -5140,7 +5140,7 @@ function _vrCheckAnswer() {
             correctText,
             isCorrect,
             _quizReplayCount,
-            'reorder'   // 存入 'reorder' source key，納入熟悉度計算
+            'voiceReorder'   // 存入 'voiceReorder' source key，口說成績獨立計算
         );
     }
 
