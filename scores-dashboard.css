@@ -1218,6 +1218,13 @@
     color: #2e7d32;
 }
 
+/* 口說紀錄 → 紫色 */
+.bucket-chip.bucket-voice {
+    background: rgba(124, 77, 204, 0.10);
+    border-color: rgba(124, 77, 204, 0.35);
+    color: #5e35b1;
+}
+
 .bucket-decay-note {
     font-size: 0.68rem;
     color: var(--color-text-light);

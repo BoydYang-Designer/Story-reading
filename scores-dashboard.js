@@ -607,15 +607,15 @@ function _sortArticlesByCat(articles, cat) {
         const _getVal = (summary, k) => {
             if (k === 'word') {
                 // 單字：Note + Article 平均
-                const a = summary.noteWordAvg, b = summary.artWordAvg;
-                if (a !== null && b !== null) return Math.round((a + b) / 2);
-                return a ?? b ?? null;
+                const na = summary.noteWordAvg, nb = summary.artWordAvg;
+                if (na !== null && nb !== null) return Math.round((na + nb) / 2);
+                return na ?? nb ?? null;
             }
             if (k === 'sent') {
                 // 句子：Note + Article 平均
-                const a = summary.noteSentAvg, b = summary.artSentAvg;
-                if (a !== null && b !== null) return Math.round((a + b) / 2);
-                return a ?? b ?? null;
+                const na = summary.noteSentAvg, nb = summary.artSentAvg;
+                if (na !== null && nb !== null) return Math.round((na + nb) / 2);
+                return na ?? nb ?? null;
             }
             if (k === 'voice') return summary.voiceAvg;
             return summary.famAvg;
@@ -1959,23 +1959,24 @@ function renderDetailView() {
     let items = [];
 
     if (tab === 'voiceReorder') {
-        // ── 口說 tab：合併 noteSentences + articleSentences，以 voiceReorder source 計分 ──
+        // ── 口說 tab：合併 noteSentences + articleSentences
+        // 只顯示「有 voiceReorder 紀錄」的句子，未測驗的不列出
         ['noteSentences', 'articleSentences'].forEach(itype => {
             const itemMap = entry[itype] || {};
             Object.entries(itemMap).forEach(([text, rec]) => {
                 const vr = rec['voiceReorder'];
                 const hasPractice = vr && (vr.correct + vr.wrong) > 0;
-                const famScore = hasPractice ? (_calcSourceFam(vr) ?? 0) : 0;
-                const totals = hasPractice ? { correct: vr.correct, wrong: vr.wrong } : { correct: 0, wrong: 0 };
+                if (!hasPractice) return; // 只顯示有口說紀錄的
+                const famScore = _calcSourceFam(vr) ?? 0;
                 items.push({
                     text,
-                    correct:     totals.correct,
-                    wrong:       totals.wrong,
-                    lastSeen:    rec.lastSeen || null,
-                    firstSeen:   rec.firstSeen || null,
+                    correct:   vr.correct,
+                    wrong:     vr.wrong,
+                    lastSeen:  rec.lastSeen  || null,
+                    firstSeen: rec.firstSeen || null,
                     famScore,
                     needScore:   100 - famScore,
-                    hasPractice,
+                    hasPractice: true,
                     rec,
                     _voiceOnly: true,
                 });
@@ -2082,11 +2083,35 @@ function renderDetailView() {
  * 回傳 { bucket, label, cssClass, effectiveFam, rawFam, daysSince }
  */
 function _getItemBucketInfo(rec, itemType) {
-    // 無 calcEffectiveFamiliarity 時的簡易回退
     let effectiveFam = null;
     let rawFam = null;
     let days = 0;
 
+    // ── 口說 tab：只看 voiceReorder source ───────────────────
+    if (itemType === 'voiceReorder') {
+        const vr = rec && rec['voiceReorder'];
+        const hasvr = vr && (vr.correct + vr.wrong) > 0;
+        if (hasvr) {
+            rawFam = _calcSourceFam(vr);
+            if (rawFam !== null) {
+                const lastSeen = rec.lastSeen || null;
+                days = lastSeen
+                    ? Math.floor((Date.now() - new Date(lastSeen).getTime()) / 86400000)
+                    : 0;
+                const halfLife   = rawFam >= 70 ? 30 : rawFam >= 40 ? 14 : 7;
+                const decayFloor = 30;
+                const floor      = Math.min(decayFloor, rawFam);
+                effectiveFam     = Math.round(floor + (rawFam - floor) * Math.pow(2, -days / halfLife));
+            }
+        }
+        // 口說不影響 quiz 出題，隱藏出題桶顯示
+        if (effectiveFam === null) {
+            return { bucket: 'A', label: '🆕 未測驗', cssClass: 'bucket-a', effectiveFam: null, rawFam: null, days: 0, hideNote: true };
+        }
+        return { bucket: '-', label: '🎙 口說紀錄', cssClass: 'bucket-voice', effectiveFam, rawFam, days, hideNote: true };
+    }
+
+    // ── 一般 tab：加權熟悉度 + 衰減 ─────────────────────────
     if (rec && _recHasPractice(rec)) {
         rawFam = typeof calcWeightedFamiliarity === 'function'
             ? calcWeightedFamiliarity(rec, itemType)
@@ -2097,7 +2122,6 @@ function _getItemBucketInfo(rec, itemType) {
             days = lastSeen
                 ? Math.floor((Date.now() - new Date(lastSeen).getTime()) / 86400000)
                 : 0;
-            // 半衰期（和 quiz.js SR_CONFIG 一致）
             const halfLife = rawFam >= 70 ? 30 : rawFam >= 40 ? 14 : 7;
             const decayFloor = 30;
             const floor = Math.min(decayFloor, rawFam);
@@ -2147,17 +2171,32 @@ function buildDetailItemHtml(item, tab) {
 
     // ── 出題桶標籤（加權規則整合）────────────────────────────
     const bucketInfo = _getItemBucketInfo(rec, tab);
-    const decayNote  = (bucketInfo.rawFam !== null && bucketInfo.rawFam !== bucketInfo.effectiveFam)
-        ? `<span class="bucket-decay-note">原始 ${bucketInfo.rawFam}% → 衰減後 ${bucketInfo.effectiveFam}% (${bucketInfo.days}天)</span>`
-        : (bucketInfo.effectiveFam !== null
-            ? `<span class="bucket-decay-note">有效熟悉度 ${bucketInfo.effectiveFam}%</span>`
-            : '');
 
-    const bucketHtml = `<div class="detail-item-bucket">
-        <span class="bucket-chip ${bucketInfo.cssClass}">${bucketInfo.label}</span>
-        ${decayNote}
-        <span class="bucket-priority-note">${_bucketPriorityNote(bucketInfo.bucket)}</span>
-    </div>`;
+    let bucketHtml = '';
+    if (tab === 'voiceReorder') {
+        // 口說 tab：不顯示出題機率，改顯示口說熟悉度摘要
+        if (bucketInfo.effectiveFam !== null) {
+            const decayNote = (bucketInfo.rawFam !== null && bucketInfo.rawFam !== bucketInfo.effectiveFam)
+                ? `<span class="bucket-decay-note">原始 ${bucketInfo.rawFam}% → 衰減後 ${bucketInfo.effectiveFam}% (${bucketInfo.days}天)</span>`
+                : `<span class="bucket-decay-note">口說熟悉度 ${bucketInfo.effectiveFam}%</span>`;
+            bucketHtml = `<div class="detail-item-bucket">
+                <span class="bucket-chip ${bucketInfo.cssClass}">${bucketInfo.label}</span>
+                ${decayNote}
+            </div>`;
+        }
+        // 未測驗時不顯示 bucket 區塊
+    } else {
+        const decayNote = (bucketInfo.rawFam !== null && bucketInfo.rawFam !== bucketInfo.effectiveFam)
+            ? `<span class="bucket-decay-note">原始 ${bucketInfo.rawFam}% → 衰減後 ${bucketInfo.effectiveFam}% (${bucketInfo.days}天)</span>`
+            : (bucketInfo.effectiveFam !== null
+                ? `<span class="bucket-decay-note">有效熟悉度 ${bucketInfo.effectiveFam}%</span>`
+                : '');
+        bucketHtml = `<div class="detail-item-bucket">
+            <span class="bucket-chip ${bucketInfo.cssClass}">${bucketInfo.label}</span>
+            ${decayNote}
+            <span class="bucket-priority-note">${_bucketPriorityNote(bucketInfo.bucket)}</span>
+        </div>`;
+    }
 
     // ── 子來源明細 ────────────────────────────────────────────
     let sourceHtml = '';
