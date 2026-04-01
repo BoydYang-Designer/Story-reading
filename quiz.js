@@ -5368,7 +5368,16 @@ function _vrUndoLast() {
 
 // ── All words placed → prompt check ──────────────────────
 function _vrOnAllPlaced() {
-    _vrStopRecordingSilent();
+    // 停止 Speech Recognition 但保留 MediaRecorder 繼續錄音，
+    // 讓 _vrCheckAnswer 停止時才產生 Blob 顯示回聽按鈕
+    _vrIsRecording = false;
+    if (_vrRecognition) {
+        try { _vrRecognition.stop(); } catch(e) {}
+        _vrRecognition = null;
+    }
+    _vrBestTranscript = '';
+    _vrSetMicOff();
+    // ★ 不呼叫 _vrStopAudioRecordingSilent()，讓 MediaRecorder 繼續錄音直到 Check
     _vrEl('vr-mic-label').textContent = 'All words placed — tap Check!';
     // B 方案：播放輕柔「就緒」提示音（告知用戶可以按 Check）
     _playReadySound();
@@ -5418,7 +5427,16 @@ function _vrCheckAnswer() {
     }
 
     _vrState.done = true;
-    _vrStopRecordingSilent();
+
+    // 停止 Speech Recognition（靜默），但讓 MediaRecorder 正常停止產生 Blob → 顯示回聽按鈕
+    _vrIsRecording = false;
+    if (_vrRecognition) {
+        try { _vrRecognition.stop(); } catch(e) {}
+        _vrRecognition = null;
+    }
+    _vrBestTranscript = '';
+    _vrSetMicOff();
+    _vrStopAudioRecording(); // ★ 正常停止 → 產生 Blob，顯示回聽按鈕
 
     const userText   = _vrState.answer.map(i => _vrState.words[i]).join(' ');
     const correctText = _vrState.words.join(' ');
