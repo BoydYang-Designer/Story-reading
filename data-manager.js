@@ -239,7 +239,7 @@ function renderReadingProgressEditor() {
             deleteBtn.addEventListener('click', () => {
                 if (confirm(`Delete progress for "${key}"?`)) {
                     delete progress[key];
-                    localStorage.setItem(SUB_CATEGORY_SESSION_KEY, JSON.stringify(progress));
+                    safeSetItem(SUB_CATEGORY_SESSION_KEY, JSON.stringify(progress)); // FIX-3
                     renderReadingProgressEditor();
                 }
             });
@@ -430,12 +430,12 @@ function importData(file) {
             
             // Import reading progress (replace)
             if (data.readingProgress) {
-                localStorage.setItem(SUB_CATEGORY_SESSION_KEY, JSON.stringify(data.readingProgress));
+                safeSetItem(SUB_CATEGORY_SESSION_KEY, JSON.stringify(data.readingProgress)) // FIX-3;
             }
             
             // Import last session (replace)
             if (data.lastSession) {
-                localStorage.setItem(LAST_SESSION_KEY, JSON.stringify(data.lastSession));
+                safeSetItem(LAST_SESSION_KEY, JSON.stringify(data.lastSession)) // FIX-3;
             }
             
             renderDataManager();
@@ -455,20 +455,8 @@ function saveWordsToStorage() {
         // Save to Firestore
         saveWordsToFirestore();
     } else {
-        // BUG-A08 修正：localStorage.setItem 可能因空間不足或隱私模式而拋出錯誤
-        try {
-            localStorage.setItem(SAVED_WORDS_KEY, JSON.stringify(savedWords));
-        } catch (e) {
-            if (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED') {
-                if (typeof showNotification === 'function') {
-                    showNotification('儲存空間已滿，筆記未能存入裝置，請匯出備份', 'error');
-                } else {
-                    alert('儲存空間已滿，筆記未能存入裝置，請匯出備份');
-                }
-            } else {
-                console.error('[DataManager] localStorage.setItem error:', e);
-            }
-        }
+        // FIX-3: 使用 story.js 提供的 safeSetItem，統一處理 QuotaExceededError
+        safeSetItem(SAVED_WORDS_KEY, JSON.stringify(savedWords));
     }
 }
 

@@ -4554,6 +4554,44 @@ let _vrRecognition = null;
 let _vrIsRecording = false;
 const _VrSpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
+// FIX-5: 語音辨識相容性 Badge — 在 Voice Reorder 卡片上顯示瀏覽器支援狀態
+// 無需用戶操作即可看到，避免點進去才發現不支援
+(function _initSpeechCompatBadge() {
+    const card = document.getElementById('quiz-mode-voice-reorder');
+    if (!card) return;
+
+    const badge = document.createElement('div');
+    badge.id = 'speech-compat-badge';
+    Object.assign(badge.style, {
+        fontSize: '0.7rem',
+        fontWeight: '600',
+        padding: '2px 7px',
+        borderRadius: '10px',
+        marginTop: '4px',
+        display: 'inline-block',
+        letterSpacing: '0.02em',
+    });
+
+    if (_VrSpeechRecognition) {
+        // 支援：顯示綠色打勾
+        badge.textContent = '🎙 支援';
+        badge.style.backgroundColor = '#e8f5e9';
+        badge.style.color = '#2e7d32';
+        badge.style.border = '1px solid #a5d6a7';
+        badge.title = '您的瀏覽器支援語音辨識';
+    } else {
+        // 不支援：顯示橘色警告
+        badge.textContent = '⚠️ 需要 Chrome';
+        badge.style.backgroundColor = '#fff3e0';
+        badge.style.color = '#e65100';
+        badge.style.border = '1px solid #ffcc80';
+        badge.title = '此功能需要 Chrome 瀏覽器，Safari/Firefox 不支援語音辨識 API';
+    }
+
+    // 插入到卡片的最後
+    card.appendChild(badge);
+})();
+
 // ── DOM refs (resolved lazily after HTML is in DOM) ─────────
 function _vrEl(id) { return document.getElementById(id); }
 

@@ -268,43 +268,100 @@ async function showAppView(user) {
     showView(homeView); // Default to home view
 }
 
-function createListItemWithImage(text, onClick, fallbackText = null) {
+// ── FIX-1: 圖片存在快取（B 方案清單，啟動時由 story.json hasThumb 欄位填入）──────
+// key: 圖片相對路徑 (e.g. "images/Atomic Habits.jpg")  value: true | false
+const _imageExistsCache = new Map();
+
+/**
+ * createListItemWithImage
+ *
+ * showThumb = true  → 只在 sub-category 列表使用，採 IntersectionObserver 延遲載入
+ *                     + fetch HEAD cache（A+C 方案），或直接查 _imageExistsCache（B 方案）
+ * showThumb = false → 文章列表使用，完全不建立 <img>，不發任何網路請求
+ */
+function createListItemWithImage(text, onClick, fallbackText = null, showThumb = true) {
     const container = document.createElement('div');
     container.className = 'list-item-with-image';
 
+    const span = document.createElement('span');
+    span.textContent = text;
+
+    if (!showThumb) {
+        // 文章列表：純文字，不建 img，不發網路請求
+        container.appendChild(span);
+        container.addEventListener('click', onClick);
+        return container;
+    }
+
+    // Sub-category：建 img 元素，用 IntersectionObserver 延遲觸發
     const img = document.createElement('img');
     img.className = 'category-thumb';
     img.alt = text;
-
-    const span = document.createElement('span');
-    span.textContent = text;
+    img.classList.add('img-hidden'); // 預設隱藏，確認圖片存在後才顯示
 
     container.appendChild(img);
     container.appendChild(span);
     container.addEventListener('click', onClick);
 
-    // 用 fetch HEAD 靜默依序確認圖片存在，避免瀏覽器印 ERR_FILE_NOT_FOUND
     const candidates = [
         `images/${text}.jpg`,
         `images/${text}.png`,
         ...(fallbackText ? [`images/${fallbackText}.jpg`, `images/${fallbackText}.png`] : [])
     ];
 
-    (function tryNext(i) {
-        if (i >= candidates.length) {
-            img.classList.add('img-hidden');
-            return;
-        }
-        fetch(candidates[i], { method: 'HEAD' })
-            .then(res => {
-                if (res.ok) {
-                    img.src = candidates[i];
-                } else {
-                    tryNext(i + 1);
+    function _trySetImage() {
+        // B 方案：若快取已有結果（由 story.json hasThumb 預填），直接查表
+        for (const path of candidates) {
+            if (_imageExistsCache.has(path)) {
+                if (_imageExistsCache.get(path)) {
+                    img.src = path;
+                    img.classList.remove('img-hidden');
                 }
-            })
-            .catch(() => tryNext(i + 1));
-    })(0);
+                return; // 有快取結果就直接用，不再發請求
+            }
+        }
+
+        // A+C 方案：快取未命中，用 fetch HEAD 依序確認（加 cache: 'force-cache'）
+        (function tryNext(i) {
+            if (i >= candidates.length) {
+                candidates.forEach(p => _imageExistsCache.set(p, false));
+                return;
+            }
+            fetch(candidates[i], { method: 'HEAD', cache: 'force-cache' })
+                .then(res => {
+                    if (res.ok) {
+                        _imageExistsCache.set(candidates[i], true);
+                        img.src = candidates[i];
+                        img.classList.remove('img-hidden');
+                        // 其他候補標記為 false
+                        candidates.slice(i + 1).forEach(p => _imageExistsCache.set(p, false));
+                    } else {
+                        _imageExistsCache.set(candidates[i], false);
+                        tryNext(i + 1);
+                    }
+                })
+                .catch(() => {
+                    _imageExistsCache.set(candidates[i], false);
+                    tryNext(i + 1);
+                });
+        })(0);
+    }
+
+    // A 方案：IntersectionObserver 延遲觸發，只在進入視口時才發請求
+    if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver((entries, obs) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    obs.disconnect();
+                    _trySetImage();
+                }
+            });
+        }, { rootMargin: '100px' }); // 提前 100px 預載
+        observer.observe(container);
+    } else {
+        // 不支援 IntersectionObserver 的舊瀏覽器直接觸發
+        _trySetImage();
+    }
 
     return container;
 }
@@ -460,12 +517,14 @@ async function loadWordsFromFirestore() {
             // 2. === NEW: Sync Last Playback Session ===
             // This ensures that when we log in on PC, we get the progress from Mobile
             if (data.lastSession) {
-                localStorage.setItem(LAST_SESSION_KEY, JSON.stringify(data.lastSession));
+                // FIX-3: 使用 safeSetItem
+                safeSetItem(LAST_SESSION_KEY, JSON.stringify(data.lastSession));
                 console.log("Last session synced from Cloud:", data.lastSession);
             }
             // 3. === Sync Sub Category Sessions ===
             if (data.subCategorySessions) {
-                localStorage.setItem(SUB_CATEGORY_SESSION_KEY, JSON.stringify(data.subCategorySessions));
+                // FIX-3: 使用 safeSetItem
+                safeSetItem(SUB_CATEGORY_SESSION_KEY, JSON.stringify(data.subCategorySessions));
                 console.log("Sub category sessions synced from Cloud:", data.subCategorySessions);
             }
             // ===========================================
@@ -512,17 +571,30 @@ function loadWordsFromStorage() {
     }
 }
 
+// ── FIX-3: safeSetItem utility ───────────────────────────────────────────────
+// 封裝所有 localStorage.setItem，統一處理 QuotaExceededError
+// 回傳 true 表示成功，false 表示失敗
+function safeSetItem(key, value) {
+    try {
+        localStorage.setItem(key, value);
+        return true;
+    } catch (e) {
+        if (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED') {
+            console.error('[FIX-3] localStorage quota exceeded for key:', key);
+            showNotification('⚠️ 儲存失敗：裝置空間不足，請至 Data Manager 匯出並清理資料。', 'error');
+        } else {
+            console.error('[FIX-3] localStorage.setItem error for key:', key, e);
+        }
+        return false;
+    }
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
 function saveWordsToStorage() {
     const serializableWords = serializeDataForStorage(savedWords);
-    // BUG-03 修正：localStorage 滿額時會拋出 QuotaExceededError，加 try/catch 通知使用者
-    try {
-        localStorage.setItem(SAVED_WORDS_KEY, JSON.stringify(serializableWords));
+    // FIX-3: 使用 safeSetItem 取代裸露的 setItem
+    if (safeSetItem(SAVED_WORDS_KEY, JSON.stringify(serializableWords))) {
         console.log("Notes saved to Local Storage.");
-    } catch (e) {
-        console.error("Failed to save notes to localStorage:", e);
-        if (typeof showNotification === 'function') {
-            showNotification('⚠️ 儲存失敗：裝置空間不足，請至 Data Manager 匯出並清理資料。', 'error');
-        }
     }
 }
 
@@ -546,12 +618,8 @@ function saveLastPlaybackState() {
             majorCategory: story['大類'] || 'Uncategorized'
         };
         
-        // 1. Save globally (最新的播放記錄) — BUG-03 修正：加 try/catch
-        try {
-            localStorage.setItem(LAST_SESSION_KEY, JSON.stringify(state));
-        } catch (e) {
-            console.error("Failed to save last session to localStorage:", e);
-        }
+        // 1. Save globally (最新的播放記錄) — FIX-3: 使用 safeSetItem
+        safeSetItem(LAST_SESSION_KEY, JSON.stringify(state));
 
         // 2. 儲存到該子分類的專屬記錄
         try {
@@ -565,7 +633,8 @@ function saveLastPlaybackState() {
                     majorCategory: state.majorCategory,
                     timestamp: Date.now()
                 };
-                localStorage.setItem(SUB_CATEGORY_SESSION_KEY, JSON.stringify(subCategorySessions));
+                // FIX-3: 使用 safeSetItem
+                safeSetItem(SUB_CATEGORY_SESSION_KEY, JSON.stringify(subCategorySessions));
             }
         } catch (e) {
             console.error("Error saving sub-category session:", e);
@@ -591,7 +660,8 @@ function clearSubCategoryPlaybackState(categoryName) {
         const subCategorySessions = JSON.parse(localStorage.getItem(SUB_CATEGORY_SESSION_KEY) || '{}');
         if (subCategorySessions[categoryName]) {
             delete subCategorySessions[categoryName];
-            localStorage.setItem(SUB_CATEGORY_SESSION_KEY, JSON.stringify(subCategorySessions));
+            // FIX-3: 使用 safeSetItem
+            safeSetItem(SUB_CATEGORY_SESSION_KEY, JSON.stringify(subCategorySessions));
         }
     } catch (e) {
         console.error("Error clearing sub-category session:", e);
@@ -1644,7 +1714,10 @@ function isWordMatchVariation(word1, word2) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 // 層級二：Web Speech TTS
-function _speakTTS(word) {
+// FIX-4: _speakTTS — 加入 iOS Chrome 靜音 Bug 偵測與補救
+// 策略：speak() 後 800ms 內若 speechSynthesis.speaking 仍為 false，
+//       判定靜音，cancel() 後重試一次；重試後 1000ms 仍無聲則通知用戶。
+function _speakTTS(word, _retryCount = 0) {
     if (!('speechSynthesis' in window)) {
         showNotification(`Audio for "${word}" was not found and TTS is not supported.`, 'error');
         return;
@@ -1653,7 +1726,29 @@ function _speakTTS(word) {
     const utterance = new SpeechSynthesisUtterance(word.trim());
     utterance.lang = 'en-US';
     utterance.rate = 0.9;
+
+    let _startFired = false;
+    utterance.onstart = () => { _startFired = true; };
+    utterance.onerror = (e) => {
+        console.warn('[FIX-4] TTS onerror:', e.error);
+    };
+
     window.speechSynthesis.speak(utterance);
+
+    // iOS Chrome 靜音偵測：800ms 後確認是否真的開始發音
+    setTimeout(() => {
+        if (!_startFired && !window.speechSynthesis.speaking) {
+            console.warn(`[FIX-4] TTS silent bug detected (attempt ${_retryCount + 1})`);
+            window.speechSynthesis.cancel();
+            if (_retryCount < 1) {
+                // 重試一次
+                setTimeout(() => _speakTTS(word, _retryCount + 1), 100);
+            } else {
+                // 重試後仍無聲，通知用戶
+                showNotification('⚠️ 語音合成在此裝置上無法使用，請改用 Chrome 桌面版。', 'warning');
+            }
+        }
+    }, 800);
 }
 
 // ── 發音來源提示（輕薄 toast）────────────────────────────────────────────────
@@ -1924,8 +2019,8 @@ copyStagedBtn.addEventListener('click', () => {
 // ──────────────────────────────────────────────────────────────────────────────
 const playStagedBtn = document.getElementById('play-staged-btn');
 
-/** TTS 朗讀一段文字，播完後執行 onDone */
-function _playStagedViaTTS(text, onDone) {
+/** TTS 朗讀一段文字，播完後執行 onDone — FIX-4: 加入 iOS 靜音偵測 */
+function _playStagedViaTTS(text, onDone, _retryCount = 0) {
     if (!('speechSynthesis' in window)) {
         showNotification('此瀏覽器不支援 TTS。', 'error');
         onDone();
@@ -1937,8 +2032,26 @@ function _playStagedViaTTS(text, onDone) {
     utt.rate = 0.9;
     utt.onend = onDone;
     utt.onerror = onDone;
+
+    let _startFired = false;
+    utt.onstart = () => { _startFired = true; };
+
     window.speechSynthesis.speak(utt);
     showAudioSourceHint('tts');
+
+    // FIX-4: iOS Chrome 靜音偵測（800ms 窗口）
+    setTimeout(() => {
+        if (!_startFired && !window.speechSynthesis.speaking) {
+            console.warn(`[FIX-4] TTS (staged) silent bug detected (attempt ${_retryCount + 1})`);
+            window.speechSynthesis.cancel();
+            if (_retryCount < 1) {
+                setTimeout(() => _playStagedViaTTS(text, onDone, _retryCount + 1), 100);
+            } else {
+                showNotification('⚠️ 語音合成在此裝置上無法使用。', 'warning');
+                onDone();
+            }
+        }
+    }, 800);
 }
 
 /** 單字：先試 MP3，2 秒超時或失敗就降級 TTS */
@@ -2207,11 +2320,14 @@ function setAudioSourceWithFallback(title) {
 
 function tryNextAudioCandidate() {
   if (!audioTriedCandidates.length) {
-    alert('Audio file not found.');
+    // FIX-2: 所有候補都失敗，顯示明確錯誤提示
+    showNotification('❌ 找不到音訊檔案，請確認 audio/ 資料夾或網路連線。', 'error');
     playPauseBtn.classList.remove('is-playing');
     isPlaying = false;
     return;
   }
+  // FIX-2: 顯示載入中提示
+  showNotification('🔊 載入音訊中…', 'info');
   audio.src = audioTriedCandidates.shift();
   audio.load();
 }
@@ -2458,6 +2574,25 @@ async function loadData() {
     
     stories = Array.isArray(storyJson['New Words']) ? storyJson['New Words'] : [];
     vocabularyData = Array.isArray(vocabJson['New Words']) ? vocabJson['New Words'] : [];
+
+    // FIX-1 B方案：從 story.json 的 "Categories" 陣列預填圖片快取
+    // 在 story.json 每個分類物件加入 "hasThumb": true → 有圖，false/不填 → 無圖
+    // 預填後 createListItemWithImage 查表即可，不再發 HEAD 請求
+    if (Array.isArray(storyJson['Categories'])) {
+        storyJson['Categories'].forEach(cat => {
+            const name = cat['分類'] || cat['name'] || '';
+            if (!name) return;
+            const hasThumb = cat['hasThumb'] === true;
+            ['jpg', 'png'].forEach(ext => {
+                const path = `images/${name}.${ext}`;
+                // 只有宣告了 hasThumb 欄位才寫入快取（沒有欄位的分類讓 HEAD 自行探測）
+                if (Object.prototype.hasOwnProperty.call(cat, 'hasThumb')) {
+                    _imageExistsCache.set(path, hasThumb && ext === 'jpg');
+                }
+            });
+        });
+        console.log(`[FIX-1] Image cache pre-filled from story.json Categories (${storyJson['Categories'].length} entries)`);
+    }
 
     console.log("✅ Stories and Vocabulary data loaded successfully.");
 
@@ -2759,7 +2894,8 @@ function showCategory(category) {
   currentStoryList.forEach((item, index) => {
     // 修改處：傳入 category 作為第三個參數 (fallback)
     // 如果找不到這篇文章的圖，就會去抓 category (如 "Atomic Habits") 的圖
-    const itemEl = createListItemWithImage(item['標題'], () => showPlayback(index), category);
+    // FIX-1: 文章列表不需要圖片，傳 showThumb=false 完全跳過圖片請求
+    const itemEl = createListItemWithImage(item['標題'], () => showPlayback(index), category, false);
     titleList.appendChild(itemEl);
   });
   
@@ -3079,6 +3215,18 @@ audio.addEventListener('play', () => {
     }
 });
 
+// FIX-2: 音訊載入成功 → 清除「載入中」通知（若尚在顯示）
+audio.addEventListener('canplaythrough', () => {
+    // 不需額外 toast，成功時靜默即可（避免打擾）
+}, { once: true });
+
+// FIX-2: 音訊載入失敗 → 顯示明確的錯誤通知（網路或 GitHub 無法連線）
+audio.addEventListener('error', () => {
+    if (!audio.src || audio.src === window.location.href) return; // src 為空時忽略
+    showNotification('⚠️ 音訊無法載入，請確認網路連線或 GitHub 是否可存取。', 'error');
+    console.warn('[FIX-2] Audio load error for:', audio.src);
+});
+
 audio.addEventListener('pause', () => { 
     if (isPlaying) {
         pauseAudio();
@@ -3165,7 +3313,8 @@ function loadCustomArticles() {
 }
 
 function saveCustomArticles(articles) {
-    localStorage.setItem(CUSTOM_ARTICLES_KEY, JSON.stringify(articles));
+    // FIX-3: 使用 safeSetItem
+    safeSetItem(CUSTOM_ARTICLES_KEY, JSON.stringify(articles));
     if (currentUser) {
         db.collection('userNotes').doc(currentUser.uid)
           .set({ customArticles: articles }, { merge: true })
@@ -3179,7 +3328,8 @@ async function loadCustomArticlesFromFirestore() {
     try {
         const doc = await db.collection('userNotes').doc(currentUser.uid).get();
         if (doc.exists && doc.data().customArticles) {
-            localStorage.setItem(CUSTOM_ARTICLES_KEY, JSON.stringify(doc.data().customArticles));
+            // FIX-3: 使用 safeSetItem
+            safeSetItem(CUSTOM_ARTICLES_KEY, JSON.stringify(doc.data().customArticles));
         }
     } catch (e) {
         console.error('Firestore custom articles load error:', e);
@@ -3194,6 +3344,14 @@ function generateSlug(title) {
         .replace(/[^\w\u4e00-\u9fff-]/g, '')
         .replace(/^-+|-+$/g, '')
         || 'article-' + Date.now();
+}
+
+// FIX-8: Slug 衝突偵測 — 若已存在相同 slug，自動加序號（e.g. my-story → my-story-2）
+function ensureUniqueSlug(slug, existingSlugs) {
+    if (!existingSlugs.has(slug)) return slug;
+    let i = 2;
+    while (existingSlugs.has(`${slug}-${i}`)) i++;
+    return `${slug}-${i}`;
 }
 
 function escapeHtml(str) {
@@ -3290,9 +3448,15 @@ function saveFromEditorPanel() {
     if (!content) { showNotification('請填入內文', 'error'); return; }
 
     const arts = loadCustomArticles();
-    const slug = generateSlug(title);
+    const rawSlug = generateSlug(title);
 
     if (editingArticleIdx === -1) {
+        // FIX-8: 新增文章時確保 slug 不重複
+        const existingSlugs = new Set(arts.map(a => a.slug));
+        const slug = ensureUniqueSlug(rawSlug, existingSlugs);
+        if (slug !== rawSlug) {
+            showNotification(`slug 已自動調整為「${slug}」以避免衝突`, 'info');
+        }
         arts.push({
             id: 'custom-' + Date.now(),
             title, major, category, content, slug,
@@ -3302,10 +3466,20 @@ function saveFromEditorPanel() {
         showNotification('文章已新增', 'success');
     } else {
         const existing = arts[editingArticleIdx];
+        let slug;
+        if (title === existing.title) {
+            slug = existing.slug; // 標題沒變，保留原 slug
+        } else {
+            // FIX-8: 標題改變時，排除自己後確保新 slug 不重複
+            const otherSlugs = new Set(arts.filter((_, i) => i !== editingArticleIdx).map(a => a.slug));
+            slug = ensureUniqueSlug(rawSlug, otherSlugs);
+            if (slug !== rawSlug) {
+                showNotification(`slug 已自動調整為「${slug}」以避免衝突`, 'info');
+            }
+        }
         arts[editingArticleIdx] = {
             ...existing,
-            title, major, category, content,
-            slug: title === existing.title ? existing.slug : slug,
+            title, major, category, content, slug,
             updatedAt: new Date().toISOString()
         };
         showNotification('文章已更新', 'success');
@@ -3480,32 +3654,100 @@ function exportCustomArticles() {
 }
 
 // --- Import JSON ---
+// FIX-9: 加入深層驗證 + 匯入前自動備份現有資料
+function _validateArticleItem(item) {
+    // 深層驗證每筆資料結構是否正確
+    const title   = item['標題'] || item.title || '';
+    const content = item['內文'] || item.content || '';
+    if (typeof title !== 'string' || title.trim().length === 0)   return false;
+    if (typeof content !== 'string' || content.trim().length === 0) return false;
+    return true;
+}
+
+function _backupCustomArticles(existing) {
+    // 匯入前自動下載備份 JSON（靜默下載，不干擾流程）
+    if (existing.length === 0) return;
+    try {
+        const blob = new Blob([JSON.stringify(existing, null, 2)], { type: 'application/json' });
+        const url  = URL.createObjectURL(blob);
+        const a    = document.createElement('a');
+        a.href     = url;
+        a.download = `custom-articles-backup-${new Date().toISOString().slice(0, 19).replace(/[T:]/g, '-')}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        console.log('[FIX-9] Backup downloaded before import.');
+    } catch (e) {
+        console.warn('[FIX-9] Backup download failed:', e);
+    }
+}
+
 function importCustomArticles(file) {
     const reader = new FileReader();
     reader.onload = (e) => {
         try {
-            const data = JSON.parse(e.target.result);
-            if (!Array.isArray(data)) throw new Error('JSON 必須是陣列');
+            // FIX-9: JSON 解析
+            let data;
+            try {
+                data = JSON.parse(e.target.result);
+            } catch (parseErr) {
+                showNotification('❌ 匯入失敗：JSON 格式無效，請確認檔案內容。', 'error');
+                return;
+            }
 
-            const existing = loadCustomArticles();
+            if (!Array.isArray(data)) {
+                showNotification('❌ 匯入失敗：JSON 必須是陣列格式。', 'error');
+                return;
+            }
+
+            // FIX-9: 深層驗證每筆資料
+            const valid   = data.filter(_validateArticleItem);
+            const invalid = data.length - valid.length;
+
+            if (valid.length === 0) {
+                showNotification('❌ 匯入失敗：所有項目都缺少「標題」或「內文」欄位。', 'error');
+                return;
+            }
+
+            // FIX-9: 告知用戶有幾筆無效資料將被略過
+            const invalidMsg = invalid > 0
+                ? `\n（已略過 ${invalid} 筆格式不正確的資料）`
+                : '';
+
+            // FIX-9: 匯入前提示並提供備份
+            const existing    = loadCustomArticles();
+            const backupMsg   = existing.length > 0
+                ? `\n\n現有 ${existing.length} 篇文章將保留（合併匯入），並自動下載備份。`
+                : '';
+
+            const confirmed = confirm(
+                `即將匯入 ${valid.length} 篇文章。${invalidMsg}${backupMsg}\n\n確定繼續？`
+            );
+            if (!confirmed) return;
+
+            // FIX-9: 自動下載備份
+            if (existing.length > 0) {
+                _backupCustomArticles(existing);
+            }
+
+            // 合併匯入（跳過 slug 重複）
             const existingSlugs = new Set(existing.map(a => a.slug));
             let added = 0;
 
-            data.forEach(item => {
-                // Accept both "export format" and "internal format"
-                const title = item['標題'] || item.title || '';
-                const content = item['內文'] || item.content || '';
-                const major = item['大類'] || item.major || '';
-                const category = item['分類'] || item.category || '';
-                const slug = item['slug'] || item.slug || generateSlug(title);
-
-                if (!title || !content) return;
-                if (existingSlugs.has(slug)) return; // Skip duplicates
+            valid.forEach(item => {
+                const title    = (item['標題'] || item.title || '').trim();
+                const content  = (item['內文'] || item.content || '').trim();
+                const major    = (item['大類'] || item.major || '').trim();
+                const category = (item['分類'] || item.category || '').trim();
+                // FIX-8: 匯入時也使用 ensureUniqueSlug 防止衝突
+                const rawSlug  = (item['slug'] || item.slug || generateSlug(title));
+                const slug     = ensureUniqueSlug(rawSlug, existingSlugs);
 
                 existing.push({
-                    id: 'custom-' + Date.now() + '-' + added,
+                    id:        'custom-' + Date.now() + '-' + added,
                     title, major, category, content, slug,
-                    merged: false,
+                    merged:    false,
                     createdAt: new Date().toISOString()
                 });
                 existingSlugs.add(slug);
@@ -3514,9 +3756,13 @@ function importCustomArticles(file) {
 
             saveCustomArticles(existing);
             renderCustomArticlesList();
-            alert(`成功匯入 ${added} 篇文章。`);
+            showNotification(
+                `✅ 成功匯入 ${added} 篇文章${invalid > 0 ? `，略過 ${invalid} 筆無效資料` : ''}。`,
+                'success'
+            );
         } catch (err) {
-            alert('匯入失敗：' + err.message);
+            showNotification('❌ 匯入失敗：' + err.message, 'error');
+            console.error('[FIX-9] Import error:', err);
         }
     };
     reader.readAsText(file);

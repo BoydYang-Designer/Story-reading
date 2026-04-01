@@ -1250,14 +1250,64 @@ async function openTsCompare(title) {
 
     const url = `https://raw.githubusercontent.com/BoydYang-Designer/Story-reading/main/audio/${encodeURIComponent(title.trim())} Timestamp.txt`;
     let githubData;
+    let isOffline = false;
+
     try {
-        const resp = await fetch(url + '?nocache=' + Date.now());
+        // FIX-7: 加入 5 秒 AbortController timeout，避免網路不通時無限等待
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+        let resp;
+        try {
+            resp = await fetch(url + '?nocache=' + Date.now(), { signal: controller.signal });
+        } finally {
+            clearTimeout(timeoutId);
+        }
         if (!resp.ok) throw new Error('GitHub 無法取得此文章的 Timestamp 檔');
         const text = await resp.text();
         if (typeof parseTimestampText !== 'function') throw new Error('parseTimestampText 函數不存在');
         githubData = parseTimestampText(text);
     } catch (err) {
-        body.innerHTML = `<p class="ts-compare-error">❌ ${escapeHtml(err.message)}</p>`;
+        // FIX-7: 離線或逾時 → 降級顯示本地暫存版，不直接顯示空白錯誤
+        if (err.name === 'AbortError' || err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
+            isOffline = true;
+            console.warn('[FIX-7] GitHub unreachable, showing local-only view:', err.message);
+        } else {
+            body.innerHTML = `<p class="ts-compare-error">❌ ${escapeHtml(err.message)}</p>`;
+            return;
+        }
+    }
+
+    // FIX-7: 離線模式 — 只顯示本地暫存版，無法比對差異
+    if (isOffline) {
+        const overrides = getTsOverrideForTitle(title);
+        const keys = Object.keys(overrides);
+        if (keys.length === 0) {
+            body.innerHTML = `
+                <p class="ts-compare-error">⚠️ 無法連線 GitHub（網路逾時），且此文章目前沒有本地暫存修改記錄。</p>`;
+            return;
+        }
+        let html = `
+            <p class="ts-compare-error" style="background:#fff8e1;border-color:#ffe082;color:#f57f17;">
+                ⚠️ 無法連線 GitHub（請確認網路連線），以下僅顯示您的<strong>本地暫存修改</strong>，無法比對差異。
+            </p>
+            <div class="ts-compare-list">`;
+        keys.sort((a, b) => Number(a) - Number(b)).forEach(idx => {
+            const ov = overrides[idx];
+            html += `
+            <div class="ts-compare-item is-diff" data-idx="${idx}">
+                <div class="ts-compare-label">第 ${Number(idx) + 1} 句（本地暫存）</div>
+                <div class="ts-compare-row">
+                    <span class="ts-compare-col-label">時間</span>
+                    <span class="ts-compare-val-local">${ov.start?.toFixed(3) ?? '—'} → ${ov.end?.toFixed(3) ?? '—'}</span>
+                </div>
+                <div class="ts-compare-row">
+                    <span class="ts-compare-col-label">文字</span>
+                    <span class="ts-compare-val-local">${escapeHtml(ov.sentence ?? '')}</span>
+                </div>
+            </div>`;
+        });
+        html += '</div>';
+        body.innerHTML = html;
         return;
     }
 
