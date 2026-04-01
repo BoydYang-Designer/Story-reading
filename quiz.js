@@ -4737,6 +4737,7 @@ async function startVoiceReorder(source) {
 // ════════════════════════════════════════════════════════════
 function _vrLoadQuestion() {
     _vrStopRecordingSilent();
+    _vrReleasePlaybackBlob(); // 釋放上一題的錄音 Blob，隱藏回聽按鈕
     const item = _vrState.sentences[_vrState.qIndex];
     _resetReplayCount();
 
@@ -5392,6 +5393,7 @@ function _vrStartRecording() {
         _vrIsRecording = true;
         _vrEl('vr-mic-btn').classList.add('is-recording');
         _vrEl('vr-mic-label').textContent = '🔴 Recording… tap to stop';
+        _vrStartAudioRecording(); // 雙軌並行：同步啟動 MediaRecorder 錄音
     } catch(e) {
         showNotification('Could not start microphone. Try again.', 'warning');
     }
@@ -5406,6 +5408,7 @@ function _vrStopRecordingSilent() {
     }
     _vrBestTranscript = '';
     _vrSetMicOff();
+    _vrStopAudioRecordingSilent(); // 靜默停止 MediaRecorder（不顯示回聽按鈕）
 }
 
 function _vrStopRecording() {
@@ -5415,6 +5418,7 @@ function _vrStopRecording() {
         _vrRecognition = null;
     }
     _vrSetMicOff();
+    _vrStopAudioRecording(); // 同步停止 MediaRecorder，產生 Blob 供回聽
     // ★ 直接用 _vrBestTranscript：歷史最長、最完整的識別結果
     const heard = _vrBestTranscript.trim();
     if (heard) {
@@ -5680,3 +5684,176 @@ document.addEventListener('keydown', (e) => {
 });
 
 console.log('✅ Voice Reorder loaded.');
+
+// ════════════════════════════════════════════════════════════
+//  VR AUDIO RECORDING — 錄音 + 當題回放（方案 A：RAM Blob）
+//  原理：MediaRecorder 與 Web Speech API 雙軌並行
+//  生命週期：每題按麥克風開始錄音 → 停止錄音 → Blob URL →
+//            顯示「回聽」按鈕 → 下一題時自動 revoke 釋放記憶體
+// ════════════════════════════════════════════════════════════
+
+let _vrRecorder      = null;   // MediaRecorder 實例
+let _vrAudioChunks   = [];     // 錄音資料片段
+let _vrPlaybackBlob  = null;   // 當前題目的錄音 Object URL
+let _vrPlaybackAudio = null;   // 回放用 Audio 元素
+let _vrSilentStop    = false;  // true 時 onstop 不顯示回聽按鈕（跳題/Check/退出場景）
+
+/**
+ * 開始錄音（與 _vrStartRecording 同步呼叫）
+ * async 函式：getUserMedia 需 await，但呼叫點在 click 手勢內，iOS 相容
+ */
+async function _vrStartAudioRecording() {
+    // 若上一題 Blob 還殘留（例如重說時），先釋放
+    _vrReleasePlaybackBlob();
+
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return;
+
+    let stream;
+    try {
+        stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    } catch (e) {
+        // 麥克風被拒或不支援 → 靜默略過，語音識別功能不受影響
+        return;
+    }
+
+    // iOS Safari 只支援 audio/mp4；其他瀏覽器用 audio/webm（品質較好）
+    const mimeType = (typeof MediaRecorder !== 'undefined' && MediaRecorder.isTypeSupported('audio/webm'))
+        ? 'audio/webm'
+        : 'audio/mp4';
+
+    try {
+        _vrRecorder = new MediaRecorder(stream, { mimeType });
+    } catch (e) {
+        stream.getTracks().forEach(t => t.stop());
+        return;
+    }
+
+    _vrAudioChunks = [];
+
+    _vrRecorder.ondataavailable = (e) => {
+        if (e.data && e.data.size > 0) _vrAudioChunks.push(e.data);
+    };
+
+    _vrRecorder.onstop = () => {
+        // 停止所有音訊軌道（釋放瀏覽器麥克風指示燈）
+        stream.getTracks().forEach(t => t.stop());
+
+        if (_vrAudioChunks.length === 0) return;
+        if (_vrSilentStop) {
+            // 靜默停止（跳題 / Check / 退出）→ 丟棄錄音，不顯示回聽按鈕
+            _vrAudioChunks = [];
+            _vrSilentStop  = false;
+            return;
+        }
+
+        const blob = new Blob(_vrAudioChunks, { type: mimeType });
+        _vrAudioChunks = [];
+        _vrPlaybackBlob = URL.createObjectURL(blob);
+
+        // 顯示回聽按鈕
+        const btn = document.getElementById('vr-playback-btn');
+        if (btn) btn.style.display = 'flex';
+    };
+
+    try {
+        _vrRecorder.start();
+    } catch (e) {
+        stream.getTracks().forEach(t => t.stop());
+        _vrRecorder = null;
+    }
+}
+
+/**
+ * 停止錄音 — 用戶主動停止（顯示回聽按鈕）
+ */
+function _vrStopAudioRecording() {
+    _vrSilentStop = false; // 正常停止 → onstop 會顯示回聽按鈕
+    if (_vrRecorder && _vrRecorder.state !== 'inactive') {
+        try { _vrRecorder.stop(); } catch (e) {}
+    }
+    _vrRecorder = null;
+}
+
+/**
+ * 停止錄音 — 靜默停止（跳題 / Check / 退出，不顯示回聽按鈕）
+ */
+function _vrStopAudioRecordingSilent() {
+    _vrSilentStop = true; // 靜默停止 → onstop 會丟棄錄音
+    if (_vrRecorder && _vrRecorder.state !== 'inactive') {
+        try { _vrRecorder.stop(); } catch (e) {}
+    }
+    _vrRecorder = null;
+}
+
+/**
+ * 回放錄音（點回聽按鈕觸發）
+ * 若正在播放則停止；若未播放則開始
+ */
+function _vrPlayback() {
+    if (!_vrPlaybackBlob) return;
+
+    const btn     = document.getElementById('vr-playback-btn');
+    const iconEl  = document.getElementById('vr-playback-icon');
+    const labelEl = document.getElementById('vr-playback-label');
+
+    // 正在播放 → 停止
+    if (_vrPlaybackAudio && !_vrPlaybackAudio.paused) {
+        _vrPlaybackAudio.pause();
+        _vrPlaybackAudio.currentTime = 0;
+        if (btn)     btn.classList.remove('is-playing');
+        if (iconEl)  iconEl.textContent  = '▶';
+        if (labelEl) labelEl.textContent = '回聽我的發音';
+        return;
+    }
+
+    // 開始播放
+    _vrPlaybackAudio = new Audio(_vrPlaybackBlob);
+
+    if (btn)     btn.classList.add('is-playing');
+    if (iconEl)  iconEl.textContent  = '■';
+    if (labelEl) labelEl.textContent = '播放中…';
+
+    _vrPlaybackAudio.onended = () => {
+        if (btn)     btn.classList.remove('is-playing');
+        if (iconEl)  iconEl.textContent  = '▶';
+        if (labelEl) labelEl.textContent = '回聽我的發音';
+    };
+    _vrPlaybackAudio.onerror = () => {
+        if (btn)     btn.classList.remove('is-playing');
+        if (iconEl)  iconEl.textContent  = '▶';
+        if (labelEl) labelEl.textContent = '回聽我的發音';
+    };
+    _vrPlaybackAudio.play().catch(() => {
+        if (btn) btn.classList.remove('is-playing');
+    });
+}
+
+/**
+ * 釋放 Blob URL 並隱藏回聽按鈕（每題切換時呼叫）
+ * 必須 revoke 以避免記憶體洩漏
+ */
+function _vrReleasePlaybackBlob() {
+    if (_vrPlaybackAudio) {
+        _vrPlaybackAudio.pause();
+        _vrPlaybackAudio = null;
+    }
+    if (_vrPlaybackBlob) {
+        URL.revokeObjectURL(_vrPlaybackBlob);
+        _vrPlaybackBlob = null;
+    }
+    _vrAudioChunks = [];
+    const btn = document.getElementById('vr-playback-btn');
+    if (btn) {
+        btn.style.display = 'none';
+        btn.classList.remove('is-playing');
+    }
+    const iconEl  = document.getElementById('vr-playback-icon');
+    const labelEl = document.getElementById('vr-playback-label');
+    if (iconEl)  iconEl.textContent  = '▶';
+    if (labelEl) labelEl.textContent = '回聽我的發音';
+}
+
+// 回聽按鈕 event listener
+document.getElementById('vr-playback-btn').addEventListener('click', _vrPlayback);
+
+console.log('✅ VR Audio Recording module loaded.');

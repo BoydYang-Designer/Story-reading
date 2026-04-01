@@ -320,6 +320,23 @@
       font-size: 0.85em; color: var(--color-primary, #7a6b5a);
       font-style: italic; text-align: center; min-height: 1.3em;
     }
+    /* VR 回聽按鈕 */
+    .vr-playback-btn {
+      display: none;
+      align-items: center; gap: 6px;
+      padding: 6px 16px;
+      border: 1.5px solid var(--color-primary, #7a6b5a);
+      border-radius: 20px;
+      background: var(--color-accent-light, #f5ece0);
+      color: var(--color-primary, #7a6b5a);
+      font-size: 0.84em; font-family: inherit; cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .vr-playback-btn:hover { background: #ede4d8; }
+    .vr-playback-btn.is-playing {
+      background: var(--color-primary, #7a6b5a);
+      color: #fff;
+    }
     /* Strict / Fuzzy toggle */
     .reorder-ctrl-strict--on {
       background: var(--color-accent-light, #f5ece0);
@@ -1051,6 +1068,11 @@
                 <button class="vr-mic-btn" id="vr-mic-btn" title="Tap to start / stop recording">🎤</button>
                 <div class="vr-mic-label" id="vr-mic-label">Tap mic & say the whole sentence</div>
                 <div class="vr-heard-text" id="vr-heard-text"></div>
+                <!-- 回聽錄音按鈕（停止錄音後才顯示） -->
+                <button class="vr-playback-btn" id="vr-playback-btn" title="回聽自己的發音">
+                    <span id="vr-playback-icon">▶</span>
+                    <span id="vr-playback-label">回聽我的發音</span>
+                </button>
             </div>
 
             <!-- Controls row -->
