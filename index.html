@@ -937,6 +937,131 @@
 
         </div>
 
+        <!-- ── 難易度說明 ── -->
+        <div class="quiz-weight-info">
+            <button class="quiz-weight-toggle" id="quiz-diff-toggle" aria-expanded="false">
+                <span class="quiz-weight-toggle-icon">🎯</span>
+                <span class="quiz-weight-toggle-label">難易度說明</span>
+                <span class="quiz-weight-toggle-arrow">▾</span>
+            </button>
+            <div class="quiz-weight-body is-hidden" id="quiz-diff-body">
+
+                <!-- 單字 / 片語模式 -->
+                <p class="quiz-weight-intro">
+                    <strong>🃏 Flashcard &amp; Flashcard+（單字 / 片語）</strong><br>
+                    依據 Oxford CEFR 詞彙表判定單字等級，選擇你想練習的程度：
+                </p>
+                <div class="quiz-weight-buckets">
+                    <div class="quiz-weight-bucket bucket-a">
+                        <div class="quiz-bucket-header">
+                            <span class="quiz-bucket-badge">A1–A2</span>
+                            <span class="quiz-bucket-pct">🟢 入門</span>
+                        </div>
+                        <div class="quiz-bucket-label">基礎核心詞彙</div>
+                        <div class="quiz-bucket-desc">日常生活最常用的基本單字，適合初學者打穩地基。</div>
+                    </div>
+                    <div class="quiz-weight-bucket bucket-c">
+                        <div class="quiz-bucket-header">
+                            <span class="quiz-bucket-badge">B1–B2</span>
+                            <span class="quiz-bucket-pct">🟡 中級</span>
+                        </div>
+                        <div class="quiz-bucket-label">進階應用詞彙</div>
+                        <div class="quiz-bucket-desc">用於表達較複雜情境的詞彙，適合有一定基礎的學習者。</div>
+                    </div>
+                    <div class="quiz-weight-bucket bucket-b">
+                        <div class="quiz-bucket-header">
+                            <span class="quiz-bucket-badge">C1–C2</span>
+                            <span class="quiz-bucket-pct">🔴 高級</span>
+                        </div>
+                        <div class="quiz-bucket-label">學術 / 精準詞彙</div>
+                        <div class="quiz-bucket-desc">閱讀學術文章或專業文章時常見，適合進階挑戰。</div>
+                    </div>
+                </div>
+                <p class="quiz-weight-note">💡 查不到 CEFR 等級的罕見詞或專有名詞，各等級模式都會保留。</p>
+
+                <!-- 句子模式 -->
+                <p class="quiz-weight-intro" style="margin-top:14px">
+                    <strong>🎧 Dictation・🔀 Reorder・🎤 Voice Reorder（句子）</strong><br>
+                    依照句子字數自動判定難度：
+                </p>
+                <div class="quiz-weight-buckets">
+                    <div class="quiz-weight-bucket bucket-a">
+                        <div class="quiz-bucket-header">
+                            <span class="quiz-bucket-badge">Easy</span>
+                            <span class="quiz-bucket-pct">🟢 ≤ 8 個字</span>
+                        </div>
+                        <div class="quiz-bucket-label">短句練習</div>
+                        <div class="quiz-bucket-desc">簡短句子，適合熟悉模式或暖身，記憶負擔低。</div>
+                    </div>
+                    <div class="quiz-weight-bucket bucket-c">
+                        <div class="quiz-bucket-header">
+                            <span class="quiz-bucket-badge">Medium</span>
+                            <span class="quiz-bucket-pct">🟡 9–15 個字</span>
+                        </div>
+                        <div class="quiz-bucket-label">中等長度句子</div>
+                        <div class="quiz-bucket-desc">日常對話或文章中最常見的句型，兼顧訓練量與難度。</div>
+                    </div>
+                    <div class="quiz-weight-bucket bucket-b">
+                        <div class="quiz-bucket-header">
+                            <span class="quiz-bucket-badge">Hard</span>
+                            <span class="quiz-bucket-pct">🔴 ≥ 16 個字</span>
+                        </div>
+                        <div class="quiz-bucket-label">長句 / 複雜結構</div>
+                        <div class="quiz-bucket-desc">較長或含從句的句子，訓練工作記憶與語序感知能力。</div>
+                    </div>
+                </div>
+                <p class="quiz-weight-note">💡 可同時勾選多個難度，系統會從所選範圍內混合出題。</p>
+
+            </div>
+        </div>
+
+        <!-- ── 出題權重說明 ── -->
+        <div class="quiz-weight-info">
+            <button class="quiz-weight-toggle" id="quiz-weight-toggle" aria-expanded="false">
+                <span class="quiz-weight-toggle-icon">⚖️</span>
+                <span class="quiz-weight-toggle-label">出題比例說明</span>
+                <span class="quiz-weight-toggle-arrow">▾</span>
+            </button>
+            <div class="quiz-weight-body is-hidden" id="quiz-weight-body">
+                <p class="quiz-weight-intro">系統依據你的練習紀錄，將每道題分入四個桶，再依以下比例抽題：</p>
+                <div class="quiz-weight-buckets">
+                    <div class="quiz-weight-bucket bucket-a">
+                        <div class="quiz-bucket-header">
+                            <span class="quiz-bucket-badge">桶 A</span>
+                            <span class="quiz-bucket-pct">95%</span>
+                        </div>
+                        <div class="quiz-bucket-label">🆕 從未練習過</div>
+                        <div class="quiz-bucket-desc">只要還有未做過的題目，就優先大量抽取，確保新知識先被看見。</div>
+                    </div>
+                    <div class="quiz-weight-bucket bucket-b">
+                        <div class="quiz-bucket-header">
+                            <span class="quiz-bucket-badge">桶 B</span>
+                            <span class="quiz-bucket-pct">剩餘 × 70%</span>
+                        </div>
+                        <div class="quiz-bucket-label">💪 需要加強（熟悉度 &lt; 40%）</div>
+                        <div class="quiz-bucket-desc">錯誤率高或久未複習、已衰減到底板的題，重點補強。</div>
+                    </div>
+                    <div class="quiz-weight-bucket bucket-c">
+                        <div class="quiz-bucket-header">
+                            <span class="quiz-bucket-badge">桶 C</span>
+                            <span class="quiz-bucket-pct">剩餘 × 20%</span>
+                        </div>
+                        <div class="quiz-bucket-label">📈 尚可（熟悉度 40–69%）</div>
+                        <div class="quiz-bucket-desc">已有基礎，但仍需定期鞏固，偶爾抽取維持記憶。</div>
+                    </div>
+                    <div class="quiz-weight-bucket bucket-d">
+                        <div class="quiz-bucket-header">
+                            <span class="quiz-bucket-badge">桶 D</span>
+                            <span class="quiz-bucket-pct">剩餘 × 5%</span>
+                        </div>
+                        <div class="quiz-bucket-label">⭐ 熟練（熟悉度 ≥ 70%）</div>
+                        <div class="quiz-bucket-desc">幾乎不出題，偶爾複習避免長期遺忘。</div>
+                    </div>
+                </div>
+                <p class="quiz-weight-note">💡 熟悉度會隨時間衰減（艾賓浩斯遺忘曲線），久未練習的題會從桶 D 滑回桶 B，確保長期記憶。</p>
+            </div>
+        </div>
+
     </div>
 
     <!-- Quiz Session -->

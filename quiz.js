@@ -450,8 +450,14 @@ function shuffle(arr) {
 // ── 間隔重複參數設定（可依需求調整）────────────────────────────
 const SR_CONFIG = {
     // 記憶底板：即使再久沒複習，有效熟悉度最多只降到這個值。
-    // 代表「學過就是學過，不會完全忘記」。建議範圍：20–40。
-    decayFloor: 30,
+    // 代表「學過就是學過，不會完全忘記」。建議範圍：15–30。
+    // 降低至 20（原 30）：避免剛學完的題因底板過高直接進桶 B 持續重複出題，
+    // 給使用者一段時間鞏固後再複習。
+    decayFloor: 20,
+
+    // Voice Reorder 難度最高，底板再低一些（15），
+    // 讓使用者需要真正熟練才能跳出桶 B。
+    decayFloorVoiceReorder: 15,
 
     // 艾賓浩斯半衰期（天）：熟悉度越高記得越久
     halfLifeHigh: 30,   // 原始熟悉度 ≥ 70%
@@ -476,8 +482,12 @@ const SR_CONFIG = {
  *   → days=0 時：effectiveFam = rawFam（剛測完，完整保留）
  *   → days→∞ 時：effectiveFam → floor（最多衰減到底板，不再下降）
  *   → 學過的題永遠比未測驗（null）更優先
+ *
+ * @param {object} rec       - itemScores 中的題目紀錄
+ * @param {string} itemType  - 'noteSentences' | 'articleSentences' | ...
+ * @param {string} [quizSource] - 'voiceReorder' 時使用較低底板（15 vs 20）
  */
-function calcEffectiveFamiliarity(rec, itemType) {
+function calcEffectiveFamiliarity(rec, itemType, quizSource) {
     if (!rec || !_recHasPractice(rec)) {
         return { rawFam: null, effectiveFam: null, daysSince: Infinity };
     }
@@ -487,7 +497,8 @@ function calcEffectiveFamiliarity(rec, itemType) {
     if (typeof calcWeightedFamiliarity === 'function' && itemType) {
         rawFam = calcWeightedFamiliarity(rec, itemType);
     } else {
-        const sources = ['fc','fcplus','dictation','reorder','articleListen'];
+        // 備用路徑：包含 voiceReorder 在內的所有來源平均
+        const sources = ['fc','fcplus','dictation','reorder','voiceReorder','articleListen'];
         const vals = sources.map(s => {
             const sr = rec[s];
             if (!sr) return null;
@@ -507,8 +518,13 @@ function calcEffectiveFamiliarity(rec, itemType) {
     else if (rawFam >= 40) halfLife = SR_CONFIG.halfLifeMid;
     else                   halfLife = SR_CONFIG.halfLifeLow;
 
+    // Voice Reorder 難度最高，使用較低底板讓衰減效果更顯著，促進真正的複習
+    const baseFloor = (quizSource === 'voiceReorder')
+        ? SR_CONFIG.decayFloorVoiceReorder
+        : SR_CONFIG.decayFloor;
+
     // 底板不超過 rawFam（避免答錯率高的題被虛假拉高）
-    const floor = Math.min(SR_CONFIG.decayFloor, rawFam);
+    const floor = Math.min(baseFloor, rawFam);
     const decayFactor = Math.pow(2, -days / halfLife);
     const effectiveFam = Math.round(floor + (rawFam - floor) * decayFactor);
 
@@ -524,9 +540,11 @@ function calcEffectiveFamiliarity(rec, itemType) {
  * 桶 D（剩餘 × 5%） ：有效熟悉度 ≥ 70%（幾乎不出）
  *
  * 學過的題（effectiveFam 有值）永遠不進桶 A，
- * 即使衰減到底板（30%）也只落在桶 B，優先度低於未測驗。
+ * 即使衰減到底板也只落在桶 B，優先度低於未測驗。
+ *
+ * @param {string} [quizSource] - 傳入 'voiceReorder' 時使用較低底板
  */
-function weightedSample(pool, n, keyFn, categoryName, titleName, itemType) {
+function weightedSample(pool, n, keyFn, categoryName, titleName, itemType, quizSource) {
     if (!pool || pool.length === 0) return [];
     n = Math.min(n, pool.length);
 
@@ -548,7 +566,7 @@ function weightedSample(pool, n, keyFn, categoryName, titleName, itemType) {
     for (const item of pool) {
         const text = keyFn ? keyFn(item) : String(item);
         const rec  = typeDataMap[text] || null;
-        const { effectiveFam } = calcEffectiveFamiliarity(rec, itemType);
+        const { effectiveFam } = calcEffectiveFamiliarity(rec, itemType, quizSource);
 
         if (effectiveFam === null)   bucketA.push(item);
         else if (effectiveFam < 40)  bucketB.push(item);
@@ -880,6 +898,32 @@ async function pickerPreselect(majorName, categoryName, titleName) {
     await pickerPopulateArticles(majorName, categoryName);
     selArticle.value = titleName;
 }
+
+// ── 難易度說明：展開 / 收合 ──────────────────────────────────
+(function _initDiffToggle() {
+    const btn  = document.getElementById('quiz-diff-toggle');
+    const body = document.getElementById('quiz-diff-body');
+    if (!btn || !body) return;
+    btn.addEventListener('click', () => {
+        const isOpen = !body.classList.contains('is-hidden');
+        body.classList.toggle('is-hidden', isOpen);
+        btn.setAttribute('aria-expanded', String(!isOpen));
+        btn.classList.toggle('is-open', !isOpen);
+    });
+})();
+
+// ── 出題權重說明：展開 / 收合 ─────────────────────────────────
+(function _initWeightToggle() {
+    const btn  = document.getElementById('quiz-weight-toggle');
+    const body = document.getElementById('quiz-weight-body');
+    if (!btn || !body) return;
+    btn.addEventListener('click', () => {
+        const isOpen = !body.classList.contains('is-hidden');
+        body.classList.toggle('is-hidden', isOpen);
+        btn.setAttribute('aria-expanded', String(!isOpen));
+        btn.classList.toggle('is-open', !isOpen);
+    });
+})();
 
 // ── Entry Point ───────────────────────────────────────────────
 
@@ -2155,7 +2199,7 @@ document.getElementById('dictation-next').addEventListener('click', () => {
 // ══════════════════════════════════════════════════════════════
 
 function getDifficultyLabel(wordCount) {
-    if (wordCount < 8)  return { label: 'Easy',   color: '#50b86c', diff: 'easy' };
+    if (wordCount <= 8)  return { label: 'Easy',   color: '#50b86c', diff: 'easy' };
     if (wordCount <= 15) return { label: 'Medium', color: '#f5a623', diff: 'medium' };
     return                     { label: 'Hard',   color: '#e05c5c', diff: 'hard' };
 }
@@ -3008,13 +3052,22 @@ async function startReorder(source) {
             showNotification(`No ${diffLabel}sentences found in this article.`, 'warning');
             return;
         }
-        const pool = shuffle(rawPool).slice(0, quizState.questionCount || 10);
-        sentences = pool.map(l => ({
+        // BUG-4 FIX: 改用 weightedSample 取代純隨機 shuffle().slice()，
+        // 讓 article 來源的 Reorder 也享有間隔重複（熟悉的句子少出，不熟的優先出）。
+        const allMappedArticle = rawPool.map(l => ({
             sentence: l.sentence.trim(),
             start: l.start,
             end: l.end,
             title
         }));
+        sentences = weightedSample(
+            allMappedArticle,
+            quizState.questionCount || 10,
+            item => item.sentence,
+            quizState.categoryName,
+            quizState.titleName,
+            'articleSentences'
+        );
 
         // Preload audio
         _setQuizAudioSrc(`audio/${encodeURIComponent(title.trim())}.mp3`);
@@ -4855,7 +4908,7 @@ async function startVoiceReorder(source) {
             const sent = (line.sentence || '').trim();
             if (!sent) return false;
             const wc = _vrTokenize(sent).length;
-            const diff = wc <= 7 ? 'easy' : wc <= 13 ? 'medium' : 'hard';
+            const diff = wc <= 8 ? 'easy' : wc <= 15 ? 'medium' : 'hard';
             return diffFilter.size === 3 || diffFilter.has(diff);
         });
         if (filtered.length === 0) {
@@ -4884,7 +4937,7 @@ async function startVoiceReorder(source) {
         const filtered = noteSentences.filter(s => {
             const text = typeof s === 'string' ? s : s.text || '';
             const wc = _vrTokenize(text).length;
-            const diff = wc <= 7 ? 'easy' : wc <= 13 ? 'medium' : 'hard';
+            const diff = wc <= 8 ? 'easy' : wc <= 15 ? 'medium' : 'hard';
             return diffFilter.size === 3 || diffFilter.has(diff);
         });
         if (filtered.length === 0) {
@@ -4898,6 +4951,8 @@ async function startVoiceReorder(source) {
     }
 
     // BUG-3 FIX: 使用間隔重複算法（weightedSample）取代純隨機抽題
+    // 傳入 'voiceReorder' 讓分桶時使用較低的衰減底板（15），
+    // 避免剛學完但還不熟的句子因底板過高而停留在桶 B 被過度重複出題。
     const n = quizState.questionCount || 10;
     const _vrItemType = (source === 'article') ? 'articleSentences' : 'noteSentences';
     const sampled = weightedSample(
@@ -4906,7 +4961,8 @@ async function startVoiceReorder(source) {
         s => s.text,
         quizState.categoryName,
         quizState.titleName,
-        _vrItemType
+        _vrItemType,
+        'voiceReorder'   // 使用 voiceReorder 專屬底板
     );
 
     _vrState.sentences  = sampled;

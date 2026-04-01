@@ -193,12 +193,15 @@ function recordItemResult(categoryName, titleName, itemType, itemText, isCorrect
     if (!rec[source]) rec[source] = { correct: 0, wrong: 0 };
     const src = rec[source];
 
+    // replayCount：每次手動重播代表使用者需要額外幫助，
+    // 無論最終答對或答錯，都記錄為額外的 wrong，
+    // 讓熟悉度公式反映出「聽幾次才答出來」的困難程度。
     if (isCorrect) {
         src.correct++;
-        if (replayCount > 0) src.wrong += replayCount;
     } else {
         src.wrong++;
     }
+    if (replayCount > 0) src.wrong += replayCount;
     rec.lastSeen = _todayStr();
     if (!rec.firstSeen) rec.firstSeen = _todayStr();
 
@@ -2106,7 +2109,7 @@ function _getItemBucketInfo(rec, itemType) {
                     ? Math.floor((Date.now() - new Date(lastSeen).getTime()) / 86400000)
                     : 0;
                 const halfLife   = rawFam >= 70 ? 30 : rawFam >= 40 ? 14 : 7;
-                const decayFloor = 30;
+                const decayFloor = 15;  // voiceReorder 難度最高，使用較低底板
                 const floor      = Math.min(decayFloor, rawFam);
                 effectiveFam     = Math.round(floor + (rawFam - floor) * Math.pow(2, -days / halfLife));
             }
@@ -2130,7 +2133,7 @@ function _getItemBucketInfo(rec, itemType) {
                 ? Math.floor((Date.now() - new Date(lastSeen).getTime()) / 86400000)
                 : 0;
             const halfLife = rawFam >= 70 ? 30 : rawFam >= 40 ? 14 : 7;
-            const decayFloor = 30;
+            const decayFloor = 20;  // 一般模式底板（與 quiz.js SR_CONFIG.decayFloor 同步）
             const floor = Math.min(decayFloor, rawFam);
             effectiveFam = Math.round(floor + (rawFam - floor) * Math.pow(2, -days / halfLife));
         }
