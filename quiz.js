@@ -40,6 +40,26 @@ const QUIZ_SCORES_KEY = 'readingChallengeQuizScores';
     document.addEventListener('click',      _unlock, true);
 })();
 
+// ── 頁面重新可見時自動 resume AudioContext（切換 app/分頁再回來的修復）────────
+// 瀏覽器在頁面進入背景時會自動 suspend AudioContext，
+// 導致回到頁面後音量極小或無聲。每次 visible 時主動 resume。
+document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState !== 'visible') return;
+
+    // resume _quizAudioCtx
+    if (window._quizAudioCtx && window._quizAudioCtx.state === 'suspended') {
+        window._quizAudioCtx.resume().catch(() => {});
+    }
+    // resume WebAudioEngine 的 AudioContext（若有暴露 unlock/resume 介面）
+    if (typeof WebAudioEngine !== 'undefined' && WebAudioEngine.isSupported()) {
+        if (typeof WebAudioEngine.resume === 'function') {
+            WebAudioEngine.resume().catch(() => {});
+        } else if (typeof WebAudioEngine.unlock === 'function') {
+            WebAudioEngine.unlock();
+        }
+    }
+});
+
 // ════════════════════════════════════════════════════════════
 //  SUCCESS SOUND — 答對音效（Web Audio API 合成，無需外部音檔）
 // ════════════════════════════════════════════════════════════
