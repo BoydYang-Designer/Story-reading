@@ -310,21 +310,43 @@ function createListItemWithImage(text, onClick, fallbackText = null, showThumb =
     ];
 
     function _trySetImage() {
-        // B 方案：若快取已有結果（由 story.json hasThumb 預填），直接查表
+        // B 方案：走完所有候補，找到第一個快取為 true 的就顯示並結束
+        // FIX: 原本找到第一個「有快取記錄」的 path 就 return，不管值是 true/false，
+        //      導致第一個候補快取為 false 時，後面的候補（如 .png）永遠不會被嘗試。
+        //      修正：應繼續走完所有候補，直到找到 true 的為止。
+        let allCached = true;
         for (const path of candidates) {
-            if (_imageExistsCache.has(path)) {
+            if (!_imageExistsCache.has(path)) {
+                allCached = false;
+                break;
+            }
+        }
+        if (allCached) {
+            // 所有候補都有快取結果，找出第一個 true 的來用
+            for (const path of candidates) {
                 if (_imageExistsCache.get(path)) {
                     img.src = path;
                     img.classList.remove('img-hidden');
+                    return;
                 }
-                return; // 有快取結果就直接用，不再發請求
             }
+            return; // 全部都是 false，沒有圖片
         }
 
         // A+C 方案：快取未命中，用 fetch HEAD 依序確認（加 cache: 'force-cache'）
         (function tryNext(i) {
             if (i >= candidates.length) {
                 candidates.forEach(p => _imageExistsCache.set(p, false));
+                return;
+            }
+            // 若此候補已有快取，直接跳過或使用
+            if (_imageExistsCache.has(candidates[i])) {
+                if (_imageExistsCache.get(candidates[i])) {
+                    img.src = candidates[i];
+                    img.classList.remove('img-hidden');
+                    return;
+                }
+                tryNext(i + 1);
                 return;
             }
             fetch(candidates[i], { method: 'HEAD', cache: 'force-cache' })
@@ -347,8 +369,13 @@ function createListItemWithImage(text, onClick, fallbackText = null, showThumb =
         })(0);
     }
 
-    // A 方案：IntersectionObserver 延遲觸發，只在進入視口時才發請求
-    if ('IntersectionObserver' in window) {
+    // A 方案：若快取已全部就緒，直接套用（不等 IntersectionObserver）
+    // FIX: 按 Back 重建 DOM 後，快取已有結果卻還要等元素進入視口才觸發，
+    //      造成已知有圖的書仍然短暫空白。直接檢查快取，若已完整就立即顯示。
+    const allAlreadyCached = candidates.every(p => _imageExistsCache.has(p));
+    if (allAlreadyCached) {
+        _trySetImage();
+    } else if ('IntersectionObserver' in window) {
         const observer = new IntersectionObserver((entries, obs) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
