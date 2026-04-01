@@ -83,6 +83,49 @@ function _playSuccessSound(type = 'correct') {
     });
 }
 
+// ════════════════════════════════════════════════════════════
+//  WRONG SOUND — 答錯音效（Web Audio API 合成，無需外部音檔）
+// ════════════════════════════════════════════════════════════
+
+/**
+ * 播放答錯音效（低沉短促的 buzz）
+ * 使用 Web Audio API 合成，不需要外部音檔
+ */
+function _playWrongSound() {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+
+    let ctx = window._quizAudioCtx;
+    if (!ctx || ctx.state === 'closed') {
+        try { ctx = new AC(); } catch (e) { return; }
+    }
+    if (ctx.state === 'suspended') {
+        ctx.resume().catch(() => {});
+    }
+
+    const now = ctx.currentTime;
+
+    // 低沉下降音（D4 → C4），輕微 vibrato 感
+    const notes = [
+        { freq: 293.66, t: 0 },    // D4
+        { freq: 261.63, t: 0.10 }, // C4
+    ];
+
+    notes.forEach(({ freq, t }) => {
+        const osc  = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, now + t);
+        gain.gain.setValueAtTime(0, now + t);
+        gain.gain.linearRampToValueAtTime(0.18, now + t + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + t + 0.22);
+        osc.start(now + t);
+        osc.stop(now + t + 0.25);
+    });
+}
+
 // ── 單字播放用 generation counter（防止舊的 async 呼叫搶佔新播放）──────────
 let _quizPlayWordGen = 0;
 
@@ -1797,6 +1840,7 @@ document.getElementById('flashcard-correct').addEventListener('click', () => {
 document.getElementById('flashcard-wrong').addEventListener('click', () => {
     const item = quizState.deck[quizState.deckIndex];
     quizState.wrong++;
+    _playWrongSound();
     // BUG-07 FIX: 同一個字只記錄一次，避免 re-queue 後結果頁重複顯示
     if (!quizState.wrongItems.includes(item.text)) {
         quizState.wrongItems.push(item.text);
@@ -2055,6 +2099,7 @@ function handleDictationAnswer(selected, correct, btn) {
         feedbackEl.innerHTML = `✗ Answer: <em>${correct}</em>`;
         feedbackEl.className = 'quiz-feedback wrong';
         quizState.wrong++;
+        _playWrongSound();
         quizState.wrongItems.push(correct);
     }
 
@@ -2673,6 +2718,7 @@ function handleArticleListenAnswer(selected, q, btn) {
         feedbackEl.textContent = '✗ Wrong';
         feedbackEl.className = 'quiz-feedback wrong';
         quizState.wrong++;
+        _playWrongSound();
         quizState.wrongItems.push(q.sentence);
     }
 
@@ -2798,6 +2844,7 @@ function handleArticleClozeAnswer(selected, correct, q, btn) {
         feedbackEl.textContent = `✗ Answer: ${correct}`;
         feedbackEl.className = 'quiz-feedback wrong';
         quizState.wrong++;
+        _playWrongSound();
         quizState.wrongItems.push(correct);
     }
 
@@ -3690,6 +3737,7 @@ document.getElementById('reorder-check-btn').addEventListener('click', () => {
         feedback.innerHTML = `✗ Correct order: <em class="quiz-review-correct-styled">${buildCorrectAnswerWithDiff(userAnswerStr, q.sentence)}</em>`;
         feedback.className = 'quiz-feedback wrong';
         quizState.wrong++;
+        _playWrongSound();
         quizState.wrongItems.push(q.sentence);
     }
 
@@ -4306,6 +4354,7 @@ document.getElementById('fcplus-submit-btn').addEventListener('click', () => {
         _playSuccessSound('correct');
     } else {
         quizState.wrong++;
+        _playWrongSound();
         quizState.wrongItems.push(word);
         // Mark back-side word red
         const mark = document.getElementById('fcplus-back-mark');
