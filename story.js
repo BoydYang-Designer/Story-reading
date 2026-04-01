@@ -303,11 +303,24 @@ function createListItemWithImage(text, onClick, fallbackText = null, showThumb =
     container.appendChild(span);
     container.addEventListener('click', onClick);
 
-    const candidates = [
+    // 同時嘗試「空格版」與「底線版」檔名
+    // 例：分類名 "James Clear – Atomic Habits" → 也試 "James_Clear_–_Atomic_Habits"
+    // 以及三條底線版 "James_Clear___Atomic_Habits"（–符號也換成_）
+    const toUnderscore = s => s.replace(/[^A-Za-z0-9.\-]/g, '_');
+    const textU = toUnderscore(text);
+    const fallU = fallbackText ? toUnderscore(fallbackText) : null;
+    const candidates = [...new Set([
         `images/${text}.jpg`,
         `images/${text}.png`,
-        ...(fallbackText ? [`images/${fallbackText}.jpg`, `images/${fallbackText}.png`] : [])
-    ];
+        `images/${textU}.jpg`,
+        `images/${textU}.png`,
+        ...(fallbackText ? [
+            `images/${fallbackText}.jpg`,
+            `images/${fallbackText}.png`,
+            `images/${fallU}.jpg`,
+            `images/${fallU}.png`,
+        ] : [])
+    ])];
 
     function _trySetImage() {
         // B 方案：走完所有候補，找到第一個快取為 true 的就顯示並結束
@@ -2603,19 +2616,21 @@ async function loadData() {
     vocabularyData = Array.isArray(vocabJson['New Words']) ? vocabJson['New Words'] : [];
 
     // FIX-1 B方案：從 story.json 的 "Categories" 陣列預填圖片快取
-    // 在 story.json 每個分類物件加入 "hasThumb": true → 有圖，false/不填 → 無圖
-    // 預填後 createListItemWithImage 查表即可，不再發 HEAD 請求
+    // hasThumb: false → 確定沒圖，所有路徑（空格版＋底線版）都標 false，不發任何請求
+    // hasThumb: true  → 不預填，讓 HEAD 請求自行確認是 .jpg 還是 .png（也可能是底線版）
     if (Array.isArray(storyJson['Categories'])) {
+        const toU = s => s.replace(/[^A-Za-z0-9.\-]/g, '_');
         storyJson['Categories'].forEach(cat => {
             const name = cat['分類'] || cat['name'] || '';
             if (!name) return;
-            const hasThumb = cat['hasThumb'] === true;
-            ['jpg', 'png'].forEach(ext => {
-                const path = `images/${name}.${ext}`;
-                // 只有宣告了 hasThumb 欄位才寫入快取（沒有欄位的分類讓 HEAD 自行探測）
-                if (Object.prototype.hasOwnProperty.call(cat, 'hasThumb')) {
-                    _imageExistsCache.set(path, hasThumb && ext === 'jpg');
-                }
+            if (!Object.prototype.hasOwnProperty.call(cat, 'hasThumb')) return;
+            if (cat['hasThumb'] === true) return; // 有圖：不預填，讓 HEAD 請求確認副檔名
+            // hasThumb: false → 標記所有候補為 false，避免發出無謂的 404 請求
+            const nameU = toU(name);
+            [name, nameU].forEach(variant => {
+                ['jpg', 'png'].forEach(ext => {
+                    _imageExistsCache.set(`images/${variant}.${ext}`, false);
+                });
             });
         });
         console.log(`[FIX-1] Image cache pre-filled from story.json Categories (${storyJson['Categories'].length} entries)`);

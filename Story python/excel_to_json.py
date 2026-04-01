@@ -17,7 +17,7 @@ CATEGORY_THUMB_MAP = {
     'Design':                            True,
     'Dylan Page':                        True,
     'Interview':                         False,
-    'James Clear - Atomic Habits':       True,
+    'James Clear – Atomic Habits':       True,  # 注意：這裡是 – (en dash U+2013)，跟 Excel 一致
     'Lit Breakdown':                     True,
     'Phrase':                            False,
     'The Alchemist':                     True,
