@@ -4889,3 +4889,135 @@ textarea:focus-visible {
   font-size: 0.875rem;
   padding: 8px 0;
 }
+
+/* ══════════════════════════════════════════════════════════
+   音訊狀態提示區（Dictation / Reorder / Article-Listen
+   共用 .quiz-audio-status--loading / --playing）
+   ══════════════════════════════════════════════════════════ */
+
+/* hint 文字在 loading 狀態 */
+.dictation-hint.quiz-audio-status--loading,
+.reorder-hint.quiz-audio-status--loading {
+  color: #b8860b;
+  font-weight: 700;
+  font-style: normal;
+  letter-spacing: 0.01em;
+}
+
+/* hint 文字在 playing 狀態 */
+.dictation-hint.quiz-audio-status--playing,
+.reorder-hint.quiz-audio-status--playing {
+  color: #1a6b3a;
+  font-weight: 700;
+  font-style: normal;
+}
+
+/* 音訊狀態圖示（⏳ / 🔊） */
+.quiz-audio-status-icon {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 2px;
+}
+
+/* ⏳ 旋轉動畫 */
+.quiz-audio-status-icon.is-spin {
+  animation: quiz-audio-spin 1.1s linear infinite;
+}
+
+@keyframes quiz-audio-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* 狀態文字本身樣式 */
+.quiz-audio-status-text {
+  display: inline;
+}
+
+/* ── 播放按鈕 loading 狀態（脈動 + 等待游標）── */
+.dictation-play-btn.is-loading-audio {
+  opacity: 0.65;
+  cursor: wait;
+  pointer-events: none;
+  animation: quiz-btn-loading-pulse 1s ease-in-out infinite;
+}
+
+/* reorder 控制列的 Play 按鈕 loading 狀態 */
+.reorder-ctrl-play.is-loading-audio {
+  opacity: 0.55;
+  cursor: wait;
+  pointer-events: none;
+  animation: quiz-btn-loading-pulse 1s ease-in-out infinite;
+}
+
+@keyframes quiz-btn-loading-pulse {
+  0%, 100% { opacity: 0.65; }
+  50%       { opacity: 0.35; }
+}
+
+/* reorder-ctrl-play loading 動畫強度稍低 */
+.reorder-ctrl-play.is-loading-audio {
+  animation: quiz-ctrl-loading-pulse 1s ease-in-out infinite;
+}
+
+@keyframes quiz-ctrl-loading-pulse {
+  0%, 100% { opacity: 0.55; }
+  50%       { opacity: 0.28; }
+}
+
+/* ── Dictation hint 背景微提示（loading / playing）── */
+.dictation-hint.quiz-audio-status--loading {
+  background: #fff8e1;
+  border-radius: 6px;
+  padding: 4px 10px;
+  transition: background 0.25s, color 0.25s;
+}
+
+.dictation-hint.quiz-audio-status--playing {
+  background: #e8f5e9;
+  border-radius: 6px;
+  padding: 4px 10px;
+  transition: background 0.25s, color 0.25s;
+}
+
+/* ── Reorder hint 背景微提示（loading / playing）── */
+.reorder-hint.quiz-audio-status--loading {
+  background: #fff8e1;
+  border-radius: 6px;
+  padding: 4px 10px;
+  transition: background 0.25s, color 0.25s;
+  margin-bottom: 10px;
+}
+
+.reorder-hint.quiz-audio-status--playing {
+  background: #e8f5e9;
+  border-radius: 6px;
+  padding: 4px 10px;
+  transition: background 0.25s, color 0.25s;
+  margin-bottom: 10px;
+}
+
+/* ══════════════════════════════════════════════════════════
+   答對音效視覺配合：答案區 correct 閃光加強
+   ══════════════════════════════════════════════════════════ */
+
+/* reorder 答案區答對時多一層光暈 */
+.reorder-answer-area.is-correct {
+  animation: reorder-correct-glow 0.5s ease-out;
+}
+
+@keyframes reorder-correct-glow {
+  0%   { box-shadow: 0 0 0   0   rgba(80, 184, 108, 0); }
+  40%  { box-shadow: 0 0 14px 4px rgba(80, 184, 108, 0.45); }
+  100% { box-shadow: 0 0 0   0   rgba(80, 184, 108, 0); }
+}
+
+/* quiz-feedback correct 答對輕微縮放進場 */
+.quiz-feedback.correct {
+  animation: feedback-correct-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes feedback-correct-pop {
+  0%   { transform: scale(0.85); opacity: 0; }
+  100% { transform: scale(1);    opacity: 1; }
+}

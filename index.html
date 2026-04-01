@@ -345,6 +345,52 @@
       font-weight: 700;
     }
 
+    /* ── VR 回聽按鈕：回聽中狀態增強 ── */
+    .vr-playback-btn.is-playing {
+      background: var(--color-primary, #7a6b5a);
+      color: #fff;
+      animation: vr-playback-pulse 1.2s ease-in-out infinite;
+    }
+    @keyframes vr-playback-pulse {
+      0%, 100% { box-shadow: 0 0 0 0   rgba(122,107,90,0.35); }
+      50%       { box-shadow: 0 0 0 8px rgba(122,107,90,0); }
+    }
+    /* 回聽中 mic-label 高亮 */
+    .vr-mic-label.is-playback-active {
+      color: var(--color-primary, #7a6b5a);
+      font-weight: 600;
+    }
+
+    /* ── Article-Listen hint 音訊狀態（共用 quiz-audio-status--* 類）── */
+    .dictation-hint.quiz-audio-status--loading {
+      color: #b8860b; font-weight: 700; font-style: normal;
+      background: #fff8e1; border-radius: 6px; padding: 3px 8px;
+    }
+    .dictation-hint.quiz-audio-status--playing {
+      color: #1a6b3a; font-weight: 700; font-style: normal;
+      background: #e8f5e9; border-radius: 6px; padding: 3px 8px;
+    }
+
+    /* ── 答對 feedback 進場動畫（voice reorder）── */
+    .quiz-feedback.is-visible.correct {
+      animation: vr-feedback-correct-pop 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    @keyframes vr-feedback-correct-pop {
+      0%   { transform: scale(0.82); opacity: 0; }
+      100% { transform: scale(1);    opacity: 1; }
+    }
+
+    /* ── VR Answer zone 答對閃光加強 ── */
+    .vr-answer-zone.vr-correct-flash {
+      border-color: #4caf50; background: #e8f5e9;
+      animation: vr-correct-glow 0.55s ease-out;
+    }
+    @keyframes vr-correct-glow {
+      0%   { box-shadow: 0 0 0   0   rgba(76,175,80,0); }
+      40%  { box-shadow: 0 0 16px 6px rgba(76,175,80,0.45); }
+      100% { box-shadow: 0 0 0   0   rgba(76,175,80,0); }
+    }
+
     /* ── VR Status Bar ── */
     .vr-status-card {
       padding: 10px 16px !important;

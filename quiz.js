@@ -40,6 +40,49 @@ const QUIZ_SCORES_KEY = 'readingChallengeQuizScores';
     document.addEventListener('click',      _unlock, true);
 })();
 
+// ════════════════════════════════════════════════════════════
+//  SUCCESS SOUND — 答對音效（Web Audio API 合成，無需外部音檔）
+// ════════════════════════════════════════════════════════════
+
+/**
+ * 播放答對音效（三音上升ding）
+ * 使用 Web Audio API 合成，不需要外部音檔
+ * @param {'correct'|'perfect'} type  correct=單題答對, perfect=全部答對
+ */
+function _playSuccessSound(type = 'correct') {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+
+    // 優先用已解鎖的 _quizAudioCtx，若無則建立一個
+    let ctx = window._quizAudioCtx;
+    if (!ctx || ctx.state === 'closed') {
+        try { ctx = new AC(); } catch (e) { return; }
+    }
+    if (ctx.state === 'suspended') {
+        ctx.resume().catch(() => {});
+    }
+
+    // 音符序列：correct = 兩音，perfect = 三音
+    const notes = type === 'perfect'
+        ? [{ freq: 523.25, t: 0 }, { freq: 659.25, t: 0.12 }, { freq: 783.99, t: 0.24 }]   // C5 E5 G5
+        : [{ freq: 659.25, t: 0 }, { freq: 783.99, t: 0.12 }];                               // E5 G5
+
+    const now = ctx.currentTime;
+    notes.forEach(({ freq, t }) => {
+        const osc  = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, now + t);
+        gain.gain.setValueAtTime(0, now + t);
+        gain.gain.linearRampToValueAtTime(0.22, now + t + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + t + 0.28);
+        osc.start(now + t);
+        osc.stop(now + t + 0.30);
+    });
+}
+
 // ── 單字播放用 generation counter（防止舊的 async 呼叫搶佔新播放）──────────
 let _quizPlayWordGen = 0;
 
@@ -1253,6 +1296,9 @@ function showQuizResult(mode, correct, total, wrongItems) {
     document.getElementById('quiz-result-emoji').textContent = emoji;
     document.getElementById('quiz-result-number').textContent = `${correct} / ${total}`;
 
+    // 全對音效
+    if (pct >= 1.0) _playSuccessSound('perfect');
+
     // Progress bar
     document.getElementById('quiz-result-progress-fill').style.width = (pct * 100) + '%';
 
@@ -1740,6 +1786,7 @@ document.getElementById('flashcard-correct').addEventListener('click', () => {
     const _fcItem = quizState.deck[quizState.deckIndex];
     quizState.correct++;
     quizState.deckIndex++;
+    _playSuccessSound('correct');
     if (typeof recordItemResult === 'function' && _fcItem) {
         const _itype = quizState.flashSource === 'article' ? 'articleWords' : 'noteWords';
         recordItemResult(quizState.categoryName, quizState.titleName, _itype, _fcItem.text, true, 0, 'fc');
@@ -1886,9 +1933,9 @@ function showDictationQuestion() {
     const q = quizState.questions[quizState.currentIndex];
     updateProgress(quizState.currentIndex + 1, quizState.questions.length);
 
-    // Hint: show word count
+    // Hint: show word count（idle 狀態顯示）
     const wordCount = q.sentence.trim().split(/\s+/).length;
-    document.getElementById('dictation-hint').textContent = `${wordCount} words`;
+    _setAudioStatusHint('dictation-hint', 'idle', `${wordCount} words`);
 
 // Play button
     const playBtn = document.getElementById('dictation-play-btn');
@@ -1934,16 +1981,56 @@ function showDictationQuestion() {
     });
 }
 
+/**
+ * Dictation / Article-Listen 模式：更新 hint 區域為音訊狀態提示
+ * @param {string} hintId   hint 元素 id
+ * @param {string} state    'idle' | 'loading' | 'playing'
+ * @param {string} idleText idle 時顯示的文字（如字數提示）
+ */
+function _setAudioStatusHint(hintId, state, idleText = '') {
+    const el = document.getElementById(hintId);
+    if (!el) return;
+    if (state === 'loading') {
+        el.innerHTML = '<span class="quiz-audio-status-icon is-spin">⏳</span> <span class="quiz-audio-status-text">載入音檔中…</span>';
+        el.className = (el.className.replace(/quiz-audio-status--\S+/g, '').trim()) + ' quiz-audio-status--loading';
+    } else if (state === 'playing') {
+        el.innerHTML = '<span class="quiz-audio-status-icon">🔊</span> <span class="quiz-audio-status-text">播放中，請仔細聆聽</span>';
+        el.className = (el.className.replace(/quiz-audio-status--\S+/g, '').trim()) + ' quiz-audio-status--playing';
+    } else {
+        el.textContent = idleText;
+        el.className = el.className.replace(/quiz-audio-status--\S+/g, '').trim();
+    }
+}
+
 function playDictationAudio(q) {
     _trackReplay();
     if (!q.start) return;
     const playBtn = document.getElementById('dictation-play-btn');
+    const spanEl  = playBtn.querySelector('span:last-child') || playBtn;
+    const _setLabel = (txt) => { if (spanEl !== playBtn) spanEl.textContent = txt; };
     // 套用使用者調整後的時間（若無調整則使用原始值）
     const timing = getQuizTiming(q.title, q.sentence, q.start, q.end);
+    const _wordCount = q.sentence ? q.sentence.trim().split(/\s+/).length : 0;
+    const _idleHint = _wordCount ? `${_wordCount} words` : '';
     playSnippet({
         start: timing.start, end: timing.end,
-        onStart: () => playBtn.classList.add('is-playing-voice'),
-        onEnd:   () => playBtn.classList.remove('is-playing-voice')
+        onLoading: () => {
+            _setAudioStatusHint('dictation-hint', 'loading');
+            playBtn.classList.add('is-loading-audio');
+            playBtn.classList.remove('is-playing-voice');
+            _setLabel('⏳ 載入中…');
+        },
+        onStart: () => {
+            _setAudioStatusHint('dictation-hint', 'playing');
+            playBtn.classList.remove('is-loading-audio');
+            playBtn.classList.add('is-playing-voice');
+            _setLabel('🔊 播放中…');
+        },
+        onEnd: () => {
+            _setAudioStatusHint('dictation-hint', 'idle', _idleHint);
+            playBtn.classList.remove('is-playing-voice', 'is-loading-audio');
+            _setLabel('▶ 重播');
+        }
     });
 }
 
@@ -1962,6 +2049,7 @@ function handleDictationAnswer(selected, correct, btn) {
         feedbackEl.textContent = '✓ Correct!';
         feedbackEl.className = 'quiz-feedback correct';
         quizState.correct++;
+        _playSuccessSound('correct');
     } else {
         btn.classList.add('is-wrong');
         feedbackEl.innerHTML = `✗ Answer: <em>${correct}</em>`;
@@ -2147,9 +2235,8 @@ function showArticleListenQuestion() {
     badge.textContent = diffInfo.label;
     badge.style.background = diffInfo.color;
 
-    // Word count hint
-    document.getElementById('article-listen-hint').textContent =
-        `${q.wordCount} words`;
+    // Word count hint（idle 狀態顯示）
+    _setAudioStatusHint('article-listen-hint', 'idle', `${q.wordCount} words`);
 
 // Play button
     const playBtn = document.getElementById('article-play-btn');
@@ -2211,15 +2298,29 @@ function playArticleAudio(q, btn) {
     _trackReplay();
     // 套用使用者調整後的時間（若無調整則使用原始值）
     const timing = getQuizTiming(q.title, q.sentence, q.start, q.end);
+    const spanEl = btn ? (btn.querySelector('span:last-child') || btn.querySelector('span') || btn) : null;
+    const _setLabel = (txt) => { if (spanEl && spanEl !== btn) spanEl.textContent = txt; };
+    // 偵測目前是哪種 quiz 模式，選對應的 hint id
+    const _hintId = document.getElementById('quiz-article-listen-area') &&
+                    !document.getElementById('quiz-article-listen-area').classList.contains('is-hidden')
+                    ? 'article-listen-hint' : null; // article-cloze 沒有固定 hint 元素，不更新
+    const _wc = q.sentence ? q.sentence.trim().split(/\s+/).length : 0;
     playSnippet({
         start: timing.start, end: timing.end,
+        onLoading: () => {
+            if (btn) { btn.classList.add('is-loading-audio'); btn.classList.remove('is-playing-voice'); }
+            _setLabel('⏳ 載入中…');
+            if (_hintId) _setAudioStatusHint(_hintId, 'loading');
+        },
         onStart: () => {
-            btn.classList.add('is-playing-voice');
-            btn.querySelector('span').textContent = '⏸ Playing...';
+            if (btn) { btn.classList.remove('is-loading-audio'); btn.classList.add('is-playing-voice'); }
+            _setLabel('🔊 播放中…');
+            if (_hintId) _setAudioStatusHint(_hintId, 'playing');
         },
         onEnd: () => {
-            btn.classList.remove('is-playing-voice');
-            btn.querySelector('span').textContent = '▶ Play Again';
+            if (btn) { btn.classList.remove('is-playing-voice', 'is-loading-audio'); }
+            _setLabel('▶ Play Again');
+            if (_hintId) _setAudioStatusHint(_hintId, 'idle', _wc ? `${_wc} words` : '');
         }
     });
 }
@@ -2566,6 +2667,7 @@ function handleArticleListenAnswer(selected, q, btn) {
         feedbackEl.textContent = '✓ Correct!';
         feedbackEl.className = 'quiz-feedback correct';
         quizState.correct++;
+        _playSuccessSound('correct');
     } else {
         btn.classList.add('is-wrong');
         feedbackEl.textContent = '✗ Wrong';
@@ -2690,6 +2792,7 @@ function handleArticleClozeAnswer(selected, correct, q, btn) {
         feedbackEl.textContent = '✓ Correct!';
         feedbackEl.className = 'quiz-feedback correct';
         quizState.correct++;
+        _playSuccessSound('correct');
     } else {
         btn.classList.add('is-wrong');
         feedbackEl.textContent = `✗ Answer: ${correct}`;
@@ -3087,18 +3190,15 @@ function showReorderQuestion() {
     // origIdx 唯一，不需要特判 first === last 的情況
     reorderFirstWordIdx = shuffledIndexed.findIndex(t => t.origIdx === 0);
     reorderLastWordIdx  = shuffledIndexed.findIndex(t => t.origIdx === tokens.length - 1);
-    
-    // 顯示提示
+
+    // Hint 區域：改為音訊狀態顯示區（音訊閒置時顯示 first/last 提示）
     const hintEl = document.getElementById('reorder-hint');
-    if (hintEl && tokens.length > 0) {
-        hintEl.textContent = `Hint: Start with "${reorderFirstWord}" and end with "${reorderLastWord}"`;
-        hintEl.style.display = 'block';
-    }
+    _reorderSetAudioStatus('idle');
 
     // Play button: always visible, disabled if no timestamp
     const playBtn = document.getElementById('reorder-play-btn');
     playBtn.classList.remove('is-hidden');
-    playBtn.classList.remove('is-playing-voice');
+    playBtn.classList.remove('is-playing-voice', 'is-loading-audio');
     const _playLabelEl = playBtn.querySelector('.reorder-ctrl-label');
     if (_playLabelEl) _playLabelEl.textContent = 'Play';
 
@@ -3161,6 +3261,31 @@ if (q.start != null) {
 
 // (removed — using playSnippet)
 
+/**
+ * Reorder 模式：更新 hint 區域為音訊狀態提示
+ * state: 'idle' | 'loading' | 'playing'
+ */
+function _reorderSetAudioStatus(state) {
+    const hintEl = document.getElementById('reorder-hint');
+    if (!hintEl) return;
+    hintEl.style.display = 'block';
+    if (state === 'loading') {
+        hintEl.innerHTML = '<span class="quiz-audio-status-icon is-spin">⏳</span> <span class="quiz-audio-status-text">載入音檔中…</span>';
+        hintEl.className = 'reorder-hint quiz-audio-status--loading';
+    } else if (state === 'playing') {
+        hintEl.innerHTML = '<span class="quiz-audio-status-icon">🔊</span> <span class="quiz-audio-status-text">播放中，請仔細聆聽</span>';
+        hintEl.className = 'reorder-hint quiz-audio-status--playing';
+    } else {
+        // idle：顯示 first/last 提示
+        if (reorderFirstWord && reorderLastWord) {
+            hintEl.innerHTML = `Hint: Start with "<strong>${reorderFirstWord}</strong>" and end with "<strong>${reorderLastWord}</strong>"`;
+        } else {
+            hintEl.textContent = '';
+        }
+        hintEl.className = 'reorder-hint';
+    }
+}
+
 function playReorderAudio(q) {
     _trackReplay();
     const playBtn = document.getElementById('reorder-play-btn');
@@ -3169,12 +3294,21 @@ function playReorderAudio(q) {
     const _pLabel = playBtn.querySelector('.reorder-ctrl-label');
     playSnippet({
         start: timing.start, end: timing.end,
+        onLoading: () => {
+            _reorderSetAudioStatus('loading');
+            playBtn.classList.add('is-loading-audio');
+            playBtn.classList.remove('is-playing-voice');
+            if (_pLabel) _pLabel.textContent = '⏳ 載入中…';
+        },
         onStart: () => {
+            _reorderSetAudioStatus('playing');
+            playBtn.classList.remove('is-loading-audio');
             playBtn.classList.add('is-playing-voice');
-            if (_pLabel) _pLabel.textContent = 'Playing…';
+            if (_pLabel) _pLabel.textContent = '🔊 播放中…';
         },
         onEnd: () => {
-            playBtn.classList.remove('is-playing-voice');
+            _reorderSetAudioStatus('idle');
+            playBtn.classList.remove('is-playing-voice', 'is-loading-audio');
             if (_pLabel) _pLabel.textContent = 'Play';
         }
     });
@@ -3512,6 +3646,7 @@ document.getElementById('reorder-check-btn').addEventListener('click', () => {
         feedback.textContent = '✓ Correct!';
         feedback.className   = 'quiz-feedback correct';
         quizState.correct++;
+        _playSuccessSound('correct');
     } else {
         answerArea.classList.add('is-wrong');
 
@@ -4168,6 +4303,7 @@ document.getElementById('fcplus-submit-btn').addEventListener('click', () => {
 
     if (correct) {
         quizState.correct++;
+        _playSuccessSound('correct');
     } else {
         quizState.wrong++;
         quizState.wrongItems.push(word);
@@ -5185,6 +5321,37 @@ function _vrUndoLast() {
 function _vrOnAllPlaced() {
     _vrStopRecordingSilent();
     _vrEl('vr-mic-label').textContent = 'All words placed — tap Check!';
+    // B 方案：播放輕柔「就緒」提示音（告知用戶可以按 Check）
+    _playReadySound();
+}
+
+/**
+ * 播放輕柔的「就緒」提示音（全部字放完但尚未 check）
+ * 音調比答對音效低，音量小，不搶佔音效上下文
+ */
+function _playReadySound() {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+    let ctx = window._quizAudioCtx;
+    if (!ctx || ctx.state === 'closed') {
+        try { ctx = new AC(); } catch (e) { return; }
+    }
+    if (ctx.state === 'suspended') ctx.resume().catch(() => {});
+    const now = ctx.currentTime;
+    // 兩個短音（輕）
+    [{ freq: 440, t: 0 }, { freq: 523.25, t: 0.1 }].forEach(({ freq, t }) => {
+        const osc  = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, now + t);
+        gain.gain.setValueAtTime(0, now + t);
+        gain.gain.linearRampToValueAtTime(0.12, now + t + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + t + 0.20);
+        osc.start(now + t);
+        osc.stop(now + t + 0.22);
+    });
 }
 
 // ── Check answer ──────────────────────────────────────────
@@ -5212,6 +5379,7 @@ function _vrCheckAnswer() {
         _vrState.correct++;
         _vrEl('vr-answer-zone').classList.add('vr-correct-flash');
         _vrShowFeedback('ok', '✓ Perfect!');
+        _playSuccessSound('correct');
     } else {
         _vrShowFeedback('wrong', `Answer: ${correctText}`);
         _vrState.wrongItems.push(correctText);
@@ -5643,6 +5811,7 @@ document.getElementById('quiz-exit-btn').addEventListener('click', () => {
 // M      → Mic toggle（開始/停止錄音）
 // Z      → Undo（撤回最後一個字）
 // X      → Clear all（清空答案區）
+// 其他字母/數字 → 攔截 preventDefault，防止瀏覽器把 focus 跳到其他元素
 document.addEventListener('keydown', (e) => {
     // 只在 voice-reorder 模式有效
     const vrArea = document.getElementById('quiz-voice-reorder-area');
@@ -5680,6 +5849,11 @@ document.addEventListener('keydown', (e) => {
         // Clear all
         const clearBtn = document.getElementById('vr-clear-btn');
         if (clearBtn && !_vrState.done) clearBtn.click();
+
+    } else if (e.key.length === 1 && /[a-zA-Z0-9]/.test(e.key)) {
+        // 其他字母/數字鍵：阻止瀏覽器預設行為（避免 focus 跳到頁面其他可聚焦元素，
+        // 導致後續 pointer/touch 事件 target 錯亂，word chip 無法點擊）
+        e.preventDefault();
     }
 });
 
@@ -5795,6 +5969,7 @@ function _vrPlayback() {
     const btn     = document.getElementById('vr-playback-btn');
     const iconEl  = document.getElementById('vr-playback-icon');
     const labelEl = document.getElementById('vr-playback-label');
+    const micLbl  = document.getElementById('vr-mic-label');
 
     // 正在播放 → 停止
     if (_vrPlaybackAudio && !_vrPlaybackAudio.paused) {
@@ -5803,6 +5978,10 @@ function _vrPlayback() {
         if (btn)     btn.classList.remove('is-playing');
         if (iconEl)  iconEl.textContent  = '▶';
         if (labelEl) labelEl.textContent = '回聽我的發音';
+        // 恢復 mic-label
+        if (micLbl && !_vrState.done) {
+            micLbl.textContent = _vrIsRecording ? '🔴 Recording… tap to stop' : 'Tap mic & say the whole sentence';
+        }
         return;
     }
 
@@ -5812,19 +5991,31 @@ function _vrPlayback() {
     if (btn)     btn.classList.add('is-playing');
     if (iconEl)  iconEl.textContent  = '■';
     if (labelEl) labelEl.textContent = '播放中…';
+    if (micLbl)  micLbl.textContent  = '🎧 正在回播您的錄音…';
 
     _vrPlaybackAudio.onended = () => {
         if (btn)     btn.classList.remove('is-playing');
         if (iconEl)  iconEl.textContent  = '▶';
         if (labelEl) labelEl.textContent = '回聽我的發音';
+        // 回放結束，恢復正常提示
+        if (micLbl && !_vrState.done) {
+            micLbl.textContent = 'Tap mic & say the whole sentence';
+        }
     };
     _vrPlaybackAudio.onerror = () => {
         if (btn)     btn.classList.remove('is-playing');
         if (iconEl)  iconEl.textContent  = '▶';
         if (labelEl) labelEl.textContent = '回聽我的發音';
+        if (micLbl && !_vrState.done) {
+            micLbl.textContent = 'Tap mic & say the whole sentence';
+        }
     };
     _vrPlaybackAudio.play().catch(() => {
         if (btn) btn.classList.remove('is-playing');
+        if (labelEl) labelEl.textContent = '回聽我的發音';
+        if (micLbl && !_vrState.done) {
+            micLbl.textContent = 'Tap mic & say the whole sentence';
+        }
     });
 }
 
