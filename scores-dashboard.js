@@ -520,11 +520,14 @@ function calcArticleFamSummary(categoryName, titleName) {
     const voiceItems = allSentItems.filter(r =>
         r['voiceReorder'] && (r['voiceReorder'].correct + r['voiceReorder'].wrong) > 0
     );
-    const voiceScores = voiceItems.map(r => _calcSourceFam(r['voiceReorder']) ?? 0);
-    const voiceAvg    = voiceScores.length > 0
-        ? Math.round(voiceScores.reduce((a, b) => a + b, 0) / voiceScores.length) : null;
-    const voiceTested = voiceItems.length;
-    const voiceTotal  = allSentItems.length;
+    const voiceScores   = voiceItems.map(r => _calcSourceFam(r['voiceReorder']) ?? 0);
+    const voiceTested   = voiceItems.length;
+    const voiceTotal    = allSentItems.length;
+    // 未測驗的句子補 0 分，讓分母 = 全部句子數，百分比才正確
+    const voiceUntested = Math.max(0, voiceTotal - voiceTested);
+    const allVoiceScores = [...voiceScores, ...Array(voiceUntested).fill(0)];
+    const voiceAvg      = allVoiceScores.length > 0
+        ? Math.round(allVoiceScores.reduce((a, b) => a + b, 0) / allVoiceScores.length) : null;
 
     const totalItems  = noteTotal + artTotal;
     const totalTested = wordTestedTotal + sentTestedTotal;
