@@ -390,6 +390,27 @@ function getFamiliarityColor(fam) {
 }
 
 /**
+ * 顏色規則（一目了然版）：
+ *   未測驗           → 紅色（fam-red）
+ *   測驗過 + 距今 > STALE_DAYS → 最多黃色（fam-yellow），不會到綠
+ *   測驗過 + 近期有測           → 依熟悉度：綠 / 黃 / 紅
+ *
+ * STALE_DAYS = 14 天（兩週未複習視為「久未測」）
+ */
+const STALE_DAYS = 14;
+
+function getItemColorClass(hasPractice, famScore, lastSeen) {
+    if (!hasPractice) return 'fam-red';                          // 未測驗 → 紅
+    const days = lastSeen ? daysSince(lastSeen) : Infinity;
+    if (days > STALE_DAYS) {
+        // 久未測：最高只到黃
+        return famScore >= 30 ? 'fam-yellow' : 'fam-red';
+    }
+    // 近期有測：正常三色
+    return getFamiliarityColor(famScore);
+}
+
+/**
  * 計算文章的熟悉度摘要
  * 回傳 { famAvg, noteAvg, artAvg, noteTotal, artTotal, hasPractice, totalTested, totalItems }
  */
@@ -2302,8 +2323,8 @@ function buildDetailItemHtml(item, tab) {
 
     const { text, correct, wrong, lastSeen, famScore, hasPractice, rec } = item;
 
-    // Color based on familiarity
-    const colorClass = getFamiliarityColor(famScore);
+    // Color: 未測驗→紅, 久未測→最多黃, 近期測→三色
+    const colorClass = getItemColorClass(hasPractice, famScore, lastSeen);
     const daysAgo = lastSeen
         ? (daysSince(lastSeen) === 0 ? '今天' : `${daysSince(lastSeen)}天前`)
         : '—';
