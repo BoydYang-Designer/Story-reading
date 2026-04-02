@@ -632,13 +632,6 @@ function _sortArticlesByCat(articles, cat) {
                 return na ?? nb ?? null;
             }
             if (k === 'voice') return summary.voiceAvg;
-            if (k === 'untested') {
-                // 未測驗數量 = 全部 - 已測（單字+句子+口說各自未測加總）
-                const untestedWord  = (summary.wordTotal  || 0) - (summary.wordTestedTotal  || 0);
-                const untestedSent  = (summary.sentTotal  || 0) - (summary.sentTestedTotal  || 0);
-                const untestedVoice = (summary.voiceTotal || 0) - (summary.voiceTested      || 0);
-                return untestedWord + untestedSent + untestedVoice;
-            }
             return summary.famAvg;
         };
 
@@ -795,11 +788,10 @@ function _buildCatSortBtns(cat) {
     const arrow = dir === 'asc' ? ' ↓' : ' ↑';
 
     const btns = [
-        { k: 'title',    label: '🔤 文章名',   title: '文章名稱 A→Z / Z→A' },
-        { k: 'word',     label: '📖 單字',     title: '單字熟悉度（低→高）' },
-        { k: 'sent',     label: '📝 句子',     title: '句子熟悉度（低→高）' },
-        { k: 'voice',    label: '🎙 口說',     title: '口說熟悉度（低→高）' },
-        { k: 'untested', label: '❓ 未測驗',   title: '未測驗題數（多→少）' },
+        { k: 'title', label: '🔤 文章名',   title: '文章名稱 A→Z / Z→A' },
+        { k: 'word',  label: '📖 單字',    title: '單字熟悉度（低→高）' },
+        { k: 'sent',  label: '📝 句子',    title: '句子熟悉度（低→高）' },
+        { k: 'voice', label: '🎙 口說',    title: '口說熟悉度（低→高）' },
     ];
 
     return btns.map(b => {
@@ -880,10 +872,9 @@ function _bindCatSortBtns(container) {
                 // 同一按鈕再點：升降冪切換（asc=低熟悉度↓ → desc=高熟悉度↑）
                 state.dir = state.dir === 'asc' ? 'desc' : 'asc';
             } else {
-                // 切換新維度
+                // 切換新維度：預設 asc（fam-red 最需練習的在最前面）
                 state.key = sortKey;
-                // untested 預設 desc（未測最多排前面），其他預設 asc（最需練習排前面）
-                state.dir = sortKey === 'untested' ? 'desc' : 'asc';
+                state.dir = 'asc';
             }
             // Rebuild this cat's body
             const catGroup = btn.closest('.browser-cat-group');
@@ -2065,6 +2056,14 @@ function renderDetailView() {
             const vb = b.lastSeen ? new Date(b.lastSeen).getTime() : 0;
             return sortDir === 'asc' ? va - vb : vb - va;
         }
+        if (sortBy === 'untested') {
+            // desc = 未測驗優先（hasPractice=false 排前面）
+            const ua = a.hasPractice ? 1 : 0;
+            const ub = b.hasPractice ? 1 : 0;
+            if (ua !== ub) return sortDir === 'desc' ? ua - ub : ub - ua;
+            // 同為未測驗或同為已測驗時，按字母排列
+            return a.text.toLowerCase().localeCompare(b.text.toLowerCase());
+        }
         // fam: asc = 低熟悉度在前（最需練習）
         return sortDir === 'asc' ? a.famScore - b.famScore : b.famScore - a.famScore;
     });
@@ -2323,7 +2322,7 @@ document.querySelectorAll('.detail-sort-btn').forEach(btn => {
             detailViewState.sortDir = detailViewState.sortDir === 'asc' ? 'desc' : 'asc';
         } else {
             detailViewState.sortBy  = btn.dataset.sort;
-            // fam 預設 asc（低熟悉度在前），其他預設 desc
+            // fam 預設 asc（低熟悉度在前），untested 預設 desc（未測驗在前），其他預設 desc
             detailViewState.sortDir = btn.dataset.sort === 'fam' ? 'asc' : 'desc';
         }
         renderDetailView();
