@@ -1016,6 +1016,40 @@ document.getElementById('back-to-note-from-quiz').addEventListener('click', () =
 
 // ── Mode Card + Subpanel Logic ────────────────────────────────
 
+/**
+ * 展開 subpanel 時的預設值設定
+ * - source 預設 'article'
+ * - 難度：CEFR 模式只選 a1a2；Diff 模式只選 easy
+ * - 題數：預設 5 題
+ */
+function _applySubpanelDefaults(mode) {
+    // ── Source: 預設 article ──────────────────────────────────
+    subpanelSource[mode] = 'article';
+    document.querySelectorAll(`.quiz-source-btn[data-mode="${mode}"]`).forEach(b => {
+        b.classList.toggle('is-active', b.dataset.source === 'article');
+    });
+    const articleOpts = document.getElementById(`${mode}-article-options`);
+    const noteOpts    = document.getElementById(`${mode}-note-options`);
+    articleOpts?.classList.remove('is-hidden');
+    noteOpts?.classList.add('is-hidden');
+
+    // ── Difficulty ───────────────────────────────────────────
+    if (_CEFR_MODES.has(mode)) {
+        quizState.selectedCefrLevels = new Set(['a1a2']);
+        _syncCefrButtons(mode);
+    } else if (_DIFF_MODES.has(mode)) {
+        quizState.selectedDifficulties = new Set(['easy']);
+        quizState.difficulty = 'easy';
+        _syncDiffButtons(mode);
+    }
+
+    // ── Question count: 預設 5 題 ────────────────────────────
+    quizState.questionCount = 5;
+    document.querySelectorAll(`.quiz-count-btn[data-mode="${mode}"]`).forEach(b => {
+        b.classList.toggle('is-active', b.dataset.count === '5');
+    });
+}
+
 // Track which subpanel source is selected per mode
 const subpanelSource = { flashcard: 'note', dictation: 'note', reorder: 'note', fcplus: 'note', 'voice-reorder': 'note' };
 
@@ -1033,13 +1067,7 @@ document.getElementById('quiz-mode-flashcard').addEventListener('click', () => {
     const isOpen = !panel.classList.contains('is-hidden');
     closeAllSubpanels();
     if (!isOpen) {
-        const items = getAllNoteItems(quizState.scope, quizState.categoryName, quizState.titleName);
-        const hasNote = items.words.length > 0 || items.phrases.length > 0;
-        const preferred = hasNote ? 'note' : 'article';
-        subpanelSource.flashcard = preferred;
-        document.querySelectorAll('.quiz-source-btn[data-mode="flashcard"]').forEach(b => {
-            b.classList.toggle('is-active', b.dataset.source === preferred);
-        });
+        _applySubpanelDefaults('flashcard');
         panel.classList.remove('is-hidden');
         card.classList.add('is-expanded');
     }
@@ -1061,6 +1089,7 @@ document.getElementById('quiz-mode-dictation').addEventListener('click', () => {
     const isOpen = !panel.classList.contains('is-hidden');
     closeAllSubpanels();
     if (!isOpen) {
+        _applySubpanelDefaults('dictation');
         panel.classList.remove('is-hidden');
         card.classList.add('is-expanded');
     }
@@ -1196,6 +1225,7 @@ document.getElementById('quiz-mode-reorder').addEventListener('click', () => {
     const isOpen = !panel.classList.contains('is-hidden');
     closeAllSubpanels();
     if (!isOpen) {
+        _applySubpanelDefaults('reorder');
         panel.classList.remove('is-hidden');
         card.classList.add('is-expanded');
     }
@@ -1212,6 +1242,7 @@ document.getElementById('quiz-mode-voice-reorder').addEventListener('click', () 
     const isOpen = !panel.classList.contains('is-hidden');
     closeAllSubpanels();
     if (!isOpen) {
+        _applySubpanelDefaults('voice-reorder');
         panel.classList.remove('is-hidden');
         card.classList.add('is-expanded');
     }
@@ -3984,22 +4015,7 @@ document.getElementById('quiz-mode-fcplus').addEventListener('click', () => {
     const isOpen = !panel.classList.contains('is-hidden');
     closeAllSubpanels();
     if (!isOpen) {
-        const items = getAllNoteItems(quizState.scope, quizState.categoryName, quizState.titleName);
-        const hasNote = items.words.length > 0 || items.phrases.length > 0;
-        const preferred = hasNote ? 'note' : 'article';
-        subpanelSource.fcplus = preferred;
-        document.querySelectorAll('.quiz-source-btn[data-mode="fcplus"]').forEach(b => {
-            b.classList.toggle('is-active', b.dataset.source === preferred);
-        });
-        const noteOpts    = document.getElementById('fcplus-note-options');
-        const articleOpts = document.getElementById('fcplus-article-options');
-        if (preferred === 'note') {
-            noteOpts?.classList.remove('is-hidden');
-            articleOpts?.classList.add('is-hidden');
-        } else {
-            articleOpts?.classList.remove('is-hidden');
-            noteOpts?.classList.add('is-hidden');
-        }
+        _applySubpanelDefaults('fcplus');
         panel.classList.remove('is-hidden');
         card.classList.add('is-expanded');
     }

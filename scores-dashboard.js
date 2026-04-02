@@ -632,6 +632,12 @@ function _sortArticlesByCat(articles, cat) {
                 return na ?? nb ?? null;
             }
             if (k === 'voice') return summary.voiceAvg;
+            if (k === 'untested') {
+                const uw = (summary.wordTotal  || 0) - (summary.wordTestedTotal  || 0);
+                const us = (summary.sentTotal  || 0) - (summary.sentTestedTotal  || 0);
+                const uv = (summary.voiceTotal || 0) - (summary.voiceTested      || 0);
+                return uw + us + uv;
+            }
             return summary.famAvg;
         };
 
@@ -788,10 +794,11 @@ function _buildCatSortBtns(cat) {
     const arrow = dir === 'asc' ? ' ↓' : ' ↑';
 
     const btns = [
-        { k: 'title', label: '🔤 文章名',   title: '文章名稱 A→Z / Z→A' },
-        { k: 'word',  label: '📖 單字',    title: '單字熟悉度（低→高）' },
-        { k: 'sent',  label: '📝 句子',    title: '句子熟悉度（低→高）' },
-        { k: 'voice', label: '🎙 口說',    title: '口說熟悉度（低→高）' },
+        { k: 'title',    label: '🔤 文章名',  title: '文章名稱 A→Z / Z→A' },
+        { k: 'word',     label: '📖 單字',    title: '單字熟悉度（低→高）' },
+        { k: 'sent',     label: '📝 句子',    title: '句子熟悉度（低→高）' },
+        { k: 'voice',    label: '🎙 口說',    title: '口說熟悉度（低→高）' },
+        { k: 'untested', label: '❓ 未測驗',  title: '未測驗題數（多→少）' },
     ];
 
     return btns.map(b => {
@@ -872,9 +879,9 @@ function _bindCatSortBtns(container) {
                 // 同一按鈕再點：升降冪切換（asc=低熟悉度↓ → desc=高熟悉度↑）
                 state.dir = state.dir === 'asc' ? 'desc' : 'asc';
             } else {
-                // 切換新維度：預設 asc（fam-red 最需練習的在最前面）
+                // 切換新維度：untested 預設 desc（未測最多排前），其他預設 asc
                 state.key = sortKey;
-                state.dir = 'asc';
+                state.dir = sortKey === 'untested' ? 'desc' : 'asc';
             }
             // Rebuild this cat's body
             const catGroup = btn.closest('.browser-cat-group');
@@ -1876,9 +1883,10 @@ let detailViewState = {
     categoryName: null,
     titleName:    null,
     tab:          'noteWords',
-    sortBy:       'fam',      // 'fam' | 'alpha' | 'recent'
+    sortBy:       'fam',      // 'fam' | 'alpha' | 'recent' | 'untested' | 'wrong'
     sortDir:      'asc',      // for fam: asc = 低熟悉度優先（需練習）
     fromNote:     false,
+    _tsData:      null,       // Timestamp 句子陣列，進入 detail view 時載入，離開後清除
 };
 
 /**
@@ -1933,16 +1941,35 @@ async function openDetailView(categoryName, titleName) {
     detailViewState.tab          = 'noteWords';
     detailViewState.sortBy       = 'fam';
     detailViewState.sortDir      = 'asc';
+    detailViewState._tsData      = null;
 
     document.getElementById('detail-view-title').textContent = titleName;
-    renderDetailView();
     showView(document.getElementById('item-detail-view'));
+    renderDetailView();
 
-    // 背景更新文章句子總數（每次進入都更新）
-    await _updateArticleSentenceTotal(categoryName, titleName);
-    // 更新後重新渲染（若目前顯示的是 article 相關 tab 才重渲）
-    if (detailViewState.tab === 'articleSentences') {
-        renderDetailView();
+    // 載入 Timestamp（句子/口說 tab 需要）
+    if (typeof getTimestampForStory === 'function') {
+        const listEl = document.getElementById('detail-items-list');
+        document.getElementById('detail-ts-loading')?.remove();
+        const banner = document.createElement('div');
+        banner.id = 'detail-ts-loading';
+        banner.className = 'detail-ts-loading-banner';
+        banner.textContent = '⏳ 載入 Timestamp 中…';
+        listEl?.parentElement?.insertBefore(banner, listEl);
+
+        try {
+            detailViewState._tsData = await getTimestampForStory(titleName);
+        } catch (e) {
+            console.error('Timestamp load error:', e);
+            detailViewState._tsData = null;
+        }
+
+        document.getElementById('detail-ts-loading')?.remove();
+
+        // 若目前在句子或口說 tab，重新渲染（現在有真實句子文字）
+        if (detailViewState.tab === 'noteSentences' || detailViewState.tab === 'voiceReorder') {
+            renderDetailView();
+        }
     }
 }
 
@@ -1972,31 +1999,136 @@ function renderDetailView() {
     let items = [];
 
     if (tab === 'voiceReorder') {
-        // ── 口說 tab：合併 noteSentences + articleSentences
-        // 只顯示「有 voiceReorder 紀錄」的句子，未測驗的不列出
+        // ── 口說 tab：以 Timestamp 所有句子為基底，未測補 0%
+        const tsData = detailViewState._tsData;
+        const norm = t => t.trim().replace(/[.,?!'"``""'']/g, '').toLowerCase();
+
+        // 建立 voiceReorder 紀錄 map（noteSentences + articleSentences 合併查）
+        const voiceMap = {};
         ['noteSentences', 'articleSentences'].forEach(itype => {
-            const itemMap = entry[itype] || {};
-            Object.entries(itemMap).forEach(([text, rec]) => {
-                const vr = rec['voiceReorder'];
-                const hasPractice = vr && (vr.correct + vr.wrong) > 0;
-                if (!hasPractice) return; // 只顯示有口說紀錄的
-                const famScore = _calcSourceFam(vr) ?? 0;
+            Object.entries(entry[itype] || {}).forEach(([text, rec]) => {
+                const k = norm(text);
+                if (!voiceMap[k]) voiceMap[k] = { rec, text };
+                else voiceMap[k].rec = rec;
+            });
+        });
+
+        if (tsData && tsData.length > 0) {
+            tsData.forEach(line => {
+                const sentence = line.sentence?.trim();
+                if (!sentence) return;
+                const found = voiceMap[norm(sentence)];
+                const rec = found?.rec || null;
+                const vr = rec?.['voiceReorder'];
+                const hasPractice = !!(vr && (vr.correct + vr.wrong) > 0);
+                const famScore = hasPractice ? (_calcSourceFam(vr) ?? 0) : 0;
                 items.push({
-                    text,
-                    correct:   vr.correct,
-                    wrong:     vr.wrong,
-                    lastSeen:  rec.lastSeen  || null,
-                    firstSeen: rec.firstSeen || null,
+                    text: sentence,
+                    correct:     vr?.correct  || 0,
+                    wrong:       vr?.wrong    || 0,
+                    lastSeen:    rec?.lastSeen  || null,
+                    firstSeen:   rec?.firstSeen || null,
                     famScore,
                     needScore:   100 - famScore,
-                    hasPractice: true,
+                    hasPractice,
                     rec,
                     _voiceOnly: true,
                 });
             });
+        } else {
+            // Timestamp 未載入：fallback 只顯示有紀錄的
+            ['noteSentences', 'articleSentences'].forEach(itype => {
+                Object.entries(entry[itype] || {}).forEach(([text, rec]) => {
+                    const vr = rec['voiceReorder'];
+                    const hasPractice = !!(vr && (vr.correct + vr.wrong) > 0);
+                    if (!hasPractice) return;
+                    const famScore = _calcSourceFam(vr) ?? 0;
+                    items.push({
+                        text,
+                        correct:   vr.correct,
+                        wrong:     vr.wrong,
+                        lastSeen:  rec.lastSeen  || null,
+                        firstSeen: rec.firstSeen || null,
+                        famScore,
+                        needScore:   100 - famScore,
+                        hasPractice: true,
+                        rec,
+                        _voiceOnly: true,
+                    });
+                });
+            });
+        }
+
+    } else if (tab === 'noteSentences') {
+        // ── 句子 tab：以 Timestamp 所有句子為基底，合併 noteSentences + articleSentences 計分
+        const tsData = detailViewState._tsData;
+        const norm = t => t.trim().replace(/[.,?!'"``""'']/g, '').toLowerCase();
+
+        // 合併計分 map
+        const mergedMap = {};
+        ['noteSentences', 'articleSentences'].forEach(itype => {
+            Object.entries(entry[itype] || {}).forEach(([text, rec]) => {
+                const k = norm(text);
+                if (!mergedMap[k]) {
+                    mergedMap[k] = { rec: JSON.parse(JSON.stringify(rec)), text };
+                } else {
+                    const sources = ['fc','fcplus','dictation','reorder','voiceReorder','articleListen'];
+                    sources.forEach(s => {
+                        if (!rec[s]) return;
+                        if (!mergedMap[k].rec[s]) mergedMap[k].rec[s] = { correct: 0, wrong: 0 };
+                        mergedMap[k].rec[s].correct += rec[s].correct || 0;
+                        mergedMap[k].rec[s].wrong   += rec[s].wrong   || 0;
+                    });
+                    if (rec.lastSeen && (!mergedMap[k].rec.lastSeen || rec.lastSeen > mergedMap[k].rec.lastSeen)) {
+                        mergedMap[k].rec.lastSeen = rec.lastSeen;
+                    }
+                }
+            });
         });
+
+        if (tsData && tsData.length > 0) {
+            tsData.forEach(line => {
+                const sentence = line.sentence?.trim();
+                if (!sentence) return;
+                const found = mergedMap[norm(sentence)];
+                const rec = found?.rec || null;
+                const hasPractice = rec ? _recHasPractice(rec) : false;
+                const famScore = rec ? calcWeightedFamiliarity(rec, 'noteSentences') : 0;
+                const totals = rec ? _recTotals(rec) : { correct: 0, wrong: 0 };
+                items.push({
+                    text:        sentence,
+                    correct:     totals.correct,
+                    wrong:       totals.wrong,
+                    lastSeen:    rec?.lastSeen  || null,
+                    firstSeen:   rec?.firstSeen || null,
+                    famScore,
+                    needScore:   100 - famScore,
+                    hasPractice,
+                    rec,
+                });
+            });
+        } else {
+            // Timestamp 未載入：fallback 用 mergedMap 已有紀錄
+            Object.values(mergedMap).forEach(({ text, rec }) => {
+                const hasPractice = _recHasPractice(rec);
+                const famScore = calcWeightedFamiliarity(rec, 'noteSentences');
+                const totals = _recTotals(rec);
+                items.push({
+                    text,
+                    correct:   totals.correct,
+                    wrong:     totals.wrong,
+                    lastSeen:  rec.lastSeen  || null,
+                    firstSeen: rec.firstSeen || null,
+                    famScore,
+                    needScore: 100 - famScore,
+                    hasPractice,
+                    rec,
+                });
+            });
+        }
+
     } else {
-        // ── 一般 tab ─────────────────────────────────────────────
+        // ── 單字 tab（noteWords）────────────────────────────────
         const itemMap = entry[tab] || {};
         items = Object.entries(itemMap).map(([text, rec]) => {
             const totals = _recTotals(rec);
@@ -2013,13 +2145,11 @@ function renderDetailView() {
             };
         });
 
-        // Add untested items from savedWords (for note tabs)
-        if (tab === 'noteWords' || tab === 'noteSentences') {
+        // 補入 savedWords 未測驗的單字
+        if (tab === 'noteWords') {
             const noteData = typeof savedWords !== 'undefined'
                 ? (savedWords[categoryName]?.[titleName] || {}) : {};
-            const pool = tab === 'noteWords'
-                ? [...(noteData.words || []), ...(noteData.phrases || [])]
-                : [...(noteData.sentences || [])];
+            const pool = [...(noteData.words || []), ...(noteData.phrases || [])];
             pool.forEach(text => {
                 const t = text.trim();
                 if (!itemMap[t]) {
@@ -2027,21 +2157,6 @@ function renderDetailView() {
                                  famScore: 0, needScore: 100, hasPractice: false, rec: null });
                 }
             });
-        }
-
-        // Article 句子 tab：加入未測驗的句子（來自 Timestamp 快取）
-        if (tab === 'articleSentences') {
-            const cachedTotal = _getArticleSentenceTotal(categoryName, titleName);
-            const testedCount = items.length;
-            const untestedNeeded = Math.max(0, cachedTotal - testedCount);
-            for (let i = 0; i < untestedNeeded; i++) {
-                items.push({
-                    text: `（未測驗句子 ${testedCount + i + 1}）`,
-                    correct: 0, wrong: 0, lastSeen: null, firstSeen: null,
-                    famScore: 0, needScore: 100, hasPractice: false,
-                    isPlaceholder: true
-                });
-            }
         }
     }
 
@@ -2063,6 +2178,13 @@ function renderDetailView() {
             if (ua !== ub) return sortDir === 'desc' ? ua - ub : ub - ua;
             // 同為未測驗或同為已測驗時，按字母排列
             return a.text.toLowerCase().localeCompare(b.text.toLowerCase());
+        }
+        if (sortBy === 'wrong') {
+            // desc = 答錯最多排前面
+            const wa = a.wrong || 0, wb = b.wrong || 0;
+            if (wa !== wb) return sortDir === 'desc' ? wb - wa : wa - wb;
+            // 同錯誤數時，按熟悉度低→高
+            return a.famScore - b.famScore;
         }
         // fam: asc = 低熟悉度在前（最需練習）
         return sortDir === 'asc' ? a.famScore - b.famScore : b.famScore - a.famScore;
@@ -2086,11 +2208,13 @@ function renderDetailView() {
     const listEl = document.getElementById('detail-items-list');
     if (items.length === 0) {
         const emptyMsg = {
-            noteWords:        '此文章尚無筆記單字',
-            noteSentences:    '此文章尚無筆記句子',
-            articleWords:     '尚無 Article 單字測驗記錄（Flashcard/Flashcard+ Article 模式）',
-            articleSentences: '尚無 Article 句子測驗記錄（Dictation/Reorder Article 模式）',
-            voiceReorder:     '尚無口說測驗記錄（Voice Reorder 模式）',
+            noteWords:     '此文章尚無筆記單字',
+            noteSentences: detailViewState._tsData
+                ? '此文章所有句子均未測驗'
+                : '載入 Timestamp 後將顯示所有句子',
+            voiceReorder:  detailViewState._tsData
+                ? '此文章所有句子均未進行口說測驗'
+                : '載入 Timestamp 後將顯示所有句子',
         };
         listEl.innerHTML = `<div class="detail-empty">${emptyMsg[tab] || '尚無資料'}</div>`;
         return;
@@ -2322,7 +2446,7 @@ document.querySelectorAll('.detail-sort-btn').forEach(btn => {
             detailViewState.sortDir = detailViewState.sortDir === 'asc' ? 'desc' : 'asc';
         } else {
             detailViewState.sortBy  = btn.dataset.sort;
-            // fam 預設 asc（低熟悉度在前），untested 預設 desc（未測驗在前），其他預設 desc
+            // fam 預設 asc（低熟悉度在前），untested/wrong 預設 desc，其他預設 desc
             detailViewState.sortDir = btn.dataset.sort === 'fam' ? 'asc' : 'desc';
         }
         renderDetailView();
