@@ -4,6 +4,17 @@
 //  Phase 4: Score Records
 // ============================================================
 
+// 統一的句子正規化函式（與 scores-dashboard.js 共用，解決 Voice Reorder key 不一致問題）
+// 若 scores-dashboard.js 已定義則使用其版本，否則使用本地版本
+if (typeof normSentence === 'undefined') {
+    var normSentence = function(t) {
+        return t.trim()
+                .replace(/[.,?!'"`“”‘’;:（）【】「」]/g, '')
+                .toLowerCase();
+    };
+}
+
+
 const QUIZ_SCORES_KEY = 'readingChallengeQuizScores';
 // TTS_PREF_KEY 已移除：發音改為兩層自動降級（GitHub MP3 → Web Speech）
 

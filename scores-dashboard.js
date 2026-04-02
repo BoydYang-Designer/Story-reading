@@ -18,13 +18,26 @@
 
 function daysSince(dateStr) {
     if (!dateStr) return Infinity;
-    const d = new Date(dateStr);
+    // 支援新格式（YYYY-MM-DD）與舊格式（toLocaleDateString）
+    let d;
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+        d = new Date(dateStr);
+    } else {
+        d = new Date(dateStr.replace(/年|月/g, '-').replace(/日/g, ''));
+    }
     if (isNaN(d)) return Infinity;
     return Math.floor((Date.now() - d.getTime()) / 86400000);
 }
 
 function _todayStr() {
-    return new Date().toLocaleDateString();
+    return new Date().toISOString().split('T')[0]; // YYYY-MM-DD，解決 Safari/iOS 解析失敗
+}
+
+// 統一的句子正規化函式（與 quiz.js recordItemResult 同步，解決 Voice Reorder key 不一致問題）
+function normSentence(t) {
+    return t.trim()
+            .replace(/[.,?!'"`\u201c\u201d\u2018\u2019;:（）【】「」]/g, '')
+            .toLowerCase();
 }
 
 function _escHtml(s) {
@@ -182,12 +195,19 @@ function recordItemResult(categoryName, titleName, itemType, itemText, isCorrect
     if (!data[key]) data[key] = { noteWords: {}, noteSentences: {}, articleWords: {}, articleSentences: {} };
     if (!data[key][itemType]) data[key][itemType] = {};
 
-    const text = itemText.trim();
-    if (!data[key][itemType][text]) {
-        data[key][itemType][text] = { fc: null, fcplus: null, dictation: null, reorder: null, voiceReorder: null, articleListen: null, firstSeen: _todayStr(), lastSeen: null };
+    // 重要修正：Voice Reorder 與 noteSentences 使用 normSentence 當 key，
+    // 確保與 renderDetailView 的比對邏輯一致，解決測完後找不到記錄的問題
+    let storageText;
+    if (source === 'voiceReorder' || itemType === 'noteSentences' || itemType === 'articleSentences') {
+        storageText = normSentence(itemText);
+    } else {
+        storageText = itemText.trim();
+    }
+    if (!data[key][itemType][storageText]) {
+        data[key][itemType][storageText] = { fc: null, fcplus: null, dictation: null, reorder: null, voiceReorder: null, articleListen: null, firstSeen: _todayStr(), lastSeen: null };
     }
 
-    const rec = data[key][itemType][text];
+    const rec = data[key][itemType][storageText];
 
     // 確保來源欄位存在
     if (!rec[source]) rec[source] = { correct: 0, wrong: 0 };
@@ -206,6 +226,14 @@ function recordItemResult(categoryName, titleName, itemType, itemText, isCorrect
     if (!rec.firstSeen) rec.firstSeen = _todayStr();
 
     saveItemScores(data);
+
+    // 測驗完成後自動重新渲染 Dashboard（解決測完後不即時更新的問題）
+    if (typeof renderScoresDashboard === 'function') {
+        const scoresView = document.getElementById('scores-dashboard-view');
+        if (scoresView && !scoresView.classList.contains('is-hidden')) {
+            renderScoresDashboard();
+        }
+    }
 }
 
 /**
@@ -2022,7 +2050,7 @@ function renderDetailView() {
     if (tab === 'voiceReorder') {
         // ── 口說 tab：以 Timestamp 所有句子為基底，未測補 0%
         const tsData = detailViewState._tsData;
-        const norm = t => t.trim().replace(/[.,?!'"``""'']/g, '').toLowerCase();
+        const norm = normSentence;   // 使用統一函式，解決 key 不一致問題
 
         // 建立 voiceReorder 紀錄 map（noteSentences + articleSentences 合併查）
         const voiceMap = {};
@@ -2083,7 +2111,7 @@ function renderDetailView() {
     } else if (tab === 'noteSentences') {
         // ── 句子 tab：以 Timestamp 所有句子為基底，合併 noteSentences + articleSentences 計分
         const tsData = detailViewState._tsData;
-        const norm = t => t.trim().replace(/[.,?!'"``""'']/g, '').toLowerCase();
+        const norm = normSentence;   // 使用統一函式
 
         // 合併計分 map
         const mergedMap = {};
