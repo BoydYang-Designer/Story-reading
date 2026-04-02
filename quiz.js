@@ -5019,7 +5019,7 @@ function _vrLoadQuestion() {
     _resetReplayCount();
 
     _vrState.words     = _vrTokenize(item.text);
-    _vrState.poolOrder = shuffle(_vrState.words.map((_, i) => i));
+    _vrState.poolOrder = _vrState.words.map((_, i) => i).sort((a, b) => _vrState.words[a].toLowerCase().localeCompare(_vrState.words[b].toLowerCase()));
     _vrState.answer    = [];
     _vrState.done      = false;
     _vrState.skipped   = false;
