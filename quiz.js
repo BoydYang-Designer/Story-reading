@@ -1494,6 +1494,7 @@ function updateProgress(current, total) {
     document.getElementById('quiz-progress-fill').style.width = pct + '%';
 }
 
+
 // ── Show Session ──────────────────────────────────────────────
 
 function showQuizSession(mode) {
@@ -1501,16 +1502,6 @@ function showQuizSession(mode) {
     quizResult.classList.add('is-hidden');
     quizSession.classList.remove('is-hidden');
 
-    // 進入測驗時，收合「難易度說明」與「出題比例說明」，避免佔用測驗空間
-    const diffBody = document.getElementById('quiz-diff-body');
-    const diffBtn  = document.getElementById('quiz-diff-toggle');
-    if (diffBody) diffBody.classList.add('is-hidden');
-    if (diffBtn)  { diffBtn.setAttribute('aria-expanded', 'false'); diffBtn.classList.remove('is-open'); }
-
-    const weightBody = document.getElementById('quiz-weight-body');
-    const weightBtn  = document.getElementById('quiz-weight-toggle');
-    if (weightBody) weightBody.classList.add('is-hidden');
-    if (weightBtn)  { weightBtn.setAttribute('aria-expanded', 'false'); weightBtn.classList.remove('is-open'); }
 
     flashcardArea.classList.add('is-hidden');
     dictationArea.classList.add('is-hidden');
