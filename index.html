@@ -436,6 +436,12 @@
       font-weight: 600;
     }
 
+    /* ── Quiz session 進行中：隱藏 Back 按鈕（已有 Exit 可用）── */
+    #quiz-view:has(#quiz-session:not(.is-hidden)) .view-top-nav,
+    #quiz-view:has(#quiz-result:not(.is-hidden)) .view-top-nav {
+      display: none;
+    }
+
   </style>
 </head>
 <body>
