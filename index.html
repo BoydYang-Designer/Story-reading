@@ -294,6 +294,10 @@
       display: flex; flex-direction: column; align-items: center; gap: 8px;
       margin: 14px 0 6px;
     }
+    /* 麥克風 + 回聽按鈕水平並排 */
+    .vr-mic-center {
+      display: flex; flex-direction: row; align-items: center; gap: 12px;
+    }
     .vr-mic-btn {
       width: 68px; height: 68px; border-radius: 50%;
       border: 3px solid var(--color-primary, #7a6b5a);
@@ -323,16 +327,22 @@
     /* VR 回聽按鈕 */
     .vr-playback-btn {
       display: none;
-      align-items: center; gap: 6px;
-      padding: 6px 16px;
-      border: 1.5px solid var(--color-primary, #7a6b5a);
-      border-radius: 20px;
+      align-items: center; justify-content: center;
+      width: 54px; height: 54px;
+      border: 2px solid var(--color-primary, #7a6b5a);
+      border-radius: 50%;
       background: var(--color-accent-light, #f5ece0);
       color: var(--color-primary, #7a6b5a);
-      font-size: 0.84em; font-family: inherit; cursor: pointer;
+      cursor: pointer;
       transition: background 0.15s, color 0.15s;
+      flex-shrink: 0;
+      padding: 0;
     }
     .vr-playback-btn:hover { background: #ede4d8; }
+    /* icon 切換：預設顯示耳機，播放中顯示停止 */
+    .vr-playback-svg--stop  { display: none; }
+    .vr-playback-btn.is-playing .vr-playback-svg--play { display: none; }
+    .vr-playback-btn.is-playing .vr-playback-svg--stop { display: block; }
     .vr-playback-btn.is-playing {
       background: var(--color-primary, #7a6b5a);
       color: #fff;
@@ -1244,14 +1254,18 @@
 
             <!-- Mic button (moved below word bank) -->
             <div class="vr-mic-row">
-                <button class="vr-mic-btn" id="vr-mic-btn" title="Tap to start / stop recording">🎤</button>
+                <div class="vr-mic-center">
+                    <button class="vr-mic-btn" id="vr-mic-btn" title="Tap to start / stop recording">🎤</button>
+                    <!-- 回聽錄音按鈕（停止錄音後才顯示，緊靠麥克風右側） -->
+                    <button class="vr-playback-btn" id="vr-playback-btn" title="回聽自己的發音">
+                        <svg class="vr-playback-svg vr-playback-svg--play" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+                        <svg class="vr-playback-svg vr-playback-svg--stop" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/></svg>
+                        <span id="vr-playback-icon" style="display:none"></span>
+                        <span id="vr-playback-label" style="display:none"></span>
+                    </button>
+                </div>
                 <div class="vr-mic-label" id="vr-mic-label">Tap mic & say the whole sentence</div>
                 <div class="vr-heard-text" id="vr-heard-text"></div>
-                <!-- 回聽錄音按鈕（停止錄音後才顯示） -->
-                <button class="vr-playback-btn" id="vr-playback-btn" title="回聽自己的發音">
-                    <span id="vr-playback-icon">▶</span>
-                    <span id="vr-playback-label">回聽我的發音</span>
-                </button>
             </div>
 
             <!-- Controls row -->
