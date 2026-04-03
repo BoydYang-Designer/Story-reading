@@ -54,22 +54,115 @@ const QUIZ_SCORES_KEY = 'readingChallengeQuizScores';
 // ── 頁面重新可見時自動 resume AudioContext（切換 app/分頁再回來的修復）────────
 // 瀏覽器在頁面進入背景時會自動 suspend AudioContext，
 // 導致回到頁面後音量極小或無聲。每次 visible 時主動 resume。
+// 同時顯示 Toast 讓使用者知道音訊恢復狀態，避免困惑。
 document.addEventListener('visibilitychange', () => {
     if (document.visibilityState !== 'visible') return;
 
+    // 只在測驗進行中才顯示 toast（避免干擾閱讀頁）
+    const _quizSessionEl = document.getElementById('quiz-session');
+    const isInQuiz = _quizSessionEl && !_quizSessionEl.classList.contains('is-hidden');
+
+    if (isInQuiz) _showResumeToast('resuming');
+
+    const resumePromises = [];
+
     // resume _quizAudioCtx
     if (window._quizAudioCtx && window._quizAudioCtx.state === 'suspended') {
-        window._quizAudioCtx.resume().catch(() => {});
+        resumePromises.push(window._quizAudioCtx.resume().catch(() => {}));
     }
     // resume WebAudioEngine 的 AudioContext（若有暴露 unlock/resume 介面）
     if (typeof WebAudioEngine !== 'undefined' && WebAudioEngine.isSupported()) {
         if (typeof WebAudioEngine.resume === 'function') {
-            WebAudioEngine.resume().catch(() => {});
+            resumePromises.push(WebAudioEngine.resume().catch(() => {}));
         } else if (typeof WebAudioEngine.unlock === 'function') {
             WebAudioEngine.unlock();
         }
     }
+
+    // 全部 resume 完成後顯示「已就緒」
+    if (isInQuiz) {
+        Promise.all(resumePromises).then(() => {
+            _showResumeToast('ready');
+        });
+    }
 });
+
+// ── 返回提示 Toast ────────────────────────────────────────────────────────────
+// 切換 app 再回來時，短暫顯示音訊恢復狀態，讓使用者清楚目前狀況。
+// 「恢復中」橘色條可點擊，手動觸發 iOS AudioContext unlock（手勢內解鎖）。
+let _resumeToastEl    = null;
+let _resumeToastTimer = null;
+
+function _showResumeToast(state) {
+    // 建立元素（只建一次，之後重複使用）
+    if (!_resumeToastEl) {
+        _resumeToastEl = document.createElement('div');
+        _resumeToastEl.id = 'quiz-resume-toast';
+        Object.assign(_resumeToastEl.style, {
+            position:      'fixed',
+            bottom:        '88px',
+            left:          '50%',
+            transform:     'translateX(-50%)',
+            padding:       '9px 20px',
+            borderRadius:  '22px',
+            fontSize:      '0.88rem',
+            fontWeight:    '600',
+            zIndex:        '2000',
+            opacity:       '0',
+            transition:    'opacity 0.2s ease',
+            whiteSpace:    'nowrap',
+            boxShadow:     '0 2px 10px rgba(0,0,0,0.18)',
+            cursor:        'pointer',
+            userSelect:    'none',
+        });
+
+        // 點擊 toast → 在使用者手勢內強制 unlock（iOS Chrome 必要）
+        _resumeToastEl.addEventListener('click', () => {
+            if (window._quizAudioCtx) {
+                window._quizAudioCtx.resume().catch(() => {});
+            }
+            if (typeof WebAudioEngine !== 'undefined' && WebAudioEngine.isSupported()) {
+                if (typeof WebAudioEngine.resume === 'function') {
+                    WebAudioEngine.resume().catch(() => {});
+                } else if (typeof WebAudioEngine.unlock === 'function') {
+                    WebAudioEngine.unlock();
+                }
+            }
+            // 顯示點擊成功回饋
+            _resumeToastEl.textContent = '🔊 已解鎖，可繼續作答';
+            _resumeToastEl.style.background = '#e8f5e9';
+            _resumeToastEl.style.color      = '#2e7d32';
+            _resumeToastEl.style.border     = '1px solid #a5d6a7';
+            clearTimeout(_resumeToastTimer);
+            _resumeToastTimer = setTimeout(() => {
+                _resumeToastEl.style.opacity = '0';
+            }, 1500);
+        });
+
+        document.body.appendChild(_resumeToastEl);
+    }
+
+    clearTimeout(_resumeToastTimer);
+
+    if (state === 'resuming') {
+        // 恢復中：橘色，不自動消失，等 ready 才換（也可點擊手動解鎖）
+        _resumeToastEl.textContent = '⏳ 音訊恢復中… 點我可手動解鎖';
+        _resumeToastEl.style.background = '#fff3e0';
+        _resumeToastEl.style.color      = '#e65100';
+        _resumeToastEl.style.border     = '1px solid #ffcc80';
+        _resumeToastEl.style.opacity    = '1';
+    } else {
+        // 就緒：綠色，1.8 秒後自動淡出
+        _resumeToastEl.textContent = '✅ 音訊已就緒，繼續作答吧！';
+        _resumeToastEl.style.background = '#e8f5e9';
+        _resumeToastEl.style.color      = '#2e7d32';
+        _resumeToastEl.style.border     = '1px solid #a5d6a7';
+        _resumeToastEl.style.opacity    = '1';
+        _resumeToastTimer = setTimeout(() => {
+            _resumeToastEl.style.opacity = '0';
+        }, 1800);
+    }
+}
 
 // ════════════════════════════════════════════════════════════
 //  SUCCESS SOUND — 答對音效（Web Audio API 合成，無需外部音檔）
