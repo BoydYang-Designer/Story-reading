@@ -1043,6 +1043,9 @@ async function pickerPreselect(majorName, categoryName, titleName) {
     selCategory.value = categoryName;
     await pickerPopulateArticles(majorName, categoryName);
     selArticle.value = titleName;
+    // ── FIX: 自動預選後必須呼叫 pickerApplySelection，
+    //         否則 quizState.titleName 仍為 null，導致無法開始測驗
+    pickerApplySelection();
 }
 
 // ── 難易度說明：展開 / 收合 ──────────────────────────────────
