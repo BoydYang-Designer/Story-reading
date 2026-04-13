@@ -2228,7 +2228,7 @@ button.secondary:hover {
 
 /* ── Menu ── */
 #quiz-view {
-    padding: 0 16px 100px;
+    padding: 0 16px 10px;
     max-width: 600px;
     margin: 0 auto;
 }
