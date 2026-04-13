@@ -2621,6 +2621,19 @@ button.secondary:hover {
     transform: translateY(0);
 }
 
+/* ── 鍵盤預選（↑↓ 箭頭導航）highlight ── */
+.quiz-option-btn.is-keyboard-focused:not(:disabled) {
+    border-color: var(--color-primary, #7a6b5a) !important;
+    background: var(--color-accent-light, #f5ece0) !important;
+    box-shadow: 0 0 0 3px rgba(122,107,90,0.18) !important;
+    transform: translateY(-1px);
+}
+[data-theme="dark"] .quiz-option-btn.is-keyboard-focused:not(:disabled) {
+    border-color: var(--color-accent, #c9a97a) !important;
+    background: rgba(201,169,122,0.15) !important;
+    box-shadow: 0 0 0 3px rgba(201,169,122,0.22) !important;
+}
+
 /* Lock colours once answered — hover must not override result state */
 .quiz-option-btn.is-correct {
     border-color: #50b86c !important;

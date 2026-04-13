@@ -2396,18 +2396,48 @@ document.getElementById('dictation-next').addEventListener('click', () => {
 });
 
 // ══════════════════════════════════════════════════════════════
-//  DICTATION KEYBOARD NAVIGATION
+//  DICTATION / ARTICLE-LISTEN  KEYBOARD NAVIGATION
+//  作用範圍：quiz-dictation-area（From Note）
+//           quiz-article-listen-area（From Article）
 //  ↑ / ↓  : 預選答案（highlight option btn）
-//  Enter  : 提交已預選答案 or 前往下一題
+//  Enter  : 提交已預選答案 / 前往下一題
 //  Space  : 重播 MP3
 // ══════════════════════════════════════════════════════════════
 
 // 目前鍵盤預選的選項 index（-1 = 未選）
 let _dictKeyIndex = -1;
 
-/** 更新 dictation-options 內各按鈕的 keyboard-focused 樣式 */
+/**
+ * 取得目前作用中的 dictation / article-listen 區域資訊
+ * 回傳 null 表示兩個區域都不在作用中
+ * @returns {{ optSel:string, nextId:string, playId:string } | null}
+ */
+function _dictGetActiveAreaInfo() {
+    const dictArea    = document.getElementById('quiz-dictation-area');
+    const artListArea = document.getElementById('quiz-article-listen-area');
+
+    if (dictArea && !dictArea.classList.contains('is-hidden')) {
+        return {
+            optSel: '#dictation-options .quiz-option-btn',
+            nextId: 'dictation-next',
+            playId: 'dictation-play-btn',
+        };
+    }
+    if (artListArea && !artListArea.classList.contains('is-hidden')) {
+        return {
+            optSel: '#article-listen-options .quiz-option-btn',
+            nextId: 'article-listen-next',
+            playId: 'article-play-btn',
+        };
+    }
+    return null;
+}
+
+/** 更新目前作用區域的 keyboard-focused 樣式 */
 function _dictUpdateKeyHighlight() {
-    const btns = document.querySelectorAll('#dictation-options .quiz-option-btn');
+    const info = _dictGetActiveAreaInfo();
+    if (!info) return;
+    const btns = document.querySelectorAll(info.optSel);
     btns.forEach((b, i) => {
         b.classList.toggle('is-keyboard-focused', i === _dictKeyIndex);
     });
@@ -2420,22 +2450,21 @@ function _dictResetKeyIndex() {
 }
 
 document.addEventListener('keydown', (e) => {
-    // 只在 dictation 區域顯示時才作用
-    const dictArea = document.getElementById('quiz-dictation-area');
-    if (!dictArea || dictArea.classList.contains('is-hidden')) return;
-    // 若有文字輸入框取得 focus，不攔截（避免干擾其他操作）
+    // 若有文字輸入框取得 focus，不攔截
     if (document.activeElement && ['INPUT','TEXTAREA'].includes(document.activeElement.tagName)) return;
 
-    const btns        = Array.from(document.querySelectorAll('#dictation-options .quiz-option-btn'));
-    const nextBtn     = document.getElementById('dictation-next');
-    const playBtn     = document.getElementById('dictation-play-btn');
+    const info = _dictGetActiveAreaInfo();
+    if (!info) return;   // 兩個區域都沒顯示 → 不處理
+
+    const btns        = Array.from(document.querySelectorAll(info.optSel));
+    const nextBtn     = document.getElementById(info.nextId);
+    const playBtn     = document.getElementById(info.playId);
     const nextVisible = nextBtn && !nextBtn.classList.contains('is-hidden');
 
     if (e.code === 'ArrowDown' || e.code === 'ArrowUp') {
         e.preventDefault();
         if (btns.length === 0) return;
-        // 若答案已提交，箭頭鍵無效
-        if (btns[0]?.disabled) return;
+        if (btns[0]?.disabled) return;   // 已答題，箭頭無效
 
         if (e.code === 'ArrowDown') {
             _dictKeyIndex = (_dictKeyIndex + 1) % btns.length;
@@ -2443,23 +2472,19 @@ document.addEventListener('keydown', (e) => {
             _dictKeyIndex = (_dictKeyIndex - 1 + btns.length) % btns.length;
         }
         _dictUpdateKeyHighlight();
-        // scroll into view on mobile
         btns[_dictKeyIndex]?.scrollIntoView({ block: 'nearest' });
 
     } else if (e.code === 'Enter') {
         e.preventDefault();
         if (nextVisible) {
-            // 已答題 → 前往下一題
-            nextBtn.click();
+            nextBtn.click();   // 已答題 → 下一題
         } else if (_dictKeyIndex >= 0 && btns[_dictKeyIndex] && !btns[_dictKeyIndex].disabled) {
-            // 預選中的選項 → 提交
-            btns[_dictKeyIndex].click();
+            btns[_dictKeyIndex].click();   // 預選中的選項 → 提交
         }
 
     } else if (e.code === 'Space') {
         e.preventDefault();
-        // 重播 MP3
-        if (playBtn && !playBtn.disabled) playBtn.click();
+        if (playBtn && !playBtn.disabled) playBtn.click();   // 重播 MP3
     }
 });
 
@@ -2658,6 +2683,9 @@ function showArticleListenQuestion() {
         btn.addEventListener('click', () => handleArticleListenAnswer(opt, q, btn));
         optEl.appendChild(btn);
     });
+
+    // 每題開始時重置鍵盤預選狀態（與 dictation 共用）
+    if (typeof _dictResetKeyIndex === 'function') _dictResetKeyIndex();
 }
 
 // Cache for timestamp data to avoid re-fetching within same quiz session
