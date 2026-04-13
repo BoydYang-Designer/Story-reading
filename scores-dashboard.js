@@ -462,9 +462,12 @@ function calcArticleFamSummary(categoryName, titleName) {
     const testedNoteSents = entry.noteSentences || {};
 
     // 已測驗用加權真實分數，未測驗補 0%
+    // FIX: 句子類型查詢時需先 normSentence，與 recordItemResult 寫入的 key 格式一致
     function scorePool(allTexts, testedMap, itype) {
+        const isSent = (itype === 'noteSentences' || itype === 'articleSentences');
         return allTexts.map(t => {
-            const rec = testedMap[t];
+            const lookupKey = isSent ? normSentence(t) : t;
+            const rec = testedMap[lookupKey];
             return rec ? calcWeightedFamiliarity(rec, itype) : 0;
         });
     }
@@ -503,16 +506,19 @@ function calcArticleFamSummary(categoryName, titleName) {
         : fallbackWordItems.filter(i => i['fcplus'] && (i['fcplus'].correct + i['fcplus'].wrong) > 0).length;
 
     // ▶ 修改：dictation 也算「測驗過」
+    // FIX: 查詢 key 需先 normSentence，與 recordItemResult 寫入格式一致
     const noteTestedSentCount = allNoteSents.length > 0
         ? allNoteSents.filter(t => {
-            const r = testedNoteSents[t];
+            const r = testedNoteSents[normSentence(t)];
             if (!r) return false;
-            return (r['reorder']   && (r['reorder'].correct   + r['reorder'].wrong)   > 0)
-                || (r['dictation'] && (r['dictation'].correct + r['dictation'].wrong) > 0);
+            return (r['reorder']      && (r['reorder'].correct      + r['reorder'].wrong)      > 0)
+                || (r['voiceReorder'] && (r['voiceReorder'].correct  + r['voiceReorder'].wrong) > 0)
+                || (r['dictation']    && (r['dictation'].correct     + r['dictation'].wrong)    > 0);
         }).length
         : fallbackSentItems.filter(i =>
-            (i['reorder']   && (i['reorder'].correct   + i['reorder'].wrong)   > 0)
-         || (i['dictation'] && (i['dictation'].correct + i['dictation'].wrong) > 0)
+            (i['reorder']      && (i['reorder'].correct      + i['reorder'].wrong)      > 0)
+         || (i['voiceReorder'] && (i['voiceReorder'].correct  + i['voiceReorder'].wrong) > 0)
+         || (i['dictation']    && (i['dictation'].correct     + i['dictation'].wrong)    > 0)
         ).length;
 
     const noteUntestedWordCount = noteWordTotal - noteTestedWordCount;

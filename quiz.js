@@ -704,8 +704,15 @@ function weightedSample(pool, n, keyFn, categoryName, titleName, itemType, quizS
     const bucketC = []; // 有效熟悉度 40–69%
     const bucketD = []; // 有效熟悉度 ≥ 70%
 
+    // FIX: 對句子類型（noteSentences / articleSentences），查詢 key 需與
+    // recordItemResult 寫入時的 normSentence(itemText) 一致，否則永遠找不到已測驗記錄
+    const _isSentenceType = (itemType === 'noteSentences' || itemType === 'articleSentences');
+
     for (const item of pool) {
-        const text = keyFn ? keyFn(item) : String(item);
+        const rawText = keyFn ? keyFn(item) : String(item);
+        const text = _isSentenceType
+            ? (typeof normSentence === 'function' ? normSentence(rawText) : rawText.trim().replace(/[.,?!'"`\u201c\u201d\u2018\u2019;:（）【】「」]/g, '').toLowerCase())
+            : rawText;
         const rec  = typeDataMap[text] || null;
         const { effectiveFam } = calcEffectiveFamiliarity(rec, itemType, quizSource);
 
@@ -2355,7 +2362,8 @@ function handleDictationAnswer(selected, correct, btn) {
     });
 
     const feedbackEl = document.getElementById('dictation-feedback');
-    const isCorrect = selected === correct;
+    // FIX: 改用不分大小寫比對，與按鈕高亮邏輯（toLowerCase）保持一致
+    const isCorrect = selected.toLowerCase() === correct.toLowerCase();
     const q = quizState.questions[quizState.currentIndex];
 
     if (isCorrect) {
@@ -2584,22 +2592,40 @@ async function startArticleQuiz() {
         return;
     }
 
-    const qCount   = quizState.questionCount || 10;
-    const selected = shuffle(pool).slice(0, qCount);
-    const questions = selected.map(l => {
-        const _sent = l.sentence.trim();
+    const qCount = quizState.questionCount || 10;
+
+    // FIX: 改用 weightedSample 取代純隨機 shuffle().slice()，
+    // 讓 article-listen（Dictation From Article）也享有間隔重複——
+    // 熟悉的句子少出，未測驗或答錯的句子優先出題，與其他模式行為一致。
+    const allMappedPool = pool.map(l => ({
+        sentence:  l.sentence.trim(),
+        start:     l.start,
+        end:       l.end,
+        title,
+        wordCount: l.sentence.trim().split(/\s+/).length,
+    }));
+    const sampledPool = weightedSample(
+        allMappedPool,
+        qCount,
+        item => item.sentence,
+        quizState.categoryName,
+        title,
+        'articleSentences'
+    );
+
+    const questions = sampledPool.map(l => {
         // 出題前先查是否有調整記錄，有則優先使用
         const _timing = (typeof getAdjustedTiming === 'function')
-            ? getAdjustedTiming(title, _sent, l.start, l.end)
+            ? getAdjustedTiming(title, l.sentence, l.start, l.end)
             : { start: l.start, end: l.end };
         return {
-            sentence:  _sent,
+            sentence:  l.sentence,
             start:     _timing.start,
             end:       _timing.end,
             origStart: l.start,
             origEnd:   l.end,
             title,
-            wordCount: _sent.split(/\s+/).length,
+            wordCount: l.wordCount,
         };
     });
 
@@ -5803,7 +5829,16 @@ function _vrCheckAnswer() {
 
     const userText   = _vrState.answer.map(i => _vrState.words[i]).join(' ');
     const correctText = _vrState.words.join(' ');
-    const isCorrect  = !_vrState.skipped && userText === correctText;
+    // FIX: Strict Mode → 完整字串比對；Fuzzy Mode → 去標點、小寫後比對（更寬鬆）
+    let isCorrect;
+    if (_vrStrictMode) {
+        isCorrect = !_vrState.skipped && userText === correctText;
+    } else {
+        const _normForCheck = s => s.toLowerCase().replace(/^[^a-z0-9]+|[^a-z0-9]+$/gi, '').replace(/[.,?!'"'"";:]/g, '');
+        const userNorm    = _vrState.answer.map(i => _normForCheck(_vrState.words[i])).join(' ');
+        const correctNorm = _vrState.words.map(w => _normForCheck(w)).join(' ');
+        isCorrect = !_vrState.skipped && userNorm === correctNorm;
+    }
 
     if (isCorrect) {
         _vrState.correct++;
