@@ -18,6 +18,43 @@ if (typeof normSentence === 'undefined') {
 const QUIZ_SCORES_KEY = 'readingChallengeQuizScores';
 // TTS_PREF_KEY 已移除：發音改為兩層自動降級（GitHub MP3 → Web Speech）
 
+// ── 上次測驗記錄（Book / Chapter 自動預選）──────────────────────────────────
+const QUIZ_LAST_SESSION_KEY = 'readingChallengeQuizLastSession';
+
+/**
+ * 儲存上次測驗的 book / chapter 選擇
+ * @param {string} major      大類
+ * @param {string} category   分類
+ * @param {string} title      文章標題
+ */
+function _saveQuizLastSession(major, category, title) {
+    if (!major || !category || !title) return;
+    const payload = { major, category, title, savedAt: Date.now() };
+    try {
+        localStorage.setItem(QUIZ_LAST_SESSION_KEY, JSON.stringify(payload));
+    } catch (e) {}
+    // 若已登入，同步寫入 Firestore（跨裝置 / 跨登入同步）
+    try {
+        if (typeof currentUser !== 'undefined' && currentUser &&
+            typeof db !== 'undefined' && db) {
+            db.collection('userNotes').doc(currentUser.uid)
+              .set({ quizLastSession: payload }, { merge: true })
+              .catch(err => console.warn('[Quiz] Firestore quizLastSession save error:', err));
+        }
+    } catch (e) {}
+}
+
+/**
+ * 讀取上次測驗的 book / chapter 選擇
+ * @returns {{ major:string, category:string, title:string } | null}
+ */
+function _loadQuizLastSession() {
+    try {
+        const raw = localStorage.getItem(QUIZ_LAST_SESSION_KEY);
+        return raw ? JSON.parse(raw) : null;
+    } catch (e) { return null; }
+}
+
 // ── 共用發音系統（兩層降級）─────────────────────────────────────────────────
 // 層級一：GitHub audio_files MP3（自有字典，最快最穩）
 // 層級二：Web Speech API（瀏覽器合成語音，最後保底）
@@ -952,6 +989,11 @@ function pickerApplySelection() {
         quizState.titleName    = title;
         quizState.categoryName = category;
         quizState.scope        = 'this';
+
+        // ── 記錄本次選擇（供下次進入 Quiz 自動預選）──────────
+        const _stObjPick = stories.find(s => s['標題'] === title);
+        const _majorPick = _stObjPick?.['大類'] || 'Uncategorized';
+        _saveQuizLastSession(_majorPick, category, title);
     } else {
         quizState.titleName = null;
     }
@@ -1053,12 +1095,26 @@ function openQuiz(categoryName, titleName, source) {
         const cat   = storyObj?.['分類']?.[0] || categoryName || 'Uncategorized';
         pickerPreselect(major, cat, titleName);
     } else {
-        // Coming from home/note: reset selects
-        selMajor.value = '';
-        selCategory.innerHTML = '<option value="">— Select Category —</option>';
-        selArticle.innerHTML  = '<option value="">— Select Article —</option>';
-        document.getElementById('quiz-picker-row-category').style.display = 'none';
-        document.getElementById('quiz-picker-row-article').style.display  = 'none';
+        // Coming from home/note: try to restore last session, otherwise reset selects
+        const _lastSess = _loadQuizLastSession();
+        if (_lastSess && _lastSess.major && _lastSess.category && _lastSess.title) {
+            const _storyExists = stories.find(s => s['標題'] === _lastSess.title);
+            if (_storyExists) {
+                pickerPreselect(_lastSess.major, _lastSess.category, _lastSess.title);
+            } else {
+                selMajor.value = '';
+                selCategory.innerHTML = '<option value="">— Select Category —</option>';
+                selArticle.innerHTML  = '<option value="">— Select Article —</option>';
+                document.getElementById('quiz-picker-row-category').style.display = 'none';
+                document.getElementById('quiz-picker-row-article').style.display  = 'none';
+            }
+        } else {
+            selMajor.value = '';
+            selCategory.innerHTML = '<option value="">— Select Category —</option>';
+            selArticle.innerHTML  = '<option value="">— Select Article —</option>';
+            document.getElementById('quiz-picker-row-category').style.display = 'none';
+            document.getElementById('quiz-picker-row-article').style.display  = 'none';
+        }
     }
 
     quizMenu.classList.remove('is-hidden');
@@ -2149,6 +2205,13 @@ async function startDictation() {
     quizState.wrongItems  = [];
     quizState.answeredQuestions = [];
 
+    // ── 記錄本次測驗選擇（供下次進入 Quiz 自動預選）──────────
+    if (quizState.titleName && quizState.categoryName) {
+        const _stObj = stories.find(s => s['標題'] === quizState.titleName);
+        const _major = _stObj?.['大類'] || 'Uncategorized';
+        _saveQuizLastSession(_major, quizState.categoryName, quizState.titleName);
+    }
+
     // Preload audio
     if (title) {
         _setQuizAudioSrc(`audio/${encodeURIComponent(title.trim())}.mp3`);
@@ -2224,6 +2287,9 @@ function showDictationQuestion() {
         btn.addEventListener('click', () => handleDictationAnswer(opt, q.sentence, btn));
         optionsEl.appendChild(btn);
     });
+
+    // 每題開始時重置鍵盤預選狀態
+    if (typeof _dictResetKeyIndex === 'function') _dictResetKeyIndex();
 }
 
 /**
@@ -2327,6 +2393,74 @@ function handleDictationAnswer(selected, correct, btn) {
 document.getElementById('dictation-next').addEventListener('click', () => {
     quizState.currentIndex++;
     showDictationQuestion();
+});
+
+// ══════════════════════════════════════════════════════════════
+//  DICTATION KEYBOARD NAVIGATION
+//  ↑ / ↓  : 預選答案（highlight option btn）
+//  Enter  : 提交已預選答案 or 前往下一題
+//  Space  : 重播 MP3
+// ══════════════════════════════════════════════════════════════
+
+// 目前鍵盤預選的選項 index（-1 = 未選）
+let _dictKeyIndex = -1;
+
+/** 更新 dictation-options 內各按鈕的 keyboard-focused 樣式 */
+function _dictUpdateKeyHighlight() {
+    const btns = document.querySelectorAll('#dictation-options .quiz-option-btn');
+    btns.forEach((b, i) => {
+        b.classList.toggle('is-keyboard-focused', i === _dictKeyIndex);
+    });
+}
+
+/** 在每題開始時重置鍵盤選取狀態 */
+function _dictResetKeyIndex() {
+    _dictKeyIndex = -1;
+    _dictUpdateKeyHighlight();
+}
+
+document.addEventListener('keydown', (e) => {
+    // 只在 dictation 區域顯示時才作用
+    const dictArea = document.getElementById('quiz-dictation-area');
+    if (!dictArea || dictArea.classList.contains('is-hidden')) return;
+    // 若有文字輸入框取得 focus，不攔截（避免干擾其他操作）
+    if (document.activeElement && ['INPUT','TEXTAREA'].includes(document.activeElement.tagName)) return;
+
+    const btns        = Array.from(document.querySelectorAll('#dictation-options .quiz-option-btn'));
+    const nextBtn     = document.getElementById('dictation-next');
+    const playBtn     = document.getElementById('dictation-play-btn');
+    const nextVisible = nextBtn && !nextBtn.classList.contains('is-hidden');
+
+    if (e.code === 'ArrowDown' || e.code === 'ArrowUp') {
+        e.preventDefault();
+        if (btns.length === 0) return;
+        // 若答案已提交，箭頭鍵無效
+        if (btns[0]?.disabled) return;
+
+        if (e.code === 'ArrowDown') {
+            _dictKeyIndex = (_dictKeyIndex + 1) % btns.length;
+        } else {
+            _dictKeyIndex = (_dictKeyIndex - 1 + btns.length) % btns.length;
+        }
+        _dictUpdateKeyHighlight();
+        // scroll into view on mobile
+        btns[_dictKeyIndex]?.scrollIntoView({ block: 'nearest' });
+
+    } else if (e.code === 'Enter') {
+        e.preventDefault();
+        if (nextVisible) {
+            // 已答題 → 前往下一題
+            nextBtn.click();
+        } else if (_dictKeyIndex >= 0 && btns[_dictKeyIndex] && !btns[_dictKeyIndex].disabled) {
+            // 預選中的選項 → 提交
+            btns[_dictKeyIndex].click();
+        }
+
+    } else if (e.code === 'Space') {
+        e.preventDefault();
+        // 重播 MP3
+        if (playBtn && !playBtn.disabled) playBtn.click();
+    }
 });
 
 // ── Load quiz scores from Firestore on login ─────────────────

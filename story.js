@@ -567,6 +567,11 @@ async function loadWordsFromFirestore() {
                 safeSetItem(SUB_CATEGORY_SESSION_KEY, JSON.stringify(data.subCategorySessions));
                 console.log("Sub category sessions synced from Cloud:", data.subCategorySessions);
             }
+            // 4. === Sync Quiz Last Session（上次 Quiz 選擇的 Book / Chapter）===
+            if (data.quizLastSession) {
+                safeSetItem('readingChallengeQuizLastSession', JSON.stringify(data.quizLastSession));
+                console.log("Quiz last session synced from Cloud:", data.quizLastSession);
+            }
             // ===========================================
 
             console.log("Notes and session loaded from Firestore.");
