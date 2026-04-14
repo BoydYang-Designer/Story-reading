@@ -446,11 +446,7 @@
       font-weight: 600;
     }
 
-    /* ── Quiz session 進行中：隱藏 Back 按鈕（已有 Exit 可用）── */
-    #quiz-view:has(#quiz-session:not(.is-hidden)) .view-top-nav,
-    #quiz-view:has(#quiz-result:not(.is-hidden)) .view-top-nav {
-      display: none;
-    }
+
 
   </style>
 </head>
@@ -720,9 +716,6 @@
 
 <!-- ===== QUIZ VIEW ===== -->
 <div id="quiz-view" class="is-hidden">
-    <div class="view-top-nav">
-        <button class="secondary btn-back-top" id="back-to-note-from-quiz">← Back</button>
-    </div>
 
     <!-- Quiz Menu -->
     <div id="quiz-menu">
@@ -1087,6 +1080,7 @@
 
         <!-- Progress -->
         <div class="quiz-progress-row">
+            <button class="secondary btn-back-top" id="back-to-note-from-quiz">← Back</button>
             <span id="quiz-progress-text">1 / 10</span>
             <div class="quiz-progress-bar-wrap">
                 <div class="quiz-progress-bar-fill" id="quiz-progress-fill"></div>

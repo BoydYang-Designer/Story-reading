@@ -629,42 +629,47 @@ const SR_CONFIG = {
  * @param {string} [quizSource] - 'voiceReorder' 時使用較低底板（15 vs 20）
  */
 function calcEffectiveFamiliarity(rec, itemType, quizSource) {
-    if (!rec || !_recHasPractice(rec)) {
+    // 決定要看哪個 source
+    // itemType 對應關係：
+    //   noteWords / articleWords    → fcplus
+    //   noteSentences               → reorder（預設）或 dictation
+    //   articleSentences            → reorder（預設）或 dictation
+    //   直接傳 quizSource 時優先使用 quizSource
+    let sourceKey = quizSource;
+    if (!sourceKey) {
+        if (itemType === 'noteWords' || itemType === 'articleWords') {
+            sourceKey = 'fcplus';
+        } else {
+            sourceKey = 'reorder';
+        }
+    }
+
+    // 取得 per-source 記錄
+    const srcRec = rec?.[sourceKey];
+    if (!srcRec || (srcRec.correct + srcRec.wrong) === 0) {
         return { rawFam: null, effectiveFam: null, daysSince: Infinity };
     }
 
-    // 取得原始熟悉度
-    let rawFam;
-    if (typeof calcWeightedFamiliarity === 'function' && itemType) {
-        rawFam = calcWeightedFamiliarity(rec, itemType);
-    } else {
-        // 備用路徑：包含 voiceReorder 在內的所有來源平均
-        const sources = ['fc','fcplus','dictation','reorder','voiceReorder','articleListen'];
-        const vals = sources.map(s => {
-            const sr = rec[s];
-            if (!sr) return null;
-            const total = (sr.correct || 0) + (sr.wrong || 0);
-            return total > 0 ? Math.round((1 - sr.wrong / total) * 100) : null;
-        }).filter(v => v !== null);
-        rawFam = vals.length > 0 ? Math.round(vals.reduce((a, b) => a + b, 0) / vals.length) : 0;
-    }
+    const total  = srcRec.correct + srcRec.wrong;
+    const rawFam = Math.round((srcRec.correct / total) * 100);
 
-    // 取得上次測驗日期
-    const lastSeen = rec.lastSeen || null;
-    const days = lastSeen ? Math.floor((Date.now() - new Date(lastSeen).getTime()) / 86400000) : 0;
+    // per-source lastSeen（新版），fallback 到 global lastSeen
+    const lastSeenStr = srcRec.lastSeen || rec?.lastSeen || null;
+    const days = lastSeenStr
+        ? Math.floor((Date.now() - new Date(lastSeenStr).getTime()) / 86400000)
+        : 0;
 
-    // 依原始熟悉度選擇半衰期
+    // 艾賓浩斯半衰期
     let halfLife;
     if (rawFam >= 70)      halfLife = SR_CONFIG.halfLifeHigh;
     else if (rawFam >= 40) halfLife = SR_CONFIG.halfLifeMid;
     else                   halfLife = SR_CONFIG.halfLifeLow;
 
-    // Voice Reorder 難度最高，使用較低底板讓衰減效果更顯著，促進真正的複習
-    const baseFloor = (quizSource === 'voiceReorder')
+    // VR 使用較低底板（15），其餘 20
+    const baseFloor = (sourceKey === 'voiceReorder')
         ? SR_CONFIG.decayFloorVoiceReorder
         : SR_CONFIG.decayFloor;
 
-    // 底板不超過 rawFam（避免答錯率高的題被虛假拉高）
     const floor = Math.min(baseFloor, rawFam);
     const decayFactor = Math.pow(2, -days / halfLife);
     const effectiveFam = Math.round(floor + (rawFam - floor) * decayFactor);
@@ -673,23 +678,20 @@ function calcEffectiveFamiliarity(rec, itemType, quizSource) {
 }
 
 /**
- * 分桶優先抽題（間隔重複版）
+ * 分桶優先抽題（間隔重複版，per-source 版）
  *
- * 桶 A（95%）：從未測驗（effectiveFam === null）→ 最高優先
- * 桶 B（剩餘 × 70%）：有效熟悉度 < 40%（含衰減後停在底板的題）
- * 桶 C（剩餘 × 20%）：有效熟悉度 40–69%
- * 桶 D（剩餘 × 5%） ：有效熟悉度 ≥ 70%（幾乎不出）
+ * quizSource 決定查哪個 source 的記錄：
+ *   flashcard/flashcard+ → 'fcplus'
+ *   dictation            → 'dictation'
+ *   reorder              → 'reorder'
+ *   voiceReorder         → 'voiceReorder'
  *
- * 學過的題（effectiveFam 有值）永遠不進桶 A，
- * 即使衰減到底板也只落在桶 B，優先度低於未測驗。
- *
- * @param {string} [quizSource] - 傳入 'voiceReorder' 時使用較低底板
+ * 未測驗判斷：rec[quizSource] 無資料 → 桶 A
  */
 function weightedSample(pool, n, keyFn, categoryName, titleName, itemType, quizSource) {
     if (!pool || pool.length === 0) return [];
     n = Math.min(n, pool.length);
 
-    // 讀取 itemScores
     let itemScores = {};
     try { itemScores = JSON.parse(localStorage.getItem('readingChallengeItemScores') || '{}'); } catch (e) {}
 
@@ -698,31 +700,45 @@ function weightedSample(pool, n, keyFn, categoryName, titleName, itemType, quizS
         ? (itemScores[storeKey][itemType] || {})
         : {};
 
-    // 將每題分到對應的桶
-    const bucketA = []; // 從未測驗
+    // 決定 sourceKey（與 calcEffectiveFamiliarity 保持一致）
+    let sourceKey = quizSource;
+    if (!sourceKey) {
+        sourceKey = (itemType === 'noteWords' || itemType === 'articleWords') ? 'fcplus' : 'reorder';
+    }
+
+    const bucketA = []; // 從未測驗（此 source 無資料）
     const bucketB = []; // 有效熟悉度 < 40%
     const bucketC = []; // 有效熟悉度 40–69%
     const bucketD = []; // 有效熟悉度 ≥ 70%
 
-    // FIX: 對句子類型（noteSentences / articleSentences），查詢 key 需與
-    // recordItemResult 寫入時的 normSentence(itemText) 一致，否則永遠找不到已測驗記錄
     const _isSentenceType = (itemType === 'noteSentences' || itemType === 'articleSentences');
 
     for (const item of pool) {
         const rawText = keyFn ? keyFn(item) : String(item);
         const text = _isSentenceType
-            ? (typeof normSentence === 'function' ? normSentence(rawText) : rawText.trim().replace(/[.,?!'"`\u201c\u201d\u2018\u2019;:（）【】「」]/g, '').toLowerCase())
+            ? (typeof normSentence === 'function'
+                ? normSentence(rawText)
+                : rawText.trim().replace(/[.,?!'"`\u201c\u201d\u2018\u2019;:（）【】「」]/g, '').toLowerCase())
             : rawText;
-        const rec  = typeDataMap[text] || null;
-        const { effectiveFam } = calcEffectiveFamiliarity(rec, itemType, quizSource);
 
-        if (effectiveFam === null)   bucketA.push(item);
-        else if (effectiveFam < 40)  bucketB.push(item);
-        else if (effectiveFam < 70)  bucketC.push(item);
-        else                         bucketD.push(item);
+        const rec = typeDataMap[text] || null;
+
+        // 只看此 source 的記錄
+        const srcRec = rec?.[sourceKey];
+        const hasSrcData = !!(srcRec && (srcRec.correct + srcRec.wrong) > 0);
+
+        if (!hasSrcData) {
+            // 未測驗此 source → 桶 A
+            bucketA.push(item);
+        } else {
+            const { effectiveFam } = calcEffectiveFamiliarity(rec, itemType, sourceKey);
+            if (effectiveFam === null)   bucketA.push(item);
+            else if (effectiveFam < 40)  bucketB.push(item);
+            else if (effectiveFam < 70)  bucketC.push(item);
+            else                         bucketD.push(item);
+        }
     }
 
-    // 桶 A 優先填滿 untestedFillRatio 比例，剩餘配額給 B/C/D
     const wantFromA = Math.min(bucketA.length, Math.ceil(n * SR_CONFIG.untestedFillRatio));
     const remaining = n - wantFromA;
 

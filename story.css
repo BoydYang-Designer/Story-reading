@@ -2323,6 +2323,7 @@ button.secondary:hover {
     align-items: center;
     gap: 10px;
     margin-bottom: 20px;
+    margin-top: 4px;
     padding: 0 2px;
 }
 
