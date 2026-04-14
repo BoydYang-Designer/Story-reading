@@ -291,12 +291,19 @@
     line-height: 1.35;
 }
 
-/* ── 三欄 Pillar 佈局 ─────────────────────────────────────── */
+/* ── Pillar 佈局（四欄版）─────────────────────────────────── */
 
 .browser-article-pillars {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     gap: 6px;
+}
+
+/* 新版四欄 */
+.browser-article-pillars-4 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 4px;
 }
 
 .art-pillar {
@@ -368,6 +375,21 @@
 .art-pillar:has(.art-pillar-val.fam-green)  { border-color: rgba(80,184,108,0.35); }
 .art-pillar:has(.art-pillar-val.fam-yellow) { border-color: rgba(220,180,60,0.35); }
 .art-pillar:has(.art-pillar-val.fam-red)    { border-color: rgba(224,92,92,0.35);  }
+
+/* 各欄背景識別色 */
+.art-pillar-dict {
+    background: rgba(230, 126, 34, 0.04);
+}
+.art-pillar-dict:has(.art-pillar-val.fam-green)  { border-color: rgba(80,184,108,0.35);  background: rgba(80,184,108,0.04); }
+.art-pillar-dict:has(.art-pillar-val.fam-yellow) { border-color: rgba(220,180,60,0.35);  background: rgba(230,126,34,0.05); }
+.art-pillar-dict:has(.art-pillar-val.fam-red)    { border-color: rgba(224,92,92,0.35);   background: rgba(224,92,92,0.04); }
+
+.art-pillar-reorder {
+    background: rgba(41, 128, 185, 0.04);
+}
+.art-pillar-reorder:has(.art-pillar-val.fam-green)  { border-color: rgba(80,184,108,0.35);  background: rgba(80,184,108,0.04); }
+.art-pillar-reorder:has(.art-pillar-val.fam-yellow) { border-color: rgba(220,180,60,0.35);  background: rgba(41,128,185,0.05); }
+.art-pillar-reorder:has(.art-pillar-val.fam-red)    { border-color: rgba(224,92,92,0.35);   background: rgba(224,92,92,0.04); }
 
 /* 口說欄特殊底色 */
 .art-pillar-voice {
@@ -446,8 +468,13 @@
         gap: 4px;
     }
 
+    .browser-article-pillars-4 {
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        gap: 3px;
+    }
+
     .art-pillar {
-        padding: 5px 6px;
+        padding: 4px 4px;
     }
 
     .art-pillar-label {
@@ -455,7 +482,9 @@
     }
 
     .art-pillar-val {
-        font-size: 0.82rem;
+        font-size: 0.78rem;
+        min-width: 32px;
+        padding: 1px 4px;
     }
 
     .browser-article-title {
@@ -550,7 +579,67 @@
 .detail-sum-chip.chip-danger { border-color: rgba(224,92,92,0.5);   color: #a83030; background: rgba(224,92,92,0.08); }
 .detail-sum-chip.chip-ok     { border-color: rgba(80,184,108,0.5);  color: #2d8a50; background: rgba(80,184,108,0.08); }
 
-/* ── Detail View — 三欄 Tab 樣式 ─────────────────────────── */
+/* ── Detail View — 四欄 Tab 樣式 ─────────────────────────── */
+
+.detail-tabs-4 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 0;
+    margin-bottom: 14px;
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: var(--color-surface);
+}
+
+.detail-tabs-4 .detail-tab-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    padding: 10px 4px;
+    border: none;
+    border-right: 1px solid var(--color-border);
+    background: transparent;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+
+.detail-tabs-4 .detail-tab-btn:last-child {
+    border-right: none;
+}
+
+.detail-tabs-4 .detail-tab-btn.is-active {
+    background: var(--color-primary);
+    color: #fff;
+}
+
+.detail-tabs-4 .detail-tab-btn.is-active .detail-tab-text {
+    color: #fff;
+}
+
+.detail-tabs-4 .detail-tab-btn:hover:not(.is-active) {
+    background: var(--color-accent-subtle);
+}
+
+/* D tab 啟用時：橙色調 */
+.detail-tabs-4 .detail-tab-btn[data-tab="dictation"].is-active {
+    background: linear-gradient(135deg, #e67e22, #f39c12);
+}
+
+/* R tab 啟用時：藍色調 */
+.detail-tabs-4 .detail-tab-btn[data-tab="reorder"].is-active {
+    background: linear-gradient(135deg, #2980b9, #3498db);
+}
+
+/* VR tab 啟用時：紫色調 */
+.detail-tabs-4 .detail-tab-btn[data-tab="voiceReorder"].is-active {
+    background: linear-gradient(135deg, #7c4dcc, #9c6ee0);
+}
+
+/* ── Detail View — 三欄 Tab 樣式（保留向後相容）────────────── */
 
 .detail-tabs-3 {
     display: grid;
@@ -608,9 +697,6 @@
 }
 
 /* 口說 tab 啟用時用紫色調 */
-.detail-tabs-3 .detail-tab-btn[data-tab="voiceReorder"].is-active {
-    background: linear-gradient(135deg, #7c4dcc, #9c6ee0);
-}
 
 /* ── 原有 detail-tab-groups 保留（向後相容） ─────────────── */
 /* 新版已改用 detail-tabs-3，舊版 detail-tab-groups 保留不刪 */
@@ -1181,6 +1267,141 @@
 .detail-src-chip.fam-red    { background: rgba(224,92,92,0.12);   border-color: rgba(224,92,92,0.3);   color: #8b1a1a; }
 .detail-src-chip.detail-src-none     { background: rgba(0,0,0,0.04); border-color: var(--color-border); color: var(--color-text-light); }
 .detail-src-chip.detail-src-practice { background: rgba(0,0,0,0.04); border-color: var(--color-border); color: var(--color-text-light); font-style: italic; }
+
+/* ── 句子模式篩選列 ──────────────────────────────────────────── */
+
+.detail-mode-filter-bar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 8px 16px 6px;
+    border-bottom: 1px solid var(--color-border-tertiary);
+    background: var(--color-background-secondary);
+}
+
+.detail-mode-filter-bar.is-hidden {
+    display: none;
+}
+
+.detail-mode-filter-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    margin-right: 2px;
+    white-space: nowrap;
+}
+
+.detail-mode-filter-btn {
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1px solid var(--color-border-secondary);
+    background: var(--color-background-primary);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+    white-space: nowrap;
+}
+
+.detail-mode-filter-btn:hover {
+    background: var(--color-background-tertiary);
+    border-color: var(--color-border-primary);
+}
+
+.detail-mode-filter-btn.is-active {
+    background: var(--color-text-primary);
+    color: var(--color-background-primary);
+    border-color: var(--color-text-primary);
+}
+
+/* 篩選中的 summary chip */
+.detail-sum-chip.chip-filter {
+    background: rgba(83, 74, 183, 0.12);
+    border-color: rgba(83, 74, 183, 0.35);
+    color: #3c3489;
+}
+
+/* ── 句子模式練習狀態標記（noteSentences tab 專用）────────────── */
+
+/* 「全未練習」的 card 樣式覆蓋：灰底 + 灰色邊框 */
+.detail-item.detail-item-never-practiced {
+    background: rgba(0, 0, 0, 0.045) !important;
+    border-color: rgba(0, 0, 0, 0.18) !important;
+}
+.detail-item.detail-item-never-practiced .detail-fam-badge {
+    background: rgba(0, 0, 0, 0.08) !important;
+    color: var(--color-text-light) !important;
+}
+.detail-item.detail-item-never-practiced .detail-score-bar {
+    background: rgba(0, 0, 0, 0.15) !important;
+}
+.detail-item.detail-item-never-practiced::after {
+    content: '未練習';
+    display: inline-block;
+    float: right;
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 1px 7px;
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.08);
+    color: var(--color-text-light);
+    margin-top: -26px;
+    position: relative;
+    z-index: 1;
+}
+
+.sent-mode-status {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+    margin-bottom: 5px;
+}
+
+.sent-mode-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 0.70rem;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 20px;
+    border: 1px solid transparent;
+    white-space: nowrap;
+    line-height: 1.4;
+}
+
+.sent-mode-chip em {
+    font-style: normal;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+.sent-mode-icon {
+    font-size: 0.75rem;
+}
+
+/* 練過且熟悉度 ≥ 70：綠色 */
+.sent-mode-chip.sent-mode-ok {
+    background: rgba(80, 184, 108, 0.12);
+    border-color: rgba(80, 184, 108, 0.35);
+    color: #2e7d51;
+}
+
+/* 練過但熟悉度 < 70：黃/橙色 */
+.sent-mode-chip.sent-mode-warn {
+    background: rgba(224, 160, 60, 0.12);
+    border-color: rgba(224, 160, 60, 0.35);
+    color: #8a5f00;
+}
+
+/* 從未練過此模式：灰色 */
+.sent-mode-chip.sent-mode-none {
+    background: rgba(0, 0, 0, 0.04);
+    border-color: var(--color-border);
+    color: var(--color-text-light);
+}
 
 /* ── 出題桶標籤（加權優先規則整合）─────────────────────────── */
 

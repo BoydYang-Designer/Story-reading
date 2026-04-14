@@ -1681,20 +1681,32 @@
     <!-- Summary chips -->
     <div id="detail-summary-bar"></div>
 
-    <!-- Tabs: 三類 單字 / 句子 / 口說 -->
-    <div class="detail-tabs detail-tabs-3">
+    <!-- Tabs: 四類 單字 / D / R / VR -->
+    <div class="detail-tabs detail-tabs-4">
         <button class="detail-tab-btn is-active" data-tab="noteWords" data-label="單字">
             <span class="detail-tab-icon">🔤</span>
             <span class="detail-tab-text">單字</span>
         </button>
-        <button class="detail-tab-btn" data-tab="noteSentences" data-label="句子">
-            <span class="detail-tab-icon">📝</span>
-            <span class="detail-tab-text">句子</span>
+        <button class="detail-tab-btn" data-tab="dictation" data-label="Dictation">
+            <span class="detail-tab-icon">🎧</span>
+            <span class="detail-tab-text">D</span>
         </button>
-        <button class="detail-tab-btn" data-tab="voiceReorder" data-label="口說">
+        <button class="detail-tab-btn" data-tab="reorder" data-label="Reorder">
+            <span class="detail-tab-icon">🔀</span>
+            <span class="detail-tab-text">R</span>
+        </button>
+        <button class="detail-tab-btn" data-tab="voiceReorder" data-label="Voice">
             <span class="detail-tab-icon">🎙</span>
-            <span class="detail-tab-text">口說</span>
+            <span class="detail-tab-text">VR</span>
         </button>
+    </div>
+
+    <!-- 篩選列（所有 tab 共用） -->
+    <div class="detail-mode-filter-bar" id="detail-mode-filter-bar">
+        <span class="detail-mode-filter-label">篩選：</span>
+        <button class="detail-mode-filter-btn is-active" data-filter="all">全部</button>
+        <button class="detail-mode-filter-btn" data-filter="untested">⬜ 未測驗</button>
+        <button class="detail-mode-filter-btn" data-filter="practiced">✅ 已測驗</button>
     </div>
 
     <!-- Sort bar -->
