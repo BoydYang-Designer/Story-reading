@@ -1909,6 +1909,7 @@ textContainer.addEventListener('click', (e) => {
                     stagedEl.className = 'staged-word';
                     stagedEl.textContent = sentenceText;
                     stagedWordsContainer.appendChild(stagedEl);
+                    updateStagingBtnState();
                 }
             }
         } else {
@@ -1936,6 +1937,7 @@ textContainer.addEventListener('click', (e) => {
                 stagedEl.className = 'staged-word';
                 stagedEl.textContent = phraseText;
                 stagedWordsContainer.appendChild(stagedEl);
+                updateStagingBtnState();
                 return;
             }
 
@@ -1958,6 +1960,7 @@ textContainer.addEventListener('click', (e) => {
                     stagedWordEl.className = 'staged-word';
                     stagedWordEl.textContent = cleanedWord;
                     stagedWordsContainer.appendChild(stagedWordEl);
+                    updateStagingBtnState();
                 }
             }
         }
@@ -1988,6 +1991,7 @@ textContainer.addEventListener('click', (e) => {
                 stagedWordEl.className = 'staged-word';
                 stagedWordEl.textContent = cleanedWord;
                 stagedWordsContainer.appendChild(stagedWordEl);
+                updateStagingBtnState();
                 // ✅ BUG-4 修正：已移除重複的 appendChild（原第 1593 行有一行多餘的 appendChild 導致單字被加入兩次）
             }
         }
@@ -1995,12 +1999,25 @@ textContainer.addEventListener('click', (e) => {
 });
 
 
+// ── FIX-7: Staging button state helper ────────────────────────────────────────
+function updateStagingBtnState() {
+    const hasWords = stagedWordsContainer.querySelectorAll('.staged-word').length > 0;
+    addToNoteBtn.disabled = !hasWords;
+    clearStagingBtn.disabled = !hasWords;
+    document.getElementById('copy-staged-btn').disabled = !hasWords;
+    document.getElementById('play-staged-btn').disabled = !hasWords;
+}
+
 stagedWordsContainer.addEventListener('click', (e) => {
-    if (e.target.classList.contains('staged-word')) e.target.remove();
+    if (e.target.classList.contains('staged-word')) {
+        e.target.remove();
+        updateStagingBtnState();
+    }
 });
 
 clearStagingBtn.addEventListener('click', () => {
-    stagedWordsContainer.innerHTML = '';
+    stagedWordsContainer.innerHTML = ''; if (typeof updateStagingBtnState === 'function') updateStagingBtnState();
+    updateStagingBtnState();
 });
 
 addToNoteBtn.addEventListener('click', () => {
@@ -2010,7 +2027,8 @@ addToNoteBtn.addEventListener('click', () => {
     if (textToAdd) {
         addWordToNote(textToAdd, currentCategoryName, currentStoryTitle);
         navigator.clipboard.writeText(textToAdd);
-        stagedWordsContainer.innerHTML = '';
+        stagedWordsContainer.innerHTML = ''; if (typeof updateStagingBtnState === 'function') updateStagingBtnState();
+        updateStagingBtnState();
     }
 });
 
@@ -2368,11 +2386,14 @@ function tryNextAudioCandidate() {
     // FIX-2: 所有候補都失敗，顯示明確錯誤提示
     showNotification('❌ 找不到音訊檔案，請確認 audio/ 資料夾或網路連線。', 'error');
     playPauseBtn.classList.remove('is-playing');
+    playPauseBtn.classList.remove('is-loading');
     isPlaying = false;
     return;
   }
-  // FIX-2: 顯示載入中提示
+  // FIX-2: 顯示載入中提示 + 按鈕 loading 狀態
   showNotification('🔊 載入音訊中…', 'info');
+  playPauseBtn.classList.add('is-loading');
+  playPauseBtn.disabled = true;
   audio.src = audioTriedCandidates.shift();
   audio.load();
 }
@@ -2971,7 +2992,7 @@ async function showPlayback(index, startTime = 0, maintainTimestampMode = false)
   cachedScrollTarget = -1;
   lastHighlightedWords = [];
   lastActiveSentenceStart = -1;
-  stagedWordsContainer.innerHTML = '';
+  stagedWordsContainer.innerHTML = ''; if (typeof updateStagingBtnState === 'function') updateStagingBtnState();
 
   // 載入新故事的資料
   currentStoryIndex = index;
@@ -3032,7 +3053,7 @@ async function showPlayback(index, startTime = 0, maintainTimestampMode = false)
 // ===== END OF MODIFIED FUNCTION =====
 
 function stopAudioAndReset() {
-  stagedWordsContainer.innerHTML = '';
+  stagedWordsContainer.innerHTML = ''; if (typeof updateStagingBtnState === 'function') updateStagingBtnState();
   stopTimestampUpdateLoop();
   stopJsonModeHighlightLoop();
   audio.pause();
@@ -3262,14 +3283,22 @@ audio.addEventListener('play', () => {
     }
 });
 
-// FIX-2: 音訊載入成功 → 清除「載入中」通知（若尚在顯示）
+// FIX-2: 音訊載入成功 → 清除「載入中」狀態
 audio.addEventListener('canplaythrough', () => {
-    // 不需額外 toast，成功時靜默即可（避免打擾）
-}, { once: true });
+    playPauseBtn.classList.remove('is-loading');
+    playPauseBtn.disabled = false;
+    // Update total duration display once known
+    const totalEl = document.getElementById('playback-total-time');
+    if (totalEl && isFinite(audio.duration)) {
+        totalEl.textContent = formatPlaybackTime(audio.duration);
+    }
+}, { once: false });
 
 // FIX-2: 音訊載入失敗 → 顯示明確的錯誤通知（網路或 GitHub 無法連線）
 audio.addEventListener('error', () => {
     if (!audio.src || audio.src === window.location.href) return; // src 為空時忽略
+    playPauseBtn.classList.remove('is-loading');
+    playPauseBtn.disabled = false;
     showNotification('⚠️ 音訊無法載入，請確認網路連線或 GitHub 是否可存取。', 'error');
     console.warn('[FIX-2] Audio load error for:', audio.src);
 });
@@ -3317,8 +3346,22 @@ audio.addEventListener('ended', () => {
 });
 // ===== END OF MODIFIED EVENT LISTENER =====
 
+// ── FIX-4: Time display helper ──────────────────────────────────
+function formatPlaybackTime(seconds) {
+    if (!isFinite(seconds) || isNaN(seconds)) return '0:00';
+    const m = Math.floor(seconds / 60);
+    const s = Math.floor(seconds % 60);
+    return `${m}:${s.toString().padStart(2, '0')}`;
+}
+
 audio.addEventListener('timeupdate', () => { 
-    if (isFinite(audio.duration)) progressBar.value = (audio.currentTime / audio.duration) * 100;
+    if (isFinite(audio.duration)) {
+        progressBar.value = (audio.currentTime / audio.duration) * 100;
+        const curEl = document.getElementById('playback-current-time');
+        const totEl = document.getElementById('playback-total-time');
+        if (curEl) curEl.textContent = formatPlaybackTime(audio.currentTime);
+        if (totEl) totEl.textContent = formatPlaybackTime(audio.duration);
+    }
 });
 progressBar.addEventListener('input', () => {
     if (isFinite(audio.duration)) {
@@ -3444,7 +3487,7 @@ function openEditorPanel(idx = -1) {
     }
 
     if (idx === -1) {
-        heading.textContent = '新增文章';
+        heading.textContent = 'Add Article';
         titleInput.value = '';
         majorInput.value = '';
         categoryInput.value = '';
@@ -3453,7 +3496,7 @@ function openEditorPanel(idx = -1) {
     } else {
         const arts = loadCustomArticles();
         const art = arts[idx];
-        heading.textContent = '編輯文章';
+        heading.textContent = 'Edit Article';
         titleInput.value = art.title || '';
         majorInput.value = art.major || '';
         categoryInput.value = art.category || '';
@@ -3545,7 +3588,7 @@ function renderCustomArticlesList() {
     container.innerHTML = '';
 
     if (articles.length === 0) {
-        container.innerHTML = '<p style="color:var(--color-text-light);text-align:center;padding:30px 0;">還沒有自訂文章。點擊「新增文章」開始。</p>';
+        container.innerHTML = '<p style="color:var(--color-text-light);text-align:center;padding:30px 0;">No custom articles yet. Click "Add Article" to get started.</p>';
         return;
     }
 
@@ -3680,7 +3723,7 @@ function restoreAudioControls() {
 // --- Export JSON ---
 function exportCustomArticles() {
     const arts = loadCustomArticles();
-    if (arts.length === 0) { alert('沒有自訂文章可以匯出。'); return; }
+    if (arts.length === 0) { alert('No custom articles to export.'); return; }
 
     // Export format: mapped to Excel columns
     const exportData = arts.map(a => ({
@@ -3818,7 +3861,7 @@ function importCustomArticles(file) {
 // --- Merged detection (inline panel) ---
 function checkMergedArticles() {
     const arts = loadCustomArticles();
-    if (arts.length === 0) { showNotification('沒有自訂文章', 'error'); return; }
+    if (arts.length === 0) { showNotification('No custom articles', 'error'); return; }
 
     const officialSlugs = new Set(stories.map(s => s['標題']?.trim().toLowerCase()));
 

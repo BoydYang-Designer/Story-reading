@@ -477,6 +477,15 @@
       </svg>
     </button>
 
+    <!-- Audio Editor icon button -->
+    <button id="go-to-audio-editor" class="btn-icon-tool" title="Audio Editor">
+      <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 18V5l12-2v13"></path>
+        <circle cx="6" cy="18" r="3"></circle>
+        <circle cx="18" cy="16" r="3"></circle>
+      </svg>
+    </button>
+
     <!-- 儲存空間檢視按鈕 -->
     <button id="storage-viewer-btn" class="btn-icon-tool" title="儲存空間用量">
       <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -496,7 +505,7 @@
   
   <div id="go-to-note" class="category-item">Note</div>
   <div id="go-to-custom-articles" class="category-item custom-articles-entry">
-    <span>自訂文章</span>
+    <span>Custom Articles</span>
     <span id="custom-articles-count-badge" class="custom-count-badge"></span>
   </div>
   
@@ -521,16 +530,8 @@
     <span>📊 Scores</span>
   </div>
 
-  <!-- 音檔時間編輯器入口 -->
-  <div id="go-to-audio-editor" class="category-item audio-editor-entry">
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
-         fill="none" stroke="currentColor" stroke-width="2"
-         stroke-linecap="round" stroke-linejoin="round">
-      <path d="M11 5H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-5"></path>
-      <path d="M17.5 2.5a2.121 2.121 0 0 1 3 3L12 14l-4 1 1-4 9.5-9.5z"></path>
-    </svg>
-    <span>🎛 音檔時間編輯</span>
-  </div>
+  <!-- 音檔時間編輯器入口 - moved to user-status toolbar -->
+  <!-- (removed from home view - now accessible via toolbar icon) -->
 </div>
 
     <div id="sub-category-view" class="is-hidden">
@@ -558,15 +559,16 @@
       <div id="text-container"></div>
       <div id="staging-area">
         <div class="staging-header">
-          <span class="staging-label">Staging</span>
+          <span class="staging-label">Staging
+            <span class="staging-info-tip" title="Click words in the text to stage them here. Then add to your Note, copy, or hear them read aloud.">ⓘ</span>
+          </span>
           <div id="staged-words-container" placeholder="Click words to stage..."></div>
           <div class="staging-header-actions">
-            <button id="add-to-note-btn">Add</button>
+            <button id="add-to-note-btn" disabled>Add</button>
             <button id="clear-staging-btn" class="secondary">Clear</button>
             <button id="copy-staged-btn" class="secondary">Copy</button>
-            <button id="play-staged-btn" class="secondary" title="播放暫存文字">
-              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-              Play
+            <button id="play-staged-btn" class="secondary" title="Read staged words aloud (TTS)">
+              🔊 Read
             </button>
           </div>
         </div>
@@ -574,6 +576,10 @@
       <div id="fixed-controls-container">
         <div class="controls">
           <input type="range" id="progress-bar" min="0" max="100" value="0">
+          <div class="playback-time-row">
+            <span id="playback-current-time">0:00</span>
+            <span id="playback-total-time">0:00</span>
+          </div>
           <div class="playback-actions">
             <button id="rewind-5" title="Rewind 5s">
               <svg class="icon-rewind" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 19 2 12 11 5 11 19"></polygon><polygon points="22 19 13 12 22 5 22 19"></polygon></svg>
@@ -588,10 +594,10 @@
 
           </div>
           <div class="navigation-actions">
-            <button id="prev-story" class="secondary" hidden>上一則</button>
+            <button id="prev-story" class="secondary" hidden>← Prev</button>
             <button id="go-to-story-note-btn" class="secondary">Note</button>
             <button id="go-to-story-quiz-btn" class="secondary">Quiz</button>
-            <button id="next-story" class="secondary" hidden>下一則</button>
+            <button id="next-story" class="secondary" hidden>Next →</button>
           </div>
         </div>
       </div>
@@ -719,6 +725,9 @@
 
     <!-- Quiz Menu -->
     <div id="quiz-menu">
+        <div class="view-top-nav">
+            <button class="secondary btn-back-top" id="back-to-home-from-quiz-menu">← Back</button>
+        </div>
         <h1 id="quiz-title">Quiz</h1>
         <p id="quiz-subtitle" class="quiz-subtitle"></p>
 
@@ -817,6 +826,9 @@
                     <button class="quiz-count-btn" data-count="5" data-mode="flashcard">5 題</button>
                 </div>
             </div>
+            <div class="quiz-available-count" id="quiz-available-flashcard">
+                <span class="quiz-available-text"></span>
+            </div>
             <button class="quiz-next-btn" id="start-flashcard-btn">Start →</button>
         </div>
 
@@ -847,6 +859,9 @@
                     <button class="quiz-count-btn is-active" data-count="10" data-mode="fcplus">10 題</button>
                     <button class="quiz-count-btn" data-count="5" data-mode="fcplus">5 題</button>
                 </div>
+            </div>
+            <div class="quiz-available-count" id="quiz-available-fcplus">
+                <span class="quiz-available-text"></span>
             </div>
             <button class="quiz-next-btn" id="start-fcplus-btn">Start →</button>
         </div>
@@ -879,6 +894,9 @@
                     <button class="quiz-count-btn" data-count="5" data-mode="dictation">5 題</button>
                 </div>
             </div>
+            <div class="quiz-available-count" id="quiz-available-dictation">
+                <span class="quiz-available-text"></span>
+            </div>
             <button class="quiz-next-btn" id="start-dictation-btn">Start →</button>
         </div>
 
@@ -910,6 +928,9 @@
                     <button class="quiz-count-btn" data-count="5" data-mode="reorder">5 題</button>
                 </div>
             </div>
+            <div class="quiz-available-count" id="quiz-available-reorder">
+                <span class="quiz-available-text"></span>
+            </div>
             <button class="quiz-next-btn" id="start-reorder-btn">Start →</button>
         </div>
 
@@ -940,6 +961,9 @@
                     <button class="quiz-count-btn is-active" data-count="10" data-mode="voice-reorder">10 題</button>
                     <button class="quiz-count-btn" data-count="5" data-mode="voice-reorder">5 題</button>
                 </div>
+            </div>
+            <div class="quiz-available-count" id="quiz-available-voice-reorder">
+                <span class="quiz-available-text"></span>
             </div>
             <button class="quiz-next-btn" id="start-voice-reorder-btn">Start 🎤 →</button>
         </div>
@@ -1094,7 +1118,7 @@
                 <div class="flashcard" id="flashcard">
                     <div class="flashcard-front">
                         <div class="flashcard-word" id="flashcard-word"></div>
-                        <div class="flashcard-hint">Tap card to flip</div>
+                        <div class="flashcard-hint flashcard-hint--pulse">Tap card to flip</div>
                     </div>
                     <div class="flashcard-back">
                         <div class="flashcard-context" id="flashcard-context"></div>
@@ -1112,8 +1136,14 @@
                 </div>
             </div>
             <div class="flashcard-actions">
-                <button class="quiz-btn quiz-btn-wrong" id="flashcard-wrong">✗ Again</button>
-                <button class="quiz-btn quiz-btn-correct" id="flashcard-correct">✓ Got it</button>
+                <button class="quiz-btn quiz-btn-wrong" id="flashcard-wrong">
+                    ✗ Again
+                    <span class="flashcard-btn-sublabel">Need more practice</span>
+                </button>
+                <button class="quiz-btn quiz-btn-correct" id="flashcard-correct">
+                    ✓ Got it
+                    <span class="flashcard-btn-sublabel">I remember this</span>
+                </button>
             </div>
         </div>
 
@@ -1365,18 +1395,18 @@
     <div class="view-top-nav">
       <button class="secondary btn-back-top" id="back-to-home-from-custom">← Back</button>
     </div>
-    <h1>自訂文章</h1>
+    <h1>Custom Articles</h1>
     <div class="custom-articles-toolbar">
       <button id="add-custom-article-btn">
         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        新增文章
+        Add Article
       </button>
-      <button id="export-custom-articles-btn" class="secondary">匯出 JSON</button>
+      <button id="export-custom-articles-btn" class="secondary">Export JSON</button>
       <label class="secondary btn-file-import">
-        匯入 JSON
+        Import JSON
         <input type="file" id="import-custom-articles-input" accept=".json" style="display:none;">
       </label>
-      <button id="check-merged-btn" class="secondary">偵測已彙整</button>
+      <button id="check-merged-btn" class="secondary">Detect Merged</button>
     </div>
   </div>
 
@@ -1384,37 +1414,37 @@
   <div id="custom-editor-panel" class="custom-editor-panel is-hidden">
     <div class="custom-editor-inner">
       <div class="custom-editor-title-row">
-        <h2 id="editor-panel-heading">新增文章</h2>
-        <button id="editor-close-btn" class="btn-icon-tool" title="關閉">
+        <h2 id="editor-panel-heading">Add Article</h2>
+        <button id="editor-close-btn" class="btn-icon-tool" title="Close">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
       </div>
       <div class="custom-editor-form">
         <div class="editor-field-row">
           <div class="editor-field">
-            <label>標題 <span class="required">*</span></label>
-            <input type="text" id="editor-article-title" placeholder="文章標題">
+            <label>Title <span class="required">*</span></label>
+            <input type="text" id="editor-article-title" placeholder="Article title">
             <div class="slug-preview">slug：<span id="editor-slug-preview">—</span></div>
           </div>
         </div>
         <div class="editor-field-row two-col">
           <div class="editor-field">
-            <label>大類</label>
-            <input type="text" id="editor-article-major" placeholder="例如：個人、商業…">
+            <label>Major Category</label>
+            <input type="text" id="editor-article-major" placeholder="e.g. Personal, Business…">
           </div>
           <div class="editor-field">
-            <label>分類</label>
-            <input type="text" id="editor-article-category" placeholder="例如：生活、設計…">
+            <label>Category</label>
+            <input type="text" id="editor-article-category" placeholder="e.g. Life, Design…">
           </div>
         </div>
         <div class="editor-field">
-          <label>內文 <span class="required">*</span></label>
-          <textarea id="editor-article-content" rows="12" placeholder="在此貼上或輸入文章內容…"></textarea>
+          <label>Content <span class="required">*</span></label>
+          <textarea id="editor-article-content" rows="12" placeholder="Paste or type article content here…"></textarea>
         </div>
       </div>
       <div class="custom-editor-actions">
-        <button id="editor-save-btn">儲存</button>
-        <button id="editor-cancel-btn" class="secondary">取消</button>
+        <button id="editor-save-btn">Save</button>
+        <button id="editor-cancel-btn" class="secondary">Cancel</button>
       </div>
     </div>
   </div>
@@ -1422,12 +1452,12 @@
   <!-- Merged detection results (inline, hidden until triggered) -->
   <div id="merged-results-panel" class="merged-results-panel is-hidden">
     <div class="merged-results-header">
-      <span>偵測結果</span>
-      <button id="merged-results-close-btn" class="btn-icon-tool" title="關閉">
+      <span>Detection Results</span>
+      <button id="merged-results-close-btn" class="btn-icon-tool" title="Close">
         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
-    <p class="merged-results-desc">以下文章已出現在正式 story.json，可選擇刪除或保留標記。</p>
+    <p class="merged-results-desc">The following articles already appear in the official story.json. You may delete or keep them.</p>
     <div id="merged-results-list"></div>
   </div>
 
@@ -1467,11 +1497,11 @@
 <!-- MERGED DETECTION MODAL kept only as fallback — hidden -->
 <div id="merged-modal" class="modal-overlay is-hidden">
   <div class="modal-box">
-    <h2>偵測已彙整文章</h2>
-    <p class="modal-desc">以下文章的 slug 已出現在正式 story.json 中。</p>
+    <h2>Detect Merged Articles</h2>
+    <p class="modal-desc">The following article slugs already appear in the official story.json.</p>
     <div id="merged-modal-list"></div>
     <div class="modal-actions">
-      <button id="merged-modal-close-btn" class="secondary">關閉</button>
+      <button id="merged-modal-close-btn" class="secondary">Close</button>
     </div>
   </div>
 </div>
@@ -1722,7 +1752,7 @@
   <div class="view-top-nav">
     <button class="secondary btn-back-top" id="back-from-audio-editor-manager">← Back</button>
   </div>
-  <h1>🎛 音檔時間調整記錄</h1>
+  <h1>🎛 Audio Editor — Timestamp Records</h1>
   <p class="aem-subtitle" id="aem-total-count">共 0 筆調整</p>
 
   <!-- 匯出 / 匯入工具列 -->

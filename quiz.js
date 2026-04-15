@@ -1165,6 +1165,29 @@ function openQuiz(categoryName, titleName, source) {
 
 // ── Event Listeners: Menu ─────────────────────────────────────
 
+// Quiz Menu 頂部的「← Back」：依來源回到上一頁（note / scores / story / home）
+document.getElementById('back-to-home-from-quiz-menu').addEventListener('click', () => {
+    quizAudioPlayer.pause();
+    if (quizState.source === 'note') {
+        showView(document.getElementById('note-view'));
+    } else if (quizState.source === 'scores') {
+        if (quizState.categoryName && quizState.titleName) {
+            if (typeof openDetailView === 'function') {
+                openDetailView(quizState.categoryName, quizState.titleName);
+            } else {
+                showView(document.getElementById('scores-dashboard-view'));
+            }
+        } else {
+            showView(document.getElementById('scores-dashboard-view'));
+        }
+    } else if (quizState.source === 'story') {
+        showView(document.getElementById('playback-view'));
+    } else {
+        showView(document.getElementById('home-view'));
+    }
+});
+
+// Quiz Session 進度列的「← Back」：永遠只回到 Quiz Menu
 document.getElementById('back-to-note-from-quiz').addEventListener('click', () => {
     quizAudioPlayer.pause();
 
@@ -1176,25 +1199,8 @@ document.getElementById('back-to-note-from-quiz').addEventListener('click', () =
         quizMenu.classList.remove('is-hidden');
         renderQuizStatsBar(quizState.categoryName, quizState.titleName);
     } else {
-        // 在選單頁，← Back 依來源決定
-        if (quizState.source === 'note') {
-            showView(document.getElementById('note-view'));
-        } else if (quizState.source === 'scores') {
-            // 從 Scores Dashboard 進來：回到 Detail View（若有文章），否則回 Dashboard
-            if (quizState.categoryName && quizState.titleName) {
-                if (typeof openDetailView === 'function') {
-                    openDetailView(quizState.categoryName, quizState.titleName);
-                } else {
-                    showView(document.getElementById('scores-dashboard-view'));
-                }
-            } else {
-                showView(document.getElementById('scores-dashboard-view'));
-            }
-        } else if (quizState.source === 'story') {
-            showView(document.getElementById('playback-view'));
-        } else {
-            showView(document.getElementById('home-view'));
-        }
+        // 已在選單頁（理論上不會觸發，因為選單頁用 back-to-home-from-quiz-menu）
+        showView(document.getElementById('home-view'));
     }
 });
 
@@ -1239,6 +1245,57 @@ function _applySubpanelDefaults(mode) {
 // Track which subpanel source is selected per mode
 const subpanelSource = { flashcard: 'note', dictation: 'note', reorder: 'note', fcplus: 'note', 'voice-reorder': 'note' };
 
+// ── Fix #6: Quiz available question count preview ─────────────────────────────
+function updateQuizAvailableCount(mode) {
+    const counterId = `quiz-available-${mode}`;
+    const container = document.getElementById(counterId);
+    if (!container) return;
+    const textEl = container.querySelector('.quiz-available-text');
+    if (!textEl) return;
+
+    const startBtnId = {
+        'flashcard': 'start-flashcard-btn',
+        'fcplus': 'start-fcplus-btn',
+        'dictation': 'start-dictation-btn',
+        'reorder': 'start-reorder-btn',
+        'voice-reorder': 'start-voice-reorder-btn'
+    }[mode];
+    const startBtn = document.getElementById(startBtnId);
+
+    // If source is 'article', questions come from the article itself — always available
+    const currentSource = subpanelSource[mode] || 'note';
+    if (currentSource === 'article') {
+        textEl.textContent = '📖 Questions drawn from the selected article';
+        textEl.className = 'quiz-available-text has-questions';
+        if (startBtn) startBtn.disabled = false;
+        return;
+    }
+
+    // Source is 'note' — check how many note items exist
+    try {
+        const items = getAllNoteItems(quizState.scope, quizState.categoryName, quizState.titleName);
+        let count = 0;
+        if (mode === 'flashcard' || mode === 'fcplus') {
+            count = (items.words || []).length + (items.phrases || []).length;
+        } else if (mode === 'dictation' || mode === 'reorder' || mode === 'voice-reorder') {
+            count = (items.sentences || []).length;
+        }
+
+        if (count === 0) {
+            textEl.textContent = '📝 No questions yet — read an article and tap words to add to Note first';
+            textEl.className = 'quiz-available-text no-questions';
+            if (startBtn) startBtn.disabled = true;
+        } else {
+            textEl.textContent = `📝 ${count} question${count !== 1 ? 's' : ''} available from Note`;
+            textEl.className = 'quiz-available-text has-questions';
+            if (startBtn) startBtn.disabled = false;
+        }
+    } catch (e) {
+        textEl.textContent = '';
+        if (startBtn) startBtn.disabled = false;
+    }
+}
+
 // Helper: close all subpanels and un-expand all cards
 function closeAllSubpanels() {
     document.querySelectorAll('.quiz-subpanel').forEach(p => p.classList.add('is-hidden'));
@@ -1256,6 +1313,7 @@ document.getElementById('quiz-mode-flashcard').addEventListener('click', () => {
         _applySubpanelDefaults('flashcard');
         panel.classList.remove('is-hidden');
         card.classList.add('is-expanded');
+        updateQuizAvailableCount('flashcard');
     }
 });
 
@@ -1278,6 +1336,7 @@ document.getElementById('quiz-mode-dictation').addEventListener('click', () => {
         _applySubpanelDefaults('dictation');
         panel.classList.remove('is-hidden');
         card.classList.add('is-expanded');
+        updateQuizAvailableCount('dictation');
     }
 });
 
@@ -1298,6 +1357,9 @@ document.querySelectorAll('.quiz-source-btn').forEach(btn => {
         // For note mode, always show note options
         const noteOptEl = document.getElementById(`${mode}-note-options`);
         if (noteOptEl) noteOptEl.classList.toggle('is-hidden', source !== 'note');
+
+        // Update available count to reflect new source selection
+        updateQuizAvailableCount(mode);
     });
 });
 
@@ -1414,6 +1476,7 @@ document.getElementById('quiz-mode-reorder').addEventListener('click', () => {
         _applySubpanelDefaults('reorder');
         panel.classList.remove('is-hidden');
         card.classList.add('is-expanded');
+        updateQuizAvailableCount('reorder');
     }
 });
 
@@ -1431,6 +1494,7 @@ document.getElementById('quiz-mode-voice-reorder').addEventListener('click', () 
         _applySubpanelDefaults('voice-reorder');
         panel.classList.remove('is-hidden');
         card.classList.add('is-expanded');
+        updateQuizAvailableCount('voice-reorder');
     }
 });
 
@@ -4331,6 +4395,7 @@ document.getElementById('quiz-mode-fcplus').addEventListener('click', () => {
         _applySubpanelDefaults('fcplus');
         panel.classList.remove('is-hidden');
         card.classList.add('is-expanded');
+        updateQuizAvailableCount('fcplus');
     }
 });
 
@@ -4349,6 +4414,7 @@ document.querySelectorAll('.quiz-source-btn[data-mode="fcplus"]').forEach(btn =>
             articleOpts?.classList.remove('is-hidden');
             noteOpts?.classList.add('is-hidden');
         }
+        updateQuizAvailableCount('fcplus');
     });
 });
 
@@ -5341,7 +5407,7 @@ function _vrLoadQuestion() {
     // Reset UI
     _vrEl('vr-feedback').className = 'quiz-feedback';
     _vrEl('vr-feedback').textContent = '';
-    _vrEl('vr-heard-text').textContent = '';
+    _vrEl('vr-heard-text').textContent = ''; _vrEl('vr-heard-text').classList.remove('has-result','has-error');
     _vrEl('vr-mic-label').textContent = 'Tap mic & say the whole sentence';
     _vrEl('vr-check-btn').textContent = 'Check ✓';
     _vrEl('vr-check-btn').style.display = '';
@@ -5550,7 +5616,7 @@ function _vrDragEnd(e) {
             _vrState.poolOrder = _vrState.poolOrder.filter(i => i !== idx);
             if (_vrWordSpeakEnabled) _quizPlayWord(_vrDrag.word);
             _vrShowFeedback('', '');
-            _vrEl('vr-heard-text').textContent = '';
+            _vrEl('vr-heard-text').textContent = ''; _vrEl('vr-heard-text').classList.remove('has-result','has-error');
             _vrRenderAnswerZone(idx);   // ← 傳 idx 觸發進場動畫
             _vrRenderPool();
             if (_vrState.answer.length === _vrState.words.length && !_vrState.done) {
@@ -5566,7 +5632,7 @@ function _vrDragEnd(e) {
     }
 
     _vrShowFeedback('', '');
-    _vrEl('vr-heard-text').textContent = '';
+    _vrEl('vr-heard-text').textContent = ''; _vrEl('vr-heard-text').classList.remove('has-result','has-error');
     _vrRenderAnswerZone(_dragPlacedIdx ?? undefined);
     _vrRenderPool();
 
@@ -5749,7 +5815,7 @@ function _vrPlaceWord(wordIdx) {
     _vrState.answer.push(wordIdx);
     _vrState.poolOrder = _vrState.poolOrder.filter(i => i !== wordIdx);
     _vrShowFeedback('', '');
-    _vrEl('vr-heard-text').textContent = '';
+    _vrEl('vr-heard-text').textContent = ''; _vrEl('vr-heard-text').classList.remove('has-result','has-error');
     _vrRenderAnswerZone(wordIdx);
     _vrRenderPool();
 
@@ -5766,7 +5832,7 @@ function _vrUndoLast() {
     const last = _vrState.answer.pop();
     _vrState.poolOrder.push(last);
     _vrShowFeedback('', '');
-    _vrEl('vr-heard-text').textContent = '';
+    _vrEl('vr-heard-text').textContent = ''; _vrEl('vr-heard-text').classList.remove('has-result','has-error');
     _vrRenderAnswerZone();
     _vrRenderPool();
 }
@@ -6070,9 +6136,22 @@ function _vrStopRecording() {
     _vrStopAudioRecording(); // 同步停止 MediaRecorder，產生 Blob 供回聽
     // ★ 直接用 _vrBestTranscript：歷史最長、最完整的識別結果
     const heard = _vrBestTranscript.trim();
+    const heardEl = _vrEl('vr-heard-text');
     if (heard) {
-        _vrEl('vr-heard-text').textContent = `Heard: "${heard}"`;
+        heardEl.textContent = `Heard: "${heard}"`;
+        heardEl.classList.add('has-result');
+        heardEl.classList.remove('has-error');
         _vrProcessSpeech(heard);
+    } else {
+        // No speech detected — show error state
+        heardEl.textContent = "Didn't catch that — try again?";
+        heardEl.classList.add('has-error');
+        heardEl.classList.remove('has-result');
+        const micBtn = _vrEl('vr-mic-btn');
+        if (micBtn) {
+            micBtn.classList.add('recognition-failed');
+            setTimeout(() => micBtn.classList.remove('recognition-failed'), 1400);
+        }
     }
     _vrBestTranscript = '';
 }
@@ -6209,7 +6288,7 @@ document.getElementById('vr-mic-btn').addEventListener('click', () => {
             while (_vrState.answer.length > 0) {
                 _vrState.poolOrder.push(_vrState.answer.pop());
             }
-            _vrEl('vr-heard-text').textContent = '';
+            _vrEl('vr-heard-text').textContent = ''; _vrEl('vr-heard-text').classList.remove('has-result','has-error');
             _vrShowFeedback('', '');
             _vrRenderAnswerZone();
             _vrRenderPool();
@@ -6238,7 +6317,7 @@ document.getElementById('vr-clear-btn').addEventListener('click', () => {
         _vrState.poolOrder.push(last);
     }
     _vrShowFeedback('', '');
-    _vrEl('vr-heard-text').textContent = '';
+    _vrEl('vr-heard-text').textContent = ''; _vrEl('vr-heard-text').classList.remove('has-result','has-error');
     _vrRenderAnswerZone();
     _vrRenderPool();
 });
