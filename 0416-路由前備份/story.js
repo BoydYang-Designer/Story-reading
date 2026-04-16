@@ -99,10 +99,6 @@ let currentSnippetTimeout = null;
 
 // --- New Timestamp State Variables ---
 let isTimestampMode = true;  // Always timestamp mode — plain text removed
-
-// --- Router State ---
-// 防止 hashchange → restoreFromHash 時又觸發 Router.push 造成無限迴圈
-let _routerRestoring = false;
 let timestampData = [];
 
 // BUG-02 修正：模組層級儲存 canplaythrough handler，防止快速切換文章時重複累積監聽器
@@ -269,13 +265,7 @@ async function showAppView(user) {
         if (typeof renderHomeReviewBadge === 'function') renderHomeReviewBadge();
     }, 300);
 
-    // 登入後：先嘗試從 URL hash 恢復畫面，否則顯示首頁
-    const initState = (typeof Router !== 'undefined') ? Router.current() : { view: 'home' };
-    if (initState.view !== 'home') {
-        await restoreFromHash(location.hash);
-    } else {
-        showView(homeView);
-    }
+    showView(homeView); // Default to home view
 }
 
 // ── FIX-1: 圖片存在快取（B 方案清單，啟動時由 story.json hasThumb 欄位填入）──────
@@ -416,7 +406,7 @@ function createListItemWithImage(text, onClick, fallbackText = null, showThumb =
     return container;
 }
 
-function showView(view, _routeState) {
+function showView(view) {
     const customArticlesView = document.getElementById('custom-articles-view');
     const quizView = document.getElementById('quiz-view');
     const scoresDashboardView = document.getElementById('scores-dashboard-view');
@@ -454,22 +444,6 @@ function showView(view, _routeState) {
 
     view.classList.remove('is-hidden');
     document.body.classList.toggle('note-view-active', view === noteView);
-
-    // ── Router：更新 URL hash（登入頁不記錄路由）─────────────
-    if (typeof Router !== 'undefined' && view !== loginView && !_routerRestoring) {
-        let state = _routeState || null;
-        if (!state) {
-            // 根據顯示的 view 自動推斷路由狀態
-            if (view === homeView)              state = { view: 'home' };
-            else if (view === subCategoryView)  state = { view: 'major', major: currentMajorCategory || '' };
-            else if (view === categoryView)     state = { view: 'category', major: currentMajorCategory || '', sub: currentCategoryName || '' };
-            else if (view === noteView)         state = { view: 'note' };
-            else if (view === quizView)         state = { view: 'quiz' };
-            else if (view === scoresDashboardView) state = { view: 'scores' };
-            // playbackView 由 showPlayback() 明確傳入 state，此處不處理
-        }
-        if (state) Router.push(state);
-    }
 }
 
 // --- Firebase Auth Functions ---
@@ -3159,7 +3133,7 @@ async function showPlayback(index, startTime = 0, maintainTimestampMode = false)
   _canplaythroughHandler = onLoaded;
   audio.addEventListener('canplaythrough', onLoaded);
 
-  showView(playbackView, { view: 'story', major: currentMajorCategory || '', sub: currentCategoryName || '', index: currentStoryIndex });
+  showView(playbackView);
 }
 // ===== END OF MODIFIED FUNCTION =====
 
@@ -4111,99 +4085,6 @@ function init() {
   window.addEventListener('resize', computeScrollMax, { passive: true });
   initCustomArticles();
 }
-
-// ============================================================
-//  ROUTER: hashchange 監聽 & restoreFromHash
-// ============================================================
-
-/**
- * 依照 URL hash 還原對應的畫面狀態。
- * 只在資料已載入（stories.length > 0）且使用者已通過 auth 後才會被呼叫。
- */
-async function restoreFromHash(hash) {
-    if (typeof Router === 'undefined') return;
-
-    _routerRestoring = true; // 暫停 showView 內的 Router.push
-    try {
-        const state = Router.parseHash(hash);
-
-        switch (state.view) {
-            case 'major': {
-                if (state.major) {
-                    showSubCategories(state.major);
-                } else {
-                    renderMajorCategories();
-                    showView(homeView);
-                }
-                break;
-            }
-            case 'category': {
-                if (state.major && state.sub) {
-                    currentMajorCategory = state.major;
-                    showCategory(state.sub);
-                } else {
-                    renderMajorCategories();
-                    showView(homeView);
-                }
-                break;
-            }
-            case 'story': {
-                if (state.major && state.sub && stories.length > 0) {
-                    // 重建 currentStoryList 以便 showPlayback 能找到正確的文章
-                    currentMajorCategory = state.major;
-                    currentCategoryName  = state.sub;
-                    currentStoryList = stories.filter(item => {
-                        const matchMajor = (item['大類'] || 'Uncategorized') === state.major;
-                        const matchSub   = item['分類']?.map(c => c.trim()).includes(state.sub);
-                        return matchMajor && matchSub;
-                    }).sort((a, b) => String(a['標題']).localeCompare(String(b['標題'])));
-
-                    const idx = Math.min(state.index, currentStoryList.length - 1);
-                    if (idx >= 0 && currentStoryList.length > 0) {
-                        await showPlayback(idx);
-                    } else {
-                        showCategory(state.sub);
-                    }
-                } else {
-                    renderMajorCategories();
-                    showView(homeView);
-                }
-                break;
-            }
-            case 'note': {
-                renderNoteView('categories');
-                showView(noteView);
-                break;
-            }
-            case 'quiz': {
-                if (typeof openQuiz === 'function') openQuiz(null, null);
-                break;
-            }
-            case 'scores': {
-                if (typeof openScoresDashboard === 'function') openScoresDashboard();
-                break;
-            }
-            default: {
-                renderMajorCategories();
-                showView(homeView);
-            }
-        }
-    } finally {
-        _routerRestoring = false;
-    }
-}
-
-// hashchange：使用者點擊瀏覽器「上一頁 / 下一頁」時觸發
-window.addEventListener('hashchange', async () => {
-    // 只在 app 已經初始化（使用者已登入）後才處理
-    if (stories.length > 0) {
-        await restoreFromHash(location.hash);
-    }
-});
-
-// ============================================================
-//  END OF ROUTER
-// ============================================================
 
 firebase.auth().onAuthStateChanged(async (user) => {
     if (user) {
