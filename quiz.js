@@ -5566,11 +5566,10 @@ function _vrDragEnd(e) {
                 const finalPos = insertPos > _vrDrag.answerPos ? insertPos - 1 : insertPos;
                 _vrState.answer.splice(finalPos, 0, _vrDrag.poolIdx);
             } else {
-                // pool → 答案區：插入指定位置並發音
+                // pool → 答案區：插入指定位置（拖曳不發音，只有點擊才發音）
                 _vrState.poolOrder = _vrState.poolOrder.filter(i => i !== _vrDrag.poolIdx);
                 _vrState.answer.splice(insertPos, 0, _vrDrag.poolIdx);
                 _dragPlacedIdx = _vrDrag.poolIdx; // ← 記錄以觸發動畫
-                if (_vrWordSpeakEnabled) _quizPlayWord(_vrDrag.word);
             }
         } else if (_vrDrag.source === 'answer') {
             // 拖出區外 → 退回 pool
@@ -5797,7 +5796,7 @@ function _vrPlaceWord(wordIdx) {
     _vrRenderAnswerZone(wordIdx);
     _vrRenderPool();
 
-    if (_vrWordSpeakEnabled) _quizPlayWord(_vrState.words[wordIdx]);
+    // 語音辨識自動放字：不發音（只有手動點擊 pool chip 才發音）
 
     if (_vrState.answer.length === _vrState.words.length) {
         _vrOnAllPlaced();
@@ -6386,8 +6385,32 @@ document.getElementById('vr-clear-btn').addEventListener('click', () => {
 // Check / Next
 document.getElementById('vr-check-btn').addEventListener('click', _vrCheckAnswer);
 
-// Word sound — 預設關閉（Voice Reorder 放字時不自動發音）
+// Word sound — 預設關閉（Voice Reorder 手動點擊 pool chip 時才發音）
 let _vrWordSpeakEnabled = false;
+
+/**
+ * 更新 #vr-word-speak-toggle 按鈕的 UI 狀態（ON / OFF）
+ * 與 Reorder 的 _updateReorderSpeakToggleBtn 邏輯相同
+ */
+function _updateVrWordSpeakToggleBtn() {
+    const btn = document.getElementById('vr-word-speak-toggle');
+    if (!btn) return;
+    const iconEl = btn.querySelector('.reorder-ctrl-icon');
+    if (_vrWordSpeakEnabled) {
+        btn.classList.remove('reorder-ctrl-word-sound--off');
+        btn.classList.add('reorder-ctrl-word-sound--on');
+        if (iconEl) iconEl.textContent = '🔊';
+    } else {
+        btn.classList.remove('reorder-ctrl-word-sound--on');
+        btn.classList.add('reorder-ctrl-word-sound--off');
+        if (iconEl) iconEl.textContent = '🔇';
+    }
+}
+
+document.getElementById('vr-word-speak-toggle')?.addEventListener('click', () => {
+    _vrWordSpeakEnabled = !_vrWordSpeakEnabled;
+    _updateVrWordSpeakToggleBtn();
+});
 
 // Strict / Fuzzy 切換已移除：固定使用精準比對模式
 
