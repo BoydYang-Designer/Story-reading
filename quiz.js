@@ -5620,6 +5620,8 @@ function _vrDragEnd(e) {
     _vrRenderPool();
 
     if (_vrState.answer.length === _vrState.words.length && !_vrState.done) {
+        // Fix 9: 手動拖曳補完最後一字時，語音 feedback（"X words placed — N more to go"）
+        // 已在上方 _vrShowFeedback('','') 清除，_vrOnAllPlaced 不會再疊上舊文字
         _vrOnAllPlaced();
     }
 
@@ -6036,13 +6038,17 @@ function _vrStartRecording() {
     // 清空 transcript 記錄（本次全新錄音）
     _vrBestTranscript = '';
 
-    _vrRecognition = new _VrSpeechRecognition();
-    _vrRecognition.lang            = 'en-US';
-    _vrRecognition.continuous      = true;
-    _vrRecognition.interimResults  = true;
-    _vrRecognition.maxAlternatives = 1;
+    // Fix 1: 用本地 reference 綁定當下實例，防止快速重啟時舊 onend 操控新實例（殭屍 Recognition）
+    const recog = new _VrSpeechRecognition();
+    _vrRecognition = recog;
+    recog.lang            = 'en-US';
+    recog.continuous      = true;
+    recog.interimResults  = true;
+    recog.maxAlternatives = 1;
 
-    _vrRecognition.onresult = (e) => {
+    recog.onresult = (e) => {
+        // 若此實例已被取代，忽略所有回調（防止多實例同時寫入 _vrBestTranscript）
+        if (recog !== _vrRecognition) return;
         // 優先累積 isFinal segment；interim 僅用於即時預覽，不覆蓋已確認結果
         let finalText   = '';
         let interimText = '';
@@ -6056,6 +6062,8 @@ function _vrStartRecording() {
 
         if (finalText.trim()) {
             // 累積所有 final segment（防止 API 分多次回傳）
+            // Fix 6: 每次收到 isFinal 結果就重置重啟計數器，讓「說話→停頓→說話」不被上限截斷
+            _vrRestartCount = 0;
             _vrBestTranscript = (_vrBestTranscript + ' ' + finalText).trim();
             _vrEl('vr-heard-text').textContent = `Heard: "${_vrBestTranscript}"…`;
         } else if (interimText.trim()) {
@@ -6064,15 +6072,24 @@ function _vrStartRecording() {
         }
     };
 
-    _vrRecognition.onerror = (e) => {
-        if (e.error === 'no-speech') return; // continuous 模式下 no-speech 不算錯，繼續等
+    // Fix 3: 補齊 audio-capture / network / aborted 等錯誤的使用者提示
+    recog.onerror = (e) => {
+        if (recog !== _vrRecognition) return; // 已被取代的舊實例，忽略
+        if (e.error === 'no-speech') return;  // continuous 模式下 no-speech 不算錯，繼續等
         _vrStopRecordingSilent();
-        if (e.error === 'not-allowed') {
-            showNotification('Microphone permission denied.', 'warning');
-        }
+        const errorMessages = {
+            'not-allowed':   'Microphone permission denied.',
+            'audio-capture': '麥克風被其他程式佔用，請關閉後重試。',
+            'network':       '網路連線異常，語音辨識需要網路連線。',
+            'aborted':       '語音辨識被中斷，請重新點擊麥克風。',
+        };
+        const msg = errorMessages[e.error] || `語音辨識錯誤（${e.error}），請重試。`;
+        showNotification(msg, 'warning');
     };
 
-    _vrRecognition.onend = () => {
+    recog.onend = () => {
+        // Fix 1: 若此實例已被取代（快速重啟場景），直接退出，不重啟也不更改全域狀態
+        if (recog !== _vrRecognition) return;
         // continuous 模式下 onend 只在「使用者主動停止」後才到這裡
         // （若仍在 _vrIsRecording 狀態表示被系統意外中斷，嘗試重啟）
         if (_vrIsRecording && !_vrState.done) {
@@ -6085,7 +6102,7 @@ function _vrStartRecording() {
                 return;
             }
             _vrRestartCount++;
-            try { _vrRecognition.start(); } catch(e) { _vrSetMicOff(); }
+            try { recog.start(); } catch(e) { _vrSetMicOff(); }
         } else {
             _vrRestartCount = 0; // 正常停止，重置計數
         }
@@ -6177,21 +6194,14 @@ const _VR_CONTRACTIONS_REV = Object.fromEntries(
 
 /**
  * 對語音辨識輸出做縮寫展開預處理：
- * 先嘗試「縮寫→展開」；再嘗試「展開→縮寫」（反向），
- * 取兩者 token 數較少（較接近口語）的版本作為 fallback。
- * 目的：減少 API 格式差異（it's vs it is）造成的失配，不改變語意。
+ * 將縮寫（it's / don't / …）展開為書面形式（it is / do not / …），
+ * 與句子池最常見的書面格式對齊，減少格式差異造成的失配。
+ * Fix 2: 移除永遠不會被 return 的 contracted 死碼路徑。
  */
 function _vrExpandContractions(text) {
     const lower = text.toLowerCase();
-    // 縮寫 → 展開
-    const expanded = lower.replace(/\b[\w']+\b/g, m => _VR_CONTRACTIONS[m] || m);
-    // 展開 → 縮寫（反向）
-    // 需多詞替換：逐一掃描展開表 key（展開形式為多詞）
-    let contracted = lower;
-    for (const [exp, con] of Object.entries(_VR_CONTRACTIONS_REV)) {
-        contracted = contracted.replace(new RegExp(`\\b${exp}\\b`, 'g'), con);
-    }
-    return expanded; // 預設使用展開形式（與句子池最常見書面格式一致）
+    // 縮寫 → 展開（單詞替換，例如 "it's" → "it is"）
+    return lower.replace(/\b[\w']+\b/g, m => _VR_CONTRACTIONS[m] || m);
 }
 
 function _vrProcessSpeech(heard) {
@@ -6615,6 +6625,7 @@ function _vrReleasePlaybackBlob() {
 }
 
 // 回聽按鈕 event listener
-document.getElementById('vr-playback-btn').addEventListener('click', _vrPlayback);
+// Fix 10: 加 null 保護，避免 DOM 不存在時拋出 TypeError 導致模組載入中斷
+document.getElementById('vr-playback-btn')?.addEventListener('click', _vrPlayback);
 
 console.log('✅ VR Audio Recording module loaded.');
