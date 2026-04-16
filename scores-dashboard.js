@@ -575,20 +575,6 @@ function _renderBrowserSection() {
             openDetailView(row.dataset.cat, row.dataset.title);
         });
     });
-    container.querySelectorAll('.browser-quiz-btn').forEach(btn => {
-        btn.addEventListener('click', e => {
-            e.stopPropagation();
-            if (typeof openQuiz === 'function') {
-                openQuiz(btn.dataset.cat, btn.dataset.title, 'scores');
-            }
-        });
-    });
-    container.querySelectorAll('.browser-read-btn').forEach(btn => {
-        btn.addEventListener('click', e => {
-            e.stopPropagation();
-            _navigateToArticle(btn.dataset.cat, btn.dataset.title);
-        });
-    });
     _bindCatSortBtns(container);
 }
 
@@ -645,20 +631,6 @@ function _rebuildCatBody(catGroupEl, cat) {
 
     body.querySelectorAll('.browser-article-row').forEach(row => {
         row.addEventListener('click', () => openDetailView(row.dataset.cat, row.dataset.title));
-    });
-    body.querySelectorAll('.browser-quiz-btn').forEach(btn => {
-        btn.addEventListener('click', e => {
-            e.stopPropagation();
-            if (typeof openQuiz === 'function') {
-                openQuiz(btn.dataset.cat, btn.dataset.title, 'scores');
-            }
-        });
-    });
-    body.querySelectorAll('.browser-read-btn').forEach(btn => {
-        btn.addEventListener('click', e => {
-            e.stopPropagation();
-            _navigateToArticle(btn.dataset.cat, btn.dataset.title);
-        });
     });
     _bindCatSortBtns(body);
 }
@@ -731,10 +703,6 @@ function _buildArticleRowHtml(article) {
         <div class="browser-article-title">${_escHtml(title)}</div>
         <div class="browser-article-pillars browser-article-pillars-4">
             ${wordPillar}${dictPillar}${reorderPillar}${voicePillar}
-        </div>
-        <div class="browser-article-actions">
-            <button class="browser-quiz-btn" data-title="${_escHtml(title)}" data-cat="${_escHtml(cat)}" title="進入 Quiz">🎯</button>
-            <button class="browser-read-btn" data-title="${_escHtml(title)}" data-cat="${_escHtml(cat)}" title="前往文章">📖</button>
         </div>
     </div>`;
 }

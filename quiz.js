@@ -5166,23 +5166,6 @@ const _VR_SKIP = new Set(['a','an','the','in','on','at','to','of','for','and','o
  * Returns pool array index (not word index) of best match, or -1.
  * Layer 1: exact | Layer 2: Levenshtein ≤ threshold | Layer 3: skip-word pass-through
  */
-function _vrMatchWord(heard, poolWords) {
-    const tokens = heard.toLowerCase().replace(/[.,?!'"-]/g, '').split(/\s+/).filter(Boolean);
-    for (const hw of tokens) {
-        for (let pi = 0; pi < poolWords.length; pi++) {
-            const cw = poolWords[pi].replace(/[.,?!'"-]/g, '').toLowerCase();
-            // Layer 1
-            if (hw === cw) return pi;
-            // Layer 2
-            const dist = _vrLevenshtein(hw, cw);
-            const thresh = cw.length <= 3 ? 1 : cw.length <= 6 ? 2 : 3;
-            if (dist <= thresh) return pi;
-        }
-        // Layer 3: if heard word is a skip-word, try again with next token
-        if (_VR_SKIP.has(hw)) continue;
-    }
-    return -1;
-}
 
 // ── State ───────────────────────────────────────────────────
 let _vrState = {
@@ -5205,6 +5188,7 @@ let _vrState = {
 
 let _vrRecognition = null;
 let _vrIsRecording = false;
+let _vrRestartCount = 0;   // 連續重啟計數器（防止 onend 無限迴圈）
 const _VrSpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
 // FIX-5: 語音辨識相容性 Badge — 在 Voice Reorder 卡片上顯示瀏覽器支援狀態
@@ -5384,7 +5368,6 @@ async function startVoiceReorder(source) {
     _vrEl('quiz-voice-reorder-area').classList.remove('is-hidden');
 
     _vrUpdateProgress();
-    _vrUpdateStrictBtn();   // 初始化時同步按鈕 UI（預設 Strict）
     _vrLoadQuestion();
 }
 
@@ -5886,6 +5869,8 @@ function _playReadySound() {
 // ── Check answer ──────────────────────────────────────────
 function _vrCheckAnswer() {
     if (_vrState.done) {
+        // 防止重複觸發（手機 touch 有時會觸發兩次 click）
+        _vrEl('vr-check-btn').disabled = true;
         // Next question
         _vrState.qIndex++;
         if (_vrState.qIndex >= _vrState.total) {
@@ -5909,18 +5894,10 @@ function _vrCheckAnswer() {
     _vrSetMicOff();
     _vrStopAudioRecording(); // ★ 正常停止 → 產生 Blob，顯示回聽按鈕
 
-    const userText   = _vrState.answer.map(i => _vrState.words[i]).join(' ');
+    const userText    = _vrState.answer.map(i => _vrState.words[i]).join(' ');
     const correctText = _vrState.words.join(' ');
-    // FIX: Strict Mode → 完整字串比對；Fuzzy Mode → 去標點、小寫後比對（更寬鬆）
-    let isCorrect;
-    if (_vrStrictMode) {
-        isCorrect = !_vrState.skipped && userText === correctText;
-    } else {
-        const _normForCheck = s => s.toLowerCase().replace(/^[^a-z0-9]+|[^a-z0-9]+$/gi, '').replace(/[.,?!'"'"";:]/g, '');
-        const userNorm    = _vrState.answer.map(i => _normForCheck(_vrState.words[i])).join(' ');
-        const correctNorm = _vrState.words.map(w => _normForCheck(w)).join(' ');
-        isCorrect = !_vrState.skipped && userNorm === correctNorm;
-    }
+    // 固定精準比對：字序與字詞完全相同才算正確（無 Fuzzy 模式）
+    const isCorrect   = !_vrState.skipped && userText === correctText;
 
     if (isCorrect) {
         _vrState.correct++;
@@ -6014,7 +5991,6 @@ function _vrStartRetryWrong() {
     _vrEl('quiz-voice-reorder-area').classList.remove('is-hidden');
 
     _vrUpdateProgress();
-    _vrUpdateStrictBtn();
     _vrLoadQuestion();
 }
 
@@ -6050,6 +6026,7 @@ function _vrStartRecording() {
         showNotification('Speech recognition not supported. Please use Chrome or Safari.', 'warning');
         return;
     }
+    _vrRestartCount = 0; // 每次全新錄音，重置重啟計數器
     // 先停掉舊的 recognition（不清空答案，純粹重啟 API）
     if (_vrRecognition) {
         try { _vrRecognition.stop(); } catch(e) {}
@@ -6066,24 +6043,24 @@ function _vrStartRecording() {
     _vrRecognition.maxAlternatives = 1;
 
     _vrRecognition.onresult = (e) => {
-        // ★ 每次從完整的 e.results[0..length-1] 重新拼接
-        // 不用 resultIndex 累加，避免 iOS 漏掉中間 final segment 的問題
-        let current = '';
-        for (let i = 0; i < e.results.length; i++) {
-            current += ' ' + e.results[i][0].transcript;
-        }
-        current = current.trim();
-
-        // 保留字數最多的版本（防止 iOS final 確認後 e.results 縮短）
-        const currentWords = current.split(/\s+/).filter(Boolean).length;
-        const bestWords    = _vrBestTranscript.split(/\s+/).filter(Boolean).length;
-        if (currentWords >= bestWords) {
-            _vrBestTranscript = current;
+        // 優先累積 isFinal segment；interim 僅用於即時預覽，不覆蓋已確認結果
+        let finalText   = '';
+        let interimText = '';
+        for (let i = e.resultIndex; i < e.results.length; i++) {
+            if (e.results[i].isFinal) {
+                finalText   += ' ' + e.results[i][0].transcript;
+            } else {
+                interimText += ' ' + e.results[i][0].transcript;
+            }
         }
 
-        // 顯示預覽用 _vrBestTranscript（和停止後送入比對的來源一致）
-        if (_vrBestTranscript) {
+        if (finalText.trim()) {
+            // 累積所有 final segment（防止 API 分多次回傳）
+            _vrBestTranscript = (_vrBestTranscript + ' ' + finalText).trim();
             _vrEl('vr-heard-text').textContent = `Heard: "${_vrBestTranscript}"…`;
+        } else if (interimText.trim()) {
+            // Interim 只更新預覽，不寫入 _vrBestTranscript
+            _vrEl('vr-heard-text').textContent = `Heard: "${_vrBestTranscript} ${interimText.trim()}"…`;
         }
     };
 
@@ -6099,7 +6076,18 @@ function _vrStartRecording() {
         // continuous 模式下 onend 只在「使用者主動停止」後才到這裡
         // （若仍在 _vrIsRecording 狀態表示被系統意外中斷，嘗試重啟）
         if (_vrIsRecording && !_vrState.done) {
+            if (_vrRestartCount >= 3) {
+                // 超過重啟上限，放棄重試，告知用戶手動操作
+                _vrSetMicOff();
+                _vrIsRecording = false;
+                _vrRestartCount = 0;
+                showNotification('麥克風連線不穩定，請重新點擊麥克風。', 'warning');
+                return;
+            }
+            _vrRestartCount++;
             try { _vrRecognition.start(); } catch(e) { _vrSetMicOff(); }
+        } else {
+            _vrRestartCount = 0; // 正常停止，重置計數
         }
     };
 
@@ -6163,8 +6151,54 @@ function _vrSetMicOff() {
     if (lbl && !_vrState.done) lbl.textContent = 'Tap mic & say the whole sentence';
 }
 
+// ── 縮寫展開對照表（雙向：縮寫→展開 / 展開→縮寫，減少語音辨識格式差異造成的失配）────
+const _VR_CONTRACTIONS = {
+    // 縮寫 → 展開（API 輸出縮寫，句子用展開形式）
+    "it's":     "it is",     "don't":    "do not",    "can't":    "cannot",
+    "i'm":      "i am",      "i've":     "i have",    "i'll":     "i will",
+    "i'd":      "i would",   "he's":     "he is",     "she's":    "she is",
+    "they're":  "they are",  "we're":    "we are",    "you're":   "you are",
+    "isn't":    "is not",    "wasn't":   "was not",   "weren't":  "were not",
+    "hasn't":   "has not",   "haven't":  "have not",  "won't":    "will not",
+    "wouldn't": "would not", "couldn't": "could not", "shouldn't":"should not",
+    "that's":   "that is",   "there's":  "there is",  "what's":   "what is",
+    "let's":    "let us",    "who's":    "who is",    "he'd":     "he would",
+    "she'd":    "she would", "they'd":   "they would","we'd":     "we would",
+    "you'd":    "you would", "he'll":    "he will",   "she'll":   "she will",
+    "they'll":  "they will", "we'll":    "we will",   "you'll":   "you will",
+    "didn't":   "did not",   "doesn't":  "does not",  "hadn't":   "had not",
+    "aren't":   "are not",   "i'd've":   "i would have",
+};
+
+// 反向表：展開 → 縮寫（句子用縮寫形式，API 輸出展開形式）
+const _VR_CONTRACTIONS_REV = Object.fromEntries(
+    Object.entries(_VR_CONTRACTIONS).map(([k, v]) => [v, k])
+);
+
+/**
+ * 對語音辨識輸出做縮寫展開預處理：
+ * 先嘗試「縮寫→展開」；再嘗試「展開→縮寫」（反向），
+ * 取兩者 token 數較少（較接近口語）的版本作為 fallback。
+ * 目的：減少 API 格式差異（it's vs it is）造成的失配，不改變語意。
+ */
+function _vrExpandContractions(text) {
+    const lower = text.toLowerCase();
+    // 縮寫 → 展開
+    const expanded = lower.replace(/\b[\w']+\b/g, m => _VR_CONTRACTIONS[m] || m);
+    // 展開 → 縮寫（反向）
+    // 需多詞替換：逐一掃描展開表 key（展開形式為多詞）
+    let contracted = lower;
+    for (const [exp, con] of Object.entries(_VR_CONTRACTIONS_REV)) {
+        contracted = contracted.replace(new RegExp(`\\b${exp}\\b`, 'g'), con);
+    }
+    return expanded; // 預設使用展開形式（與句子池最常見書面格式一致）
+}
+
 function _vrProcessSpeech(heard) {
     if (_vrState.done) return;
+
+    // ── 縮寫展開預處理：統一縮寫/展開格式，減少格式差異造成的失配 ──
+    heard = _vrExpandContractions(heard);
 
     // ── 按照 heard 的語序，逐一從 pool 找字放入答案區 ──────────
     // 規則：
@@ -6191,9 +6225,7 @@ function _vrProcessSpeech(heard) {
         // 先統一數字形式再比對（"ten" vs "10" 或 "10" vs "ten" 都算相同）
         const na = _vrNormalizeNum(a), nb = _vrNormalizeNum(b);
         if (na === nb) return true;
-        if (_vrStrictMode) return false;
-        const thresh = nb.length <= 3 ? 1 : nb.length <= 6 ? 2 : 3;
-        return _vrLevenshtein(na, nb) <= thresh;
+        return false; // 固定精準模式：不啟用 Levenshtein 模糊配對
     }
 
     // 工作用 pool（splice 用，不直接動 _vrState.poolOrder）
@@ -6328,29 +6360,7 @@ document.getElementById('vr-check-btn').addEventListener('click', _vrCheckAnswer
 // Word sound — 預設關閉（Voice Reorder 放字時不自動發音）
 let _vrWordSpeakEnabled = false;
 
-// Strict / Fuzzy 切換
-let _vrStrictMode = true;  // 預設 Strict
-
-function _vrUpdateStrictBtn() {
-    const btn = _vrEl('vr-strict-toggle');
-    if (!btn) return;
-    const iconEl = btn.querySelector('.reorder-ctrl-icon');
-    const lblEl  = btn.querySelector('.reorder-ctrl-label');
-    if (_vrStrictMode) {
-        btn.classList.add('reorder-ctrl-strict--on');
-        if (iconEl) iconEl.textContent = '🎯';
-        if (lblEl)  lblEl.textContent  = 'Strict';
-    } else {
-        btn.classList.remove('reorder-ctrl-strict--on');
-        if (iconEl) iconEl.textContent = '🌊';
-        if (lblEl)  lblEl.textContent  = 'Fuzzy';
-    }
-}
-
-document.getElementById('vr-strict-toggle').addEventListener('click', () => {
-    _vrStrictMode = !_vrStrictMode;
-    _vrUpdateStrictBtn();
-});
+// Strict / Fuzzy 切換已移除：固定使用精準比對模式
 
 // ★ 語音識別唯一資料來源：歷史最長 transcript
 // 每次 onresult 從完整 e.results 重新讀取，取字數最多的版本保留
