@@ -455,6 +455,12 @@ function showView(view, _routeState) {
     view.classList.remove('is-hidden');
     document.body.classList.toggle('note-view-active', view === noteView);
 
+    // ── user-status：只在首頁顯示 ─────────────────────────────
+    const userStatusEl = document.getElementById('user-status');
+    if (userStatusEl) {
+        userStatusEl.classList.toggle('is-hidden', view !== homeView);
+    }
+
     // ── Router：更新 URL hash（登入頁不記錄路由）─────────────
     if (typeof Router !== 'undefined' && view !== loginView && !_routerRestoring) {
         let state = _routeState || null;
