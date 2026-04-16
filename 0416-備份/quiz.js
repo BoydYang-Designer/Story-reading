@@ -2380,10 +2380,6 @@ function showDictationQuestion() {
 
     // 每題開始時重置鍵盤預選狀態
     if (typeof _dictResetKeyIndex === 'function') _dictResetKeyIndex();
-
-    // 自動 focus 播放按鈕，讓使用者在行動裝置上不須額外點擊即可操作
-    const playBtn = document.getElementById('dictation-play-btn');
-    if (playBtn) playBtn.focus();
 }
 
 /**
@@ -4703,11 +4699,10 @@ function _buildFcplusLetters(word) {
             inp.dataset.idx  = i;
             inp.dataset.char = ch.toLowerCase();
             if (isHint) inp.placeholder = ch.toLowerCase();
-            inp.setAttribute('autocomplete',   'off');
-            inp.setAttribute('autocorrect',    'off');
-            inp.setAttribute('autocapitalize', 'none');
-            inp.setAttribute('spellcheck',     'false');
-            inp.setAttribute('inputmode',      'text');
+            inp.autocomplete   = 'off';
+            inp.autocorrect    = 'off';
+            inp.autocapitalize = 'off';
+            inp.spellcheck     = false;
 
             inp.addEventListener('input', _fcplusHandleInput);
             inp.addEventListener('keydown', _fcplusHandleKeydown);
