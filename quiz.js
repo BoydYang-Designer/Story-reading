@@ -5137,34 +5137,20 @@ const _VR_NUM_MAP_REV = Object.fromEntries(Object.entries(_VR_NUM_MAP).map(([k,v
 /**
  * 將單字統一正規化：數字文字 → 阿拉伯數字（作為比對用的標準形式）
  * "ten" → "10"，"10" → "10"，"hello" → "hello"
+ * [FIX-P2] 移除第二個 if 分支（_VR_NUM_MAP_REV 判斷後仍 return w，與 fallback 完全等價）
  */
 function _vrNormalizeNum(w) {
-    if (_VR_NUM_MAP[w]) return _VR_NUM_MAP[w];   // 文字 → 數字
-    if (_VR_NUM_MAP_REV[w]) return w;              // 已是數字，保留
-    return w;
+    return _VR_NUM_MAP[w] || w;   // 文字→數字；其他（含已是數字）直接保留
 }
 
-// ── Levenshtein distance ────────────────────────────────────
-function _vrLevenshtein(a, b) {
-    const m = a.length, n = b.length;
-    const dp = Array.from({ length: m + 1 }, (_, i) =>
-        Array.from({ length: n + 1 }, (_, j) => (i === 0 ? j : j === 0 ? i : 0))
-    );
-    for (let i = 1; i <= m; i++)
-        for (let j = 1; j <= n; j++)
-            dp[i][j] = a[i-1] === b[j-1]
-                ? dp[i-1][j-1]
-                : 1 + Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]);
-    return dp[m][n];
-}
-
-// ── Stop-words to forgive in layer-3 matching ──────────────
-const _VR_SKIP = new Set(['a','an','the','in','on','at','to','of','for','and','or','but','is','was','it','he','she','they','we','i','his','her','their','my','your','its']);
+// ── [REMOVED] _vrLevenshtein 與 _VR_SKIP 已移除：
+// 目前 _approxEq 固定使用精準比對模式，Levenshtein 模糊配對功能尚未啟用。
+// 若未來需要啟用模糊比對，請重新引入並在 _approxEq 中移除 return false 一行。
 
 /**
  * Match heard transcript against remaining pool words.
  * Returns pool array index (not word index) of best match, or -1.
- * Layer 1: exact | Layer 2: Levenshtein ≤ threshold | Layer 3: skip-word pass-through
+ * Layer 1: exact（目前唯一啟用層）
  */
 
 // ── State ───────────────────────────────────────────────────
@@ -5189,6 +5175,13 @@ let _vrState = {
 let _vrRecognition = null;
 let _vrIsRecording = false;
 let _vrRestartCount = 0;   // 連續重啟計數器（防止 onend 無限迴圈）
+let _vrTimeoutId   = null; // [FIX-P0-B] 錄音逾時計時器 ID
+
+// [FIX-P1] iOS Safari 對 continuous:true 支援不完整，每次停頓後就自動觸發 onend。
+// 在 iOS 上將重啟上限從 3 提高到 8，讓說話較慢的使用者也能說完整句。
+const _vrIsIOS = /iP(hone|ad|od)/.test(navigator.userAgent) ||
+                 (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const _VR_RESTART_LIMIT = _vrIsIOS ? 8 : 3;
 const _VrSpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
 // FIX-5: 語音辨識相容性 Badge — 在 Voice Reorder 卡片上顯示瀏覽器支援狀態
@@ -6090,10 +6083,12 @@ function _vrStartRecording() {
     recog.onend = () => {
         // Fix 1: 若此實例已被取代（快速重啟場景），直接退出，不重啟也不更改全域狀態
         if (recog !== _vrRecognition) return;
-        // continuous 模式下 onend 只在「使用者主動停止」後才到這裡
-        // （若仍在 _vrIsRecording 狀態表示被系統意外中斷，嘗試重啟）
+        // [FIX-P2 注解修正] continuous 模式下 onend 會在以下情況觸發：
+        //   - 使用者主動停止（_vrIsRecording = false）→ 正常結束，不重啟
+        //   - 系統意外中斷（網路波動、iOS 停頓偵測、切換 App）→ _vrIsRecording 仍為 true → 嘗試重啟
+        // iOS Safari 因不完整支援 continuous，停頓後必然觸發此路徑，所以 iOS 上限較高（_VR_RESTART_LIMIT）
         if (_vrIsRecording && !_vrState.done) {
-            if (_vrRestartCount >= 3) {
+            if (_vrRestartCount >= _VR_RESTART_LIMIT) {
                 // 超過重啟上限，放棄重試，告知用戶手動操作
                 _vrSetMicOff();
                 _vrIsRecording = false;
@@ -6102,7 +6097,13 @@ function _vrStartRecording() {
                 return;
             }
             _vrRestartCount++;
-            try { recog.start(); } catch(e) { _vrSetMicOff(); }
+            try { recog.start(); } catch(e) {
+                // [FIX-P0-A] 重啟失敗時同步重置 _vrIsRecording，
+                // 否則 UI 顯示麥克風關閉，但內部仍認為在錄音，
+                // 導致下次點擊麥克風觸發 stop 而非 start，功能整個卡死。
+                _vrIsRecording = false;
+                _vrSetMicOff();
+            }
         } else {
             _vrRestartCount = 0; // 正常停止，重置計數
         }
@@ -6114,6 +6115,17 @@ function _vrStartRecording() {
         _vrEl('vr-mic-btn').classList.add('is-recording');
         _vrEl('vr-mic-label').textContent = '🔴 Recording… tap to stop';
         _vrStartAudioRecording(); // 雙軌並行：同步啟動 MediaRecorder 錄音
+
+        // [FIX-P0-B] 30 秒逾時保護：網路不穩時 Web Speech API 有時靜悄悄地停止
+        // 回應（onresult / onend 永遠不來），UI 卻一直顯示 🔴 錄音中。
+        // 超時後自動停止並提示使用者，避免無限等待。
+        const _thisRecog = recog;
+        _vrTimeoutId = setTimeout(() => {
+            if (_vrIsRecording && _vrRecognition === _thisRecog) {
+                _vrStopRecording();
+                showNotification('錄音逾時（30 秒），已自動停止。如有辨識結果已套用，否則請重新點麥克風。', 'warning');
+            }
+        }, 30000);
     } catch(e) {
         showNotification('Could not start microphone. Try again.', 'warning');
     }
@@ -6122,6 +6134,8 @@ function _vrStartRecording() {
 function _vrStopRecordingSilent() {
     // 內部停止：只關閉 API，不觸發 pending 比對（供 _vrOnAllPlaced / _vrFinish / _vrCheckAnswer 使用）
     _vrIsRecording = false;
+    // [FIX-P0-B] 清除逾時計時器，避免停止後仍觸發逾時警告
+    if (_vrTimeoutId) { clearTimeout(_vrTimeoutId); _vrTimeoutId = null; }
     if (_vrRecognition) {
         try { _vrRecognition.stop(); } catch(e) {}
         _vrRecognition = null;
@@ -6133,6 +6147,8 @@ function _vrStopRecordingSilent() {
 
 function _vrStopRecording() {
     _vrIsRecording = false;
+    // [FIX-P0-B] 清除逾時計時器
+    if (_vrTimeoutId) { clearTimeout(_vrTimeoutId); _vrTimeoutId = null; }
     if (_vrRecognition) {
         try { _vrRecognition.stop(); } catch(e) {}
         _vrRecognition = null;
@@ -6187,10 +6203,11 @@ const _VR_CONTRACTIONS = {
     "aren't":   "are not",   "i'd've":   "i would have",
 };
 
-// 反向表：展開 → 縮寫（句子用縮寫形式，API 輸出展開形式）
-const _VR_CONTRACTIONS_REV = Object.fromEntries(
-    Object.entries(_VR_CONTRACTIONS).map(([k, v]) => [v, k])
-);
+// 反向表（展開→縮寫）目前未使用，已移除以避免維護混淆。
+// 若未來需要雙向轉換，請重新加入：
+// const _VR_CONTRACTIONS_REV = Object.fromEntries(
+//     Object.entries(_VR_CONTRACTIONS).map(([k, v]) => [v, k])
+// );
 
 /**
  * 對語音辨識輸出做縮寫展開預處理：
@@ -6327,9 +6344,11 @@ document.getElementById('vr-mic-btn').addEventListener('click', () => {
         // 若已有答案（上一次錄音結果），再點麥克風 = 重說
         // → 清空答案區退回池子、清空 Heard、重新開始
         if (_vrState.answer.length > 0) {
-            while (_vrState.answer.length > 0) {
-                _vrState.poolOrder.push(_vrState.answer.pop());
-            }
+            // [FIX-P2] 直接從 words 重新產生排序好的完整 pool，
+            // 而非逐一 pop+push，避免字卡排列順序與原始不同讓使用者困惑。
+            _vrState.answer    = [];
+            _vrState.poolOrder = _vrState.words.map((_, i) => i)
+                .sort((a, b) => _vrState.words[a].toLowerCase().localeCompare(_vrState.words[b].toLowerCase()));
             _vrEl('vr-heard-text').textContent = ''; _vrEl('vr-heard-text').classList.remove('has-result','has-error');
             _vrShowFeedback('', '');
             _vrRenderAnswerZone();
