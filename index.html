@@ -1344,6 +1344,40 @@
 
             <!-- 反饋 + Check/Next -->
             <div class="quiz-feedback" id="reorder-feedback"></div>
+
+            <!-- 口說練習分支 Practice Zone -->
+            <div id="reorder-practice-zone" class="reorder-practice-zone is-hidden">
+
+                <!-- Step 1: 進入練習的入口按鈕 -->
+                <button id="reorder-practice-btn" class="reorder-practice-entry-btn">
+                    🎙 Practice Speaking
+                </button>
+
+                <!-- Step 2: 錄音控制區（進入 PRACTICE_IDLE 後顯示） -->
+                <div id="reorder-practice-controls" class="is-hidden">
+                    <button id="reorder-practice-mic-btn" class="vr-mic-btn" aria-label="Start recording">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                            <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                            <line x1="12" y1="19" x2="12" y2="23"></line>
+                            <line x1="8" y1="23" x2="16" y2="23"></line>
+                        </svg>
+                    </button>
+                    <p id="reorder-practice-label" class="vr-mic-label">Tap mic &amp; say the sentence</p>
+                    <div id="reorder-practice-heard" class="vr-heard-text"></div>
+                </div>
+
+                <!-- Step 3: 結果區（PRACTICE_DONE 後顯示） -->
+                <div id="reorder-practice-result" class="is-hidden">
+                    <div id="reorder-practice-diff" class="reorder-practice-diff"></div>
+                    <div class="reorder-practice-actions">
+                        <button id="reorder-practice-replay-btn" class="reorder-practice-action-btn">▶ Replay</button>
+                        <button id="reorder-practice-retry-btn" class="reorder-practice-action-btn">↺ Retry</button>
+                    </div>
+                </div>
+
+            </div>
+
             <div class="reorder-submit-row">
                 <button class="quiz-btn quiz-btn-correct reorder-check-full" id="reorder-check-btn">Check ✓</button>
             </div>

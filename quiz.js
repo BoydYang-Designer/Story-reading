@@ -3396,6 +3396,9 @@ function startReorderRetryWrong() {
     //   即使 showReorderQuestion() 因邊界條件提早 return，也不會殘留 true 鎖死 Pool。
     reorderChecked = false;
 
+    // 清理練習分支狀態（避免 Retry Wrong 流程殘留前一輪練習狀態）
+    _reorderPracticeCleanup();
+
     // 保留 start/end/title，讓 retry 時音檔可以正常播放
     const retryTitle = wrongQs.find(q => q.title)?.title || quizState.titleName || null;
     quizState.questions = shuffle(wrongQs.map(q => ({
@@ -3559,6 +3562,19 @@ let reorderAnswer  = [];   // word tokens in answer area (in order)
 let reorderPool    = [];   // all shuffled tokens for current question
 let reorderChecked = false;
 
+// ── Reorder Practice Branch — 口說練習狀態機 ──────────────────
+// 合法值: 'IDLE' | 'CHECKING' | 'CHECKED' |
+//         'PRACTICE_IDLE' | 'RECORDING' | 'RECOGNIZING' | 'PRACTICE_DONE' | 'NEXT'
+let reorderPracticeState           = 'IDLE';
+let reorderPracticeRecognition     = null;    // SpeechRecognition 實例
+let reorderPracticeBestTranscript  = '';      // 本次辨識最佳結果
+let reorderPracticeBlob            = null;    // 錄音回放用 Object URL
+let reorderPracticeMediaRecorder   = null;    // MediaRecorder 實例
+let reorderPracticeChunks          = [];      // 錄音片段暫存
+let reorderPracticeTargetSentence  = '';      // 本次練習的目標句（正確句）
+let reorderPracticePlaybackAudio   = null;    // 回放用 Audio 物件
+let reorderPracticeMimeType        = 'audio/webm'; // 錄音格式
+
 // ★ FIX R-03: 統一管理 is-checked 狀態，防止競態假死
 function _reorderSetCheckedState(checked) {
     const area = document.getElementById('quiz-reorder-area');
@@ -3711,6 +3727,7 @@ function normalizeForCheck(tokens) {
 
 function showReorderQuestion() {
     _resetReplayCount();
+    _reorderPracticeCleanup(); // 換題時清理前一題的練習狀態與錄音資源
     if (quizState.currentIndex >= quizState.questions.length) {
         showQuizResult('reorder', quizState.correct,
             quizState.questions.length, quizState.wrongItems);
@@ -4268,7 +4285,429 @@ document.getElementById('reorder-check-btn').addEventListener('click', () => {
     checkBtn.classList.add('quiz-btn-next-mode', 'reorder-check-full');
     checkBtn.disabled = false;
     checkBtn.dataset.mode = 'next';
+
+    // 評分完成 → 顯示 Practice 按鈕（答對答錯皆顯示）
+    _reorderPracticeTransition('CHECKED');
 });
+
+// ══════════════════════════════════════════════════════════════
+//  REORDER PRACTICE BRANCH — 口說練習狀態機
+// ══════════════════════════════════════════════════════════════
+
+/**
+ * 狀態機核心：切換狀態並觸發 UI 更新
+ * 所有狀態變更都必須透過此函式
+ */
+function _reorderPracticeTransition(newState) {
+    reorderPracticeState = newState;
+    _reorderPracticeUpdateUI(newState);
+}
+
+/**
+ * 根據當前狀態顯示/隱藏對應 UI 區塊
+ *
+ * 狀態對應 UI：
+ *   IDLE / CHECKING   → practice-zone 隱藏
+ *   CHECKED           → zone 顯示，practice-btn 顯示，controls/result 隱藏
+ *   PRACTICE_IDLE     → zone 顯示，practice-btn 隱藏，controls 顯示，result 隱藏
+ *   RECORDING         → zone 顯示，controls 顯示（mic 動畫），result 隱藏
+ *   RECOGNIZING       → zone 顯示，controls 顯示（loading 動畫），result 隱藏
+ *   PRACTICE_DONE     → zone 顯示，controls 隱藏，result 顯示
+ */
+function _reorderPracticeUpdateUI(state) {
+    const zone     = document.getElementById('reorder-practice-zone');
+    const entryBtn = document.getElementById('reorder-practice-btn');
+    const controls = document.getElementById('reorder-practice-controls');
+    const result   = document.getElementById('reorder-practice-result');
+    const micBtn   = document.getElementById('reorder-practice-mic-btn');
+    const label    = document.getElementById('reorder-practice-label');
+    if (!zone) return;
+
+    const show = (el) => el && el.classList.remove('is-hidden');
+    const hide = (el) => el && el.classList.add('is-hidden');
+
+    switch (state) {
+        case 'IDLE':
+        case 'CHECKING':
+            hide(zone);
+            hide(entryBtn);
+            hide(controls);
+            hide(result);
+            break;
+
+        case 'CHECKED':
+            show(zone);
+            show(entryBtn);
+            hide(controls);
+            hide(result);
+            // 清除 mic 動畫 class
+            if (micBtn) {
+                micBtn.classList.remove('is-recording', 'is-recognizing');
+            }
+            break;
+
+        case 'PRACTICE_IDLE':
+            show(zone);
+            hide(entryBtn);
+            show(controls);
+            hide(result);
+            if (micBtn) {
+                micBtn.classList.remove('is-recording', 'is-recognizing');
+            }
+            if (label) label.textContent = 'Tap mic & say the sentence';
+            // 清除辨識文字
+            const heardEl = document.getElementById('reorder-practice-heard');
+            if (heardEl) heardEl.textContent = '';
+            break;
+
+        case 'RECORDING':
+            show(zone);
+            hide(entryBtn);
+            show(controls);
+            hide(result);
+            if (micBtn) {
+                micBtn.classList.add('is-recording');
+                micBtn.classList.remove('is-recognizing');
+            }
+            if (label) label.textContent = '🔴 Recording… tap to stop';
+            break;
+
+        case 'RECOGNIZING':
+            show(zone);
+            hide(entryBtn);
+            show(controls);
+            hide(result);
+            if (micBtn) {
+                micBtn.classList.remove('is-recording');
+                micBtn.classList.add('is-recognizing');
+            }
+            if (label) label.textContent = '⏳ Recognizing…';
+            break;
+
+        case 'PRACTICE_DONE':
+            show(zone);
+            hide(entryBtn);
+            hide(controls);
+            show(result);
+            if (micBtn) {
+                micBtn.classList.remove('is-recording', 'is-recognizing');
+            }
+            break;
+    }
+}
+
+/**
+ * 使用者按下 Practice 按鈕後的進入邏輯
+ */
+function _reorderPracticeEnter() {
+    const q = quizState.questions[quizState.currentIndex];
+    reorderPracticeTargetSentence = q ? q.sentence : '';
+    reorderPracticeBestTranscript = '';
+    // 釋放上一輪 Blob
+    if (reorderPracticeBlob) {
+        URL.revokeObjectURL(reorderPracticeBlob);
+        reorderPracticeBlob = null;
+    }
+    reorderPracticeChunks = [];
+    _reorderPracticeTransition('PRACTICE_IDLE');
+}
+
+/**
+ * 啟動麥克風錄音 + 語音辨識
+ */
+async function _reorderPracticeStartRecording() {
+    // ── iOS AudioContext 解鎖（在手勢堆疊內同步執行）──────────
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (AC) {
+        if (!window._quizAudioCtx || window._quizAudioCtx.state === 'closed') {
+            window._quizAudioCtx = new AC();
+        }
+        if (window._quizAudioCtx.state === 'suspended') {
+            window._quizAudioCtx.resume().catch(() => {});
+        }
+    }
+
+    _reorderPracticeTransition('RECORDING');
+
+    // ── 1. 麥克風 & MediaRecorder ─────────────────────────────
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        let stream;
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        } catch (e) {
+            console.warn('[ReorderPractice] Mic permission denied:', e);
+            _reorderPracticeHandleMicError();
+            return;
+        }
+
+        reorderPracticeMimeType =
+            (typeof MediaRecorder !== 'undefined' && MediaRecorder.isTypeSupported('audio/webm'))
+                ? 'audio/webm'
+                : 'audio/mp4';
+
+        try {
+            reorderPracticeMediaRecorder = new MediaRecorder(stream, { mimeType: reorderPracticeMimeType });
+        } catch (e) {
+            stream.getTracks().forEach(t => t.stop());
+            reorderPracticeMediaRecorder = null;
+        }
+
+        if (reorderPracticeMediaRecorder) {
+            reorderPracticeChunks = [];
+            reorderPracticeMediaRecorder.ondataavailable = (e) => {
+                if (e.data && e.data.size > 0) reorderPracticeChunks.push(e.data);
+            };
+            reorderPracticeMediaRecorder.onstop = () => {
+                stream.getTracks().forEach(t => t.stop());
+                if (reorderPracticeChunks.length > 0) {
+                    const blob = new Blob(reorderPracticeChunks, { type: reorderPracticeMimeType });
+                    if (reorderPracticeBlob) URL.revokeObjectURL(reorderPracticeBlob);
+                    reorderPracticeBlob = URL.createObjectURL(blob);
+                }
+                reorderPracticeChunks = [];
+            };
+            try {
+                reorderPracticeMediaRecorder.start();
+            } catch (e) {
+                stream.getTracks().forEach(t => t.stop());
+                reorderPracticeMediaRecorder = null;
+            }
+        }
+    }
+
+    // ── 2. SpeechRecognition ──────────────────────────────────
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) {
+        console.warn('[ReorderPractice] SpeechRecognition not supported');
+        return;
+    }
+
+    reorderPracticeRecognition = new SR();
+    reorderPracticeRecognition.lang = 'en-US';
+    reorderPracticeRecognition.continuous = false;
+    reorderPracticeRecognition.interimResults = true;
+
+    reorderPracticeRecognition.onresult = (e) => {
+        let best = '';
+        for (let i = 0; i < e.results.length; i++) {
+            if (e.results[i][0].transcript.length > best.length) {
+                best = e.results[i][0].transcript;
+            }
+        }
+        reorderPracticeBestTranscript = best;
+        // 即時顯示辨識文字
+        const heardEl = document.getElementById('reorder-practice-heard');
+        if (heardEl) heardEl.textContent = best;
+    };
+
+    reorderPracticeRecognition.onend = () => {
+        // 若仍在 RECORDING 狀態（自動結束），也停止 MediaRecorder 並進入 RECOGNIZING
+        if (reorderPracticeState === 'RECORDING') {
+            _reorderPracticeStopMediaRecorder();
+        }
+        // 進入 RECOGNIZING → 然後立即執行 finish
+        if (reorderPracticeState === 'RECORDING' || reorderPracticeState === 'RECOGNIZING') {
+            _reorderPracticeTransition('RECOGNIZING');
+            // 短暫延遲讓 onstop 有機會產生 Blob，再執行 finish
+            setTimeout(_reorderPracticeFinish, 300);
+        }
+    };
+
+    reorderPracticeRecognition.onerror = (e) => {
+        console.warn('[ReorderPractice] SpeechRecognition error:', e.error);
+        if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
+            _reorderPracticeHandleMicError();
+        } else {
+            // 其他錯誤仍嘗試完成
+            _reorderPracticeStopMediaRecorder();
+            _reorderPracticeTransition('RECOGNIZING');
+            setTimeout(_reorderPracticeFinish, 300);
+        }
+    };
+
+    try {
+        reorderPracticeRecognition.start();
+    } catch (e) {
+        console.warn('[ReorderPractice] SpeechRecognition start error:', e);
+    }
+}
+
+/**
+ * 停止 MediaRecorder（內部輔助，不改變狀態）
+ */
+function _reorderPracticeStopMediaRecorder() {
+    if (reorderPracticeMediaRecorder && reorderPracticeMediaRecorder.state !== 'inactive') {
+        try { reorderPracticeMediaRecorder.stop(); } catch (e) {}
+    }
+    reorderPracticeMediaRecorder = null;
+}
+
+/**
+ * 停止錄音（使用者再次點擊 mic 觸發）
+ */
+function _reorderPracticeStopRecording() {
+    // 先停 SpeechRecognition（會觸發 onend → finish）
+    if (reorderPracticeRecognition) {
+        try { reorderPracticeRecognition.stop(); } catch (e) {}
+    }
+    _reorderPracticeStopMediaRecorder();
+    _reorderPracticeTransition('RECOGNIZING');
+}
+
+/**
+ * 辨識結束後，執行比對並顯示結果
+ */
+function _reorderPracticeFinish() {
+    // 避免重複執行
+    if (reorderPracticeState === 'PRACTICE_DONE') return;
+
+    const target     = reorderPracticeTargetSentence || '';
+    const transcript = reorderPracticeBestTranscript || '';
+
+    // 利用現有的 buildCorrectAnswerWithDiff 產生 diff HTML
+    const diffHTML = buildCorrectAnswerWithDiff(transcript, target);
+
+    // 判斷是否完全正確
+    const normTarget     = normalizeForCheck(target.match(/\S+/g) || []);
+    const normTranscript = normalizeForCheck((transcript.match(/\S+/g) || []));
+    const isPerfect      = normTarget === normTranscript;
+
+    const diffEl = document.getElementById('reorder-practice-diff');
+    if (diffEl) {
+        if (transcript.trim() === '') {
+            diffEl.innerHTML = '<span style="color:var(--color-text-light)">（未辨識到語音）</span>';
+        } else if (isPerfect) {
+            diffEl.innerHTML = `<span style="color:#2e7d32;font-weight:700">✓ Perfect!</span><br><em>${diffHTML}</em>`;
+        } else {
+            diffEl.innerHTML = `<span style="color:#c62828;font-size:0.88em">Correct:</span> <em class="quiz-review-correct-styled">${diffHTML}</em>`;
+        }
+    }
+
+    _reorderPracticeTransition('PRACTICE_DONE');
+}
+
+/**
+ * 回放剛才的錄音
+ */
+function _reorderPracticeReplay() {
+    if (!reorderPracticeBlob) return;
+
+    const btn = document.getElementById('reorder-practice-replay-btn');
+
+    // 正在播放 → 停止
+    if (reorderPracticePlaybackAudio && !reorderPracticePlaybackAudio.paused) {
+        reorderPracticePlaybackAudio.pause();
+        reorderPracticePlaybackAudio.currentTime = 0;
+        if (btn) btn.classList.remove('is-playing');
+        return;
+    }
+
+    reorderPracticePlaybackAudio = new Audio(reorderPracticeBlob);
+    if (btn) btn.classList.add('is-playing');
+
+    reorderPracticePlaybackAudio.onended = () => {
+        if (btn) btn.classList.remove('is-playing');
+    };
+    reorderPracticePlaybackAudio.onerror = () => {
+        if (btn) btn.classList.remove('is-playing');
+    };
+    reorderPracticePlaybackAudio.play().catch(() => {
+        if (btn) btn.classList.remove('is-playing');
+    });
+}
+
+/**
+ * 重錄（Retry 按鈕）
+ */
+function _reorderPracticeReset() {
+    // 停止回放
+    if (reorderPracticePlaybackAudio) {
+        reorderPracticePlaybackAudio.pause();
+        reorderPracticePlaybackAudio = null;
+    }
+    const replayBtn = document.getElementById('reorder-practice-replay-btn');
+    if (replayBtn) replayBtn.classList.remove('is-playing');
+
+    reorderPracticeBestTranscript = '';
+    if (reorderPracticeBlob) {
+        URL.revokeObjectURL(reorderPracticeBlob);
+        reorderPracticeBlob = null;
+    }
+    reorderPracticeChunks = [];
+
+    _reorderPracticeTransition('PRACTICE_IDLE');
+}
+
+/**
+ * 麥克風權限被拒或不支援時的錯誤處理
+ */
+function _reorderPracticeHandleMicError() {
+    const micBtn = document.getElementById('reorder-practice-mic-btn');
+    if (micBtn) {
+        micBtn.classList.add('recognition-failed');
+        setTimeout(() => micBtn.classList.remove('recognition-failed'), 1500);
+    }
+    const label = document.getElementById('reorder-practice-label');
+    if (label) label.textContent = '⚠ Mic not available';
+    _reorderPracticeTransition('PRACTICE_IDLE');
+}
+
+/**
+ * 離開題目時清理所有資源（Next / 換題 / Retry Wrong）
+ */
+function _reorderPracticeCleanup() {
+    // 停止錄音（若進行中）
+    if (reorderPracticeState === 'RECORDING' || reorderPracticeState === 'RECOGNIZING') {
+        if (reorderPracticeRecognition) {
+            try { reorderPracticeRecognition.abort(); } catch (e) {}
+            reorderPracticeRecognition = null;
+        }
+        _reorderPracticeStopMediaRecorder();
+    }
+    // 停止回放
+    if (reorderPracticePlaybackAudio) {
+        reorderPracticePlaybackAudio.pause();
+        reorderPracticePlaybackAudio = null;
+    }
+    // 釋放 Blob URL
+    if (reorderPracticeBlob) {
+        URL.revokeObjectURL(reorderPracticeBlob);
+        reorderPracticeBlob = null;
+    }
+    // 重置所有狀態變數
+    reorderPracticeBestTranscript = '';
+    reorderPracticeChunks         = [];
+    reorderPracticeTargetSentence = '';
+    reorderPracticeRecognition    = null;
+    reorderPracticeMediaRecorder  = null;
+
+    // 回到 IDLE 並更新 UI（隱藏整個 zone）
+    _reorderPracticeTransition('IDLE');
+}
+
+// ── Reorder Practice Event Listeners ──────────────────────────
+
+// Practice 入口按鈕
+document.getElementById('reorder-practice-btn')
+    ?.addEventListener('click', _reorderPracticeEnter);
+
+// Mic 按鈕（toggle 錄音）
+document.getElementById('reorder-practice-mic-btn')
+    ?.addEventListener('click', () => {
+        if (reorderPracticeState === 'RECORDING') {
+            _reorderPracticeStopRecording();
+        } else if (reorderPracticeState === 'PRACTICE_IDLE') {
+            _reorderPracticeStartRecording();
+        }
+    });
+
+// Replay 按鈕
+document.getElementById('reorder-practice-replay-btn')
+    ?.addEventListener('click', _reorderPracticeReplay);
+
+// Retry 按鈕
+document.getElementById('reorder-practice-retry-btn')
+    ?.addEventListener('click', _reorderPracticeReset);
 
 // ── Reorder Keyboard Shortcuts ────────────────────────────────
 // Space  = Play audio
