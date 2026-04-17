@@ -297,8 +297,12 @@ let _quizPlayWordGen = 0;
  * @param {string} word               要播放的單字
  * @param {HTMLElement|null} btn      播放按鈕（可選），播放中加 is-playing-voice，結束後移除
  * @param {Function|null} onEnd       播放結束 callback（可選）
+ * @param {{ onMp3Success?: Function, onMp3Fail?: Function }|null} iosCallbacks
+ *        iOS TTS pre-unlock 用回調：
+ *        onMp3Success — MP3 成功播放時呼叫（用來 cancel 靜音 TTS）
+ *        onMp3Fail    — 所有 MP3 失敗時呼叫（用來以原音量重播 TTS）
  */
-async function _quizPlayWord(word, btn = null, onEnd = null) {
+async function _quizPlayWord(word, btn = null, onEnd = null, iosCallbacks = null) {
     const clean = word.trim().toLowerCase().replace(/^[.,?!:;'"]+|[.,?!:;'"]+$/g, '');
     if (!clean) { if (onEnd) onEnd(); return; }
 
@@ -367,6 +371,10 @@ async function _quizPlayWord(word, btn = null, onEnd = null) {
             source.connect(ctx.destination);
             if (btn) btn.classList.add('is-playing-voice');
             if (typeof showAudioSourceHint === 'function') showAudioSourceHint('mp3');
+            // iOS: MP3 成功，取消預先送入 queue 的靜音 TTS
+            if (iosCallbacks && typeof iosCallbacks.onMp3Success === 'function') {
+                iosCallbacks.onMp3Success();
+            }
             source.start(0);
             source.onended = () => {
                 if (window._quizCurrentSource === source) window._quizCurrentSource = null;
@@ -393,6 +401,13 @@ async function _quizPlayWord(word, btn = null, onEnd = null) {
     // 所有 MP3 候選失敗 → TTS 保底
     if (isStale()) return;
     if (typeof showAudioSourceHint === 'function') showAudioSourceHint('tts');
+    // iOS: 若有 pre-unlock callback，優先走它（已在手勢堆疊外，iOS 授權由預先 speak 持有）
+    if (iosCallbacks && typeof iosCallbacks.onMp3Fail === 'function') {
+        iosCallbacks.onMp3Fail();
+        if (btn) btn.classList.remove('is-playing-voice');
+        if (onEnd) onEnd();
+        return;
+    }
     _tts();
 }
 
@@ -3623,10 +3638,45 @@ document.getElementById('reorder-word-speak-toggle').addEventListener('click', (
 });
 
 // 重組句專用發音（三層降級）
+// iOS Fix: speechSynthesis.speak() 必須在 user gesture 的同步堆疊內呼叫才有聲音。
+// _quizPlayWord 是 async（會先 await fetch MP3），等到降級到 TTS 時已離開手勢堆疊，iOS 靜音。
+// 解法：在手勢堆疊內同步先把 utterance 送進 TTS queue（iOS 視為已授權），
+// 若 MP3 成功播放則立刻 cancel() TTS；若 MP3 失敗，TTS 已在 queue 中，正常發聲。
 function _speakReorderWord(word) {
     const clean = word.replace(/^[^a-zA-Z]+|[^a-zA-Z]+$/g, '').trim();
     if (!clean) return;
-    _quizPlayWord(clean);
+
+    // ── iOS TTS pre-unlock ────────────────────────────────────────
+    // 同步（在 user gesture 堆疊內）先把 utterance 放入 speechSynthesis queue，
+    // 讓 iOS WebKit 解鎖 TTS 授權。後續若 MP3 成功，再 cancel() 掉它。
+    let _iosTtsUtterance = null;
+    if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        _iosTtsUtterance = new SpeechSynthesisUtterance(clean);
+        _iosTtsUtterance.lang  = 'en-US';
+        _iosTtsUtterance.rate  = 0.9;
+        _iosTtsUtterance.volume = 0; // 先靜音，MP3 失敗後才真正發聲
+        window.speechSynthesis.speak(_iosTtsUtterance);
+    }
+
+    // 嘗試 MP3；若成功 → cancel 掉靜音 TTS；若失敗 → 重新用原音量播 TTS
+    _quizPlayWord(clean, null, null, {
+        onMp3Success: () => {
+            // MP3 播放成功，取消靜音 TTS
+            if (_iosTtsUtterance) window.speechSynthesis.cancel();
+        },
+        onMp3Fail: () => {
+            // MP3 全部失敗，重新以原音量發 TTS（此時 iOS 授權已解鎖）
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const u = new SpeechSynthesisUtterance(clean);
+                u.lang  = 'en-US';
+                u.rate  = 0.9;
+                u.volume = 1;
+                window.speechSynthesis.speak(u);
+            }
+        }
+    });
 }
 
 // _playGithubMp3: 单字或多字 — 統一用 AudioContext 播放，解決 Chrome iOS 靜音問題
