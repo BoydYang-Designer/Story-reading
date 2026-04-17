@@ -221,6 +221,7 @@ function _playSuccessSound(type = 'correct') {
     }
     if (ctx.state === 'suspended') {
         ctx.resume().catch(() => {});
+        console.warn('[Quiz Audio] AudioContext still suspended before play — user may not have interacted with the page yet (iOS limitation).');
     }
 
     // 音符序列：correct = 兩音，perfect = 三音
@@ -262,6 +263,7 @@ function _playWrongSound() {
     }
     if (ctx.state === 'suspended') {
         ctx.resume().catch(() => {});
+        console.warn('[Quiz Audio] AudioContext still suspended before play — user may not have interacted with the page yet (iOS limitation).');
     }
 
     const now = ctx.currentTime;
@@ -3726,6 +3728,13 @@ function normalizeForCheck(tokens) {
 }
 
 function showReorderQuestion() {
+    // FIX-D4: 換題前強制清除任何殘留的拖曳 ghost 元素與插入指示器
+    if (_drag.ghost) {
+        _drag.ghost.remove();
+        _drag.ghost = null;
+    }
+    _removeInsertIndicator();
+    _drag = { active: false, ghost: null, source: null, poolIdx: null, answerPos: null, word: null, startX: 0, startY: 0, moved: false, originEl: null };
     _resetReplayCount();
     _reorderPracticeCleanup(); // 換題時清理前一題的練習狀態與錄音資源
     if (quizState.currentIndex >= quizState.questions.length) {
@@ -3746,9 +3755,15 @@ function showReorderQuestion() {
     const tokens = tokenize(q.sentence);
     const indexedTokens = tokens.map((word, origIdx) => ({ word, origIdx }));
     let shuffledIndexed;
-    do { shuffledIndexed = shuffle([...indexedTokens]); }
-    while (tokens.length > 1 &&
-           shuffledIndexed.map(t => t.word).join(' ') === tokens.join(' '));
+    let _shuffleAttempts = 0;
+    do {
+        shuffledIndexed = shuffle([...indexedTokens]);
+        _shuffleAttempts++;
+    } while (
+        tokens.length > 1 &&
+        _shuffleAttempts < 50 &&
+        shuffledIndexed.map(t => t.word).join(' ') === tokens.join(' ')
+    );
     reorderPool = shuffledIndexed.map(t => t.word);
 
     // 記錄第一個和最後一個單字（供 hint 顯示）
@@ -3769,7 +3784,7 @@ function showReorderQuestion() {
     const _playLabelEl = playBtn.querySelector('.reorder-ctrl-label');
     if (_playLabelEl) _playLabelEl.textContent = 'Play';
 
-if (q.start != null) {
+    if (q.start != null) {
         playBtn.disabled = false;
         playBtn.style.opacity = '';
         playBtn.onclick = () => playReorderAudio(q);
@@ -4221,8 +4236,13 @@ document.getElementById('reorder-check-btn').addEventListener('click', () => {
 
         // LCS diff — find which user words are NOT part of the longest common subsequence
         // so only truly wrong/misplaced words get highlighted red
-        const userTokens    = reorderAnswer.map(a => normalizeForCheck([a.word]));
-        const correctTokens = tokens.map(t => normalizeForCheck([t]));
+        // BUG-R1 FIX: use the same normalisation granularity as userStr/correctStr
+        // (split the already-normalised strings) so that per-token comparisons are
+        // consistent with the whole-sentence isCorrect check, and pure-punctuation
+        // tokens that reduce to "" are filtered out rather than becoming stray empty
+        // strings that skew the LCS table.
+        const userTokens    = userStr.split(' ').filter(Boolean);
+        const correctTokens = correctStr.split(' ').filter(Boolean);
 
         // Build LCS table
         const m = userTokens.length, n = correctTokens.length;
@@ -4256,7 +4276,12 @@ document.getElementById('reorder-check-btn').addEventListener('click', () => {
         });
 
         const userAnswerStr = reorderAnswer.map(a => a.word).join(' ');
-        feedback.innerHTML = `✗ Correct order: <em class="quiz-review-correct-styled">${buildCorrectAnswerWithDiff(userAnswerStr, q.sentence)}</em>`;
+        // FIX-C2: LCS 長度為 0 時不標差異色，直接顯示完整正確句更清楚
+        const _lcsLen = dp[m][n];
+        const _diffHtml = _lcsLen === 0
+            ? q.sentence.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+            : buildCorrectAnswerWithDiff(userAnswerStr, q.sentence);
+        feedback.innerHTML = `✗ Correct order: <em class="quiz-review-correct-styled">${_diffHtml}</em>`;
         feedback.className = 'quiz-feedback wrong';
         quizState.wrong++;
         _playWrongSound();
