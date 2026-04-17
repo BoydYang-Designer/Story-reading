@@ -5837,7 +5837,8 @@ function _vrLoadQuestion() {
     _resetReplayCount();
 
     _vrState.words     = _vrTokenize(item.text);
-    _vrState.poolOrder = _vrState.words.map((_, i) => i).sort((a, b) => _vrState.words[a].toLowerCase().localeCompare(_vrState.words[b].toLowerCase()));
+    // IMPROVE-3 FIX: pool 排序鍵改用 _vrClean（與語音比對邏輯一致），避免含標點單字（self-esteem）排序錯位
+    _vrState.poolOrder = _vrState.words.map((_, i) => i).sort((a, b) => _vrClean(_vrState.words[a]).localeCompare(_vrClean(_vrState.words[b])));
     _vrState.answer    = [];
     _vrState.done      = false;
     _vrState.skipped   = false;
@@ -5855,6 +5856,8 @@ function _vrLoadQuestion() {
 
     _vrRenderAnswerZone();
     _vrRenderPool();
+
+    _vrNextPending = false; // WARN-2 FIX: 新題載入完畢，解除 pending 鎖
 
     // Auto-play sentence
     _vrPlaySentence(true);
@@ -6327,15 +6330,18 @@ function _playReadySound() {
 // ── Check answer ──────────────────────────────────────────
 function _vrCheckAnswer() {
     if (_vrState.done) {
-        // 防止重複觸發（手機 touch 有時會觸發兩次 click）
+        // WARN-2 FIX: 雙重保護 — disabled + _vrNextPending flag，防止快速雙擊時多跳一題
+        if (_vrNextPending) return;
+        _vrNextPending = true;
         _vrEl('vr-check-btn').disabled = true;
         // Next question
         _vrState.qIndex++;
         if (_vrState.qIndex >= _vrState.total) {
+            _vrNextPending = false;
             _vrFinish();
         } else {
             _vrUpdateProgress();
-            _vrLoadQuestion();
+            _vrLoadQuestion(); // _vrLoadQuestion 結尾會重置 _vrNextPending
         }
         return;
     }
@@ -6364,7 +6370,8 @@ function _vrCheckAnswer() {
         _playSuccessSound('correct');
     } else {
         _vrShowFeedback('wrong', `Answer: ${correctText}`);
-        _vrState.wrongItems.push(correctText);
+        // WARN-1 FIX: 存 {text, qIndex} 而非純文字，避免重複句子時 Retry 時抓錯音訊段落
+        _vrState.wrongItems.push({ text: correctText, qIndex: _vrState.qIndex });
     }
 
     // Track in answeredQuestions — 欄位對齊 showQuizResult 期望格式
@@ -6405,9 +6412,11 @@ function _vrFinish() {
 
     quizState.correct    = _vrState.correct;
     quizState.wrong      = _vrState.total - _vrState.correct;
-    quizState.wrongItems = _vrState.wrongItems;
+    // WARN-1 FIX: showQuizResult expects plain text strings, extract .text from wrongItems objects
+    const wrongTexts = _vrState.wrongItems.map(w => (typeof w === 'object' ? w.text : w));
+    quizState.wrongItems = wrongTexts;
 
-    showQuizResult('voice-reorder', _vrState.correct, _vrState.total, _vrState.wrongItems);
+    showQuizResult('voice-reorder', _vrState.correct, _vrState.total, wrongTexts);
 }
 
 // ── Retry Wrong (BUG-2 FIX) ──────────────────────────────
@@ -6421,13 +6430,16 @@ function _vrStartRetryWrong() {
         return;
     }
 
-    const wrongTexts = new Set(_vrState.wrongItems);
+    // WARN-1 FIX: wrongItems 現在存 {text, qIndex}，用 qIndex 精確匹配原始 sentences
+    // 避免重複句子（相同文字）時抓到錯誤的音訊段落
+    const wrongEntries = _vrState.wrongItems; // [{text, qIndex}, ...]
+    const retrySentences = wrongEntries
+        .map(entry => _vrState.sentences[entry.qIndex])
+        .filter(Boolean);
 
-    // 從原始 sentences 中過濾出答錯的句子（保留 start/end 資訊）
-    const retrySentences = _vrState.sentences.filter(s => wrongTexts.has(s.text));
-
-    // 若原始 sentences 完全沒有命中（不應發生），直接用文字建立
-    const fallback = _vrState.wrongItems.map(text => ({ text }));
+    // 若無法以 qIndex 對應（例如 sentences 已被 shuffle 覆蓋），fallback 用文字比對
+    const wrongTextsSet = new Set(wrongEntries.map(e => e.text));
+    const fallback = _vrState.sentences.filter(s => wrongTextsSet.has(s.text));
     const finalSentences = retrySentences.length > 0 ? retrySentences : fallback;
 
     _vrState.sentences  = shuffle(finalSentences);
@@ -6456,8 +6468,9 @@ function _vrStartRetryWrong() {
 function _vrUpdateProgress() {
     const done  = _vrState.qIndex;
     const total = _vrState.total;
-    // BUG-6 FIX: 使用 (done + 1) 讓進度條與上方文字「N / total」保持一致
-    const pct   = total > 0 ? Math.round(((done + 1) / total) * 100) : 0;
+    // IMPROVE-1 FIX: bar 寬度用 done/total（最後一題按 Check 後才滿格）
+    // 文字維持 done+1/total（讓第 1 題顯示「1/N」而非「0/N」）
+    const pct   = total > 0 ? Math.round((done / total) * 100) : 0;
     const progText = _vrEl('quiz-progress-text');
     const progFill = _vrEl('quiz-progress-fill');
     if (progText) progText.textContent = `${done + 1} / ${total}`;
@@ -6666,22 +6679,54 @@ const _VR_CONTRACTIONS = {
     "aren't":   "are not",   "i'd've":   "i would have",
 };
 
-// 反向表（展開→縮寫）目前未使用，已移除以避免維護混淆。
-// 若未來需要雙向轉換，請重新加入：
-// const _VR_CONTRACTIONS_REV = Object.fromEntries(
-//     Object.entries(_VR_CONTRACTIONS).map(([k, v]) => [v, k])
-// );
+// IMPROVE-2 FIX: 反向表（展開 → 縮寫），供 _vrExpandContractions 雙向比對使用
+// 注意：同一展開形式只對應一個縮寫（取第一個）
+const _VR_CONTRACTIONS_REV = (() => {
+    const rev = {};
+    for (const [k, v] of Object.entries(_VR_CONTRACTIONS)) {
+        if (!rev[v]) rev[v] = k; // 先入優先
+    }
+    return rev;
+})();
 
 /**
  * 對語音辨識輸出做縮寫展開預處理：
- * 將縮寫（it's / don't / …）展開為書面形式（it is / do not / …），
- * 與句子池最常見的書面格式對齊，減少格式差異造成的失配。
- * Fix 2: 移除永遠不會被 return 的 contracted 死碼路徑。
+ * IMPROVE-2 FIX:
+ *   1. 先將彎撇號（‘’）統一轉為直撇號，確保 regex 和查表一致
+ *   2. 縮寫 → 展開（API 輸出 "don't"，句子用 "do not"）
+ *   3. 展開 → 縮寫（API 輸出 "do not"，句子用 "don't"）
+ *   兩個方向都跑，讓語音辨識結果與句子池無論哪種格式都能對齊。
+ *   複合縮寫 i'd've 透過精確字串比對處理（已在正向表中列出）。
  */
 function _vrExpandContractions(text) {
-    const lower = text.toLowerCase();
-    // 縮寫 → 展開（單詞替換，例如 "it's" → "it is"）
-    return lower.replace(/\b[\w']+\b/g, m => _VR_CONTRACTIONS[m] || m);
+    // Step 1: 彎撇號正規化（iOS/Word 常見）→ 直撇號，確保 regex \w' 能正確匹配
+    const normalized = text.toLowerCase().replace(/[‘’]/g, "'");
+
+    // Step 2: 先用多字詞精確比對處理複合縮寫（例如 i'd've / i would have）
+    // 必須在單字 regex replace 之前跑，避免被拆散
+    let result = normalized;
+    // 正向：複合縮寫 → 展開
+    for (const [k, v] of Object.entries(_VR_CONTRACTIONS)) {
+        if (k.includes("'") && k.split("'").length > 2) { // 含兩個以上撇號 = 複合縮寫
+            result = result.split(k).join(v);
+        }
+    }
+    // 反向：展開多詞 → 複合縮寫（例如 "i would have" → "i'd've"）
+    for (const [v, k] of Object.entries(_VR_CONTRACTIONS_REV)) {
+        if (v.includes(' ') && v.split(' ').length >= 3) { // 三詞以上的展開形式
+            result = result.split(v).join(k);
+        }
+    }
+
+    // Step 3: 單字 regex replace — 縮寫 ↔ 展開雙向處理
+    // 先跑正向（縮寫→展開），再跑反向（展開→縮寫）
+    // 注意：兩趟都跑確保無論 API 輸出哪種格式都能命中
+    result = result.replace(/[\w']+/g, m => _VR_CONTRACTIONS[m] || m);
+    // 反向（單詞展開形式，例如 "cannot" → "can't" 在某些句子中有用）
+    // 只替換有精確反向對應的詞（避免誤傷正常單字）
+    result = result.replace(/[\w]+/g, m => _VR_CONTRACTIONS_REV[m] || m);
+
+    return result;
 }
 
 function _vrProcessSpeech(heard) {
@@ -6891,6 +6936,8 @@ document.getElementById('vr-word-speak-toggle')?.addEventListener('click', () =>
 // 每次 onresult 從完整 e.results 重新讀取，取字數最多的版本保留
 // 解決 iOS Web Speech API 在 continuous 模式下 final 可能漏字的問題
 let _vrBestTranscript = '';
+let _vrNextPending = false; // WARN-2 FIX: 防止快速雙擊 Next 時多跳一題
+let _vrPlaybackAborted = false; // WARN-3 FIX: 切題時標記舊 Playback 已廢棄，防止 onended/onerror 修改新題 UI
 
 // Exit button (shared quiz-exit-btn) already handled globally; add voice-reorder stop
 
@@ -7081,6 +7128,7 @@ function _vrPlayback() {
     }
 
     // 開始播放
+    _vrPlaybackAborted = false; // WARN-3 FIX: 本次播放開始，重置廢棄旗標
     _vrPlaybackAudio = new Audio(_vrPlaybackBlob);
 
     if (btn)     btn.classList.add('is-playing');
@@ -7089,6 +7137,7 @@ function _vrPlayback() {
     if (micLbl)  micLbl.textContent  = '🎧 正在回播您的錄音…';
 
     _vrPlaybackAudio.onended = () => {
+        if (_vrPlaybackAborted) return; // WARN-3 FIX: 已切題，忽略舊回調
         if (btn)     btn.classList.remove('is-playing');
         if (iconEl)  iconEl.textContent  = '▶';
         if (labelEl) labelEl.textContent = '回聽我的發音';
@@ -7098,6 +7147,7 @@ function _vrPlayback() {
         }
     };
     _vrPlaybackAudio.onerror = () => {
+        if (_vrPlaybackAborted) return; // WARN-3 FIX: 已切題，忽略舊回調
         if (btn)     btn.classList.remove('is-playing');
         if (iconEl)  iconEl.textContent  = '▶';
         if (labelEl) labelEl.textContent = '回聽我的發音';
@@ -7119,6 +7169,7 @@ function _vrPlayback() {
  * 必須 revoke 以避免記憶體洩漏
  */
 function _vrReleasePlaybackBlob() {
+    _vrPlaybackAborted = true; // WARN-3 FIX: 通知任何 pending 的 onended/onerror 忽略回調
     if (_vrPlaybackAudio) {
         _vrPlaybackAudio.pause();
         _vrPlaybackAudio = null;
