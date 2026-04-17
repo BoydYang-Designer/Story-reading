@@ -3600,7 +3600,7 @@ let reorderFirstWordIdx = -1; // shuffle 後 tokens[0] 在 reorderPool 中的索
 let reorderLastWordIdx  = -1; // shuffle 後 tokens[last] 在 reorderPool 中的索引
 
 // ── 單字發音開關（hover / click）────────────────────────────
-let reorderWordSpeakEnabled = true;
+let reorderWordSpeakEnabled = false;
 
 function _updateReorderSpeakToggleBtn() {
     const btn = document.getElementById('reorder-word-speak-toggle');
@@ -3829,6 +3829,7 @@ function showReorderQuestion() {
     checkBtn.classList.add('quiz-btn-correct', 'reorder-check-full');
     checkBtn.disabled = false;
     _reorderSetCheckedState(false); // ★ FIX R-03: 統一清除 is-checked class，恢復所有控制按鈕
+    _updateReorderSpeakToggleBtn(); // 確保 Word 開關 UI 與狀態同步
     document.getElementById('reorder-clear-btn').disabled = false;
     const _backBtn = document.getElementById('reorder-back-btn');
     if (_backBtn) _backBtn.disabled = false;
@@ -6249,7 +6250,11 @@ function _vrRenderAnswerZone(latestIdx) {
         }
 
         chip.addEventListener('pointerdown', (e) => {
-            if (_vrState.done) return;
+            if (_vrState.done) {
+                // Check 後：若 Word 發音開關是 ON，點擊答案區單字仍可發音
+                if (_vrWordSpeakEnabled) _speakReorderWord(_vrState.words[wordIdx]);
+                return;
+            }
             e.currentTarget.setPointerCapture(e.pointerId);
             _vrDragStart(e, 'answer', wordIdx, pos, _vrState.words[wordIdx]);
         });
@@ -6272,7 +6277,11 @@ function _vrRenderPool() {
         chip.dataset.wordIdx = idx;
         chip.style.touchAction = 'none';
         chip.addEventListener('pointerdown', (e) => {
-            if (_vrState.done) return;
+            if (_vrState.done) {
+                // Check 後：若 Word 發音開關是 ON，點擊 pool chip 仍可發音
+                if (_vrWordSpeakEnabled) _speakReorderWord(_vrState.words[idx]);
+                return;
+            }
             e.currentTarget.setPointerCapture(e.pointerId);
             _vrDragStart(e, 'pool', idx, null, _vrState.words[idx]);
         });
