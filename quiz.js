@@ -4174,7 +4174,11 @@ function renderReorderAnswer() {
         btn.className = 'reorder-word in-answer';
         btn.textContent = item.word;
         btn.addEventListener('pointerdown', (e) => {
-            if (reorderChecked) return;
+            if (reorderChecked) {
+                // Check 後：若 Word 發音開關是 ON，點擊答案區單字仍可發音
+                if (reorderWordSpeakEnabled) _speakReorderWord(item.word);
+                return;
+            }
             e.currentTarget.setPointerCapture(e.pointerId);
             _dragStart(e, 'answer', item.idx, pos, item.word);
         });
