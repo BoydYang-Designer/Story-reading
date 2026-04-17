@@ -5362,3 +5362,14 @@ textarea:focus-visible {
   50%  { background: #ffe0b2; border-color: #e65100; box-shadow: 0 0 0 4px rgba(230,81,0,0.18); }
   100% { background: #fff3e0; border-color: #f57c00; }
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   FIX R-03: is-checked 狀態統一鎖定 Reorder 控制按鈕，防止競態假死
+   搭配 quiz.js 的 _reorderSetCheckedState() 使用
+   ══════════════════════════════════════════════════════════════════ */
+#quiz-reorder-area.is-checked #reorder-clear-btn,
+#quiz-reorder-area.is-checked #reorder-back-btn {
+  opacity: 0.38;
+  pointer-events: none;
+  cursor: default;
+}

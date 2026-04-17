@@ -3392,6 +3392,10 @@ function startReorderRetryWrong() {
     const wrongQs = quizState.answeredQuestions.filter(q => !q.isCorrect);
     if (wrongQs.length === 0) return;
 
+    // ★ FIX R-01: 在任何路徑分叉前強制重置 reorderChecked，
+    //   即使 showReorderQuestion() 因邊界條件提早 return，也不會殘留 true 鎖死 Pool。
+    reorderChecked = false;
+
     // 保留 start/end/title，讓 retry 時音檔可以正常播放
     const retryTitle = wrongQs.find(q => q.title)?.title || quizState.titleName || null;
     quizState.questions = shuffle(wrongQs.map(q => ({
@@ -3554,6 +3558,24 @@ async function startReorder(source) {
 let reorderAnswer  = [];   // word tokens in answer area (in order)
 let reorderPool    = [];   // all shuffled tokens for current question
 let reorderChecked = false;
+
+// ★ FIX R-03: 統一管理 is-checked 狀態，防止競態假死
+function _reorderSetCheckedState(checked) {
+    const area = document.getElementById('quiz-reorder-area');
+    if (!area) return;
+    if (checked) {
+        area.classList.add('is-checked');
+        document.getElementById('reorder-clear-btn').disabled = true;
+        const backBtn = document.getElementById('reorder-back-btn');
+        if (backBtn) backBtn.disabled = true;
+    } else {
+        area.classList.remove('is-checked');
+        document.getElementById('reorder-clear-btn').disabled = false;
+        const backBtn = document.getElementById('reorder-back-btn');
+        if (backBtn) backBtn.disabled = false;
+    }
+}
+
 let reorderFirstWord = '';  // 第一個單字
 let reorderLastWord = '';   // 最後一個單字
 let reorderFirstWordIdx = -1; // shuffle 後 tokens[0] 在 reorderPool 中的索引（避免大小寫重複標記）
@@ -3774,6 +3796,7 @@ if (q.start != null) {
     checkBtn.classList.remove('quiz-btn-next-mode');
     checkBtn.classList.add('quiz-btn-correct', 'reorder-check-full');
     checkBtn.disabled = false;
+    _reorderSetCheckedState(false); // ★ FIX R-03: 統一清除 is-checked class，恢復所有控制按鈕
     document.getElementById('reorder-clear-btn').disabled = false;
     const _backBtn = document.getElementById('reorder-back-btn');
     if (_backBtn) _backBtn.disabled = false;
@@ -4157,10 +4180,11 @@ document.getElementById('reorder-check-btn').addEventListener('click', () => {
         return;
     }
 
+    // ★ FIX R-02: 立即鎖定 checkBtn，消除 audio async gap 的重入視窗
+    document.getElementById('reorder-check-btn').disabled = true;
+
     reorderChecked = true;
-    document.getElementById('reorder-clear-btn').disabled = true;
-    const _backBtnCheck = document.getElementById('reorder-back-btn');
-    if (_backBtnCheck) _backBtnCheck.disabled = true;
+    _reorderSetCheckedState(true); // ★ FIX R-03: 統一鎖定所有控制按鈕
 
     const userStr    = normalizeForCheck(reorderAnswer.map(a => a.word));
     const correctStr = normalizeForCheck(tokens);
@@ -5387,6 +5411,7 @@ function _vrLoadQuestion() {
     _vrEl('vr-mic-label').textContent = 'Tap mic & say the whole sentence';
     _vrEl('vr-check-btn').textContent = 'Check ✓';
     _vrEl('vr-check-btn').style.display = '';
+    _vrEl('vr-check-btn').disabled = false; // ★ FIX VR-01: iOS ghost click 可能在 done 分支設 disabled=true，但 _vrLoadQuestion 從未清除它，導致下一題 Check 永久灰掉。
     _vrEl('vr-answer-zone').classList.remove('vr-correct-flash'); // BUG-5 FIX: 清除上一題的綠色閃爍
 
     _vrRenderAnswerZone();
@@ -6371,11 +6396,20 @@ document.getElementById('vr-undo-btn').addEventListener('click', _vrUndoLast);
 // Clear all
 document.getElementById('vr-clear-btn').addEventListener('click', () => {
     if (_vrState.done) return;
-    // Push all answer words back to pool
-    while (_vrState.answer.length > 0) {
-        const last = _vrState.answer.pop();
-        _vrState.poolOrder.push(last);
+
+    // ★ FIX VR-05 步驟1: 清除殘留的 transcript，防止下次停止錄音時把舊字放回去
+    _vrBestTranscript = '';
+
+    // ★ FIX VR-05 步驟2: 若正在錄音，靜默停止（不觸發 _vrProcessSpeech）
+    if (_vrIsRecording) {
+        _vrStopRecordingSilent();
     }
+
+    // 重設 pool — 用完整重建而非逐一 pop，確保排序正確
+    _vrState.answer    = [];
+    _vrState.poolOrder = _vrState.words.map((_, i) => i)
+        .sort((a, b) => _vrState.words[a].toLowerCase().localeCompare(_vrState.words[b].toLowerCase()));
+
     _vrShowFeedback('', '');
     _vrEl('vr-heard-text').textContent = ''; _vrEl('vr-heard-text').classList.remove('has-result','has-error');
     _vrRenderAnswerZone();
