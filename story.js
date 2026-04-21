@@ -1439,47 +1439,86 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
                 } else {
                     // 嘗試播放 GitHub MP3，若找不到則降級 TTS
                     const cleanItem = itemText.trim();
-                    const capitalized = cleanItem.charAt(0).toUpperCase() + cleanItem.slice(1).toLowerCase();
-                    const candidates = [...new Set([capitalized, cleanItem.toLowerCase()])];
-                    let tried = 0;
 
-                    function _tryNoteGithub() {
-                        if (tried >= candidates.length) {
-                            // MP3 不存在 → 降級 TTS
-                            voiceBtn.classList.remove('is-playing-voice');
-                            if ('speechSynthesis' in window) {
+                    // ── iOS Fix: 修正 1 ──────────────────────────────────────────────
+                    // 必須在 user gesture 的同步 call stack 內立即送出靜音佔位，
+                    // 取得 iOS WebKit 的 TTS 授權，後續無論走 MP3 或 TTS 路徑授權均已就緒。
+                    _iosPreUnlockTTS(cleanItem);
+
+                    const onVoiceEnd = () => voiceBtn.classList.remove('is-playing-voice');
+
+                    // ── iOS Fix: 修正 2 ──────────────────────────────────────────────
+                    // 優先使用 _quizPlayWord（AudioContext 路徑），解決 iOS Chrome 對
+                    // new Audio() 跨域 autoplay policy 導致的靜音問題。
+                    // iosCallbacks 讓 MP3 成功時 cancel() 掉靜音佔位，
+                    // MP3 失敗時以原音量重播 TTS（授權已由 pre-unlock 取得）。
+                    if (typeof _quizPlayWord === 'function') {
+                        _quizPlayWord(cleanItem, voiceBtn, onVoiceEnd, {
+                            onMp3Success: () => {
+                                window.speechSynthesis.cancel();
+                            },
+                            onMp3Fail: () => {
+                                // MP3 全部失敗，以原音量重播 TTS（iOS 授權已解鎖）
                                 window.speechSynthesis.cancel();
                                 const u = new SpeechSynthesisUtterance(cleanItem);
                                 u.lang = 'en-US';
                                 u.rate = 0.9;
                                 let _startFired = false;
                                 u.onstart = () => { _startFired = true; };
-                                u.onend = () => voiceBtn.classList.remove('is-playing-voice');
-                                u.onerror = () => voiceBtn.classList.remove('is-playing-voice');
+                                u.onend = onVoiceEnd;
+                                u.onerror = onVoiceEnd;
                                 voiceBtn.classList.add('is-playing-voice');
                                 window.speechSynthesis.speak(u);
-                                // iOS 靜音偵測：600ms 後若仍未觸發 onstart 且未在播放，
-                                // 判定靜音並還原按鈕狀態，避免永遠卡在 is-playing-voice
+                                // iOS Fix: 修正 3 — 靜音偵測時間統一改為 800ms
                                 setTimeout(() => {
                                     if (!_startFired && !window.speechSynthesis.speaking) {
                                         voiceBtn.classList.remove('is-playing-voice');
                                     }
-                                }, 600);
+                                }, 800);
                             }
-                            return;
+                        });
+                    } else {
+                        // _quizPlayWord 不可用時的備用路徑（舊瀏覽器）
+                        const capitalized = cleanItem.charAt(0).toUpperCase() + cleanItem.slice(1).toLowerCase();
+                        const candidates = [...new Set([capitalized, cleanItem.toLowerCase()])];
+                        let tried = 0;
+
+                        function _tryNoteGithub() {
+                            if (tried >= candidates.length) {
+                                // MP3 不存在 → 降級 TTS（iOS 授權已由 pre-unlock 取得）
+                                window.speechSynthesis.cancel();
+                                if ('speechSynthesis' in window) {
+                                    const u = new SpeechSynthesisUtterance(cleanItem);
+                                    u.lang = 'en-US';
+                                    u.rate = 0.9;
+                                    let _startFired = false;
+                                    u.onstart = () => { _startFired = true; };
+                                    u.onend = onVoiceEnd;
+                                    u.onerror = onVoiceEnd;
+                                    voiceBtn.classList.add('is-playing-voice');
+                                    window.speechSynthesis.speak(u);
+                                    // iOS Fix: 修正 3 — 靜音偵測時間統一改為 800ms
+                                    setTimeout(() => {
+                                        if (!_startFired && !window.speechSynthesis.speaking) {
+                                            voiceBtn.classList.remove('is-playing-voice');
+                                        }
+                                    }, 800);
+                                }
+                                return;
+                            }
+                            const BASE = 'https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/';
+                            const src = BASE + encodeURIComponent(candidates[tried++]) + '.mp3';
+                            const au = new Audio(src);
+                            let settled = false;
+                            au.onerror = () => { if (!settled) { settled = true; _tryNoteGithub(); } };
+                            au.play()
+                                .then(() => { window.speechSynthesis.cancel(); }) // MP3 成功，取消靜音佔位
+                                .catch(() => { if (!settled) { settled = true; _tryNoteGithub(); } });
+                            au.addEventListener('canplay', () => { settled = true; }, { once: true });
+                            au.addEventListener('ended', onVoiceEnd, { once: true });
                         }
-                        const BASE = 'https://raw.githubusercontent.com/BoydYang-Designer/English-vocabulary/main/audio_files/';
-                        const src = BASE + encodeURIComponent(candidates[tried++]) + '.mp3';
-                        const au = new Audio(src);
-                        let settled = false;
-                        au.onerror = () => { if (!settled) { settled = true; _tryNoteGithub(); } };
-                        au.play().catch(() => { if (!settled) { settled = true; _tryNoteGithub(); } });
-                        au.addEventListener('canplay', () => { settled = true; }, { once: true });
-                        au.addEventListener('ended', () => {
-                            voiceBtn.classList.remove('is-playing-voice');
-                        }, { once: true });
+                        _tryNoteGithub();
                     }
-                    _tryNoteGithub();
                 }
             });
             actions.appendChild(voiceBtn);
@@ -1932,8 +1971,8 @@ function _speakTTS(word, _retryCount = 0) {
         if (!_startFired && !window.speechSynthesis.speaking) {
             console.warn(`[FIX-4] TTS silent bug detected (attempt ${_retryCount + 1})`);
             window.speechSynthesis.cancel();
-            if (_retryCount < 1) {
-                // 重試一次
+            if (_retryCount < 2) {
+                // iOS Fix: 修正 4 — 重試上限由 1 次改為 2 次，給 iOS 語音引擎更充裕的初始化機會
                 setTimeout(() => _speakTTS(word, _retryCount + 1), 100);
             } else {
                 // 重試後仍無聲，通知用戶
@@ -2254,7 +2293,8 @@ function _playStagedViaTTS(text, onDone, _retryCount = 0) {
         if (!_startFired && !window.speechSynthesis.speaking) {
             console.warn(`[FIX-4] TTS (staged) silent bug detected (attempt ${_retryCount + 1})`);
             window.speechSynthesis.cancel();
-            if (_retryCount < 1) {
+            if (_retryCount < 2) {
+                // iOS Fix: 修正 4 — 重試上限由 1 次改為 2 次
                 setTimeout(() => _playStagedViaTTS(text, onDone, _retryCount + 1), 100);
             } else {
                 showNotification('⚠️ 語音合成在此裝置上無法使用。', 'warning');
