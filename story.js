@@ -1452,9 +1452,19 @@ function renderNoteView(level = 'categories', categoryName = null, titleName = n
                                 const u = new SpeechSynthesisUtterance(cleanItem);
                                 u.lang = 'en-US';
                                 u.rate = 0.9;
+                                let _startFired = false;
+                                u.onstart = () => { _startFired = true; };
                                 u.onend = () => voiceBtn.classList.remove('is-playing-voice');
+                                u.onerror = () => voiceBtn.classList.remove('is-playing-voice');
                                 voiceBtn.classList.add('is-playing-voice');
                                 window.speechSynthesis.speak(u);
+                                // iOS 靜音偵測：600ms 後若仍未觸發 onstart 且未在播放，
+                                // 判定靜音並還原按鈕狀態，避免永遠卡在 is-playing-voice
+                                setTimeout(() => {
+                                    if (!_startFired && !window.speechSynthesis.speaking) {
+                                        voiceBtn.classList.remove('is-playing-voice');
+                                    }
+                                }, 600);
                             }
                             return;
                         }
@@ -1875,6 +1885,20 @@ function isWordMatchVariation(word1, word2) {
 // 層級二：Web Speech API（瀏覽器合成語音，最後保底）
 // ─────────────────────────────────────────────────────────────────────────────
 
+// ── iOS TTS Pre-unlock 工具函式 ───────────────────────────────────────────────
+// 必須在 user gesture 的同步 call stack 內呼叫，才能讓 iOS WebKit 解鎖 TTS 授權。
+// 送出一個靜音 utterance 佔位；若後續 MP3 播放成功，呼叫 speechSynthesis.cancel()
+// 取消它；若 MP3 失敗，重新送出有聲 utterance。
+function _iosPreUnlockTTS(text) {
+    if (!('speechSynthesis' in window)) return null;
+    const u = new SpeechSynthesisUtterance((text || '').trim() || '\u00A0');
+    u.volume = 0; // 靜音佔位，不影響使用者體驗
+    u.lang = 'en-US';
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(u);
+    return u;
+}
+
 // 層級二：Web Speech TTS
 // FIX-4: _speakTTS — 加入 iOS Chrome 靜音 Bug 偵測與補救
 // 策略：speak() 後 800ms 內若 speechSynthesis.speaking 仍為 false，
@@ -1883,6 +1907,12 @@ function _speakTTS(word, _retryCount = 0) {
     if (!('speechSynthesis' in window)) {
         showNotification(`Audio for "${word}" was not found and TTS is not supported.`, 'error');
         return;
+    }
+    // iOS pre-unlock：第一次嘗試時在手勢堆疊內同步送出靜音佔位，取得授權
+    // retry 路徑（_retryCount > 0）是在 setTimeout 內呼叫，已脫離手勢堆疊，
+    // 但授權已由第一次呼叫時取得，retry 只需直接 speak。
+    if (_retryCount === 0) {
+        _iosPreUnlockTTS(word);
     }
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(word.trim());
@@ -2287,6 +2317,10 @@ if (playStagedBtn) playStagedBtn.addEventListener('click', () => {
     const fullText = stagedWords.map(el => el.textContent).join(' ').trim();
     if (!fullText) return;
 
+    // ★ iOS pre-unlock：在 user gesture 的同步 call stack 內立即送出靜音佔位，
+    //   取得 iOS WebKit 的 TTS 授權。後續無論走 MP3 或 TTS 路徑，授權均已就緒。
+    _iosPreUnlockTTS(fullText);
+
     playStagedBtn.disabled = true;
     playStagedBtn.classList.add('is-playing-staged');
 
@@ -2299,9 +2333,13 @@ if (playStagedBtn) playStagedBtn.addEventListener('click', () => {
     const isSingleWord = stagedWords.length === 1 && !/\s/.test(stagedWords[0].textContent.trim());
 
     if (isSingleWord) {
+        // 單字：_playStagedSingleWord 內部會：
+        //   MP3 成功 → cancel 掉靜音佔位
+        //   MP3 失敗 → cancel 後以原音量重新 speak（iOS 授權已解鎖，不會靜音）
         _playStagedSingleWord(fullText, onDone);
     } else {
-        // 片段、多詞、整句 → 直接 TTS
+        // 片段、多詞、整句 → cancel 靜音佔位，直接以原音量 TTS
+        window.speechSynthesis.cancel();
         _playStagedViaTTS(fullText, onDone);
     }
 });

@@ -333,17 +333,32 @@ async function _quizPlayWord(word, btn = null, onEnd = null, iosCallbacks = null
         const u = new SpeechSynthesisUtterance(clean);
         u.lang = 'en-US';
         u.rate = 0.9;
-        u.onend = () => { if (btn) btn.classList.remove('is-playing-voice'); if (onEnd) onEnd(); };
-        u.onerror = () => { if (btn) btn.classList.remove('is-playing-voice'); if (onEnd) onEnd(); };
+
+        // iOS Fix: 用 onstart 旗標確認語音已真正開始，
+        // 避免語音引擎初始化延遲期間被靜音偵測誤觸發（原 600ms 易誤判）
+        let _ttsStarted = false;
+        let _ttsEnded   = false;
+        const _cleanup = () => {
+            if (btn) btn.classList.remove('is-playing-voice');
+            if (onEnd) onEnd();
+        };
+
+        u.onstart = () => { _ttsStarted = true; };
+        u.onend   = () => { if (!_ttsEnded) { _ttsEnded = true; _cleanup(); } };
+        u.onerror = () => { if (!_ttsEnded) { _ttsEnded = true; _cleanup(); } };
+
         if (btn) btn.classList.add('is-playing-voice');
         window.speechSynthesis.speak(u);
+
         // Chrome for iOS: speechSynthesis 常靜音，偵測後移除按鈕狀態
+        // 只有在語音從未 start（_ttsStarted === false）時才視為封鎖並強制結束。
+        // 拉長至 800ms，給 iOS 語音引擎更充裕的初始化時間，避免 Safari 假性誤判。
         setTimeout(() => {
-            if (btn && !window.speechSynthesis.speaking) {
-                btn.classList.remove('is-playing-voice');
-                if (onEnd) onEnd();
+            if (!_ttsStarted && !_ttsEnded) {
+                _ttsEnded = true;
+                _cleanup();
             }
-        }, 600);
+        }, 800);
     }
 
     // 層級二：fetch → AudioContext decode（解決 Chrome iOS new Audio() 跨域靜音問題）
@@ -2076,17 +2091,21 @@ function showFlashcard() {
     _fcIsFlipped = false;          // 重置翻面狀態
 
     // 自動播放（三層降級；iOS Safari 非手勢觸發可能被封鎖，偵測後改用 pulse 提示）
-    _quizPlayWord(item.text, audioBtn, () => {
-        // 若播完後按鈕還顯示 needs-tap 就移除
-        audioBtn.classList.remove('needs-tap');
-    });
-    // iOS 封鎖偵測：等待 async fetch 完成後才顯示 pulse 提示（3s 給慢速網路足夠時間）
-    setTimeout(() => {
+    // iOS Fix: 使用 timer ref，讓 onEnd callback 可以取消偵測計時器，
+    // 避免「音訊成功播完」與「4s timer 尚未到期」之間的時序競爭，
+    // 防止 needs-tap 在音訊已播完後才錯誤出現。
+    const _autoPlayPulseTimer = setTimeout(() => {
         if (!audioBtn.classList.contains('is-playing-voice') &&
             !window.speechSynthesis?.speaking) {
             audioBtn.classList.add('needs-tap');
         }
-    }, 3000);
+    }, 4000); // 拉長至 4s，給慢速網路 + iOS 語音引擎更充裕時間
+
+    _quizPlayWord(item.text, audioBtn, () => {
+        // 音訊確認播完 → 取消 needs-tap 偵測，不再顯示提示
+        clearTimeout(_autoPlayPulseTimer);
+        audioBtn.classList.remove('needs-tap');
+    });
 
     // ── 背面：整句音檔 + ✏️ ────────────────────────────────────
     const backAudioBtn      = document.getElementById('flashcard-back-audio-btn');
@@ -2421,6 +2440,19 @@ function _setAudioStatusHint(hintId, state, idleText = '') {
 }
 
 function playDictationAudio(q) {
+    // iOS Fix: 在手勢事件內確保 AudioContext 已 resume。
+    // 切換 App 再回來時，瀏覽器會 suspend AudioContext；
+    // visibilitychange resume 為非同步，首題點擊時可能仍處於 suspended 狀態。
+    if (window._quizAudioCtx?.state === 'suspended') {
+        window._quizAudioCtx.resume().catch(() => {});
+    }
+    if (typeof WebAudioEngine !== 'undefined') {
+        if (typeof WebAudioEngine.resume === 'function') {
+            WebAudioEngine.resume().catch(() => {});
+        } else if (typeof WebAudioEngine.unlock === 'function') {
+            WebAudioEngine.unlock();
+        }
+    }
     _trackReplay();
     if (!q.start) return;
     const playBtn = document.getElementById('dictation-play-btn');
@@ -3741,14 +3773,26 @@ async function _playGithubMp3Sequence(words, index) {
         if (typeof showAudioSourceHint === 'function') showAudioSourceHint('tts');
         if ('speechSynthesis' in window) {
             await new Promise(resolve => {
+                // iOS Fix: onstart 旗標確認語音已真正開始。
+                // 若 800ms 內從未 start → 視為封鎖，直接略過，不再等滿 2s。
+                // 真正有聲音時，交由 onend/onerror 正常結束，不受超時打斷。
+                let _seqTtsStarted = false;
+                let _seqTtsResolved = false;
+                const _seqResolve = () => {
+                    if (!_seqTtsResolved) { _seqTtsResolved = true; resolve(); }
+                };
                 const u = new SpeechSynthesisUtterance(clean);
-                u.lang = 'en-US';
-                u.rate = 0.9;
-                u.onend = resolve;
-                u.onerror = resolve;
+                u.lang  = 'en-US';
+                u.rate  = 0.9;
+                u.onstart = () => { _seqTtsStarted = true; };
+                u.onend   = _seqResolve;
+                u.onerror = _seqResolve;
                 window.speechSynthesis.cancel();
                 window.speechSynthesis.speak(u);
-                setTimeout(resolve, 2000); // 防御性超時
+                // 只有語音從未 start 時才觸發快速超時（避免封鎖時整句延遲 2s/字）
+                setTimeout(() => { if (!_seqTtsStarted) _seqResolve(); }, 800);
+                // 保留防禦性最大超時（語音很長或異常狀況）
+                setTimeout(_seqResolve, 5000);
             });
         }
     }
@@ -3921,6 +3965,17 @@ function _reorderSetAudioStatus(state) {
 }
 
 function playReorderAudio(q) {
+    // iOS Fix: 在手勢事件內確保 AudioContext 已 resume（同 playDictationAudio）
+    if (window._quizAudioCtx?.state === 'suspended') {
+        window._quizAudioCtx.resume().catch(() => {});
+    }
+    if (typeof WebAudioEngine !== 'undefined') {
+        if (typeof WebAudioEngine.resume === 'function') {
+            WebAudioEngine.resume().catch(() => {});
+        } else if (typeof WebAudioEngine.unlock === 'function') {
+            WebAudioEngine.unlock();
+        }
+    }
     _trackReplay();
     const playBtn = document.getElementById('reorder-play-btn');
     // 套用使用者調整後的時間（若無調整則使用原始值）
@@ -6033,6 +6088,16 @@ function _vrPlaySentence(isAuto) {
         // BUG-7 FIX: TTS 路徑也先顯示 loading 狀態，再切換到 playing
         if (!('speechSynthesis' in window)) return;
         _vrSetPlayBtnState('loading');
+        // iOS pre-unlock：在 user gesture 堆疊內同步送出靜音佔位取得授權，
+        // 與 _speakReorderWord 的完整 pre-unlock 機制對齊，避免 iOS 靜音。
+        {
+            const _placeholder = new SpeechSynthesisUtterance('\u00A0');
+            _placeholder.volume = 0;
+            _placeholder.lang = 'en-US';
+            speechSynthesis.cancel();
+            speechSynthesis.speak(_placeholder);
+        }
+        // 取消靜音佔位，重新以原音量發聲
         speechSynthesis.cancel();
         const u = new SpeechSynthesisUtterance(item.text);
         u.lang = 'en-US'; u.rate = 0.85;
