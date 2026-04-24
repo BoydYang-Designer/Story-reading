@@ -95,9 +95,11 @@ function _loadQuizLastSession() {
 document.addEventListener('visibilitychange', () => {
     if (document.visibilityState !== 'visible') return;
 
-    // 只在測驗進行中才顯示 toast（避免干擾閱讀頁）
+    // 只在測驗進行中或結果頁才顯示 toast（避免干擾閱讀頁）
     const _quizSessionEl = document.getElementById('quiz-session');
-    const isInQuiz = _quizSessionEl && !_quizSessionEl.classList.contains('is-hidden');
+    const _quizResultEl  = document.getElementById('quiz-result');
+    const isInQuiz = (_quizSessionEl && !_quizSessionEl.classList.contains('is-hidden')) ||
+                     (_quizResultEl  && !_quizResultEl.classList.contains('is-hidden'));
 
     if (isInQuiz) _showResumeToast('resuming');
 
@@ -146,6 +148,7 @@ function _showResumeToast(state) {
             fontWeight:    '600',
             zIndex:        '2000',
             opacity:       '0',
+            pointerEvents: 'none',
             transition:    'opacity 0.2s ease',
             whiteSpace:    'nowrap',
             boxShadow:     '0 2px 10px rgba(0,0,0,0.18)',
@@ -172,7 +175,8 @@ function _showResumeToast(state) {
             _resumeToastEl.style.border     = '1px solid #a5d6a7';
             clearTimeout(_resumeToastTimer);
             _resumeToastTimer = setTimeout(() => {
-                _resumeToastEl.style.opacity = '0';
+                _resumeToastEl.style.opacity       = '0';
+                _resumeToastEl.style.pointerEvents = 'none'; // 淡出後不再攔截點擊
             }, 1500);
         });
 
@@ -184,19 +188,22 @@ function _showResumeToast(state) {
     if (state === 'resuming') {
         // 恢復中：橘色，不自動消失，等 ready 才換（也可點擊手動解鎖）
         _resumeToastEl.textContent = '⏳ 音訊恢復中… 點我可手動解鎖';
-        _resumeToastEl.style.background = '#fff3e0';
-        _resumeToastEl.style.color      = '#e65100';
-        _resumeToastEl.style.border     = '1px solid #ffcc80';
-        _resumeToastEl.style.opacity    = '1';
+        _resumeToastEl.style.background    = '#fff3e0';
+        _resumeToastEl.style.color         = '#e65100';
+        _resumeToastEl.style.border        = '1px solid #ffcc80';
+        _resumeToastEl.style.opacity       = '1';
+        _resumeToastEl.style.pointerEvents = 'auto';
     } else {
         // 就緒：綠色，1.8 秒後自動淡出
         _resumeToastEl.textContent = '✅ 音訊已就緒，繼續作答吧！';
-        _resumeToastEl.style.background = '#e8f5e9';
-        _resumeToastEl.style.color      = '#2e7d32';
-        _resumeToastEl.style.border     = '1px solid #a5d6a7';
-        _resumeToastEl.style.opacity    = '1';
+        _resumeToastEl.style.background    = '#e8f5e9';
+        _resumeToastEl.style.color         = '#2e7d32';
+        _resumeToastEl.style.border        = '1px solid #a5d6a7';
+        _resumeToastEl.style.opacity       = '1';
+        _resumeToastEl.style.pointerEvents = 'auto';
         _resumeToastTimer = setTimeout(() => {
-            _resumeToastEl.style.opacity = '0';
+            _resumeToastEl.style.opacity       = '0';
+            _resumeToastEl.style.pointerEvents = 'none'; // 淡出後不再攔截點擊
         }, 1800);
     }
 }
@@ -1551,13 +1558,17 @@ document.getElementById('start-dictation-btn').addEventListener('click', () => {
 
 document.getElementById('quiz-exit-btn').addEventListener('click', () => {
     quizAudioPlayer.pause();
+    if (typeof WebAudioEngine !== 'undefined') WebAudioEngine.stop();
+    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
 
     // 判斷是否已有作答紀錄（flashcard 用 correct+wrong，其他用 answeredQuestions）
     const hasAnswered = quizState.answeredQuestions.length > 0 ||
                         quizState.correct > 0 || quizState.wrong > 0;
 
     if (!hasAnswered) {
-        // 未答任何題，直接回選單
+        // 未答任何題，直接回選單（也清理錄音資源）
+        if (quizState.mode === 'reorder' && typeof _reorderPracticeCleanup === 'function') _reorderPracticeCleanup();
+        if (typeof _vrReleasePlaybackBlob === 'function') _vrReleasePlaybackBlob();
         quizMenu.classList.remove('is-hidden');
         quizSession.classList.add('is-hidden');
         quizResult.classList.add('is-hidden');
@@ -1701,6 +1712,16 @@ function showQuizSession(mode) {
 // ── Show Result ───────────────────────────────────────────────
 
 function showQuizResult(mode, correct, total, wrongItems) {
+    // ── 進入結果頁前，統一清理所有音訊與錄音資源 ──────────────────
+    // 防止背景音訊/錄音繼續運行，避免干擾結果頁的 UI 互動
+    quizAudioPlayer.pause();
+    if (typeof WebAudioEngine !== 'undefined') WebAudioEngine.stop();
+    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+    // 清理 voice-reorder 錄音 Blob（釋放記憶體，隱藏回聽按鈕）
+    if (typeof _vrReleasePlaybackBlob === 'function') _vrReleasePlaybackBlob();
+    // 清理 reorder practice 錄音（若在 reorder 模式中）
+    if (mode === 'reorder' && typeof _reorderPracticeCleanup === 'function') _reorderPracticeCleanup();
+
     quizSession.classList.add('is-hidden');
     quizResult.classList.remove('is-hidden');
 
@@ -1895,7 +1916,10 @@ document.getElementById('quiz-retry-wrong-btn').addEventListener('click', () => 
 });
 
 document.getElementById('quiz-back-btn').addEventListener('click', () => {
+    // 停止所有音訊（包含 TTS 與 WebAudio 句子片段）
     quizAudioPlayer.pause();
+    if (typeof WebAudioEngine !== 'undefined') WebAudioEngine.stop();
+    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
     quizResult.classList.add('is-hidden');
     quizMenu.classList.remove('is-hidden');
     renderQuizStatsBar(quizState.categoryName, quizState.titleName);
