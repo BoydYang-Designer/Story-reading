@@ -13,7 +13,6 @@ tkinter 是 Python 內建，不需要安裝。
 
 import re
 import time
-import json
 import os
 import threading
 import requests
@@ -25,8 +24,7 @@ MYMEMORY_URL = "https://api.mymemory.translated.net/get"
 SRC_LANG = "en"
 TGT_LANG = "zh-TW"
 DELAY_SECONDS = 0.3
-PROGRESS_FILE = ".translate_progress.json"
-EMAIL_FILE = ".translate_email.txt"
+EMAIL_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".translate_email.txt")
 # ──────────────────────────────────────────────────────
 
 LINE_REGEX = re.compile(r'(\[\d{2}:\d{2}:\d{2}\.\d{3} --> \d{2}:\d{2}:\d{2}\.\d{3}\])(.*)')
@@ -40,7 +38,6 @@ class QuotaExceededError(Exception):
 
 
 def is_chinese(text: str) -> bool:
-    """確認翻譯結果含有中文字元"""
     return bool(ZH_REGEX.search(text))
 
 
@@ -64,51 +61,27 @@ def translate_text(text: str, email: str = "") -> str:
         data = resp.json()
         translated = data.get("responseData", {}).get("translatedText", "")
 
-        # 1. 明確的額度警告
         if translated and translated.upper().startswith("MYMEMORY WARNING"):
             raise QuotaExceededError("MyMemory 每日額度已用完（WARNING 訊息）")
 
-        # 2. 有翻譯結果但不含中文 → 視為英翻英，額度可能用完
         if translated and not is_chinese(translated):
             raise QuotaExceededError(f"翻譯結果不含中文，疑似額度用完：{translated[:40]}")
 
         if translated:
             return translated
 
-        # fallback：嘗試 matches
         matches = data.get("matches", [])
         for m in matches:
             t = m.get("translation", "")
             if t and is_chinese(t):
                 return t
 
-        # 都沒有中文結果
         raise QuotaExceededError("無法取得中文翻譯結果")
 
     except QuotaExceededError:
         raise
-    except Exception as e:
-        return ""  # 純網路錯誤，回傳空字串讓呼叫端決定
-
-
-def load_cache() -> dict:
-    if os.path.exists(PROGRESS_FILE):
-        with open(PROGRESS_FILE, "r", encoding="utf-8") as f:
-            return json.load(f)
-    return {}
-
-
-def save_cache(cache: dict):
-    with open(PROGRESS_FILE, "w", encoding="utf-8") as f:
-        json.dump(cache, f, ensure_ascii=False, indent=2)
-
-
-def clean_bad_cache(cache: dict) -> tuple[dict, int]:
-    """移除快取中英翻英的錯誤條目，回傳 (新快取, 刪除數量)"""
-    bad_keys = [k for k, v in cache.items() if not is_chinese(str(v))]
-    for k in bad_keys:
-        del cache[k]
-    return cache, len(bad_keys)
+    except Exception:
+        return ""
 
 
 def load_saved_email() -> str:
@@ -125,60 +98,75 @@ def save_email(email: str):
 
 # ── 翻譯主邏輯 ─────────────────────────────────────────
 
-def process_file(filepath: str, email: str, cache: dict,
+def process_file(filepath: str, email: str,
                  log_fn, progress_fn, stop_flag: list) -> str:
     """
     回傳：
       'done'    → 全部完成
       'stopped' → 使用者手動停止
       'quota'   → 額度用完（已存檔）
+
+    邏輯：
+      - 逐行掃描，若英文行的「下一行」已是中文行 → 直接保留，不呼叫 API
+      - 只有英文行後面沒有對應中文行，才翻譯
     """
     with open(filepath, "r", encoding="utf-8") as f:
         raw_lines = f.read().splitlines()
 
-    # 過濾舊的中文翻譯行（保留英文行）
-    en_lines = []
-    for line in raw_lines:
-        if not line.strip():
-            en_lines.append(line)
-            continue
-        m = LINE_REGEX.match(line)
-        if m and ZH_REGEX.search(m.group(2)):
-            continue
-        en_lines.append(line)
+    def already_has_chinese(lines, idx):
+        next_idx = idx + 1
+        if next_idx >= len(lines):
+            return False
+        nm = LINE_REGEX.match(lines[next_idx])
+        return bool(nm and ZH_REGEX.search(nm.group(2)))
 
-    total = sum(1 for l in en_lines if LINE_REGEX.match(l))
+    total = sum(
+        1 for idx, l in enumerate(raw_lines)
+        if LINE_REGEX.match(l)
+        and not ZH_REGEX.search(LINE_REGEX.match(l).group(2))
+        and not already_has_chinese(raw_lines, idx)
+    )
     done = 0
     output_lines = []
-    file_key = os.path.basename(filepath)
 
-    for i, line in enumerate(en_lines):
+    i = 0
+    while i < len(raw_lines):
         if stop_flag[0]:
-            _save_partial(filepath, output_lines, en_lines, i)
+            remaining = raw_lines[i:]
+            with open(filepath, "w", encoding="utf-8") as f:
+                f.write("\n".join(output_lines + remaining))
             return 'stopped'
+
+        line = raw_lines[i]
 
         if not line.strip():
             output_lines.append(line)
+            i += 1
             continue
 
         m = LINE_REGEX.match(line)
         if not m:
             output_lines.append(line)
+            i += 1
             continue
 
         ts = m.group(1)
         sentence = m.group(2).strip()
-        cache_key = f"{file_key}||{sentence}"
 
-        output_lines.append(line)  # 英文行
+        # 中文行：直接保留
+        if ZH_REGEX.search(sentence):
+            output_lines.append(line)
+            i += 1
+            continue
 
-        # 快取命中
-        if cache_key in cache:
-            zh = cache[cache_key]
-            log_fn(f"  ✅ (快取) {sentence[:45]}...")
-            output_lines.append(f"{ts} {zh}")
-            done += 1
-            progress_fn(done, total)
+        # 英文行
+        output_lines.append(line)
+
+        # 下一行已有中文 → 跳過
+        if already_has_chinese(raw_lines, i):
+            log_fn(f"  ⏭️  (已翻) {sentence[:45]}")
+            output_lines.append(raw_lines[i + 1])
+            i += 2
             continue
 
         # 需要翻譯
@@ -186,51 +174,31 @@ def process_file(filepath: str, email: str, cache: dict,
             zh = translate_text(sentence, email)
 
             if not zh:
-                # 網路錯誤，跳過這句（保留英文）
                 log_fn(f"  ⚠️  網路錯誤，跳過：{sentence[:40]}")
                 done += 1
                 progress_fn(done, total)
+                i += 1
                 continue
 
-            cache[cache_key] = zh
-            save_cache(cache)
             log_fn(f"  🌐 {sentence[:35]}... → {zh[:25]}...")
             output_lines.append(f"{ts} {zh}")
             done += 1
             progress_fn(done, total)
             time.sleep(DELAY_SECONDS)
+            i += 1
 
         except QuotaExceededError as e:
             log_fn(f"  ⚠️  {e}")
             log_fn("  💾 儲存目前進度...")
-
-            # output_lines 最後已 append 了這行英文但沒有中文，
-            # 後面的英文行（en_lines[i+1:]）也要補回來
-            remaining_en = en_lines[i + 1:]
-            final = output_lines + remaining_en
+            remaining = raw_lines[i + 1:]
             with open(filepath, "w", encoding="utf-8") as f:
-                f.write("\n".join(final))
-
+                f.write("\n".join(output_lines + remaining))
             log_fn(f"  ✔️  已儲存：{os.path.basename(filepath)}")
             return 'quota'
 
-    # 全部完成
     with open(filepath, "w", encoding="utf-8") as f:
         f.write("\n".join(output_lines))
     return 'done'
-
-
-def _save_partial(filepath, output_lines, en_lines, current_idx):
-    """手動停止時存檔：已翻的保留，剩餘的補回英文"""
-    try:
-        # output_lines 最後一行是當前英文行（尚未翻譯），
-        # en_lines[current_idx+1:] 是後面還沒跑到的行
-        remaining_en = en_lines[current_idx + 1:]
-        final = output_lines + remaining_en
-        with open(filepath, "w", encoding="utf-8") as f:
-            f.write("\n".join(final))
-    except Exception:
-        pass
 
 
 # ── GUI ───────────────────────────────────────────────
@@ -239,17 +207,31 @@ class App(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("Timestamp 中英翻譯工具")
-        self.geometry("740x640")
+        self.geometry("740x580")
         self.resizable(True, True)
         self.configure(bg="#1e1e2e")
 
         self.selected_files: list[str] = []
         self.stop_flag = [False]
-        self.cache = load_cache()
         self.current_email = load_saved_email()
 
         self._build_ui()
         self._ask_email_on_start()
+
+    # ── 執行緒安全的 GUI 更新方法 ──────────────────────
+    # 所有從背景執行緒呼叫 GUI 的地方，都必須透過這兩個方法，
+    # 利用 self.after(0, ...) 將實際操作排程回主執行緒執行，
+    # 避免 tkinter 的 Race Condition 造成偶發性崩潰。
+
+    def safe_log(self, msg: str):
+        """執行緒安全版 log：透過 after() 排程到主執行緒"""
+        self.after(0, lambda: self.log(msg))
+
+    def safe_progress(self, done: int, total: int, filename: str = ""):
+        """執行緒安全版 progress：透過 after() 排程到主執行緒"""
+        self.after(0, lambda: self.set_progress(done, total, filename))
+
+    # ──────────────────────────────────────────────────
 
     def _ask_email_on_start(self):
         dialog = tk.Toplevel(self)
@@ -318,9 +300,12 @@ class App(tk.Tk):
             font=("Arial", 9), bg=BG, fg="#a6adc8")
         self.email_label.pack()
 
-        tk.Button(self, text="🔄  更換 Email", font=("Arial", 9),
-                  bg=BTN_BG, fg="#a6adc8", relief="flat", cursor="hand2", pady=2,
-                  command=self._ask_email_on_start).pack(pady=(2, 10))
+        # 「更換 Email」按鈕：翻譯進行中時會被 disable，避免中途更換造成混亂
+        self.change_email_btn = tk.Button(
+            self, text="🔄  更換 Email", font=("Arial", 9),
+            bg=BTN_BG, fg="#a6adc8", relief="flat", cursor="hand2", pady=2,
+            command=self._ask_email_on_start)
+        self.change_email_btn.pack(pady=(2, 10))
 
         tk.Button(self, text="📂  選擇 Timestamp.txt 檔案（可複選）",
                   font=FONT, bg=BTN_BG, fg=FG,
@@ -356,16 +341,6 @@ class App(tk.Tk):
                                   cursor="hand2", relief="flat", padx=16, pady=6,
                                   state="disabled", command=self.stop_translation)
         self.stop_btn.pack(side="left", padx=6)
-
-        tk.Button(btn_frame, text="🧹  清除錯誤快取",
-                  font=FONT, bg="#fab387", fg="#1e1e2e",
-                  cursor="hand2", relief="flat", padx=12, pady=6,
-                  command=self.clean_bad_cache).pack(side="left", padx=6)
-
-        tk.Button(btn_frame, text="🗑  清除全部快取",
-                  font=FONT, bg=BTN_BG, fg=FG,
-                  cursor="hand2", relief="flat", padx=12, pady=6,
-                  command=self.clear_all_cache).pack(side="left", padx=6)
 
         log_frame = tk.Frame(self, bg=BG)
         log_frame.pack(fill="both", expand=True, padx=20, pady=(0, 16))
@@ -410,6 +385,8 @@ class App(tk.Tk):
         self.stop_flag[0] = False
         self.start_btn.config(state="disabled")
         self.stop_btn.config(state="normal")
+        # 翻譯進行中，鎖定「更換 Email」避免中途變更
+        self.change_email_btn.config(state="disabled")
         self.log(f"\n🚀 開始翻譯（Email：{self.current_email or '未設定'}）")
         threading.Thread(target=self._run_translation, daemon=True).start()
 
@@ -418,58 +395,49 @@ class App(tk.Tk):
         self.log("⏹  使用者中止，完成目前句子後停止並存檔...")
 
     def _run_translation(self):
+        """
+        背景執行緒：所有 GUI 操作都透過 safe_log / safe_progress 排程回主執行緒，
+        確保 tkinter 執行緒安全。
+        """
         for i, filepath in enumerate(self.selected_files):
             fname = os.path.basename(filepath)
-            self.log(f"\n📄 [{i+1}/{len(self.selected_files)}] {fname}")
+            self.safe_log(f"\n📄 [{i+1}/{len(self.selected_files)}] {fname}")
 
             result = process_file(
                 filepath=filepath,
                 email=self.current_email,
-                cache=self.cache,
-                log_fn=self.log,
-                progress_fn=lambda d, t, fn=fname: self.set_progress(d, t, fn),
+                log_fn=self.safe_log,                                              # ← 改用 safe_log
+                progress_fn=lambda d, t, fn=fname: self.safe_progress(d, t, fn),  # ← 改用 safe_progress
                 stop_flag=self.stop_flag
             )
 
             if result == 'done':
-                self.log(f"  ✔️  完成：{fname}")
+                self.safe_log(f"  ✔️  完成：{fname}")
             elif result == 'stopped':
-                self.log("⏹  已停止並存檔。下次選同一個檔案可繼續。")
+                self.safe_log("⏹  已停止並存檔。下次選同一個檔案可繼續。")
                 break
             elif result == 'quota':
-                self.log("\n⚠️  每日翻譯額度已用完！")
-                self.log("💡  可點「🔄 更換 Email」使用另一個 Email 繼續，或明天再跑。")
+                self.safe_log("\n⚠️  每日翻譯額度已用完！")
+                self.safe_log("💡  明天再開啟，程式會自動從未翻譯的句子繼續。")
                 self.after(0, lambda: messagebox.showinfo(
                     "額度用完",
                     "每日翻譯額度已用完！\n\n"
                     "✅ 目前進度已儲存\n"
-                    "💡 可點「更換 Email」換另一個 Google Email 繼續\n"
-                    "📅 或明天再開啟，系統會自動從未翻譯的句子繼續"
+                    "📅 明天再開啟，程式會自動從未翻譯的句子繼續"
                 ))
                 break
 
-        self.log("\n🎉 本次作業結束！")
+        self.safe_log("\n🎉 本次作業結束！")
+        # 翻譯結束後，UI 狀態恢復也排程回主執行緒
+        self.after(0, self._on_translation_done)
+
+    def _on_translation_done(self):
+        """翻譯完成後，在主執行緒恢復 UI 狀態"""
         self.start_btn.config(state="normal")
         self.stop_btn.config(state="disabled")
+        self.change_email_btn.config(state="normal")  # 解鎖「更換 Email」
         self.progress_label.config(text="")
         self.progress_bar["value"] = 0
-
-    def clean_bad_cache(self):
-        """清除快取中英翻英的錯誤條目"""
-        self.cache, removed = clean_bad_cache(self.cache)
-        save_cache(self.cache)
-        self.log(f"🧹  已清除 {removed} 筆錯誤快取（英翻英），下次重新翻譯這些句子")
-        if removed == 0:
-            messagebox.showinfo("清除完成", "沒有發現錯誤快取，快取都是正確的中文翻譯！")
-        else:
-            messagebox.showinfo("清除完成", f"已清除 {removed} 筆英翻英的錯誤快取。\n下次翻譯時會重新翻譯這些句子。")
-
-    def clear_all_cache(self):
-        if messagebox.askyesno("確認", "清除所有翻譯快取？\n（下次會重新翻譯所有句子）"):
-            self.cache = {}
-            if os.path.exists(PROGRESS_FILE):
-                os.remove(PROGRESS_FILE)
-            self.log("🗑  全部快取已清除")
 
 
 if __name__ == "__main__":
