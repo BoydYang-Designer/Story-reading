@@ -440,6 +440,17 @@
       font-weight: 600;
     }
 
+    /* 中文翻譯行 — 預設隱藏 */
+    .timestamp-translation {
+        display: none;
+        font-size: 0.9em;
+        color: #888;
+        margin-top: -0.6em;
+        margin-bottom: 0.8em;
+        padding-left: 0.5em;
+        border-left: 2px solid #ccc;
+        line-height: 1.5;
+    }
 
 
   </style>
@@ -549,6 +560,7 @@
       <div class="view-top-nav">
         <button class="secondary btn-back-top" id="back-to-category">← Back</button>
         <button class="secondary btn-back-top" id="ts-edit-mode-btn" title="開啟/關閉句子編輯模式" style="margin-left:auto;">✏️</button>
+        <button class="secondary btn-back-top" id="toggle-translation-btn" style="display:none;">顯示中文</button>
       </div>
       <div id="text-container"></div>
       <div id="staging-area">

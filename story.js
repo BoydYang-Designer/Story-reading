@@ -99,6 +99,7 @@ let currentSnippetTimeout = null;
 
 // --- New Timestamp State Variables ---
 let isTimestampMode = true;  // Always timestamp mode — plain text removed
+let showTranslation = false; // 控制是否顯示中文翻譯
 
 // --- Router State ---
 // 防止 hashchange → restoreFromHash 時又觸發 Router.push 造成無限迴圈
@@ -2549,6 +2550,15 @@ function renderTimestampContent() {
         });
 
         frag.appendChild(p);
+
+        // 如果有中文翻譯，加一個翻譯行
+        if (line.translation) {
+            const pZh = document.createElement('p');
+            pZh.className = 'timestamp-translation';
+            pZh.dataset.start = line.start;
+            pZh.textContent = line.translation;
+            frag.appendChild(pZh);
+        }
     });
     textContainer.appendChild(frag);
     lastHighlightedSentence = null;
@@ -2881,23 +2891,37 @@ function parseTimestampText(text) {
     const data = [];
     const regex = /\[(\d{2}:\d{2}:\d{2}\.\d{3}) --> (\d{2}:\d{2}:\d{2}\.\d{3})\](.*)/;
     const shortRegex = /\[(\d{2}:\d{2}\.\d{3}) --> (\d{2}:\d{2}\.\d{3})\](.*)/;
+    const zhRegex = /[\u4e00-\u9fff]/; // 偵測中文字元
 
     for (const line of lines) {
         let match = line.match(regex);
         if (!match) {
-             match = line.match(shortRegex);
-             if (match) {
-                 match[1] = '00:' + match[1];
-                 match[2] = '00:' + match[2];
-             }
+            match = line.match(shortRegex);
+            if (match) {
+                match[1] = '00:' + match[1];
+                match[2] = '00:' + match[2];
+            }
         }
-        
+
         if (match) {
-            data.push({
-                start: timeToSeconds(match[1]),
-                end: timeToSeconds(match[2]),
-                sentence: match[3].trim()
-            });
+            const sentenceText = match[3].trim();
+            const startSec = timeToSeconds(match[1]);
+            const endSec = timeToSeconds(match[2]);
+
+            if (zhRegex.test(sentenceText)) {
+                // 這是中文翻譯行 → 附加到上一筆資料的 translation 欄位
+                if (data.length > 0 && data[data.length - 1].start === startSec) {
+                    data[data.length - 1].translation = sentenceText;
+                }
+            } else {
+                // 這是英文原文行 → 新增一筆
+                data.push({
+                    start: startSec,
+                    end: endSec,
+                    sentence: sentenceText,
+                    translation: '' // 預設空，等下一行中文填入
+                });
+            }
         }
     }
     return data;
@@ -3210,6 +3234,16 @@ async function showPlayback(index, startTime = 0, maintainTimestampMode = false)
   const tsEditModeBtn = document.getElementById('ts-edit-mode-btn');
   if (tsEditModeBtn) tsEditModeBtn.style.display = hasTimestampFile ? '' : 'none';
 
+  // 顯示/隱藏中文翻譯 Toggle 按鈕
+  const toggleTranslationBtn = document.getElementById('toggle-translation-btn');
+  if (toggleTranslationBtn) {
+      // 有翻譯內容才顯示按鈕（避免純英文 timestamp 出現無效按鈕）
+      const hasTranslation = timestampData.some(line => line.translation);
+      toggleTranslationBtn.style.display = hasTranslation ? '' : 'none';
+      showTranslation = false;
+      toggleTranslationBtn.textContent = '顯示中文';
+  }
+
   // Always use timestamp mode; fallback to plain text if no timestamp file
   if (hasTimestampFile) {
       renderTimestampContent();
@@ -3272,6 +3306,10 @@ function stopAudioAndReset() {
   if (typeof resetTsEditMode === 'function') resetTsEditMode();
   const _tsBtn = document.getElementById('ts-edit-mode-btn');
   if (_tsBtn) _tsBtn.style.display = 'none';
+  // 離開文章時隱藏中文翻譯按鈕，並重設狀態
+  const _toggleZhBtn = document.getElementById('toggle-translation-btn');
+  if (_toggleZhBtn) _toggleZhBtn.style.display = 'none';
+  showTranslation = false;
 }
 
 function pauseAudio(byUser = false) {
@@ -3381,6 +3419,18 @@ if (backToSubCategoryBtn) {
     });
 }
 
+
+// 中文翻譯 Toggle 按鈕
+const toggleTranslationBtn = document.getElementById('toggle-translation-btn');
+if (toggleTranslationBtn) {
+    toggleTranslationBtn.addEventListener('click', () => {
+        showTranslation = !showTranslation;
+        document.querySelectorAll('.timestamp-translation').forEach(el => {
+            el.style.display = showTranslation ? 'block' : 'none';
+        });
+        toggleTranslationBtn.textContent = showTranslation ? '隱藏中文' : '顯示中文';
+    });
+}
 
 rewindBtn.addEventListener('click', () => { 
     if (isTimestampMode && hasTimestampFile) {
