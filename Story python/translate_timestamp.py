@@ -9,6 +9,18 @@ translate_timestamp.py
 
 tkinter 是 Python 內建，不需要安裝。
 翻譯 API：MyMemory（免費，加 email 每天 50,000 字）
+
+修復紀錄（v1.1）：
+  - [Bug Fix]  跳過 Email 設定時，同步清除磁碟儲存的 Email 檔案
+  - [Bug Fix]  translate_text 改為只靜默處理網路相關例外，QuotaExceededError 正常往上拋
+  - [改善] Email 輸入時加入格式驗證，避免輸入無效 Email 導致無聲失去高額度
+  - [改善] 翻譯時顯示累計字元數，讓使用者了解今日額度使用狀況
+  - [改善] UI 加入「今日用量」標籤，即時顯示本次啟動累計翻譯字元數
+  - [文件] 在 __init__ 加上 _build_ui → _ask_email_on_start 的順序依賴說明
+
+修復紀錄（v1.2）：
+  - [Bug Fix]  額度用完時，明確列出所有未處理的後續檔案並逐一記錄 log
+  - [Bug Fix]  額度用完的 messagebox 改為顯示「跳過 N 個檔案」的具體清單
 """
 
 import re
@@ -28,7 +40,10 @@ EMAIL_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".translat
 # ──────────────────────────────────────────────────────
 
 LINE_REGEX = re.compile(r'(\[\d{2}:\d{2}:\d{2}\.\d{3} --> \d{2}:\d{2}:\d{2}\.\d{3}\])(.*)')
-ZH_REGEX = re.compile(r'[\u4e00-\u9fff]')
+ZH_REGEX   = re.compile(r'[\u4e00-\u9fff]')
+
+# Email 格式驗證（基本 RFC 5322 簡化版）
+EMAIL_PATTERN = re.compile(r'^[\w\.\+\-]+@[\w\.\-]+\.\w{2,}$')
 
 
 # ── 工具函數 ───────────────────────────────────────────
@@ -41,12 +56,22 @@ def is_chinese(text: str) -> bool:
     return bool(ZH_REGEX.search(text))
 
 
+def is_valid_email(email: str) -> bool:
+    """檢查 Email 格式是否合法"""
+    return bool(EMAIL_PATTERN.match(email))
+
+
 def translate_text(text: str, email: str = "") -> str:
     """
     呼叫 MyMemory API 翻譯。
     - 額度用完 → 拋出 QuotaExceededError
     - 結果不含中文（英翻英）→ 拋出 QuotaExceededError
-    - 網路錯誤 → 回傳空字串
+    - 網路 / 連線錯誤 → 回傳空字串（靜默跳過，不中斷整批翻譯）
+
+    [Bug Fix v1.1]
+      原本 `except Exception: return ""` 會把 QuotaExceededError 也吃掉，
+      導致額度用完時程式不停止、繼續耗費請求。
+      現在改為只捕捉真正的網路相關例外，QuotaExceededError 正常往上傳遞。
     """
     text = text.strip()
     if not text:
@@ -58,6 +83,7 @@ def translate_text(text: str, email: str = "") -> str:
 
     try:
         resp = requests.get(MYMEMORY_URL, params=params, timeout=10)
+        resp.raise_for_status()
         data = resp.json()
         translated = data.get("responseData", {}).get("translatedText", "")
 
@@ -79,8 +105,10 @@ def translate_text(text: str, email: str = "") -> str:
         raise QuotaExceededError("無法取得中文翻譯結果")
 
     except QuotaExceededError:
+        # 額度問題：讓呼叫端知道，不吃掉
         raise
-    except Exception:
+    except (requests.exceptions.RequestException, ValueError, KeyError):
+        # 網路錯誤、JSON 解析失敗：靜默回傳空字串，讓該句被標記為跳過
         return ""
 
 
@@ -96,10 +124,16 @@ def save_email(email: str):
         f.write(email.strip())
 
 
+def clear_saved_email():
+    """[Bug Fix v1.1] 清除磁碟上儲存的 Email，讓下次啟動不會自動載回舊值"""
+    if os.path.exists(EMAIL_FILE):
+        os.remove(EMAIL_FILE)
+
+
 # ── 翻譯主邏輯 ─────────────────────────────────────────
 
 def process_file(filepath: str, email: str,
-                 log_fn, progress_fn, stop_flag: list) -> str:
+                 log_fn, progress_fn, char_count_fn, stop_flag: list) -> str:
     """
     回傳：
       'done'    → 全部完成
@@ -109,6 +143,9 @@ def process_file(filepath: str, email: str,
     邏輯：
       - 逐行掃描，若英文行的「下一行」已是中文行 → 直接保留，不呼叫 API
       - 只有英文行後面沒有對應中文行，才翻譯
+
+    參數新增：
+      char_count_fn: 每次成功翻譯後，回報本句字元數給 GUI 更新累計用量
     """
     with open(filepath, "r", encoding="utf-8") as f:
         raw_lines = f.read().splitlines()
@@ -150,7 +187,7 @@ def process_file(filepath: str, email: str,
             i += 1
             continue
 
-        ts = m.group(1)
+        ts       = m.group(1)
         sentence = m.group(2).strip()
 
         # 中文行：直接保留
@@ -162,7 +199,7 @@ def process_file(filepath: str, email: str,
         # 英文行
         output_lines.append(line)
 
-        # 下一行已有中文 → 跳過
+        # 下一行已有中文 → 跳過（不計入 total，也不呼叫 API）
         if already_has_chinese(raw_lines, i):
             log_fn(f"  ⏭️  (已翻) {sentence[:45]}")
             output_lines.append(raw_lines[i + 1])
@@ -184,6 +221,7 @@ def process_file(filepath: str, email: str,
             output_lines.append(f"{ts} {zh}")
             done += 1
             progress_fn(done, total)
+            char_count_fn(len(sentence))   # 回報本句字元數給 GUI
             time.sleep(DELAY_SECONDS)
             i += 1
 
@@ -207,19 +245,23 @@ class App(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("Timestamp 中英翻譯工具")
-        self.geometry("740x580")
+        self.geometry("740x620")
         self.resizable(True, True)
         self.configure(bg="#1e1e2e")
 
         self.selected_files: list[str] = []
-        self.stop_flag = [False]
+        self.stop_flag     = [False]
         self.current_email = load_saved_email()
+        self.total_chars   = 0   # 本次啟動累計翻譯字元數
 
+        # 注意：_build_ui 必須在 _ask_email_on_start 之前呼叫，
+        # 因為 _ask_email_on_start 的 confirm() 會更新 self.email_label，
+        # 而 email_label 是在 _build_ui 裡建立的。
         self._build_ui()
         self._ask_email_on_start()
 
     # ── 執行緒安全的 GUI 更新方法 ──────────────────────
-    # 所有從背景執行緒呼叫 GUI 的地方，都必須透過這兩個方法，
+    # 所有從背景執行緒呼叫 GUI 的地方，都必須透過這些方法，
     # 利用 self.after(0, ...) 將實際操作排程回主執行緒執行，
     # 避免 tkinter 的 Race Condition 造成偶發性崩潰。
 
@@ -231,12 +273,22 @@ class App(tk.Tk):
         """執行緒安全版 progress：透過 after() 排程到主執行緒"""
         self.after(0, lambda: self.set_progress(done, total, filename))
 
+    def safe_add_chars(self, n: int):
+        """執行緒安全版累計字元數更新"""
+        self.after(0, lambda: self._add_chars(n))
+
     # ──────────────────────────────────────────────────
+
+    def _add_chars(self, n: int):
+        """更新累計字元數並刷新標籤（必須在主執行緒呼叫）"""
+        self.total_chars += n
+        limit = "50,000" if self.current_email else "5,000"
+        self.usage_label.config(text=f"📊 本次累計用量：約 {self.total_chars:,} 字元（上限 {limit} 字元/天）")
 
     def _ask_email_on_start(self):
         dialog = tk.Toplevel(self)
         dialog.title("設定 Email（可提高每日額度）")
-        dialog.geometry("480x230")
+        dialog.geometry("480x260")
         dialog.configure(bg="#1e1e2e")
         dialog.grab_set()
         dialog.resizable(False, False)
@@ -248,7 +300,10 @@ class App(tk.Tk):
                  font=("Arial", 10), bg=BG, fg=ACC, wraplength=440).pack(pady=(18, 4))
         tk.Label(dialog,
                  text="Google email 可用。MyMemory 不會寄信給你，留空則使用免費額度。",
-                 font=("Arial", 9), bg=BG, fg="#a6adc8", wraplength=440).pack(pady=(0, 12))
+                 font=("Arial", 9), bg=BG, fg="#a6adc8", wraplength=440).pack(pady=(0, 4))
+        tk.Label(dialog,
+                 text="⚠️  請確認 Email 格式正確，否則將自動降回免費額度（5,000 字）",
+                 font=("Arial", 9), bg=BG, fg="#f9e2af", wraplength=440).pack(pady=(0, 12))
 
         entry_frame = tk.Frame(dialog, bg=BG)
         entry_frame.pack()
@@ -258,21 +313,43 @@ class App(tk.Tk):
                          width=30, bg="#313244", fg=FG, insertbackground=FG, relief="flat")
         entry.pack(side="left", padx=(4, 0))
 
+        # 格式錯誤提示標籤（預設隱藏）
+        warn_label = tk.Label(dialog, text="", font=("Arial", 9), bg=BG, fg="#f38ba8")
+        warn_label.pack(pady=(4, 0))
+
         def confirm():
             email = email_var.get().strip()
+
+            # [改善 v1.1] Email 格式驗證
+            if email and not is_valid_email(email):
+                warn_label.config(text="❌ Email 格式不正確，請重新輸入（例：yourname@gmail.com）")
+                entry.focus_set()
+                return
+
             self.current_email = email
             if email:
                 save_email(email)
                 self.email_label.config(text=f"📧 Email：{email}")
-                self.log(f"✅ 使用 Email：{email}（高額度模式）")
+                self.log(f"✅ 使用 Email：{email}（高額度模式，上限 50,000 字/天）")
             else:
+                # 使用者主動留空 → 清除磁碟舊值
+                clear_saved_email()
                 self.email_label.config(text="📧 Email：未設定（免費額度 5,000 字/天）")
                 self.log("ℹ️  未設定 Email，使用免費額度（5,000 字/天）")
+
+            # 重設用量顯示
+            self.total_chars = 0
+            limit = "50,000" if email else "5,000"
+            self.usage_label.config(text=f"📊 本次累計用量：約 0 字元（上限 {limit} 字元/天）")
             dialog.destroy()
 
         def skip():
+            # [Bug Fix v1.1] 跳過時同步清除磁碟儲存的 Email，
+            # 避免下次啟動仍自動載入舊值，造成使用者誤以為已設定 Email。
             self.current_email = ""
+            clear_saved_email()
             self.email_label.config(text="📧 Email：未設定（免費額度 5,000 字/天）")
+            self.usage_label.config(text="📊 本次累計用量：約 0 字元（上限 5,000 字元/天）")
             self.log("ℹ️  跳過 Email 設定，使用免費額度")
             dialog.destroy()
 
@@ -285,12 +362,16 @@ class App(tk.Tk):
                   bg="#313244", fg=FG, relief="flat", padx=14, pady=5,
                   cursor="hand2", command=skip).pack(side="left", padx=8)
 
+        # 支援按 Enter 確認
+        entry.bind("<Return>", lambda e: confirm())
+        entry.focus_set()
+
         self.wait_window(dialog)
 
     def _build_ui(self):
         BG, FG, ACC = "#1e1e2e", "#cdd6f4", "#89b4fa"
         BTN_BG = "#313244"
-        FONT = ("Arial", 11)
+        FONT   = ("Arial", 11)
 
         tk.Label(self, text="📄 Timestamp 中英翻譯工具",
                  font=("Arial", 15, "bold"), bg=BG, fg=ACC).pack(pady=(16, 2))
@@ -299,6 +380,13 @@ class App(tk.Tk):
             text=f"📧 Email：{self.current_email or '未設定（免費額度 5,000 字/天）'}",
             font=("Arial", 9), bg=BG, fg="#a6adc8")
         self.email_label.pack()
+
+        # 累計用量標籤（[改善 v1.1]）
+        limit = "50,000" if self.current_email else "5,000"
+        self.usage_label = tk.Label(self,
+            text=f"📊 本次累計用量：約 0 字元（上限 {limit} 字元/天）",
+            font=("Arial", 9), bg=BG, fg="#a6adc8")
+        self.usage_label.pack()
 
         # 「更換 Email」按鈕：翻譯進行中時會被 disable，避免中途更換造成混亂
         self.change_email_btn = tk.Button(
@@ -396,19 +484,20 @@ class App(tk.Tk):
 
     def _run_translation(self):
         """
-        背景執行緒：所有 GUI 操作都透過 safe_log / safe_progress 排程回主執行緒，
-        確保 tkinter 執行緒安全。
+        背景執行緒：所有 GUI 操作都透過 safe_log / safe_progress / safe_add_chars
+        排程回主執行緒，確保 tkinter 執行緒安全。
         """
         for i, filepath in enumerate(self.selected_files):
             fname = os.path.basename(filepath)
             self.safe_log(f"\n📄 [{i+1}/{len(self.selected_files)}] {fname}")
 
             result = process_file(
-                filepath=filepath,
-                email=self.current_email,
-                log_fn=self.safe_log,                                              # ← 改用 safe_log
-                progress_fn=lambda d, t, fn=fname: self.safe_progress(d, t, fn),  # ← 改用 safe_progress
-                stop_flag=self.stop_flag
+                filepath      = filepath,
+                email         = self.current_email,
+                log_fn        = self.safe_log,
+                progress_fn   = lambda d, t, fn=fname: self.safe_progress(d, t, fn),
+                char_count_fn = self.safe_add_chars,   # [改善 v1.1] 字元數回報
+                stop_flag     = self.stop_flag
             )
 
             if result == 'done':
@@ -418,13 +507,31 @@ class App(tk.Tk):
                 break
             elif result == 'quota':
                 self.safe_log("\n⚠️  每日翻譯額度已用完！")
+                self.safe_log(f"  💾 {fname} 目前進度已儲存。")
+
+                # [Bug Fix v1.2] 明確列出所有後續未處理的檔案，讓使用者清楚知道哪些沒翻到
+                skipped = self.selected_files[i + 1:]
+                if skipped:
+                    self.safe_log(f"\n⏭️  以下 {len(skipped)} 個檔案因額度用完而跳過（原檔不動）：")
+                    for sk in skipped:
+                        self.safe_log(f"    • {os.path.basename(sk)}")
+                    skipped_names = "\n".join(f"  • {os.path.basename(sk)}" for sk in skipped)
+                    self.after(0, lambda sn=skipped_names: messagebox.showinfo(
+                        "額度用完",
+                        "每日翻譯額度已用完！\n\n"
+                        "✅ 目前進度已儲存\n"
+                        f"⏭️  以下檔案尚未翻譯：\n{sn}\n\n"
+                        "📅 明天再開啟，程式會自動從未翻譯的句子繼續"
+                    ))
+                else:
+                    self.after(0, lambda: messagebox.showinfo(
+                        "額度用完",
+                        "每日翻譯額度已用完！\n\n"
+                        "✅ 目前進度已儲存\n"
+                        "📅 明天再開啟，程式會自動從未翻譯的句子繼續"
+                    ))
+
                 self.safe_log("💡  明天再開啟，程式會自動從未翻譯的句子繼續。")
-                self.after(0, lambda: messagebox.showinfo(
-                    "額度用完",
-                    "每日翻譯額度已用完！\n\n"
-                    "✅ 目前進度已儲存\n"
-                    "📅 明天再開啟，程式會自動從未翻譯的句子繼續"
-                ))
                 break
 
         self.safe_log("\n🎉 本次作業結束！")

@@ -1,66 +1,132 @@
 [00:00:00.000 --> 00:00:05.900] Part 1 -11 Ask the owner of that stall how much the sword costs, he said to his friend.
+[00:00:00.000 --> 00:00:05.900] 第1-11部分問那個攤子的主人那把劍要多少錢，他對他的朋友說。
 [00:00:06.360 --> 00:00:10.520] Then he realized that he had been distracted for a few moments looking at the sword.
+[00:00:06.360 --> 00:00:10.520] 然後他意識到，他已經分心了一會兒，看著那把劍。
 [00:00:11.100 --> 00:00:14.700] His heart squeezed as if his chest had suddenly compressed it.
+[00:00:11.100 --> 00:00:14.700] 他的心臟擠了起來，彷彿胸口突然壓縮起來。
 [00:00:15.060 --> 00:00:18.180] He was afraid to look around because he knew what he would find.
+[00:00:15.060 --> 00:00:18.180] 他害怕環顧四周，因為他知道自己會發現什麼。
 [00:00:20.290 --> 00:00:25.790] He continued to look at the beautiful sword for a bit longer, until he summoned the courage to turn around.
+[00:00:20.290 --> 00:00:25.790] 他繼續盯著那把美麗的劍看了一會兒，才鼓起勇氣轉身。
 [00:00:26.330 --> 00:00:32.150] All around him was the market with people coming and going, shouting and buying, and the aroma of strange foods.
+[00:00:26.330 --> 00:00:32.150] 他周圍到處都是市場，人們來來去去，大喊大叫，買來買去，還有奇怪食物的香味。
 [00:00:32.550 --> 00:00:34.930] But nowhere could he find his new companion.
+[00:00:32.550 --> 00:00:34.930] 但他找不到他的新同伴。
 [00:00:35.330 --> 00:00:40.130] The boy wanted to believe that his friend had simply become separated from him by accident.
+[00:00:35.330 --> 00:00:40.130] 男孩想相信他的朋友只是意外與他分開了。
 [00:00:40.610 --> 00:00:43.450] He decided to stay right there and await his return.
+[00:00:40.610 --> 00:00:43.450] 他決定留在那裡等著回來。
 [00:00:43.890 --> 00:00:48.510] As he waited, a priest climbed to the top of a nearby tower and began his chant.
+[00:00:43.890 --> 00:00:48.510] 在等待的同時，一位牧師爬上附近一座塔的頂端，開始吟唱。
 [00:00:48.810 --> 00:00:53.770] Everyone in the market fell to their knees, touched their foreheads to the ground and took up the chant.
+[00:00:48.810 --> 00:00:53.770] 市場上的每個人都跪了下來，把額頭摸到地上，拿起了聖歌。
 [00:00:54.190 --> 00:00:58.090] Then like a colony of worker ants they dismantled their stalls and left.
+[00:00:54.190 --> 00:00:58.090] 然後像一羣工蟻一樣，他們拆除了自己的攤位並離開了。
 [00:00:58.090 --> 00:01:00.910] The sun began its departure as well.
+[00:00:58.090 --> 00:01:00.910] 太陽也開始離開了。
 [00:01:01.290 --> 00:01:07.690] The boy watched it through its trajectory for some time, until it was hidden behind the white houses surrounding the plaza.
+[00:01:01.290 --> 00:01:07.690] 男孩透過軌跡觀看了一段時間，直到它隱藏在廣場周圍的白色房屋後面。
 [00:01:08.290 --> 00:01:16.430] He recalled that when the sun had risen that morning he was on another continent, still a shepherd with sixty sheep and looking forward to meeting with a girl.
+[00:01:08.290 --> 00:01:16.430] 他回憶說，那天早上太陽升起的時候，他在另一個大陸上，仍然是一個帶著六十隻羊的牧羊人，期待著與一個女孩見面。
 [00:01:16.850 --> 00:01:22.030] That morning he had known everything that was going to happen to him as he walked through the familiar fields.
+[00:01:16.850 --> 00:01:22.030] 那天早上，當他走過熟悉的田野時，他已經知道將要發生在他身上的一切。
 [00:01:22.410 --> 00:01:30.350] But now, as the sun began to set he was in a different country, a stranger in a strange land, where he couldn't even speak the language.
+[00:01:22.410 --> 00:01:30.350] 但現在，當太陽開始下山時，他在另一個國家，一個陌生人在一個陌生的土地上，在那裡他甚至不會說這種語言。
 [00:01:30.790 --> 00:01:36.050] He was no longer a shepherd and he had nothing, not even the money to return and start everything over.
+[00:01:30.790 --> 00:01:36.050] 他不再是一個牧羊人，他什麼都沒有，甚至沒有錢回來重新開始一切。
 [00:01:36.550 --> 00:01:39.910] All this happened between sunrise and sunset, the boy thought.
+[00:01:36.550 --> 00:01:39.910] 這一切都發生在日出和日落之間，男孩想。
 [00:01:40.310 --> 00:01:46.250] He was feeling sorry for himself and lamenting the fact that his life could have changed so suddenly and so drastically.
+[00:01:40.310 --> 00:01:46.250] 他為自己感到難過，並感嘆自己的生活可能突然發生如此巨大的變化。
 [00:01:46.710 --> 00:01:51.990] He was so ashamed that he wanted to cry. He had never even of his own sheep.
+[00:01:46.710 --> 00:01:51.990] 他羞得想哭。他甚至從未有過自己的羊。
 [00:01:52.310 --> 00:01:56.110] But the marketplace was empty and he was far from home so he wept.
+[00:01:52.310 --> 00:01:56.110] 但市場是空的，他離家很遠，所以他哭了。
 [00:01:56.530 --> 00:02:02.130] He wept because God was unfair, and because this was the way God repaid those who believed in their dreams.
+[00:01:56.530 --> 00:02:02.130] 他哭泣是因為神不公平，也因為這是神回報那些相信自己夢想的人的方式。
 [00:02:02.510 --> 00:02:05.890] When I had my sheep I was happy and I made those around me happy.
+[00:02:02.510 --> 00:02:05.890] 當我有羊時，我很開心，我讓周圍的人開心。
 [00:02:06.350 --> 00:02:08.690] People saw me coming and welcomed me he thought.
+[00:02:06.350 --> 00:02:08.690] 人們看見我來了，他想歡迎我。
 [00:02:09.030 --> 00:02:10.670] But now I'm sad and alone.
+[00:02:09.030 --> 00:02:10.670] 但現在我又悲傷又孤單
 [00:02:10.910 --> 00:02:15.150] I'm going to become bitter and distrustful of people because one person betrayed me.
+[00:02:10.910 --> 00:02:15.150] 我會變得痛苦和不信任別人，因為有一個人背叛了我。
 [00:02:15.390 --> 00:02:19.010] I'm going to hate those who have found their treasure because I never found mine.
+[00:02:15.390 --> 00:02:19.010] 我會討厭那些找到寶藏的人，因為我從未找到自己的寶藏。
 [00:02:19.010 --> 00:02:24.690] And I'm going to hold on to what little I have, because I'm too insignificant to conquer the world.
+[00:02:19.010 --> 00:02:24.690] 我會堅持我所擁有的，因為我太微不足道了，無法徵服世界。
 [00:02:25.290 --> 00:02:28.310] He opened his pouch to see what was left of his possessions.
+[00:02:25.290 --> 00:02:28.310] 他打開袋子，看看自己剩下的東西。
 [00:02:28.710 --> 00:02:31.930] Maybe there was a bit left of the sandwich he had eaten on the ship.
+[00:02:28.710 --> 00:02:31.930] 也許他在船上吃過的三明治還有一點剩下。
 [00:02:32.290 --> 00:02:37.450] But all he found was the heavy book, his jacket, and the two stones the old man had given him.
+[00:02:32.290 --> 00:02:37.450] 但他只發現了那本沉重的書、他的外套和老人送給他的兩塊石頭。
 [00:02:37.870 --> 00:02:40.770] As he looked at the stones he felt relieved for some reason.
+[00:02:37.870 --> 00:02:40.770] 當他看著這些石頭時，不知為何，他感到鬆了一口氣。
 [00:02:41.350 --> 00:02:46.350] He had exchanged six sheep for two precious stones that had been taken from a gold breastplate.
+[00:02:41.350 --> 00:02:46.350] 他用六隻羊換了兩塊從金胸甲上取下來的寶石。
 [00:02:46.770 --> 00:02:49.250] He could sell the stones and buy a return ticket.
+[00:02:46.770 --> 00:02:49.250] 他可以賣掉寶石，買回程票。
 [00:02:49.730 --> 00:02:54.810] But this time I'll be smarter, the boy thought, removing them from the pouch so he could put them in his pocket.
+[00:02:49.730 --> 00:02:54.810] 但這次我會更聰明，男孩想，把它們從袋子裡拿出來，這樣他就可以把它們放在口袋裡了。
 [00:02:55.370 --> 00:03:00.810] This was a port town, and the only truthful thing his friend had told him was that port towns are full of thieves.
+[00:02:55.370 --> 00:03:00.810] 這是一個港口城鎮，他的朋友告訴他的唯一真實的事情是，港口城鎮到處都是小偷。
 [00:03:01.230 --> 00:03:04.470] Now he understood why the owner of the bar had been so upset.
+[00:03:01.230 --> 00:03:04.470] 現在他明白酒吧老闆為什麼這麼生氣了。
 [00:03:04.730 --> 00:03:07.230] He was trying to tell him not to trust that man.
+[00:03:04.730 --> 00:03:07.230] 他試圖告訴他不要相信那個人。
 [00:03:07.590 --> 00:03:12.970] Unlike everyone else I see the world in terms of what I would like to see happen, not what actually does.
+[00:03:07.590 --> 00:03:12.970] 與其他人不同，我以我希望看到發生的事情來看待世界，而不是實際發生的事情。
 [00:03:13.730 --> 00:03:20.930] He ran his fingers slowly over the stones, sensing their temperature and feeling their surfaces. They were his treasure.
+[00:03:13.730 --> 00:03:20.930] 他用手指慢慢踩在石頭上，感應石頭的溫度，感受石頭的表面。他們是他的寶藏。
 [00:03:21.290 --> 00:03:23.110] Just handling them made him feel better.
+[00:03:21.290 --> 00:03:23.110] 只是處理它們讓他感覺好多了。
 [00:03:23.470 --> 00:03:25.390] They reminded him of the old man.
+[00:03:23.470 --> 00:03:25.390] 他們讓他想起了那個老人。
 [00:03:25.790 --> 00:03:30.830] When you want something all the universe conspires in helping you to achieve it, he had said.
+[00:03:25.790 --> 00:03:30.830] 他說，當你想要某樣東西時，整個宇宙都會合謀幫助你實現它。
 [00:03:31.170 --> 00:03:34.590] The boy was trying to understand the truth of what the old man had said.
+[00:03:31.170 --> 00:03:34.590] 男孩試圖理解老人所說的真相。
 [00:03:35.030 --> 00:03:40.930] There he was in the empty marketplace without a scent to his name, and with not a sheep to guard through the night.
+[00:03:35.030 --> 00:03:40.930] 他在空蕩蕩的集市上，沒有名字的氣味，也沒有一隻羊守夜。
 [00:03:40.930 --> 00:03:46.230] But the stones were proof that he had met with a king, a king who knew of the boy's past.
+[00:03:40.930 --> 00:03:46.230] 但這些石頭證明他遇到了一位國王，一位知道這個男孩過去的國王。
 [00:03:46.690 --> 00:03:50.490] They're called Urim and Thummim, and they can help you to read the omens.
+[00:03:46.690 --> 00:03:50.490] 他們被稱為烏陵和土明，他們可以幫助你解讀預兆。
 [00:03:50.790 --> 00:03:54.310] The boy put the stones back in the pouch and decided to do an experiment.
+[00:03:50.790 --> 00:03:54.310] 男孩把石頭放回袋子裡，決定做一個實驗。
 [00:03:54.810 --> 00:03:59.730] The old man had said to ask very clear questions and to do that the boy had to know what he wanted.
+[00:03:54.810 --> 00:03:59.730] 老人說要問非常清楚的問題，要做到這一點，男孩必須知道自己想要什麼。
 [00:04:00.290 --> 00:04:03.310] So he asked if the old man's blessing was still with him.
+[00:04:00.290 --> 00:04:03.310] 所以他問老人的祝福是否仍然與他同在。
 [00:04:03.670 --> 00:04:06.730] He took out one of the stones. It was yes.
+[00:04:03.670 --> 00:04:06.730] 他拿出一塊石頭是的。
 [00:04:07.290 --> 00:04:10.030] Am I going to find my treasure? he asked.
+[00:04:07.290 --> 00:04:10.030] 我會找到我的寶藏嗎？他問。
 [00:04:10.490 --> 00:04:13.950] He stuck his hand into the pouch and felt around for one of the stones.
+[00:04:10.490 --> 00:04:13.950] 他把手伸進袋子裡，摸摸周圍的一塊石頭。
 [00:04:14.490 --> 00:04:18.470] As he did so, both of them pushed through a hole in the pouch and fell to the ground.
+[00:04:14.490 --> 00:04:18.470] 他這麼做時，兩人都從袋子裡推了一個洞，摔倒在地。
 [00:04:18.890 --> 00:04:22.250] The boy had never even noticed that there was a hole in his pouch.
+[00:04:18.890 --> 00:04:22.250] 男孩從來沒有注意到袋子裏有洞。
 [00:04:22.670 --> 00:04:26.070] He knelt down to find Urim and Thummim and put them back in the pouch.
+[00:04:22.670 --> 00:04:26.070] 他跪下來找到烏陵和土明，把他們放回袋子裡。
 [00:04:26.530 --> 00:04:30.830] But as he saw them lying there on the ground, another phrase came to his mind.
+[00:04:26.530 --> 00:04:30.830] 但當他看到他們躺在地上時，腦海中浮現出另一句話。
 [00:04:31.350 --> 00:04:38.270] Learn to recognize omens and follow them, the old king had said. An omen. The boy smiled to himself.
+[00:04:31.350 --> 00:04:38.270] 老國王說，學會辨認預兆並跟隨它們。一個預兆，男孩對自己笑了笑。
 [00:04:38.690 --> 00:04:41.590] He picked up the two stones and put them back in his pouch.
+[00:04:38.690 --> 00:04:41.590] 他拿起兩塊石頭，放回袋子裡。
 [00:04:42.010 --> 00:04:46.270] He didn't consider mending the hole, the stones could fall through any time they wanted.
+[00:04:42.010 --> 00:04:46.270] 他沒有考慮修補這個洞，石頭可能會隨時掉下來。
 [00:04:46.910 --> 00:04:52.870] He had learned that there were certain things one shouldn't ask about, so as not to flee from one's own personal legend.
+[00:04:46.910 --> 00:04:52.870] 他知道有些事情不應該問，以免逃避自己的個人傳說。
 [00:04:53.290 --> 00:04:57.170] I promised that I would make my own decisions, he said to himself.
+[00:04:53.290 --> 00:04:57.170] 他自言自語地說，我答應過我會自己做決定。
 [00:04:57.170 --> 00:04:57.610] He said to himself, he said to himself, he said to himself.
+[00:04:57.170 --> 00:04:57.610] 他自言自語，他自言自語，他自言自語。
 [00:04:57.610 --> 00:04:57.670] He said to himself, he said to himself, he said to himself, he said to himself.
+[00:04:57.610 --> 00:04:57.670] 他自言自語，他自言自語，他自言自語，他自言自語。
 [00:04:57.670 --> 00:04:57.790] He said to himself, he said to himself, he said to himself, he said to himself.
+[00:04:57.670 --> 00:04:57.790] 他自言自語，他自言自語，他自言自語，他自言自語。
