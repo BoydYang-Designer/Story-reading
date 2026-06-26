@@ -1,76 +1,152 @@
 [00:00:00.000 --> 00:00:05.280] Part 2 -18 At night, they spread their sleeping gear and kept their fires hidden.
+[00:00:00.000 --> 00:00:05.280] 第2-18部分晚上，他們鋪開睡眠裝備，把火藏起來。
 [00:00:05.660 --> 00:00:10.900] The desert nights were cold and were becoming darker and darker as the phases of the moon passed.
+[00:00:05.660 --> 00:00:10.900] 沙漠的夜晚很冷，隨著月亮相位的過去，它變得越來越暗。
 [00:00:11.200 --> 00:00:17.920] They went on for a week, speaking only of the precautions they needed to follow in order to avoid the battles between the tribes.
+[00:00:11.200 --> 00:00:17.920] 他們持續了一個星期，只談到他們需要遵循的預防措施，以避免部落之間的戰鬥。
 [00:00:18.280 --> 00:00:23.040] The war continued, and at times the wind carried the sweet, sickly smell of blood.
+[00:00:18.280 --> 00:00:23.040] 戰爭仍在繼續，有時風帶著甜美、病態的血腥味。
 [00:00:23.580 --> 00:00:28.700] Battles had been fought nearby, and the wind reminded the boy that there was the language of omens,
+[00:00:23.580 --> 00:00:28.700] 戰鬥已經在附近進行，風提醒男孩有預兆的語言，
 [00:00:29.160 --> 00:00:32.000] always ready to show him what his eyes had failed to observe.
+[00:00:29.160 --> 00:00:32.000] 隨時準備向他展示他的眼睛沒有看到的東西
 [00:00:32.440 --> 00:00:36.660] On the seventh day the alchemist decided to make camp earlier than usual.
+[00:00:32.440 --> 00:00:36.660] 第七天，煉金術士決定比平時提前扎營。
 [00:00:37.120 --> 00:00:42.480] The falcon flew off to find game, and the alchemist offered his water container to the boy.
+[00:00:37.120 --> 00:00:42.480] 獵鷹飛去找獵物，煉金術士把他的水箱交給了男孩。
 [00:00:42.780 --> 00:00:46.460] You are almost at the end of your journey, said the alchemist.
+[00:00:42.780 --> 00:00:46.460] 煉金術士說，你的旅程即將結束。
 [00:00:46.740 --> 00:00:50.180] I congratulate you for having pursued your personal legend.
+[00:00:46.740 --> 00:00:50.180] 我恭喜你追求你的個人傳奇。
 [00:00:50.640 --> 00:00:53.720] And you've told me nothing along the way, said the boy.
+[00:00:50.640 --> 00:00:53.720] 一路上你什麼都沒告訴我，男孩說。
 [00:00:54.000 --> 00:00:56.620] I thought you were going to teach me some of the things you know.
+[00:00:54.000 --> 00:00:56.620] 我以為你會教我一些你知道的事情。
 [00:00:56.880 --> 00:01:03.100] A while ago I rode through the desert with a man who had books on alchemy, but I wasn't able to learn anything from them.
+[00:00:56.880 --> 00:01:03.100] 不久前，我和一個有煉金術書籍的人一起騎馬穿越沙漠，但我無法從他們身上學到任何東西。
 [00:01:03.520 --> 00:01:08.540] There is only one way to learn, the alchemist answered. It's through action.
+[00:01:03.520 --> 00:01:08.540] 只有一種方法可以學習，煉金術士回答。而是透過行動。
 [00:01:08.980 --> 00:01:11.420] Everything you need to know you have learned through your journey.
+[00:01:08.980 --> 00:01:11.420] 您需要知道的一切都是您在旅程中學到的。
 [00:01:11.700 --> 00:01:13.740] You need to learn only one thing more.
+[00:01:11.700 --> 00:01:13.740] 你只需要多學一件事。
 [00:01:14.160 --> 00:01:19.440] The boy wanted to know what that was, but the alchemist was searching the horizon looking for the falcon.
+[00:01:14.160 --> 00:01:19.440] 男孩想知道那是甚麼，但煉金術士正在地平線上尋找獵鷹。
 [00:01:19.900 --> 00:01:23.620] Why are you called the alchemist? Because that's what I am.
+[00:01:19.900 --> 00:01:23.620] 你為甚麼被稱為煉金術士？因為這就是我。
 [00:01:23.960 --> 00:01:28.540] And what went wrong when other alchemists tried to make gold and were unable to do so?
+[00:01:23.960 --> 00:01:28.540] 當其他煉金術士試圖製造黃金而無法做到這一點時，出了什麼問題？
 [00:01:28.880 --> 00:01:32.380] They were looking only for gold, his companion answered.
+[00:01:28.880 --> 00:01:32.380] 他們只是在尋找黃金，他的同伴回答。
 [00:01:32.720 --> 00:01:38.720] They were seeking the treasure of their personal legend, without wanting actually to live out the personal legend.
+[00:01:32.720 --> 00:01:38.720] 他們在尋找個人傳奇的寶藏，卻不想真正活出個人傳奇。
 [00:01:39.140 --> 00:01:42.180] What is it that I still need to know? the boy asked.
+[00:01:39.140 --> 00:01:42.180] 「我還需要知道什麼？」男孩問。
 [00:01:42.540 --> 00:01:45.260] But the alchemist continued to look to the horizon.
+[00:01:42.540 --> 00:01:45.260] 但煉金術師繼續望向地平線。
 [00:01:45.700 --> 00:01:48.240] And finally the falcon returned with their meal.
+[00:01:45.700 --> 00:01:48.240] 終於獵鷹帶著飯回來了
 [00:01:48.640 --> 00:01:53.300] They dug a hole and lit their fire in it so that the light of the flames would not be seen.
+[00:01:48.640 --> 00:01:53.300] 他們挖了一個洞，點燃了火，這樣火焰的光就看不見了。
 [00:01:53.760 --> 00:01:58.460] I'm an alchemist simply because I'm an alchemist, he said as he prepared the meal.
+[00:01:53.760 --> 00:01:58.460] 他在準備飯菜時說，我是一名煉金術士，只是因為我是一名煉金術士。
 [00:01:58.820 --> 00:02:04.200] I learned the science from my grandfather who learned from his father and so on back to the creation of the world.
+[00:01:58.820 --> 00:02:04.200] 我從祖父那裡學到了科學，祖父從父親那裡學到了世界的創造。
 [00:02:04.580 --> 00:02:08.260] In those times the masterwork could be written simply on an emerald.
+[00:02:04.580 --> 00:02:08.260] 在那個時代，傑作可以簡單地寫在翡翠上。
 [00:02:08.520 --> 00:02:14.240] But men began to reject simple things and to write tracts, interpretations and philosophical studies.
+[00:02:08.520 --> 00:02:14.240] 但人們開始拒絕簡單的事物，開始寫小冊子、詮釋和哲學研究。
 [00:02:14.700 --> 00:02:18.080] They also began to feel that they knew a better way than others had.
+[00:02:14.700 --> 00:02:18.080] 他們也開始覺得自己知道比別人更好的方法。
 [00:02:18.480 --> 00:02:20.960] Yet the emerald tablet is still alive today.
+[00:02:18.480 --> 00:02:20.960] 然而，翡翠片至今仍然活著。
 [00:02:21.760 --> 00:02:25.480] What was written on the emerald tablet? The boy wanted to know.
+[00:02:21.760 --> 00:02:25.480] 翡翠色的平板電腦上寫了什麼？男孩想知道。
 [00:02:25.800 --> 00:02:31.000] The alchemist began to draw in the sand and completed his drawing in less than five minutes.
+[00:02:25.800 --> 00:02:31.000] 煉金術士開始在沙地上畫畫，並在不到五分鐘的時間內完成了他的畫作。
 [00:02:31.500 --> 00:02:35.820] As he drew, the boy thought of the old king and the plaza where they had met that day.
+[00:02:31.500 --> 00:02:35.820] 畫畫的時候，男孩想起了老國王和他們那天見面的廣場。
 [00:02:36.100 --> 00:02:38.840] It seemed as if it had taken place years and years ago.
+[00:02:36.100 --> 00:02:38.840] 這似乎發生在許多年前。
 [00:02:39.260 --> 00:02:44.020] This is what was written on the emerald tablet, said the alchemist when he had finished.
+[00:02:39.260 --> 00:02:44.020] 這是翡翠石碑上寫的東西，煉金術士在完成後說。
 [00:02:44.400 --> 00:02:46.940] The boy tried to read what was written in the sand.
+[00:02:44.400 --> 00:02:46.940] 男孩試圖讀出沙子上寫的東西。
 [00:02:47.340 --> 00:02:50.060] It's a code, said the boy, a bit disappointed.
+[00:02:47.340 --> 00:02:50.060] 這是一個密碼，男孩說，有點失望。
 [00:02:50.540 --> 00:02:56.220] It looks like what I saw in the Englishman's books. No, the alchemist answered.
+[00:02:50.540 --> 00:02:56.220] 它看起來像我在英國人的書中看到的東西不，煉金術士回答。
 [00:02:56.640 --> 00:02:58.880] It's like the flight of those two hawks.
+[00:02:56.640 --> 00:02:58.880] 就像那兩隻鷹的飛行
 [00:02:59.080 --> 00:03:01.200] It can't be understood by reason alone.
+[00:02:59.080 --> 00:03:01.200] 光靠理性是無法理解的。
 [00:03:01.620 --> 00:03:05.200] The emerald tablet is a direct passage to the soul of the world.
+[00:03:01.620 --> 00:03:05.200] 翡翠板是通往世界靈魂的直接通道。
 [00:03:05.640 --> 00:03:10.640] The wise men understood that this natural world is only an image and a copy of paradise.
+[00:03:05.640 --> 00:03:10.640] 智者明白，這個自然世界只是一個形象和天堂的複製品。
 [00:03:11.120 --> 00:03:15.820] The existence of this world is simply a guarantee that there exists a world that is perfect.
+[00:03:11.120 --> 00:03:15.820] 這個世界的存在只是保證存在一個完美的世界。
 [00:03:16.340 --> 00:03:23.940] God created the world so that through its visible objects, men could understand his spiritual teachings and the marvels of his wisdom.
+[00:03:16.340 --> 00:03:23.940] 神創造了世界，使人能透過可見的物體，了解祂的靈性教導和祂智慧的奇妙之處。
 [00:03:24.200 --> 00:03:25.900] That's what I mean by action.
+[00:03:24.200 --> 00:03:25.900] 這就是我所說的行動。
 [00:03:26.420 --> 00:03:29.920] Should I understand the emerald tablet? The boy asked.
+[00:03:26.420 --> 00:03:29.920] 我應該瞭解翡翠平板電腦嗎？男孩問道。
 [00:03:30.440 --> 00:03:36.940] Perhaps, if you were in a laboratory of alchemy, this would be the right time to study the best way to understand the emerald tablet.
+[00:03:30.440 --> 00:03:36.940] 也許，如果你在煉金術實驗室，現在是研究翡翠石碑的最佳方式的最佳時機。
 [00:03:37.400 --> 00:03:40.600] But you are in the desert. So immerse yourself in it.
+[00:03:37.400 --> 00:03:40.600] 但你在沙漠中。讓自己沉浸其中。
 [00:03:40.800 --> 00:03:43.480] The desert will give you an understanding of the world.
+[00:03:40.800 --> 00:03:43.480] 沙漠會讓你了解世界。
 [00:03:43.860 --> 00:03:46.520] In fact, anything on the face of the earth will do that.
+[00:03:43.860 --> 00:03:46.520] 事實上，地球上的任何東西都會這樣做。
 [00:03:46.880 --> 00:03:49.000] You don't even have to understand the desert.
+[00:03:46.880 --> 00:03:49.000] 你甚至不必了解沙漠。
 [00:03:49.360 --> 00:03:55.340] All you have to do is contemplate a simple grain of sand, and you will see in it all the marvels of creation.
+[00:03:49.360 --> 00:03:55.340] 您所要做的就是思考一粒簡單的沙子，您將在其中看到所有創造的奇蹟。
 [00:03:55.920 --> 00:03:59.920] How do I immerse myself in the desert? Listen to your heart.
+[00:03:55.920 --> 00:03:59.920] 我如何沉浸在沙漠中？傾聽你的心聲。
 [00:03:59.920 --> 00:04:05.280] It knows all things because it came from the soul of the world, and it will one day return there.
+[00:03:59.920 --> 00:04:05.280] 它知道所有的事情，因為它來自世界的靈魂，有一天它會回到那裡。
 [00:04:05.960 --> 00:04:08.960] They crossed the desert for another two days in silence.
+[00:04:05.960 --> 00:04:08.960] 他們又默默地穿越了沙漠兩天。
 [00:04:09.340 --> 00:04:15.980] The alchemist had become much more cautious, because they were approaching the area where the most violent battles were being waged.
+[00:04:09.340 --> 00:04:15.980] 煉金術士變得更加謹慎，因為他們正在接近最激烈的戰鬥地區。
 [00:04:16.360 --> 00:04:19.500] As they moved along, the boy tried to listen to his heart.
+[00:04:16.360 --> 00:04:19.500] 當他們繼續前進時，男孩試圖傾聽他的心聲。
 [00:04:19.900 --> 00:04:21.500] It was not easy to do.
+[00:04:19.900 --> 00:04:21.500] 做起來並不容易。
 [00:04:21.780 --> 00:04:27.000] In earlier times, his heart had always been ready to tell its story, but lately that wasn't true.
+[00:04:21.780 --> 00:04:27.000] 在早期，他的心總是準備好講述它的故事，但最近情況並非如此。
 [00:04:27.460 --> 00:04:36.680] There had been times when his heart spent hours telling of its sadness, and at other times it became so emotional over the desert sunrise that the boy had to hide his tears.
+[00:04:27.460 --> 00:04:36.680] 有時，他的心花了幾個小時講述它的悲傷，而在其他時候，它在沙漠日出時變得如此情緒化，以至於男孩不得不隱藏他的眼淚。
 [00:04:37.340 --> 00:04:45.400] His heart beat fastest when it spoke to the boy of treasure, and more slowly when the boy stared entranced at the endless horizons of the desert.
+[00:04:37.340 --> 00:04:45.400] 他的心跳得最快的是與寶藏男孩說話，而當男孩盯著無盡的沙漠地平線時，他的心跳得更慢。
 [00:04:45.720 --> 00:04:51.140] But his heart was never quiet, even when the boy and the alchemist had fallen into silence.
+[00:04:45.720 --> 00:04:51.140] 但即使男孩和煉金術士陷入了沉默，他的心也從未安靜過。
 [00:04:51.140 --> 00:04:53.720] Why do we have to listen to our hearts?
+[00:04:51.140 --> 00:04:53.720] 為什麼我們必須聆聽自己的心聲？
 [00:04:53.960 --> 00:04:56.360] The boy asked when they had made camp that day.
+[00:04:53.960 --> 00:04:56.360] 男孩問他們那天什麼時候露營。
 [00:04:56.820 --> 00:05:00.220] Because wherever your heart is, that is where you'll find your treasure.
+[00:04:56.820 --> 00:05:00.220] 因為無論你的心在哪裡，你都會在那裡找到你的寶藏。
 [00:05:00.700 --> 00:05:03.740] But my heart is agitated, the boy said.
+[00:05:00.700 --> 00:05:03.740] 但我的心很激動，男孩說。
 [00:05:04.100 --> 00:05:08.940] It has its dreams, it gets emotional, and it's become passionate over a woman of the desert.
+[00:05:04.100 --> 00:05:08.940] 它有它的夢想，它變得情緒化，它變得對沙漠中的女人充滿熱情。
 [00:05:09.260 --> 00:05:17.020] It asks things of me, and it keeps me from sleeping many nights when I'm thinking about her. Well, that's good. Your heart is alive.
+[00:05:09.260 --> 00:05:17.020] 它要求我的東西，當我想到她的時候，它讓我無法睡很多個夜晚。很好你的心是活的。
 [00:05:17.400 --> 00:05:19.440] Keep listening to what it has to say.
+[00:05:17.400 --> 00:05:19.440] 繼續聆聽它所說的話。
 [00:05:19.940 --> 00:05:26.660] During the next three days, the two travelers passed by a number of armed tribesmen, and saw others on the horizon.
+[00:05:19.940 --> 00:05:26.660] 在接下來的三天裡，兩個旅行者經過了一些武裝部落的人，並看到其他人在地平線上。
 [00:05:27.080 --> 00:05:29.320] The boy's heart began to speak of fear.
+[00:05:27.080 --> 00:05:29.320] 男孩的心開始說出恐懼。
 [00:05:29.740 --> 00:05:36.400] It told him stories it had heard from the soul of the world, stories of men who sought to find their treasure and never succeeded.
+[00:05:29.740 --> 00:05:36.400] 它告訴他從世界的靈魂中聽到的故事，那些尋找寶藏卻從未成功過的人的故事。
 [00:05:37.160 --> 00:05:42.960] Sometimes it frightened the boy with the idea that he might not find his treasure, or that he might die there in the desert.
+[00:05:37.160 --> 00:05:42.960] 有時，這讓男孩感到害怕，因為他可能找不到自己的寶藏，或者他可能會死在沙漠中。
 [00:05:43.500 --> 00:05:46.520] At other times, it told the boy that it was satisfied.
+[00:05:43.500 --> 00:05:46.520] 其他時候，它告訴男孩它很滿意。
 [00:05:46.880 --> 00:05:48.540] It had found love and riches.
+[00:05:46.880 --> 00:05:48.540] 它找到了愛和財富。
