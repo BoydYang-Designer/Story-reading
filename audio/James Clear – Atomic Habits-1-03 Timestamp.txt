@@ -1,100 +1,200 @@
 [00:00:00.050 --> 00:00:06.500] The Fundamentals Why Tiny Changes Make a Big Difference Chapter
+[00:00:00.050 --> 00:00:06.500] 微小改變能帶來巨大改變的基本原理章節
 [00:00:06.500 --> 00:00:12.200] 1 The Surprising Power of Atomic Habits The
+[00:00:06.500 --> 00:00:12.200] 1原子習慣的驚人力量
 [00:00:12.200 --> 00:00:15.180] fate of British cycling changed one day in 2003.
+[00:00:12.200 --> 00:00:15.180] 英國自行車運動的命運在2003年的一天發生了變化
 [00:00:15.640 --> 00:00:24.060] The organization, which was the governing body for professional cycling in Great Britain, had recently hired Dave Brailsford as its performance director.
+[00:00:15.640 --> 00:00:24.060] 該組織是英國專業自行車運動的管理機構，最近聘請了Dave Brailsford擔任表現總監。
 [00:00:24.500 --> 00:00:30.060] At the time, professional cyclists in Great Britain had endured nearly 100 years of mediocrity.
+[00:00:24.500 --> 00:00:30.060] 當時，英國的職業自行車手已經忍受了近100年的平庸。
 [00:00:30.700 --> 00:00:39.740] Since 1908, British riders had won just a single gold medal at the Olympic Games, and they had fared even worse in cycling's biggest race, the Tour de France.
+[00:00:30.700 --> 00:00:39.740] 自1908年以來，英國車手在奧運會上只贏得一枚金牌，而在自行車最大的比賽環法自行車賽中，他們的表現甚至更糟。
 [00:00:40.200 --> 00:00:43.960] In 110 years, no British cyclist had ever won the event.
+[00:00:40.200 --> 00:00:43.960] 110年來，沒有一位英國自行車運動員贏得這項賽事。
 [00:00:44.660 --> 00:00:57.900] In fact, the performance of British riders had been so underwhelming that one of the top bike manufacturers in Europe refused to sell bikes to the team because they were afraid that it would hurt sales if other professionals saw the Brits using their gear.
+[00:00:44.660 --> 00:00:57.900] 事實上，英國車手的表現如此令人印象深刻，以至於歐洲頂級自行車製造商之一拒絕向車隊出售自行車，因為他們擔心如果其他專業人士看到英國人使用他們的裝備會損害銷售。
 [00:00:59.320 --> 00:01:02.160] Brailsford had been hired to put British cycling on a new trajectory.
+[00:00:59.320 --> 00:01:02.160] Brailsford被僱用來將英國自行車帶入新的軌道。
 [00:01:02.840 --> 00:01:15.760] What made him different from previous coaches was his relentless commitment to a strategy that he referred to as the aggregation of marginal gains, which was the philosophy of searching for a tiny margin of improvement in everything you do.
+[00:01:02.840 --> 00:01:15.760] 他與前任教練的不同之處在於，他堅定不移地致力於一種他稱為邊際收益聚合的策略，即在你所做的一切中尋找微小的改進邊際的哲學。
 [00:01:16.640 --> 00:01:25.180] Brailsford said, The whole principle came from the idea that if you broke down everything you could think of that goes into riding a bike and then improve it by 1%,
+[00:01:16.640 --> 00:01:25.180] Brailsford說，整個原則來自這樣的想法：如果你把所有你能想到的東西都分解掉，然後騎自行車，然後將它改進1 ％ ，
 [00:01:25.180 --> 00:01:28.320] you will get a significant increase when you put them all together.
+[00:01:25.180 --> 00:01:28.320] 當你把它們放在一起時，你會得到顯著的增加。
 [00:01:29.820 --> 00:01:34.980] Brailsford and his coaches began by making small adjustments you might expect from a professional cycling team.
+[00:01:29.820 --> 00:01:34.980] Brailsford和他的教練一開始會對專業自行車隊進行細微調整。
 [00:01:35.440 --> 00:01:40.520] They redesigned the bike seats to make them more comfortable and rubbed alcohol on the tires for a better grip.
+[00:01:35.440 --> 00:01:40.520] 他們重新設計了自行車座椅，使其更舒適，並在輪胎上擦拭酒精，以獲得更好的抓地力。
 [00:01:40.920 --> 00:01:46.060] They asked riders to wear electrically heated overshorts to maintain ideal muscle temperature while riding,
+[00:01:40.920 --> 00:01:46.060] 他們要求乘客在騎乘時穿著電熱式超短褲，以維持理想的肌肉溫度，
 [00:01:46.220 --> 00:01:50.860] and used biofeedback sensors to monitor how each athlete responded to a particular workout.
+[00:01:46.220 --> 00:01:50.860] 並使用生物反饋傳感器來監控每位運動員對特定鍛煉的反應。
 [00:01:51.420 --> 00:02:01.460] The team tested various fabrics in a wind tunnel and had their outdoor riders switch to indoor racing suits, which proved to be lighter and more aerodynamic. But they didn't stop there.
+[00:01:51.420 --> 00:02:01.460] 該團隊在風洞中測試了各種織物，並讓他們的戶外騎手切換到室內賽車服，這被證明是更輕，更具空氣動力學。但他們並沒有止步於此。
 [00:02:02.200 --> 00:02:07.080] Brailsford and his team continued to find 1 % improvements and overlooked in unexpected areas.
+[00:02:02.200 --> 00:02:07.080] Brailsford和他的團隊繼續發現1 ％的改進，但在意想不到的領域被忽視。
 [00:02:07.800 --> 00:02:12.880] They tested different types of massage gels to see which one led to the fastest muscle recovery.
+[00:02:07.800 --> 00:02:12.880] 他們測試了不同類型的按摩凝膠，看看哪一種導致肌肉恢復最快。
 [00:02:13.400 --> 00:02:19.520] They hired a surgeon to teach each rider the best way to wash their hands to reduce the chances of catching a cold.
+[00:02:13.400 --> 00:02:19.520] 他們聘請外科醫生教導每位乘客洗手的最佳方式，以減少感冒的機會。
 [00:02:20.220 --> 00:02:24.440] They determined the type of pillow and mattress that led to the best night's sleep for each rider.
+[00:02:20.220 --> 00:02:24.440] 他們決定為每位乘客提供最佳睡眠的枕頭和牀墊類型。
 [00:02:24.860 --> 00:02:31.960] They even painted the inside of the team truck white, which helped them spot little bits of dust that would normally slip by unnoticed,
+[00:02:24.860 --> 00:02:31.960] 他們甚至將團隊卡車的內部漆成白色，這有助於他們發現通常會被忽視的灰塵
 [00:02:32.160 --> 00:02:34.760] but could degrade the performance of the finely tuned bikes.
+[00:02:32.160 --> 00:02:34.760] 但可能會降低微調自行車的性能
 [00:02:35.900 --> 00:02:41.840] As these and hundreds of other small improvements accumulated, the results came faster than anyone could have imagined.
+[00:02:35.900 --> 00:02:41.840] 隨著這些和其他數百個小改進的積累，結果比任何人想像的都要快。
 [00:02:42.740 --> 00:02:54.700] Just five years after Brailsford took over, the British cycling team dominated the road and track cycling events at the 2008 Olympic Games in Beijing, where they won an astounding 60 % of the gold medals available.
+[00:02:42.740 --> 00:02:54.700] 在Brailsford接手五年後，英國自行車隊在2008年北京奧運會上主導了公路和田徑自行車賽事，在那裡他們贏得了驚人的60 ％的金牌。
 [00:02:55.620 --> 00:03:03.180] Four years later, when the Olympic Games came to London, the Brits raised the bar as they set nine Olympic records and seven world records.
+[00:02:55.620 --> 00:03:03.180] 四年後，當奧運會來到倫敦時，英國人提高了標準，創下了九項奧運紀錄和七項世界紀錄。
 [00:03:03.860 --> 00:03:08.320] That same year, Bradley Wiggins became the first British cyclist to win the Tour de France.
+[00:03:03.860 --> 00:03:08.320] 同年，布拉德利·威金斯（ Bradley Wiggins ）成為第一位贏得環法自行車賽的英國自行車手。
 [00:03:08.320 --> 00:03:13.980] The next year, his teammate Chris Froome won the race, and he would go on to win again in 2015,
+[00:03:08.320 --> 00:03:13.980] 次年，他的隊友克裏斯弗羅姆贏得了比賽，他將在2015年再次獲勝
 [00:03:14.640 --> 00:03:20.380] 2016, and 2017, giving the British team five Tour de France victories in six years.
+[00:03:14.640 --> 00:03:20.380] 2016年和2017年，讓英國隊在六年內獲得五次環法自行車賽冠軍。
 [00:03:21.220 --> 00:03:24.860] During the 10 -year span from 2007 to 2017,
+[00:03:21.220 --> 00:03:24.860] 在2007年至2017年的10年期間，
 [00:03:25.600 --> 00:03:40.000] British cyclists won 178 world championships and 66 Olympic or Paralympic gold medals and captured five Tour de France victories in what is widely regarded as the most successful run in cycling history. How does this happen?
+[00:03:25.600 --> 00:03:40.000] 英國自行車運動員贏得了178個世界錦標賽冠軍和66個奧運會或殘奧會金牌，並在被廣泛認為是自行車歷史上最成功的比賽中獲得了五次環法自行車賽的勝利。為什麼會發生這種情況？
 [00:03:40.240 --> 00:03:49.580] How does a team of previously ordinary athletes transform into world champions with tiny changes that, at first glance, would seem to make a modest difference at best?
+[00:03:40.240 --> 00:03:49.580] 一支以前的普通運動員團隊如何在乍一看似乎會產生適度差異的微小變化下轉變為世界冠軍？
 [00:03:50.060 --> 00:03:59.540] Why do small improvements accumulate into such remarkable results, and how can you replicate this approach in your own life? Why Small Habits Make a Big Difference
+[00:03:50.060 --> 00:03:59.540] 為什麼微小的改善會積累成如此顯著的結果，以及您如何在自己的生活中複製這種方法？為什麼小習慣會產生重大影響
 [00:04:00.660 --> 00:04:09.080] It is so easy to overestimate the importance of one defining moment and underestimate the value of making small improvements on a daily basis.
+[00:04:00.660 --> 00:04:09.080] 人們很容易高估一個決定性時刻的重要性，而低估每天進行微小改進的價值。
 [00:04:09.580 --> 00:04:14.280] Too often, we convince ourselves that massive success requires massive action.
+[00:04:09.580 --> 00:04:14.280] 我們常常說服自己，大規模的成功需要大規模的行動。
 [00:04:14.620 --> 00:04:26.400] Whether it is losing weight, building a business, writing a book, winning a championship, or achieving any other goal, we put pressure on ourselves to make some earth -shattering improvement that everyone will talk about.
+[00:04:14.620 --> 00:04:26.400] 無論是減肥、創業、寫書、贏得冠軍，還是實現任何其他目標，我們都會給自己施加壓力，讓自己做出一些每個人都會談論的驚天動地的改進。
 [00:04:27.220 --> 00:04:32.640] Meanwhile, improving by one percent isn't particularly notable, sometimes it isn't even noticeable,
+[00:04:27.220 --> 00:04:32.640] 同時，改善百分之一並不特別明顯，有時甚至不明顯，
 [00:04:32.640 --> 00:04:36.120] but it can be far more meaningful, especially in the long run.
+[00:04:32.640 --> 00:04:36.120] 但它可能更有意義，特別是從長遠來看
 [00:04:36.780 --> 00:04:41.760] The difference a tiny improvement can make over time is astounding. Here's how the math works out.
+[00:04:36.780 --> 00:04:41.760] 隨著時間的推移，微小的改進可以產生的差異是驚人的。以下是數學的運作方式。
 [00:04:42.140 --> 00:04:47.960] If you can get one percent better each day for one year, you'll end up 37 times better by the time you're done.
+[00:04:42.140 --> 00:04:47.960] 如果你能夠在一年內每天提高百分之一，到結束時，你最終會提高37倍。
 [00:04:48.780 --> 00:04:53.520] Conversely, if you get one percent worse each day for one year, you'll decline nearly down to zero.
+[00:04:48.780 --> 00:04:53.520] 相反，如果你在一年內每天變差百分之一，你會下降到幾乎為零。
 [00:04:53.920 --> 00:04:58.440] What starts as a small win or a minor setback accumulates into something much more.
+[00:04:53.920 --> 00:04:58.440] 從小小的勝利或小小的挫折開始，會積累成更多的東西。
 [00:04:59.120 --> 00:05:01.780] Habits are the compound interest of self -improvement.
+[00:04:59.120 --> 00:05:01.780] 習慣是自我提升的複利。
 [00:05:02.060 --> 00:05:07.980] The same way that money multiplies through compound interest, the effects of your habits multiply as you repeat them.
+[00:05:02.060 --> 00:05:07.980] 就像金錢通過複利倍增一樣，當你重複它們時，你的習慣的影響也會倍增。
 [00:05:08.260 --> 00:05:14.640] They seem to make little difference on any given day, and yet the impact they deliver over the months and years can be enormous.
+[00:05:08.260 --> 00:05:14.640] 它們似乎在任何一天都沒有什麼不同，但它們在幾個月和幾年內產生的影響可能是巨大的。
 [00:05:15.000 --> 00:05:23.620] It is only when looking back, two, five, or perhaps ten years later, that the value of good habits and the cost of bad ones becomes strikingly apparent.
+[00:05:15.000 --> 00:05:23.620] 只有當回顧兩年、五年或十年後，好習慣的價值和壞習慣的代價才會顯而易見。
 [00:05:24.580 --> 00:05:27.600] This can be a difficult concept to appreciate in daily life.
+[00:05:24.580 --> 00:05:27.600] 在日常生活中，這可能是一個難以理解的概念。
 [00:05:28.140 --> 00:05:32.180] We often dismiss small changes because they don't seem to matter very much in the moment.
+[00:05:28.140 --> 00:05:32.180] 我們經常忽略微小的變化，因為它們在當下似乎並不重要。
 [00:05:32.700 --> 00:05:35.500] If you save a little money now, you're still not a millionaire.
+[00:05:32.700 --> 00:05:35.500] 如果你現在存了一點錢，你仍然不是百萬富翁。
 [00:05:35.720 --> 00:05:38.700] If you go to the gym three days in a row, you're still out of shape.
+[00:05:35.720 --> 00:05:38.700] 如果你連續三天去健身房，你仍然會變形。
 [00:05:38.980 --> 00:05:42.380] If you study Mandarin for an hour tonight, you still haven't learned the language.
+[00:05:38.980 --> 00:05:42.380] 如果你今晚學了一個小時的普通話，你還沒有學會這種語言。
 [00:05:42.780 --> 00:05:48.460] We make a few changes, but the results never seem to come quickly, and so we slide back into our previous routines.
+[00:05:42.780 --> 00:05:48.460] 我們做了一些改變，但結果似乎永遠不會很快出現，因此我們又回到了以前的例行公事。
 [00:05:49.680 --> 00:05:54.180] Unfortunately, the slow pace of transformation also makes it easy to let a bad habit slide.
+[00:05:49.680 --> 00:05:54.180] 不幸的是，轉型步伐緩慢也很容易讓壞習慣消失。
 [00:05:54.960 --> 00:05:57.940] If you eat an unhealthy meal today, the scale doesn't move much.
+[00:05:54.960 --> 00:05:57.940] 如果你今天吃了一頓不健康的飯，體重就不會有太大的變化。
 [00:05:58.060 --> 00:06:00.940] If you work late and ignore your family, they will forgive you.
+[00:05:58.060 --> 00:06:00.940] 如果你工作到很晚，忽視你的家人，他們會原諒你。
 [00:06:01.200 --> 00:06:08.760] If you procrastinate and put your project off until tomorrow, there will usually be time to finish it later. A single decision is easy to dismiss.
+[00:06:01.200 --> 00:06:08.760] 如果您拖延並將專案推遲到明天，通常會有時間在稍後完成。單一決策很容易被忽略。
 [00:06:09.400 --> 00:06:16.060] But when we repeat 1 % errors, day after day, by replicating poor decisions, duplicating tiny mistakes,
+[00:06:09.400 --> 00:06:16.060] 但是，當我們日復一日地重複1 ％的錯誤時，通過複製糟糕的決策，複製微小的錯誤，
 [00:06:16.280 --> 00:06:21.400] and rationalizing little excuses, our small choices compound into toxic results.
+[00:06:16.280 --> 00:06:21.400] 並合理化小藉口，我們的小選擇會複合成有毒的結果。
 [00:06:21.960 --> 00:06:28.300] It's the accumulation of many missteps, a 1 % decline here and there, that eventually leads to a problem.
+[00:06:21.960 --> 00:06:28.300] 這是許多失誤的積累，在這裡和那裡下降1 ％ ，最終導致問題。
 [00:06:29.040 --> 00:06:35.280] The impact created by a change in your habits is similar to the effect of shifting the route of an airplane by just a few degrees.
+[00:06:29.040 --> 00:06:35.280] 習慣改變所帶來的影響，類似於將飛機航線改變幾度的影響。
 [00:06:36.000 --> 00:06:38.560] Imagine you are flying from Los Angeles to New York City.
+[00:06:36.000 --> 00:06:38.560] 想像一下，你正從洛杉磯飛往紐約市。
 [00:06:38.940 --> 00:06:46.800] If a pilot, leaving from LAX, adjusts the heading just 3 .5 degrees south, you will land in Washington, D .C., instead of New York.
+[00:06:38.940 --> 00:06:46.800] 如果從洛杉磯國際機場出發的飛行員向南調整航向僅3 .5度，您將降落在華盛頓特區，而不是紐約。
 [00:06:47.460 --> 00:06:57.100] Such a small change is barely noticeable at takeoff, the nose of the airplane moves just a few feet, but when magnified across the entire United States, you end up hundreds of miles apart.
+[00:06:47.460 --> 00:06:57.100] 這種微小的變化在起飛時幾乎看不出來，飛機的機頭只移動了幾英尺，但當放大整個美國時，你最終會相隔數百英裏。
 [00:06:58.260 --> 00:07:02.860] Similarly, a slight change in your daily habits can guide your life to a very different destination.
+[00:06:58.260 --> 00:07:02.860] 同樣，日常習慣的輕微改變可以引導您的生活走向完全不同的目的地。
 [00:07:03.460 --> 00:07:08.180] Making a choice that is 1 % better or 1 % worse seems insignificant in the moment.
+[00:07:03.460 --> 00:07:08.180] 做出1 ％更好或1 ％更差的選擇在當下似乎微不足道。
 [00:07:08.420 --> 00:07:14.880] But over the span of moments that make up a lifetime, these choices determine the difference between who you are and who you could be.
+[00:07:08.420 --> 00:07:14.880] 但在構成一生的各個時刻，這些選擇決定了你是誰和你可能成為誰之間的差異。
 [00:07:15.540 --> 00:07:19.720] Success is the product of daily habits, not once -in -a -lifetime transformations.
+[00:07:15.540 --> 00:07:19.720] 成功是日常習慣的產物，而不是一生一次的轉變。
 [00:07:21.500 --> 00:07:25.700] That said, it doesn't matter how successful or unsuccessful you are right now.
+[00:07:21.500 --> 00:07:25.700] 也就是說，你現在的成功與否並不重要。
 [00:07:25.820 --> 00:07:29.460] What matters is whether your habits are putting you on the path toward success.
+[00:07:25.820 --> 00:07:29.460] 重要的是你的習慣是否讓你走上成功之路。
 [00:07:29.900 --> 00:07:34.100] You should be far more concerned with your current trajectory than with your current results.
+[00:07:29.900 --> 00:07:34.100] 您應該更關心目前的軌跡，而不是目前的結果。
 [00:07:34.840 --> 00:07:39.080] If you're a millionaire, but you spend more than you earn each month, then you're on a bad trajectory.
+[00:07:34.840 --> 00:07:39.080] 如果你是百萬富翁，但每個月的花費超過收入，那麼你正處於一個糟糕的軌道上。
 [00:07:39.540 --> 00:07:42.180] If your spending habits don't change, it's not going to end well.
+[00:07:39.540 --> 00:07:42.180] 如果你的消費習慣沒有改變，結果就不會好。
 [00:07:43.000 --> 00:07:49.380] Conversely, if you're broke, but you save a little bit every month, then you're on the path toward financial freedom, even if you're moving slower than you'd like.
+[00:07:43.000 --> 00:07:49.380] 相反，如果你身無分文，但每個月都存了一點錢，那麼即使你的行動速度比你想像的要慢，你也在邁向財務自由的道路上。
 [00:07:50.560 --> 00:07:53.120] Your outcomes are a lagging measure of your habits.
+[00:07:50.560 --> 00:07:53.120] 您的成果是衡量您習慣的落後標準。
 [00:07:53.340 --> 00:07:56.300] Your net worth is a lagging measure of your financial habits.
+[00:07:53.340 --> 00:07:56.300] 您的淨資產是衡量您財務習慣的落後標準。
 [00:07:56.480 --> 00:07:58.940] Your weight is a lagging measure of your eating habits.
+[00:07:56.480 --> 00:07:58.940] 體重是衡量飲食習慣的落後標準。
 [00:07:59.120 --> 00:08:01.800] Your knowledge is a lagging measure of your learning habits.
+[00:07:59.120 --> 00:08:01.800] 您的知識是衡量您學習習慣的落後標準。
 [00:08:02.000 --> 00:08:06.020] Your clutter is a lagging measure of your cleaning habits. You get what you repeat.
+[00:08:02.000 --> 00:08:06.020] 雜物是衡量清潔習慣的滯後指標。你得到你重複的東西。
 [00:08:07.140 --> 00:08:16.700] If you want to predict where you'll end up in life, all you have to do is follow the curve of tiny gains or tiny losses and see how your daily choices will compound 10 or 20 years down the line.
+[00:08:07.140 --> 00:08:16.700] 如果你想預測你將在生活中結束的地方，你所要做的就是跟隨微小的收益或微小的損失的曲線，看看你的日常選擇將如何在10年或20年後複合。
 [00:08:16.700 --> 00:08:18.900] Are you spending less than you earn each month?
+[00:08:16.700 --> 00:08:18.900] 你的消費是否低於每月收入？
 [00:08:19.220 --> 00:08:21.100] Are you making it into the gym each week?
+[00:08:19.220 --> 00:08:21.100] 你每週都去健身房嗎？
 [00:08:21.440 --> 00:08:23.720] Are you reading books and learning something new each day?
+[00:08:21.440 --> 00:08:23.720] 您是否每天都在閱讀書籍並學習新事物？
 [00:08:24.280 --> 00:08:27.720] Tiny battles like these are the ones that will define your future self.
+[00:08:24.280 --> 00:08:27.720] 像這樣的小戰鬥將定義你未來的自我。
 [00:08:28.660 --> 00:08:37.620] Time magnifies the margin between success and failure. It will multiply whatever you feed it. Good habits make time your ally. Bad habits make time your enemy.
+[00:08:28.660 --> 00:08:37.620] 時間放大了成功和失敗之間的距離。不管你餵它甚麼，它都會成倍增加。良好的習慣讓時間成為你的盟友。壞習慣讓時間成為你的敵人。
 [00:08:38.340 --> 00:08:45.840] Your habits can compound for you or against you. Here are some examples of positive compounding. Productivity compounds.
+[00:08:38.340 --> 00:08:45.840] 你的習慣可能對你有利或不利。以下是一些積極複合的例子。生產力複合。
 [00:08:46.720 --> 00:08:51.980] Accomplishing one extra task is a small feat on any given day but accounts for a lot over an entire career.
+[00:08:46.720 --> 00:08:51.980] 完成一項額外任務在任何一天都是一個小壯舉，但在整個職業生涯中佔有很大比重。
 [00:08:52.540 --> 00:08:56.660] The effect of automating an old task or mastering a new skill can be even greater.
+[00:08:52.540 --> 00:08:56.660] 自動化舊任務或掌握新技能的影響可能更大。
 [00:08:57.040 --> 00:09:04.500] The more tasks you can handle without thinking, the more your brain is free to focus on other areas. Knowledge compounds.
+[00:08:57.040 --> 00:09:04.500] 您無需思考就能處理的任務越多，您的大腦就越能自由地專注於其他領域。知識複合物。
 [00:09:05.040 --> 00:09:11.100] Learning one new idea won't make you a genius, but a commitment to lifelong learning can be transformative. Furthermore,
+[00:09:05.040 --> 00:09:11.100] 學習一個新想法不會讓你成為天才，但對終身學習的承諾可能會帶來變革。此外，
 [00:09:11.700 --> 00:09:17.240] each book you read not only teaches you something new, but also opens up different ways of thinking about old ideas.
+[00:09:11.700 --> 00:09:17.240] 您閱讀的每本書不僅教會您一些新的東西，還開啟了對舊思想的不同思考方式。
 [00:09:17.660 --> 00:09:27.640] As Warren Buffett says, that's how knowledge works. It builds up like compound interest. Relationships compound. People reflect your behavior back to you.
+[00:09:17.660 --> 00:09:27.640] 正如沃倫·巴菲特（ Warren Buffett ）所說，知識就是這樣運作的。它像複利一樣累積起來。關係複合。人們會將您的行為反應給您。
 [00:09:27.860 --> 00:09:30.420] The more you help others, the more others want to help you.
+[00:09:27.860 --> 00:09:30.420] 你幫助他人越多，其他人就越想幫助你。
 [00:09:30.840 --> 00:09:36.300] Being a little bit nicer in each interaction can result in a network of broad and strong connections over time.
+[00:09:30.840 --> 00:09:36.300] 在每次互動中變得更友善一點，隨著時間的推移，可以建立廣泛而強大的聯繫網絡。
 [00:09:37.700 --> 00:09:50.900] And here are some examples of negative compounding. Stress compounds. The frustration of a traffic jam. The weight of parenting responsibilities. The worry of making ends meet. The strain of slightly high blood pressure.
+[00:09:37.700 --> 00:09:50.900] 這裡有一些負複合的例子。壓力複合。交通堵塞的挫折感。育兒責任的份量。維持生計的憂慮。輕微高血壓的壓力。
 [00:09:51.340 --> 00:10:02.080] By themselves, these common causes of stress are manageable, but when they persist for years, little stresses compound into serious health issues. Negative thoughts compound.
+[00:09:51.340 --> 00:10:02.080] 這些壓力的常見原因本身是可以控制的，但當它們持續多年時，很少有壓力會複合成嚴重的健康問題。負面思想複雜化。
 [00:10:02.580 --> 00:10:10.660] The more you think of yourself as worthless or stupid or ugly, the more you condition yourself to interpret life that way. You get trapped in a thought loop.
+[00:10:02.580 --> 00:10:10.660] 你越認為自己毫無價值、愚蠢或醜陋，你就越習慣以這種方式解釋生活。你被困在一個思想循環中。
 [00:10:11.020 --> 00:10:13.140] The same is true for how you think about others.
+[00:10:11.020 --> 00:10:13.140] 您如何看待他人也是如此。
 [00:10:13.420 --> 00:10:21.620] Once you fall into the habit of seeing people as angry, unjust, or selfish, you see those kind of people everywhere. Outrage compounds.
+[00:10:13.420 --> 00:10:21.620] 一旦你養成了將人們視為憤怒、不公正或自私的習慣，你就會看到到處都是那種人。憤怒情緒會複雜化。
 [00:10:22.440 --> 00:10:26.400] Riots, protests, and mass movements are rarely the result of a single event.
+[00:10:22.440 --> 00:10:26.400] 暴動、抗議和羣眾運動很少是單一事件的結果。
 [00:10:26.420 --> 00:10:35.540] Instead, a long series of microaggressions and daily aggravations slowly multiply until one event tips the scales and outrage spreads like wildfire.
+[00:10:26.420 --> 00:10:35.540] 相反，一連串的微攻擊和日常惡化慢慢成倍增加，直到一個事件像野火一樣擴大規模和憤怒蔓延。

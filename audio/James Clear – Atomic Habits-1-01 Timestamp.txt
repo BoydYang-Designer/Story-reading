@@ -1,78 +1,156 @@
 [00:00:00.000 --> 00:00:14.720] Atomic Habits. An easy and proven way to build good habits and break bad ones. Tiny Changes. Remarkable Results. This is the author, James Clear. Introduction. My Story.
+[00:00:00.000 --> 00:00:14.720] 原子習慣。建立好習慣和打破壞習慣的簡單且經過驗證的方法。微小改變。卓越成果。這是作者，詹姆斯·克利爾簡介。我的故事。
 [00:00:15.820 --> 00:00:20.480] On the final day of my sophomore year of high school, I was hit in the face with a baseball bat.
+[00:00:15.820 --> 00:00:20.480] 在我高中二年級的最後一天，我被棒球棒擊中臉部。
 [00:00:21.140 --> 00:00:28.300] As my classmate took a full swing, the bat slipped out of his hands and came flying toward me before striking me directly between the eyes.
+[00:00:21.140 --> 00:00:28.300] 當我的同學全力以赴時，蝙蝠從他的手中滑落，飛向我，然後直接打在我的眼睛之間。
 [00:00:28.840 --> 00:00:31.100] I have no memory of the moment of impact.
+[00:00:28.840 --> 00:00:31.100] 我對撞擊的那一刻沒有記憶。
 [00:00:32.180 --> 00:00:37.600] The bat smashed into my face with such force that it crushed my nose into a distorted U -shape.
+[00:00:32.180 --> 00:00:37.600] 蝙蝠用力砸在我的臉上，把我的鼻子壓成扭曲的U形。
 [00:00:37.960 --> 00:00:42.360] The collision sent the soft tissue of my brain slamming into the inside of my skull.
+[00:00:37.960 --> 00:00:42.360] 碰撞使我的大腦軟組織猛烈撞擊我的頭骨內部。
 [00:00:43.420 --> 00:00:46.440] Immediately, a wave of swelling surged throughout my head.
+[00:00:43.420 --> 00:00:46.440] 立刻，一波腫脹湧上我的腦袋。
 [00:00:47.100 --> 00:00:53.200] In a fraction of a second, I had a broken nose, multiple skull fractures, and two shattered eye sockets.
+[00:00:47.100 --> 00:00:53.200] 在幾秒鐘內，我鼻子骨折，多處頭骨骨折，兩個眼窩破裂。
 [00:00:54.200 --> 00:00:57.920] When I opened my eyes, I saw people staring at me and running over to help.
+[00:00:54.200 --> 00:00:57.920] 當我睜開眼睛時，我看到有人盯著我看，跑過來幫忙。
 [00:00:58.420 --> 00:01:00.960] I looked down and noticed spots of red on my clothes.
+[00:00:58.420 --> 00:01:00.960] 我往下看，注意到衣服上有紅色的斑點。
 [00:01:01.380 --> 00:01:04.600] One of my classmates took the shirt off his back and handed it to me.
+[00:01:01.380 --> 00:01:04.600] 我的一個同學把襯衫從背上拿下來遞給我。
 [00:01:05.280 --> 00:01:08.460] I used it to plug the stream of blood rushing from my broken nose.
+[00:01:05.280 --> 00:01:08.460] 我用它來堵塞從我破碎的鼻子流出的血流。
 [00:01:09.140 --> 00:01:12.720] Shocked and confused, I was unaware of how seriously I had been injured.
+[00:01:09.140 --> 00:01:12.720] 感到震驚和困惑，我不知道自己受傷有多嚴重。
 [00:01:14.080 --> 00:01:18.700] My teacher looped his arm around my shoulder, and we began the long walk to the nurse's office.
+[00:01:14.080 --> 00:01:18.700] 老師抱著我的肩膀，我們開始長途跋涉到護士辦公室。
 [00:01:19.020 --> 00:01:22.020] Across the field, down the hill, and back into school.
+[00:01:19.020 --> 00:01:22.020] 穿過田野，下山，回到學校。
 [00:01:22.680 --> 00:01:30.780] Random hands touched my sides, holding me upright. We took our time and walked slowly. Nobody realized that every minute mattered.
+[00:01:22.680 --> 00:01:30.780] 隨機的手碰觸到我的兩側，直立地抱著我。我們慢慢來，慢慢走。沒有人意識到每一分鐘都很重要。
 [00:01:32.220 --> 00:01:41.920] When we arrived at the nurse's office, she asked me a series of questions. What year is it? 1998, I answered. It was actually 2002.
+[00:01:32.220 --> 00:01:41.920] 當我們到達護士辦公室時，她問了我一系列的問題。那是哪一年？ 1998年，我回答。實際上是2002年
 [00:01:42.800 --> 00:01:56.960] Who is the President of the United States? Bill Clinton, I said. The correct answer was George W. Bush. What is your mom's name? Uh, um, I stalled. Ten seconds passed.
+[00:01:42.800 --> 00:01:56.960] 誰是美國總統？比爾克林頓，我說正確答案是喬治· W ·布希。你媽媽叫什麼名字？我拖延了十秒過去了。
 [00:01:58.300 --> 00:02:06.740] Patty, I said casually, ignoring the fact that it had taken me ten seconds to remember my own mother's name. That is the last question I remember.
+[00:01:58.300 --> 00:02:06.740] 帕蒂，我隨口說，忽略了我花了十秒鐘才記住自己母親的名字的事實。這是我記得的最後一個問題。
 [00:02:07.180 --> 00:02:12.860] My body was unable to handle the rapid swelling in my brain, and I lost consciousness before the ambulance arrived.
+[00:02:07.180 --> 00:02:12.860] 我的身體無法處理大腦的快速腫脹，在救護車到達之前我失去了意識。
 [00:02:13.480 --> 00:02:17.220] Minutes later, I was carried out of school and taken to the local hospital.
+[00:02:13.480 --> 00:02:17.220] 幾分鐘後，我被帶出學校，送到當地醫院。
 [00:02:18.380 --> 00:02:21.360] Shortly after arriving, my body began shutting down.
+[00:02:18.380 --> 00:02:21.360] 到達後不久，我的身體開始關閉。
 [00:02:21.360 --> 00:02:24.880] I struggled with basic functions like swallowing and breathing.
+[00:02:21.360 --> 00:02:24.880] 我在吞咽和呼吸等基本功能方面苦苦掙扎。
 [00:02:25.400 --> 00:02:29.420] I had my first seizure of the day. Then, I stopped breathing entirely.
+[00:02:25.400 --> 00:02:29.420] 我今天第一次癲癇發作然後，我完全停止了呼吸。
 [00:02:30.120 --> 00:02:36.400] As the doctors hurried to supply me with oxygen, they also decided the local hospital was unequipped to handle the situation,
+[00:02:30.120 --> 00:02:36.400] 當醫生急著給我供氧時，他們也決定當地醫院沒有設備來處理這種情況，
 [00:02:36.400 --> 00:02:39.840] and ordered a helicopter to fly me to a larger hospital in Cincinnati.
+[00:02:36.400 --> 00:02:39.840] 並訂購一架直升機送我去辛辛那提的一家更大的醫院
 [00:02:40.940 --> 00:02:45.160] I was rolled out of the emergency room doors and toward the helipad across the street.
+[00:02:40.940 --> 00:02:45.160] 我被推出急診室的門，朝街對面的直升機停機坪走去。
 [00:02:45.160 --> 00:02:51.720] The stretcher rattled on a bumpy sidewalk as one nurse pushed me along, while another pumped each breath into me by hand.
+[00:02:45.160 --> 00:02:51.720] 擔架在崎嶇的人行道上嘎嘎作響，一位護士推著我，另一位護士用手把每口氣都往我身上吸。
 [00:02:52.440 --> 00:02:57.840] My mother, who had arrived at the hospital a few moments before, climbed into the helicopter beside me.
+[00:02:52.440 --> 00:02:57.840] 不久前抵達醫院的母親爬上了我旁邊的直升機。
 [00:02:58.400 --> 00:03:03.060] I remained unconscious and unable to breathe on my own, as she held my hand during the flight.
+[00:02:58.400 --> 00:03:03.060] 我仍然昏迷不醒，無法自主呼吸，因為她在飛行期間握著我的手。
 [00:03:04.600 --> 00:03:10.600] While my mother rode with me in the helicopter, my father went home to check on my brother and sister and break the news to them.
+[00:03:04.600 --> 00:03:10.600] 當母親和我一起乘坐直升機時，父親回家檢查我的兄弟姐妹，並將消息告訴他們。
 [00:03:11.220 --> 00:03:16.320] He choked back tears as he explained to my sister that he would miss her eighth -grade graduation ceremony that night.
+[00:03:11.220 --> 00:03:16.320] 當他向我妹妹解釋說他會錯過那天晚上的八年級畢業典禮時，他哽咽著淚水。
 [00:03:16.980 --> 00:03:21.920] After passing my siblings off to family and friends, he drove to Cincinnati to meet my mother.
+[00:03:16.980 --> 00:03:21.920] 在把我的兄弟姐妹傳給家人和朋友之後，他開車去辛辛那提見了我的母親。
 [00:03:23.160 --> 00:03:31.080] When my mom and I landed on the roof of the hospital, a team of nearly twenty doctors and nurses sprinted onto the helipad and wheeled me into the trauma unit.
+[00:03:23.160 --> 00:03:31.080] 當我和媽媽降落在醫院的屋頂上時，一支由近二十名醫生和護士組成的團隊衝上直升機停機坪，把我推進創傷部門。
 [00:03:31.660 --> 00:03:37.200] By this time, the swelling in my brain had become so severe that I was having repeated post -traumatic seizures.
+[00:03:31.660 --> 00:03:37.200] 到那時，我大腦的腫脹已經變得如此嚴重，以至於我反覆出現創傷後癲癇發作。
 [00:03:37.600 --> 00:03:41.920] My broken bones needed to be fixed, but I was in no condition to undergo surgery.
+[00:03:37.600 --> 00:03:41.920] 我的骨折需要修復，但我沒有條件接受手術。
 [00:03:42.680 --> 00:03:49.020] After yet another seizure, my third of the day, I was put into a medically induced coma and placed on a ventilator.
+[00:03:42.680 --> 00:03:49.020] 在第三天又一次癲癇發作後，我陷入了醫學誘發的昏迷狀態，並被放置在呼吸機上。
 [00:03:50.500 --> 00:03:52.720] My parents were no strangers to this hospital.
+[00:03:50.500 --> 00:03:52.720] 我父母對這家醫院並不陌生。
 [00:03:53.400 --> 00:04:03.180] Ten years earlier, they had entered the same building on the ground floor after my sister was diagnosed with leukemia at age three. I was five at the time. My brother was just six months old.
+[00:03:53.400 --> 00:04:03.180] 十年前，在我姐姐三歲時被診斷出患有白血病後，他們進入了一樓的同一棟樓。那時我五歲。我哥哥才六個月大
 [00:04:04.020 --> 00:04:13.820] After two and a half years of chemotherapy treatments, spinal taps, and bone marrow biopsies, my little sister finally walked out of the hospital happy, healthy, and cancer -free.
+[00:04:04.020 --> 00:04:13.820] 經過兩年半的化療、脊椎穿刺和骨髓活組織檢查，我的妹妹終於快樂、健康、無癌症地走出了醫院。
 [00:04:14.660 --> 00:04:20.720] And now, after ten years of normal life, my parents found themselves back in the same place with a different child.
+[00:04:14.660 --> 00:04:20.720] 現在，經過十年的正常生活，我的父母發現自己和另一個孩子回到了同一個地方。
 [00:04:22.400 --> 00:04:27.240] While I slipped into a coma, the hospital sent a priest and a social worker to comfort my parents.
+[00:04:22.400 --> 00:04:27.240] 當我陷入昏迷時，醫院派了一名神父和一名社工來安慰我的父母。
 [00:04:27.240 --> 00:04:32.800] It was the same priest who had met with them a decade earlier, on the evening they found out my sister had cancer.
+[00:04:27.240 --> 00:04:32.800] 十年前，他們發現我妹妹患癌症的那天晚上，就是同一位牧師與他們見面。
 [00:04:33.580 --> 00:04:37.440] As day faded into night, a series of machines kept me alive.
+[00:04:33.580 --> 00:04:37.440] 隨著白天逐漸變成黑夜，一系列機器讓我活了下來。
 [00:04:38.180 --> 00:04:43.180] My parents slept restlessly on a hospital mattress. One moment, they would collapse from fatigue.
+[00:04:38.180 --> 00:04:43.180] 我父母不安地睡在醫院的牀墊上。片刻之間，他們就會因疲勞而崩潰。
 [00:04:43.480 --> 00:04:45.500] The next, they would be wide awake with worry.
+[00:04:43.480 --> 00:04:45.500] 接下來，他們會因擔心而完全清醒。
 [00:04:46.080 --> 00:04:53.830] My mother would tell me later, It was one of the worst nights I've ever had. My recovery.
+[00:04:46.080 --> 00:04:53.830] 我媽媽後來告訴我，這是我經歷過的最糟糕的夜晚之一。我的康復。
 [00:04:55.550 --> 00:05:01.310] Mercifully, by the next morning, my breathing had rebounded to the point where the doctors felt comfortable releasing me from the coma.
+[00:04:55.550 --> 00:05:01.310] 幸運的是，到了第二天早上，我的呼吸已經恢復到醫生覺得舒服地把我從昏迷中解放出來的程度。
 [00:05:01.890 --> 00:05:05.970] When I finally regained consciousness, I discovered that I had lost my ability to smell.
+[00:05:01.890 --> 00:05:05.970] 當我終於恢復意識時，我發現我已經失去了嗅覺能力。
 [00:05:06.610 --> 00:05:10.530] As a test, a nurse asked me to blow my nose and sniff an apple juice box.
+[00:05:06.610 --> 00:05:10.530] 作為一項測試，護士要我噴鼻涕，嗅一個蘋果汁盒。
 [00:05:11.170 --> 00:05:19.870] My sense of smell returned, but, to everyone's surprise, the act of blowing my nose forced air through the fractures in my eye socket and pushed my left eye outward.
+[00:05:11.170 --> 00:05:19.870] 我的嗅覺恢復了，但令所有人驚訝的是，我的鼻子被迫通過眼窩骨折，並將左眼向外推。
 [00:05:20.450 --> 00:05:27.130] My eyeball bulged out of the socket, held precariously in place by my eyelid and the optic nerve attaching my eye to my brain.
+[00:05:20.450 --> 00:05:27.130] 我的眼球從眼窩中凸出，被我的眼瞼和將我的眼睛附著在我大腦上的視神經不穩定地固定到位。
 [00:05:28.510 --> 00:05:34.890] The ophthalmologist said my eye would gradually slide back into place as the air seeped out, but it was hard to tell how long this would take.
+[00:05:28.510 --> 00:05:34.890] 眼科醫生說，隨著空氣滲出，我的眼睛會逐漸滑回原位，但很難說這需要多長時間。
 [00:05:35.510 --> 00:05:40.090] I was scheduled for surgery one week later, which would allow me some additional time to heal.
+[00:05:35.510 --> 00:05:40.090] 一週後，我被安排進行手術，這將給我一些額外的時間來癒合。
 [00:05:40.770 --> 00:05:45.270] I looked like I had been on the wrong end of a boxing match, but I was cleared to leave the hospital.
+[00:05:40.770 --> 00:05:45.270] 我看起來像是在一場拳擊比賽的錯誤結束，但我被允許離開醫院。
 [00:05:46.290 --> 00:05:53.950] I returned home with a broken nose, half a dozen facial fractures, and a bulging left eye. The following months were hard.
+[00:05:46.290 --> 00:05:53.950] 我回到家時，鼻子骨折，六處臉部骨折，左眼凸起。接下來的幾個月很艱難。
 [00:05:54.170 --> 00:05:56.350] It felt like everything in my life was on pause.
+[00:05:54.170 --> 00:05:56.350] 我覺得生活中的一切都處於暫停狀態。
 [00:05:56.690 --> 00:05:59.610] I had double vision for weeks, I literally couldn't see straight.
+[00:05:56.690 --> 00:05:59.610] 我有幾個星期的雙視力，我實際上看不到直線。
 [00:05:59.990 --> 00:06:04.250] It took more than a month, but my eyeball did eventually return to its normal location.
+[00:05:59.990 --> 00:06:04.250] 花了一個多月的時間，但我的眼球最終恢復了正常的位置。
 [00:06:04.830 --> 00:06:09.150] Between the seizures and my vision problems, it was eight months before I could drive a car again.
+[00:06:04.830 --> 00:06:09.150] 在癲癇發作和視力問題之間，我花了八個月才再次開車。
 [00:06:09.910 --> 00:06:14.070] At physical therapy, I practiced basic motor patterns like walking in a straight line.
+[00:06:09.910 --> 00:06:14.070] 在物理治療中，我練習基本的運動模式，例如直線行走。
 [00:06:14.670 --> 00:06:20.310] I was determined not to let my injury get me down, but there were more than a few moments when I felt depressed and overwhelmed.
+[00:06:14.670 --> 00:06:20.310] 我決心不讓受傷讓我失望，但有不止一瞬間，我感到沮喪和不知所措。
 [00:06:21.670 --> 00:06:26.470] I became painfully aware of how far I had to go when I returned to the baseball field one year later.
+[00:06:21.670 --> 00:06:26.470] 一年後，當我回到棒球場時，我痛苦地意識到我必須走多遠。
 [00:06:27.370 --> 00:06:29.330] Baseball had always been a major part of my life.
+[00:06:27.370 --> 00:06:29.330] 棒球一直是我人生的重要組成部分。
 [00:06:29.530 --> 00:06:31.650] My dad had played minor league baseball for the St.
+[00:06:29.530 --> 00:06:31.650] 我父親曾在聖
 [00:06:31.690 --> 00:06:34.390] Louis Cardinals, and I had a dream of playing professionally too.
+[00:06:31.690 --> 00:06:34.390] 路易斯紅雀和我也夢想能打出專業的球
 [00:06:35.190 --> 00:06:39.430] After months of rehabilitation, what I wanted more than anything was to get back on the field.
+[00:06:35.190 --> 00:06:39.430] 經過幾個月的康復，我最想要的是回到球場。
 [00:06:40.150 --> 00:06:42.130] But my return to baseball was not smooth.
+[00:06:40.150 --> 00:06:42.130] 但我對棒球的回歸並不順利
 [00:06:42.810 --> 00:06:46.810] When the season rolled around, I was the only junior to be cut from the varsity baseball team.
+[00:06:42.810 --> 00:06:46.810] 當賽季結束時，我是唯一一個從大學棒球隊被淘汰的初中生。
 [00:06:47.130 --> 00:06:49.990] I was sent down to play with the sophomores on junior varsity.
+[00:06:47.130 --> 00:06:49.990] 我被派去跟大學二年級的學生一起玩
 [00:06:50.610 --> 00:06:59.230] I had been playing since age four, and for someone who had spent so much time and effort on the sport, getting cut was humiliating. I vividly remember the day it happened.
+[00:06:50.610 --> 00:06:59.230] 我從四歲起就開始打球，對於一個在這項運動上花了很多時間和精力的人來說，被裁掉是一種羞辱。我清楚地記得事情發生的那一天。
 [00:06:59.230 --> 00:07:04.910] I sat in my car and cried as I flipped through the radio, desperately searching for a song that would make me feel better.
+[00:06:59.230 --> 00:07:04.910] 當我翻開收音機時，我坐在車裡哭了起來，拼命尋找一首能讓我感覺更好的歌曲。
 [00:07:06.550 --> 00:07:12.030] After a year of self -doubt, I managed to make the varsity team as a senior, but I rarely made it on the field.
+[00:07:06.550 --> 00:07:12.030] 經過一年的自我懷疑，我設法成為校隊隊長，但我很少在場上成功。
 [00:07:12.750 --> 00:07:17.590] In total, I played 11 innings of high school varsity baseball, barely more than a single game.
+[00:07:12.750 --> 00:07:17.590] 總的來說，我參加了高中棒球隊的11局比賽，僅僅是一場比賽。
 [00:07:18.510 --> 00:07:24.890] Despite my lackluster high school career, I still believed I could become a great player, and I knew that if things were going to improve,
+[00:07:18.510 --> 00:07:24.890] 儘管我的高中生涯平淡無奇，但我仍然相信我可以成為一名偉大的球員，我知道如果事情會有所改善，
 [00:07:25.170 --> 00:07:27.330] I was the one responsible for making it happen.
+[00:07:25.170 --> 00:07:27.330] 我是實現這一目標的責任人。
 [00:07:27.970 --> 00:07:32.610] The turning point came two years after my injury, when I began college at Denison University.
+[00:07:27.970 --> 00:07:32.610] 轉捩點發生在我受傷兩年後，當時我在丹尼森大學上大學。
 [00:07:33.390 --> 00:07:38.890] It was a new beginning, and it was the place where I would discover the surprising power of small habits for the first time.
+[00:07:33.390 --> 00:07:38.890] 這是一個新的開始，也是我第一次發現小習慣的驚人力量的地方。

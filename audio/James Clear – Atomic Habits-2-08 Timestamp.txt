@@ -1,71 +1,142 @@
 [00:00:00.000 --> 00:00:03.340] You often decide what to do next based on what you have just finished doing.
+[00:00:00.000 --> 00:00:03.340] 您通常會根據剛剛完成的工作來決定下一步該做什麼。
 [00:00:03.760 --> 00:00:09.060] Going to the bathroom leads to washing and drying your hands, which reminds you that you need to put dirty towels in the laundry,
+[00:00:03.760 --> 00:00:09.060] 去洗手間會導致洗手和乾手，這提醒您需要將骯髒的毛巾放在洗衣房中，
 [00:00:09.220 --> 00:00:14.680] and so you add laundry detergent to the shopping list, and so on. No behavior happens in isolation.
+[00:00:09.220 --> 00:00:14.680] 所以你把洗衣液加到購物清單上等等任何行為都不會孤立發生。
 [00:00:15.320 --> 00:00:20.720] Each action becomes a cue that triggers the next behavior. All right, why is this important?
+[00:00:15.320 --> 00:00:20.720] 每個動作都會成為觸發下一個行為的提示。好吧，這為甚麼很重要？
 [00:00:21.240 --> 00:00:26.440] Well, when it comes to building new habits, you can use the connectedness of behavior to your advantage.
+[00:00:21.240 --> 00:00:26.440] 嗯，當涉及到建立新的習慣時，您可以使用行為的連接性來獲得優勢。
 [00:00:26.900 --> 00:00:32.180] One of the best ways to build a new habit is to identify a current habit that you already do each day,
+[00:00:26.900 --> 00:00:32.180] 養成新習慣的最佳方法之一是找出你每天已經養成的現有習慣，
 [00:00:32.280 --> 00:00:36.600] and then stack your new behavior on top. This is what I call habit stacking.
+[00:00:32.280 --> 00:00:36.600] 然後把你的新行為堆疊在上面這就是我所謂的習慣堆疊
 [00:00:37.160 --> 00:00:40.580] Habit stacking is a special form of an implementation intention.
+[00:00:37.160 --> 00:00:40.580] 習慣堆疊是實現意圖的一種特殊形式。
 [00:00:40.900 --> 00:00:46.080] Rather than pairing your new habit with a particular time and location, you pair it with a current habit.
+[00:00:40.900 --> 00:00:46.080] 與其將您的新習慣與特定的時間和地點配對，不如將其與當前的習慣配對。
 [00:00:46.500 --> 00:00:54.140] This method, which again was created by BJ Fogg as part of his Tiny Habits program, can be used to design an obvious cue for nearly any habit.
+[00:00:46.500 --> 00:00:54.140] 這種方法再次由BJ Fogg創建，作為他的Tiny Habits計劃的一部分，可用於設計幾乎任何習慣的明顯提示。
 [00:00:54.740 --> 00:01:03.460] So the habit stacking formula is, After current habit, I will new habit. For example, Meditation.
+[00:00:54.740 --> 00:01:03.460] 所以習慣堆疊公式是，按照目前的習慣，我會養成新的習慣。例如，冥想。
 [00:01:03.940 --> 00:01:08.840] After I pour my cup of coffee each morning, I will meditate for one minute. Exercise.
+[00:01:03.940 --> 00:01:08.840] 每天早上倒一杯咖啡後，我會冥想一分鐘。運動。
 [00:01:09.440 --> 00:01:14.840] After I take off my work shoes, I will immediately change into my workout clothes. Gratitude.
+[00:01:09.440 --> 00:01:14.840] 脫掉工作鞋後，我會馬上換上運動服，謝謝。
 [00:01:15.200 --> 00:01:20.580] After I sit down to dinner, I will say one thing I'm grateful for that happened today. Marriage.
+[00:01:15.200 --> 00:01:20.580] 在我坐下來吃晚飯後，我會說一件我很感謝今天發生的事情：婚姻。
 [00:01:21.120 --> 00:01:25.340] After I get into bed at night, I will give my partner a kiss. Safety.
+[00:01:21.120 --> 00:01:25.340] 晚上睡覺後，我會親吻我的伴侶。安全。
 [00:01:25.900 --> 00:01:31.300] After I put on my running shoes, I will text a friend or family member where I am running and how long it will take.
+[00:01:25.900 --> 00:01:31.300] 穿上跑鞋後，我會發短信給朋友或家人，告訴他們我跑步的地方和需要多長時間。
 [00:01:32.360 --> 00:01:36.760] The key is to tie your desired behavior into something you already do each day.
+[00:01:32.360 --> 00:01:36.760] 關鍵是將您想要的行為與您每天已經做的事情聯繫起來。
 [00:01:36.980 --> 00:01:42.360] Once you have mastered this basic structure, you can begin to create larger stacks by chaining small habits together.
+[00:01:36.980 --> 00:01:42.360] 一旦你掌握了這個基本結構，你就可以通過將小習慣鏈結在一起，開始創造更大的疊加。
 [00:01:42.360 --> 00:01:47.940] This allows you to take advantage of the natural momentum that comes from one behavior leading into the next,
+[00:01:42.360 --> 00:01:47.940] 這使您可以利用從一種行為導向下一種行為的自然動能，
 [00:01:48.160 --> 00:01:50.220] like a positive version of the Diderot effect.
+[00:01:48.160 --> 00:01:50.220] 就像狄德羅效應的正面版本
 [00:01:51.080 --> 00:01:55.900] So, for example, your morning routine habit stack might look like this. 1.
+[00:01:51.080 --> 00:01:55.900] 舉例來說，您的早晨例行習慣堆疊可能看起來像這樣。1.
 [00:01:56.600 --> 00:02:01.400] After I pour in my morning cup of coffee, I will meditate for 60 seconds. 2.
+[00:01:56.600 --> 00:02:01.400] 在早上倒入咖啡後，我會冥想60秒。2.
 [00:02:02.260 --> 00:02:07.020] After I meditate for 60 seconds, I will write my to -do list for the day. 3.
+[00:02:02.260 --> 00:02:07.020] 冥想60秒後，我會寫下當天的待辦事項清單。3.
 [00:02:07.720 --> 00:02:11.600] After I write my to -do list for the day, I will immediately begin my first task.
+[00:02:07.720 --> 00:02:11.600] 在我寫下當天的待辦事項清單後，我將立即開始我的第一項任務。
 [00:02:12.660 --> 00:02:16.500] Or, you could consider a habit stack like this in the evening. 1.
+[00:02:12.660 --> 00:02:16.500] 或者，您可以在晚上考慮這樣的習慣。1.
 [00:02:17.040 --> 00:02:21.860] After I finish eating dinner, I will put my plate directly into the dishwasher. 2.
+[00:02:17.040 --> 00:02:21.860] 晚餐吃完後，我會直接將盤子放入洗碗機。2.
 [00:02:22.340 --> 00:02:26.660] After I put my dishes away, I will immediately wipe down the counter. 3.
+[00:02:22.340 --> 00:02:26.660] 放好碗碟後，我會立即擦拭櫃臺。3.
 [00:02:27.140 --> 00:02:30.620] After I wipe down the counter, I will set out my coffee mug for tomorrow morning.
+[00:02:27.140 --> 00:02:30.620] 擦完櫃臺後，我會把咖啡杯放到明天早上。
 [00:02:31.780 --> 00:02:35.280] You can also insert new behaviors into the middle of your current routines.
+[00:02:31.780 --> 00:02:35.280] 您也可以在目前的日常工作中插入新的行為。
 [00:02:35.500 --> 00:02:39.060] For example, you may already have a morning routine that looks something like this.
+[00:02:35.500 --> 00:02:39.060] 例如，你可能已經有這樣的早晨例行公事。
 [00:02:39.320 --> 00:02:41.440] Wake up, make my bed, take a shower.
+[00:02:39.320 --> 00:02:41.440] 醒醒，整理我的牀，洗個澡
 [00:02:42.140 --> 00:02:44.740] Let's say you want to develop the habit of reading more each night.
+[00:02:42.140 --> 00:02:44.740] 假設你想養成每晚多閱讀的習慣。
 [00:02:44.900 --> 00:02:48.520] Well, you can expand your habit stack and try something like this.
+[00:02:44.900 --> 00:02:48.520] 嗯，你可以擴展你的習慣堆疊並嘗試這樣的東西。
 [00:02:49.140 --> 00:02:53.900] Wake up, make my bed, place a book on my pillow, take a shower.
+[00:02:49.140 --> 00:02:53.900] 醒來，整理我的牀，在我的枕頭上放一本書，洗個澡。
 [00:02:55.140 --> 00:02:59.140] Now, when you climb into bed each night, a book will be sitting there waiting for you to enjoy.
+[00:02:55.140 --> 00:02:59.140] 現在，當你每晚爬上牀時，會有一本書坐在那裡等著你享用。
 [00:03:00.360 --> 00:03:04.700] Overall, habit stacking allows you to create a simple set of rules that guide your future behavior.
+[00:03:00.360 --> 00:03:04.700] 整體而言，習慣堆疊可讓您建立一套簡單的規則，引導您未來的行為。
 [00:03:05.220 --> 00:03:08.160] It's like you always have a game plan for which action should come next.
+[00:03:05.220 --> 00:03:08.160] 就像你總是有一個接下來應該採取行動的遊戲計劃。
 [00:03:08.320 --> 00:03:16.860] And once you get comfortable with this approach, you can develop general habit stacks to guide you whenever the situation is appropriate. So, for example, exercise.
+[00:03:08.320 --> 00:03:16.860] 一旦你熟悉這種方法，你就可以養成一般的習慣堆疊，在適當的情況下為你提供指導。舉例來說，運動。
 [00:03:17.220 --> 00:03:22.480] When I see a set of stairs, I will take them instead of using the elevator. Or social skills.
+[00:03:17.220 --> 00:03:22.480] 當我看到一組樓梯時，我會使用它們，而不是使用電梯。或社交技巧。
 [00:03:22.760 --> 00:03:27.960] When I walk into a party, I will introduce myself to someone I don't know yet. Finances.
+[00:03:22.760 --> 00:03:27.960] 當我走進派對時，我會向一個我還不認識的人介紹自己。財務。
 [00:03:28.260 --> 00:03:34.800] When I want to buy something over $100, I will wait at least 24 hours before purchasing it. Healthy eating.
+[00:03:28.260 --> 00:03:34.800] 當我想購買超過$ 100的東西時，我會等至少24小時才購買。健康飲食。
 [00:03:35.080 --> 00:03:40.060] When I serve myself a meal, I will always put veggies on my plate first. Minimalism.
+[00:03:35.080 --> 00:03:40.060] 當我為自己準備一頓飯時，我總是會先把蔬菜放在我的盤子上。極簡主義。
 [00:03:40.260 --> 00:03:45.620] When I buy one new item, I will give something away. One in, one out. Mood.
+[00:03:40.260 --> 00:03:45.620] 當我購買一件新物品時，我會捐贈一些東西。一進一出，心情
 [00:03:45.960 --> 00:03:51.660] When the phone rings, I will take one deep breath and smile before answering it. Forgetfulness.
+[00:03:45.960 --> 00:03:51.660] 當電話響起時，我會深吸一口氣，微笑著再接聽。健忘。
 [00:03:52.120 --> 00:03:56.700] When I leave a public place, I will check the table and chairs to make sure I don't leave anything behind.
+[00:03:52.120 --> 00:03:56.700] 當我離開公共場所時，我會檢查桌子和椅子，以確保我不會留下任何東西。
 [00:03:57.920 --> 00:04:04.760] No matter how you use this strategy, the secret to creating a successful habit stack is selecting the right cue to kick things off.
+[00:03:57.920 --> 00:04:04.760] 無論您如何使用此策略，創建成功習慣堆疊的祕訣是選擇正確的線索來啟動事情。
 [00:04:05.340 --> 00:04:10.700] Unlike an implementation intention, which specifically states the time and location for a given behavior,
+[00:04:05.340 --> 00:04:10.700] 與具體說明給定行為的時間和位置的實施意圖不同，
 [00:04:11.320 --> 00:04:14.720] habit stacking implicitly has a time and location built into it.
+[00:04:11.320 --> 00:04:14.720] 習慣堆疊隱含了時間和地點。
 [00:04:15.380 --> 00:04:19.520] When and where you choose to insert a habit into your daily routine can make a big difference.
+[00:04:15.380 --> 00:04:19.520] 您選擇在日常生活中融入習慣的時間和地點可以產生很大的影響。
 [00:04:19.900 --> 00:04:25.720] If you're trying to add meditation into your morning routine, but mornings are chaotic and your kids keep running into the room,
+[00:04:19.900 --> 00:04:25.720] 如果你想在早晨的日常生活中添加冥想，但早晨很混亂，你的孩子不斷跑進房間，
 [00:04:25.940 --> 00:04:28.920] then that may be the wrong place and time to build that habit.
+[00:04:25.940 --> 00:04:28.920] 那可能是培養這種習慣的錯誤地點和時間
 [00:04:29.460 --> 00:04:32.000] Consider when you are most likely to be successful.
+[00:04:29.460 --> 00:04:32.000] 考慮一下您最有可能取得成功的時機。
 [00:04:32.340 --> 00:04:37.760] Don't ask yourself to do a habit or try to build a habit stack when you are likely to be occupied with something else.
+[00:04:32.340 --> 00:04:37.760] 當您可能忙於其他事情時，不要要求自己養成一個習慣或嘗試建立一個習慣堆疊。
 [00:04:38.780 --> 00:04:41.900] Your cue should also have the same frequency as your desired habit.
+[00:04:38.780 --> 00:04:41.900] 您的提示也應與您想要的習慣具有相同的頻率。
 [00:04:42.100 --> 00:04:48.600] If you want to do a habit every day, but you stack it on top of a habit that only happens on Mondays, well, then that's not a good choice.
+[00:04:42.100 --> 00:04:48.600] 如果你想每天養成一個習慣，但你把它堆疊在一個只在星期一發生的習慣之上，那麼這不是一個好選擇。
 [00:04:49.280 --> 00:04:54.280] One way to find the right trigger for your habit stack is by brainstorming a list of your current habits.
+[00:04:49.280 --> 00:04:54.280] 為您的習慣堆疊找到正確觸發因素的一種方法是集思廣益，列出您目前的習慣。
 [00:04:54.840 --> 00:04:58.960] You can use your habit scorecard, which we created in the last chapter, as a starting point.
+[00:04:54.840 --> 00:04:58.960] 您可以使用我們在上一章中創建的習慣計分卡作為起點。
 [00:04:59.680 --> 00:05:01.940] Alternatively, you can create a list with two columns.
+[00:04:59.680 --> 00:05:01.940] 或者，您也可以建立包含兩欄的清單。
 [00:05:02.340 --> 00:05:06.920] In the first column, write down the habits that you do each day without fail. For example,
+[00:05:02.340 --> 00:05:06.920] 在第一欄中，寫下您每天都會做的習慣。例如，
 [00:05:07.780 --> 00:05:13.000] get out of bed, take a shower, brush your teeth, get dressed, brew a cup of coffee, eat breakfast,
+[00:05:07.780 --> 00:05:13.000] 起牀，洗澡，刷牙，穿衣服，泡一杯咖啡，吃早餐，
 [00:05:13.600 --> 00:05:15.160] take the kids to school, and so on.
+[00:05:13.600 --> 00:05:15.160] 帶孩子上學等等
 [00:05:15.840 --> 00:05:18.160] Your list can be much longer, but you get the idea.
+[00:05:15.840 --> 00:05:18.160] 你的清單可能要長得多，但你明白了。
 [00:05:19.260 --> 00:05:23.540] In the second column, write down all of the things that happen to you each day without fail.
+[00:05:19.260 --> 00:05:23.540] 在第二欄中，寫下每天發生在你身上的所有事情。
 [00:05:23.540 --> 00:05:27.260] For example, the sun rises, or you get a text message.
+[00:05:23.540 --> 00:05:27.260] 例如，太陽升起，或收到簡訊。
 [00:05:27.440 --> 00:05:29.960] The song you're listening to ends, or the sun sets.
+[00:05:27.440 --> 00:05:29.960] 你正在聆聽的歌曲結束了，或者太陽落山了。
 [00:05:31.260 --> 00:05:37.280] Once you're armed with these two lists, you can begin searching for the best place to layer a new habit into your lifestyle.
+[00:05:31.260 --> 00:05:37.280] 一旦你掌握了這兩個清單，就可以開始尋找最佳地點，將新習慣融入你的生活方式。
 [00:05:38.080 --> 00:05:45.920] If you're looking for more examples and guidance on this, you can download a habit stacking template at atomichabits .com slash habit stacking.
+[00:05:38.080 --> 00:05:45.920] 如果您正在尋找更多相關範例和指導，可以在atomichabits .com slash habit stacking下載習慣堆疊範本。
 [00:05:47.180 --> 00:05:52.740] All right, so habit stacking works best when the cue is highly specific and immediately actionable.
+[00:05:47.180 --> 00:05:52.740] 好吧，所以當提示高度具體且可立即採取行動時，習慣堆疊效果最好。
 [00:05:53.080 --> 00:05:56.660] Many people select cues that are too vague. I made this mistake myself.
+[00:05:53.080 --> 00:05:56.660] 許多人會選擇過於模糊的提示。我自己犯了這個錯誤。
 [00:05:56.660 --> 00:06:02.520] When I wanted to start a push -up habit, my habit stack was, when I take a break for lunch, I will do 10 push -ups.
+[00:05:56.660 --> 00:06:02.520] 當我想養成一個伏地挺身的習慣時，我的習慣堆疊是，當我休息吃午餐時，我會做10個伏地挺身。
 [00:06:02.520 --> 00:06:03.000] All right, so I'm going to start a push -up habit and I'm going to start a push -up habit and I'm going to start a push -up habit and I'm going to start a push -up habit.
+[00:06:02.520 --> 00:06:03.000] 好吧，我要開始俯臥撐的習慣，我要開始俯臥撐的習慣，我要開始俯臥撐的習慣，我要開始俯臥撐的習慣。

@@ -1,72 +1,144 @@
 [00:00:00.020 --> 00:00:08.000] Here's a sample of where you might start. Wake up, turn off the alarm, check my phone, go to the bathroom,
+[00:00:00.020 --> 00:00:08.000] 以下是您可以從哪裡開始的範例。醒醒，關掉警報器，檢查我的手機，去洗手間
 [00:00:08.880 --> 00:00:12.260] weigh myself, take a shower, and so on.
+[00:00:08.880 --> 00:00:12.260] 稱體重、洗澡等等
 [00:00:13.380 --> 00:00:20.080] Once you have a full list, look at each behavior and ask yourself, is this a good habit, a bad habit, or a neutral habit?
+[00:00:13.380 --> 00:00:20.080] 一旦你有完整的清單，看看每個行為，並問自己，這是一個好習慣，一個壞習慣，還是一個中立的習慣？
 [00:00:20.740 --> 00:00:23.100] If it's a good habit, write a plus sign next to it.
+[00:00:20.740 --> 00:00:23.100] 如果這是一個好習慣，請在旁邊寫一個加號。
 [00:00:23.600 --> 00:00:26.320] If it is a bad habit, write a minus sign next to it.
+[00:00:23.600 --> 00:00:26.320] 如果這是一個壞習慣，請在其旁邊寫一個減號。
 [00:00:26.560 --> 00:00:28.760] And if it's neutral, write an equal sign.
+[00:00:26.560 --> 00:00:28.760] 如果它是中性的，寫一個等號。
 [00:00:29.560 --> 00:00:32.340] For example, the list I just mentioned might look like this.
+[00:00:29.560 --> 00:00:32.340] 例如，我剛才提到的清單可能看起來像這樣。
 [00:00:33.100 --> 00:00:38.180] Wake up, neutral habit, turn off alarm, neutral, check my phone.
+[00:00:33.100 --> 00:00:38.180] 醒醒，保持中立的習慣，關掉警報器，保持中立，檢查我的手機。
 [00:00:38.580 --> 00:00:43.300] Probably shouldn't do that before I get out of bed, that's negative. Go to the bathroom, neutral,
+[00:00:38.580 --> 00:00:43.300] 在我起牀之前可能不應該這樣做，這是負面的。去洗手間，中立者
 [00:00:44.100 --> 00:00:47.680] weigh myself, positive, take a shower, positive, and so on.
+[00:00:44.100 --> 00:00:47.680] 稱體重、正面、洗澡、正面等等。
 [00:00:48.560 --> 00:00:52.720] The marks you give to a particular habit will depend on your situation and your goals.
+[00:00:48.560 --> 00:00:52.720] 您給特定習慣留下的印記將取決於您的情況和目標。
 [00:00:53.020 --> 00:00:57.580] For someone who is trying to lose weight, eating a bagel with peanut butter every morning might be a bad habit.
+[00:00:53.020 --> 00:00:57.580] 對於試圖減肥的人來說，每天早上吃百吉餅和花生醬可能是一個壞習慣。
 [00:00:58.080 --> 00:01:01.800] For someone who is trying to bulk up and add muscle, the same behavior might be a good habit.
+[00:00:58.080 --> 00:01:01.800] 對於試圖增加體重和肌肉的人來說，同樣的行為可能是一個好習慣。
 [00:01:02.200 --> 00:01:03.840] It all depends on what you're working toward.
+[00:01:02.200 --> 00:01:03.840] 這一切都取決於你正在努力的目標。
 [00:01:04.580 --> 00:01:10.600] If you're interested, you can get a template to create your own habit scorecard at atomichabits .com slash scorecard.
+[00:01:04.580 --> 00:01:10.600] 如果您有興趣，可以在atomichabits .com SLASH計分卡上獲得模板，以創建自己的習慣計分卡。
 [00:01:11.760 --> 00:01:15.620] It's worth noting that scoring your habits can be a little more complex for another reason.
+[00:01:11.760 --> 00:01:15.620] 值得注意的是，由於另一個原因，評分您的習慣可能會更複雜一些。
 [00:01:16.140 --> 00:01:19.600] The labels good habit and bad habit are slightly inaccurate.
+[00:01:16.140 --> 00:01:19.600] 好習慣和壞習慣的標籤有點不準確。
 [00:01:20.080 --> 00:01:27.000] There aren't really any good habits or bad habits. There are only effective habits. That is, effective at solving problems.
+[00:01:20.080 --> 00:01:27.000] 沒有任何好習慣或壞習慣。只有有效的習慣。也就是說，有效地解決問題。
 [00:01:27.700 --> 00:01:31.860] All habits serve you in some way, even the bad ones, which is why you repeat them.
+[00:01:27.700 --> 00:01:31.860] 所有習慣都以某種方式為你服務，即使是壞習慣，這就是你重複它們的原因。
 [00:01:32.220 --> 00:01:37.780] For this exercise, categorize your habits based on how they will benefit you or hurt you in the long run.
+[00:01:32.220 --> 00:01:37.780] 在這個練習中，根據習慣對您的長期益處或傷害程度進行分類。
 [00:01:38.740 --> 00:01:44.560] Generally speaking, good habits will have net positive outcomes. Bad habits will have net negative outcomes.
+[00:01:38.740 --> 00:01:44.560] 一般來說，良好的習慣會產生淨積極的結果。壞習慣會產生淨負面結果。
 [00:01:45.140 --> 00:01:50.480] Smoking a cigarette may reduce stress right now, that's how it's serving you, but it's not a healthy long -term behavior.
+[00:01:45.140 --> 00:01:50.480] 吸煙現在可以減輕壓力，這就是它為你提供的方式，但這不是一種健康的長期行為。
 [00:01:51.280 --> 00:01:57.100] If you're still having trouble determining how to rate a particular habit on your habit scorecard, here's a question I like to use.
+[00:01:51.280 --> 00:01:57.100] 如果您仍然無法確定如何在習慣計分卡上對特定習慣進行評分，以下是我喜歡使用的問題。
 [00:01:57.420 --> 00:02:00.760] Does this behavior help me become the type of person I wish to be?
+[00:01:57.420 --> 00:02:00.760] 這種行為是否幫助我成為我想要的那種人？
 [00:02:01.220 --> 00:02:04.760] Does this habit cast a vote for or against my desired identity?
+[00:02:01.220 --> 00:02:04.760] 這種習慣是贊成還是反對我的理想身份？
 [00:02:05.500 --> 00:02:08.560] Habits that reinforce your desired identity are usually good.
+[00:02:05.500 --> 00:02:08.560] 強化您理想身份的習慣通常是好的。
 [00:02:08.760 --> 00:02:11.880] Habits that conflict with your desired identity are usually bad.
+[00:02:08.760 --> 00:02:11.880] 與您想要的身份相衝突的習慣通常是不好的。
 [00:02:12.960 --> 00:02:16.700] As you create your habit scorecard, there is no need to change anything at first.
+[00:02:12.960 --> 00:02:16.700] 當您建立習慣計分卡時，起初無需更改任何內容。
 [00:02:16.900 --> 00:02:19.720] The goal is simply to notice what is actually going on.
+[00:02:16.900 --> 00:02:19.720] 目標只是注意實際發生的事情。
 [00:02:19.980 --> 00:02:27.080] Observe your thoughts and actions without judgment or internal criticism. Don't blame yourself for your faults. Don't praise yourself for your successes.
+[00:02:19.980 --> 00:02:27.080] 在沒有判斷或內部批評的情況下觀察你的思想和行為。不要為自己的錯誤而責怪自己。不要為自己的成功而讚美自己。
 [00:02:28.180 --> 00:02:32.640] If you eat a chocolate bar every morning, acknowledge it, almost as if you were watching someone else.
+[00:02:28.180 --> 00:02:32.640] 如果你每天早上都吃巧克力棒，就要承認這一點，就像你在看別人一樣。
 [00:02:33.120 --> 00:02:35.120] Oh, how interesting that they would do such a thing.
+[00:02:33.120 --> 00:02:35.120] 哦，他們會做這樣的事是多麼有趣
 [00:02:35.640 --> 00:02:38.980] If you binge eat, simply notice that you are eating more calories than you should.
+[00:02:35.640 --> 00:02:38.980] 如果你暴飲暴食，只需注意你攝入的卡路裏超過了你應該攝入的卡路裏。
 [00:02:39.400 --> 00:02:43.460] If you waste your time online, notice that you are spending your life in a way that you do not want to.
+[00:02:39.400 --> 00:02:43.460] 如果您在線上浪費時間，請注意您正在以一種不想要的方式度過一生。
 [00:02:44.420 --> 00:02:47.580] The first step to changing bad habits is to be on the lookout for them.
+[00:02:44.420 --> 00:02:47.580] 改變壞習慣的第一步是留意它們。
 [00:02:48.080 --> 00:02:51.740] If you feel like you need extra help, then you can try pointing and calling in your own life.
+[00:02:48.080 --> 00:02:51.740] 如果你覺得自己需要額外的幫助，那麼你可以嘗試指點和召喚自己的生活。
 [00:02:52.100 --> 00:02:55.600] Say out loud the action that you are thinking of taking and what the outcome will be.
+[00:02:52.100 --> 00:02:55.600] 大聲說出您正在考慮採取的行動以及結果。
 [00:02:56.080 --> 00:03:03.160] If you want to cut back on your junk food habit, but you notice yourself grabbing another cookie, say out loud, I am about to eat this cookie, but I don't need it.
+[00:02:56.080 --> 00:03:03.160] 如果你想減少你的垃圾食品習慣，但你發現自己在抓另一塊餅乾，大聲說，我正要吃這塊餅乾，但我不需要它。
 [00:03:03.380 --> 00:03:05.500] Eating it will cause me to gain weight and hurt my health.
+[00:03:03.380 --> 00:03:05.500] 吃它會導致我體重增加並損害我的健康。
 [00:03:06.240 --> 00:03:09.920] Hearing your bad habits spoken aloud makes the consequences seem more real.
+[00:03:06.240 --> 00:03:09.920] 聽到你的壞習慣大聲說出來，讓後果看起來更真實。
 [00:03:10.160 --> 00:03:14.220] It adds weight to the action rather than letting yourself mindlessly slip into an old routine.
+[00:03:10.160 --> 00:03:14.220] 它增加了行動的重量，而不是讓自己盲目地陷入舊的例行公事。
 [00:03:14.800 --> 00:03:18.720] This approach is useful even if you are simply trying to remember a task on your to -do list.
+[00:03:14.800 --> 00:03:18.720] 即使您只是想記住待辦事項清單上的任務，這種方法也很有用。
 [00:03:19.040 --> 00:03:24.840] Just saying out loud, tomorrow I need to go to the post office after lunch, increases the odds that you will actually do it.
+[00:03:19.040 --> 00:03:24.840] 只是大聲說，明天午飯後我需要去郵局，增加你實際去做的機會。
 [00:03:25.300 --> 00:03:28.760] You are getting yourself to acknowledge the need for action, and that can make all the difference.
+[00:03:25.300 --> 00:03:28.760] 你正在讓自己承認採取行動的必要性，這可以帶來很大的不同。
 [00:03:29.540 --> 00:03:32.620] The process of behavior change always starts with awareness.
+[00:03:29.540 --> 00:03:32.620] 行為改變的過程總是從意識開始。
 [00:03:33.640 --> 00:03:40.280] Strategies like pointing and calling and the habit scorecard are focused on getting you to recognize your habits and acknowledge the cues that trigger them,
+[00:03:33.640 --> 00:03:40.280] 指向和召喚以及習慣計分卡等策略的重點是讓您認識到自己的習慣並承認觸發習慣的線索，
 [00:03:40.440 --> 00:03:46.220] which makes it possible to respond in a way that benefits you. Chapter Summary
+[00:03:40.440 --> 00:03:46.220] 這使得以對您有益的方式作出回應成為可能。章節摘要
 [00:03:46.980 --> 00:03:52.600] With enough practice, your brain will pick up on the cues that predict certain outcomes without consciously thinking about it.
+[00:03:46.980 --> 00:03:52.600] 經過足夠的練習，你的大腦會在不自覺思考的情況下，接收到預測某些結果的線索。
 [00:03:53.520 --> 00:03:57.120] Once our habits become automatic, we stop paying attention to what we are doing.
+[00:03:53.520 --> 00:03:57.120] 一旦我們的習慣變得自動化，我們就不再關注我們正在做的事情。
 [00:03:57.900 --> 00:04:01.000] The process of behavior change always starts with awareness.
+[00:03:57.900 --> 00:04:01.000] 行為改變的過程總是從意識開始。
 [00:04:01.320 --> 00:04:04.000] You need to be aware of your habits before you can change them.
+[00:04:01.320 --> 00:04:04.000] 在改變習慣之前，您需要意識到自己的習慣。
 [00:04:05.020 --> 00:04:11.620] Pointing and calling raises your level of awareness from a non -conscious habit to a more conscious level by verbalizing your actions.
+[00:04:05.020 --> 00:04:11.620] 透過言語表達你的行為，將你的意識水平從無意識的習慣提升到更有意識的水平。
 [00:04:12.300 --> 00:04:17.040] The habit scorecard is a simple exercise you can use to become more aware of your behavior.
+[00:04:12.300 --> 00:04:17.040] 習慣計分卡是一個簡單的練習，您可以使用它來更了解自己的行為。
 [00:04:21.520 --> 00:04:27.300] Chapter 5 The Best Way to Start a New Habit In
+[00:04:21.520 --> 00:04:27.300] 第五章養成新習慣的最佳方式
 [00:04:27.300 --> 00:04:39.840] 2001, researchers in Great Britain began working with 248 people to build better exercise habits over the course of two weeks. The subjects were divided into three groups. The first group was the control group.
+[00:04:27.300 --> 00:04:39.840] 2001年，英國的研究人員開始與248人合作，在兩週內建立更好的運動習慣。受試者分為三組。第一組是對照組。
 [00:04:39.940 --> 00:04:45.600] They were simply asked to track how often they exercised. The second group was the motivation group.
+[00:04:39.940 --> 00:04:45.600] 他們只是被要求追蹤他們鍛煉的頻率。第二組是動機組。
 [00:04:45.780 --> 00:04:51.020] They were asked not only to track their workouts, but also to read some material on the benefits of exercise.
+[00:04:45.780 --> 00:04:51.020] 他們不僅被要求追蹤他們的鍛煉，還被要求閱讀一些有關鍛煉益處的材料。
 [00:04:51.020 --> 00:05:00.540] The researchers also explained to the group how exercise could reduce the risk of coronary heart disease and improve heart health. Finally, there was the third group.
+[00:04:51.020 --> 00:05:00.540] 研究人員還向研究小組解釋了運動如何降低冠心病的風險並改善心臟健康。最後，是第三組。
 [00:05:01.000 --> 00:05:06.480] These subjects received the same presentation as the second group, which ensured that they had equal levels of motivation.
+[00:05:01.000 --> 00:05:06.480] 這些受試者獲得了與第二組相同的演講，這確保了他們有同等的動機。
 [00:05:06.980 --> 00:05:12.760] However, they were also asked to formulate a plan for when and where they would exercise over the following weeks.
+[00:05:06.980 --> 00:05:12.760] 然而，他們也被要求為接下來幾週的運動時間和地點制定計劃。
 [00:05:13.620 --> 00:05:17.280] Specifically, each member of the third group completed the following sentence.
+[00:05:13.620 --> 00:05:17.280] 具體來說，第三組的每位成員都完成了以下句子。
 [00:05:17.280 --> 00:05:25.300] During the next week, I will partake in at least 20 minutes of vigorous exercise on this day, at this time, in this place.
+[00:05:17.280 --> 00:05:25.300] 在接下來的一週中，我將在這一天，在這個時候，在這個地方參加至少20分鐘的劇烈運動。
 [00:05:26.220 --> 00:05:31.480] In the first and second groups, 35 to 38 percent of people exercised at least once per week.
+[00:05:26.220 --> 00:05:31.480] 在第一組和第二組中， 35%至38%的人每週至少鍛煉一次。
 [00:05:32.060 --> 00:05:39.660] Interestingly, the motivational presentation given to the second group seemed to have no meaningful impact on the behavior of participants as soon as they left the researchers.
+[00:05:32.060 --> 00:05:39.660] 有趣的是，給予第二組的動機演示似乎對參與者離開研究人員後的行為沒有任何有意義的影響。
 [00:05:40.300 --> 00:05:46.060] But 91 percent of the third group exercised at least once per week, more than double the normal rate.
+[00:05:40.300 --> 00:05:46.060] 但第三組中有91%的人每週至少運動一次，是正常運動率的兩倍多。
 [00:05:46.900 --> 00:05:52.020] The sentence that they had filled out is what researchers refer to as an implementation intention,
+[00:05:46.900 --> 00:05:52.020] 他們填寫的句子是研究人員稱之為實施意圖，
 [00:05:52.280 --> 00:05:55.980] which is a plan you make beforehand about when and where to act.
+[00:05:52.280 --> 00:05:55.980] 這是你事先制定的何時何地採取行動的計劃
 [00:05:56.140 --> 00:05:59.680] That is, how you intend to implement a particular habit.
+[00:05:56.140 --> 00:05:59.680] 也就是說，您打算如何實施特定的習慣。
 [00:05:59.680 --> 00:05:59.700] That is, how you intend to implement a particular habit.
+[00:05:59.680 --> 00:05:59.700] 也就是說，您打算如何實施特定的習慣。
 [00:05:59.700 --> 00:05:59.760] That is, how you intend to implement a particular habit.
+[00:05:59.700 --> 00:05:59.760] 也就是說，您打算如何實施特定的習慣。
 [00:06:00.080 --> 00:06:00.200] That is, how you intend to implement a particular habit.
+[00:06:00.080 --> 00:06:00.200] 也就是說，您打算如何實施特定的習慣。
 [00:06:00.200 --> 00:06:00.320] That is, how you intend to implement a particular habit.
+[00:06:00.200 --> 00:06:00.320] 也就是說，您打算如何實施特定的習慣。

@@ -21,6 +21,11 @@ tkinter 是 Python 內建，不需要安裝。
 修復紀錄（v1.2）：
   - [Bug Fix]  額度用完時，明確列出所有未處理的後續檔案並逐一記錄 log
   - [Bug Fix]  額度用完的 messagebox 改為顯示「跳過 N 個檔案」的具體清單
+
+修復紀錄（v1.3）：
+  - [Bug Fix]  網路錯誤（⚠️ 網路錯誤，跳過）不再靜默跳過繼續翻譯，
+               改為拋出 QuotaExceededError，與額度用完走同一條停止路徑：
+               立即存檔目前進度、停止當前檔案、跳過所有後續檔案並記錄在訊息欄。
 """
 
 import re
@@ -107,9 +112,9 @@ def translate_text(text: str, email: str = "") -> str:
     except QuotaExceededError:
         # 額度問題：讓呼叫端知道，不吃掉
         raise
-    except (requests.exceptions.RequestException, ValueError, KeyError):
-        # 網路錯誤、JSON 解析失敗：靜默回傳空字串，讓該句被標記為跳過
-        return ""
+    except (requests.exceptions.RequestException, ValueError, KeyError) as net_err:
+        # 網路錯誤、JSON 解析失敗：視為額度用完，立即停止整批翻譯
+        raise QuotaExceededError(f"網路錯誤，停止翻譯：{net_err}") from net_err
 
 
 def load_saved_email() -> str:
@@ -209,13 +214,6 @@ def process_file(filepath: str, email: str,
         # 需要翻譯
         try:
             zh = translate_text(sentence, email)
-
-            if not zh:
-                log_fn(f"  ⚠️  網路錯誤，跳過：{sentence[:40]}")
-                done += 1
-                progress_fn(done, total)
-                i += 1
-                continue
 
             log_fn(f"  🌐 {sentence[:35]}... → {zh[:25]}...")
             output_lines.append(f"{ts} {zh}")
@@ -506,7 +504,7 @@ class App(tk.Tk):
                 self.safe_log("⏹  已停止並存檔。下次選同一個檔案可繼續。")
                 break
             elif result == 'quota':
-                self.safe_log("\n⚠️  每日翻譯額度已用完！")
+                self.safe_log("\n⚠️  翻譯中止（額度用完或網路錯誤）！")
                 self.safe_log(f"  💾 {fname} 目前進度已儲存。")
 
                 # [Bug Fix v1.2] 明確列出所有後續未處理的檔案，讓使用者清楚知道哪些沒翻到

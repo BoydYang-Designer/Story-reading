@@ -1,64 +1,128 @@
 [00:00:00.110 --> 00:00:05.790] Application 1 .1, fill out the habit scorecard and write down your current habits to become more aware of them.
+[00:00:00.110 --> 00:00:05.790] 應用程式1 .1 ，填寫習慣計分卡並寫下您目前的習慣，以便更好地了解它們。
 [00:00:06.610 --> 00:00:20.790] Application 1 .2, use implementation intentions, I will, behavior, at, time, in, location. Application 1 .3, use habit stacking, after, current habit, I will, new habit.
+[00:00:06.610 --> 00:00:20.790] 應用程式1 .2 ，使用實施意圖，我會，行為，在，時間，在，地點。應用1 .3 ，使用習慣堆疊，之後，現在的習慣，我會，新的習慣。
 [00:00:21.710 --> 00:00:27.330] Application 1 .4, design your environment, make the cues of good habits obvious and visible.
+[00:00:21.710 --> 00:00:27.330] 應用1 .4 ，設計您的環境，使良好習慣的線索明顯可見。
 [00:00:27.330 --> 00:00:32.330] And then, the inversion of the first law, make it invisible.
+[00:00:27.330 --> 00:00:32.330] 然後，第一定律的反轉，使它隱形。
 [00:00:33.290 --> 00:00:39.010] Application 1 .5, reduce exposure, remove the cues of your bad habits from your environment.
+[00:00:33.290 --> 00:00:39.010] 應用1.5 ，減少暴露，從環境中消除不良習慣的暗示。
 [00:00:40.010 --> 00:00:46.010] I've collected these applications and compiled them into a single cheat sheet, which we will be returning to at the end of each law.
+[00:00:40.010 --> 00:00:46.010] 我已經收集了這些應用程序，並將其編譯成一個單一的備忘錄，我們將在每個法律結束時返回。
 [00:00:46.310 --> 00:01:00.130] You can download a printable version of the habits cheat sheet at atomichabits .com slash cheat sheet. The second law, make it attractive. Chapter
+[00:00:46.310 --> 00:01:00.130] 您可以在atomichabits .com slash cheat sheet下載習慣備忘錄的可列印版本。第二定律，讓它有吸引力
 [00:01:01.380 --> 00:01:06.820] 8, How to Make a Habit Irresistible In
+[00:01:01.380 --> 00:01:06.820] 8、如何讓習慣變得無法抗拒
 [00:01:06.820 --> 00:01:14.900] the 1940s, a Dutch scientist named Nico Tinbergen performed a series of experiments that transformed our understanding of what motivates us.
+[00:01:06.820 --> 00:01:14.900] 20世紀40年代，荷蘭科學家Nico Tinbergen進行了一系列實驗，改變了我們對動機的理解。
 [00:01:15.660 --> 00:01:20.780] Tinbergen, who eventually won a Nobel Prize for his work, was investigating herring gulls,
+[00:01:15.660 --> 00:01:20.780] 丁伯根最終因他的工作而獲得諾貝爾獎，他正在調查青海鷗
 [00:01:21.000 --> 00:01:25.020] the gray and white birds often seen flying along the seashores of North America.
+[00:01:21.000 --> 00:01:25.020] 灰色和白色的鳥類經常沿著北美海岸飛行
 [00:01:26.100 --> 00:01:33.980] Adult herring gulls have a small red dot on their beak, and Tinbergen noticed that newly hatched chicks would peck at this spot whenever they wanted food.
+[00:01:26.100 --> 00:01:33.980] 成年鯡鷗的喙上有一個小紅點，丁伯根注意到，新孵化的雛鳥只要想吃東西，就會在這個地方啄食。
 [00:01:34.680 --> 00:01:40.680] To begin one experiment, he created a collection of fake cardboard beaks, just a head, without a body.
+[00:01:34.680 --> 00:01:40.680] 為了開始一項實驗，他創造了一系列假紙板喙，只有一個頭，沒有身體。
 [00:01:41.260 --> 00:01:46.260] When the parents had flown away, he went over to the nest and offered these dummy beaks to the chicks.
+[00:01:41.260 --> 00:01:46.260] 父母飛走後，他走到巢穴，把這些假喙送給小雞。
 [00:01:46.680 --> 00:01:51.260] The beaks were obvious fakes, and he assumed the baby birds would reject them altogether. However,
+[00:01:46.680 --> 00:01:51.260] 喙顯然是假的，他以為小鳥會完全排斥它們，但
 [00:01:52.840 --> 00:01:58.520] when the tiny gulls saw the red spot on the cardboard beaks, they pecked away just as if it were attached to their own mother.
+[00:01:52.840 --> 00:01:58.520] 當小海鷗看到紙板喙上的紅斑時，它們啄走了，就好像它附著在自己的母親身上一樣。
 [00:01:59.080 --> 00:02:04.320] They had a clear preference for those red spots, as if they had been genetically programmed at birth.
+[00:01:59.080 --> 00:02:04.320] 他們對這些紅斑有明顯的偏好，就好像他們在出生時就被基因編程一樣。
 [00:02:05.300 --> 00:02:10.300] Soon, Tinbergen discovered that the bigger the red spot, the faster the chicks pecked.
+[00:02:05.300 --> 00:02:10.300] 很快，丁伯根發現紅斑越大，雛鳥啄食的速度越快。
 [00:02:11.280 --> 00:02:15.140] Eventually, he created a beak with three large red dots on it.
+[00:02:11.280 --> 00:02:15.140] 最後，他創造了一個上面有三個大紅點的喙。
 [00:02:15.660 --> 00:02:19.540] When he placed it over the nest, the baby birds went crazy with delight.
+[00:02:15.660 --> 00:02:19.540] 當他把它放在巢上時，小鳥們高興得發瘋了。
 [00:02:19.980 --> 00:02:24.020] They pecked at the little red patches as if it was the greatest beak they had ever seen.
+[00:02:19.980 --> 00:02:24.020] 他們啄著小紅斑，彷彿這是他們見過的最大的喙。
 [00:02:25.440 --> 00:02:28.560] Tinbergen and his colleagues discovered similar behavior in other animals.
+[00:02:25.440 --> 00:02:28.560] Tinbergen和他的同事在其他動物身上發現了類似的行為。
 [00:02:28.780 --> 00:02:31.880] For example, the gray -lagged goose is a ground -nesting bird.
+[00:02:28.780 --> 00:02:31.880] 例如，灰色滯後的鵝是地面築巢的鳥。
 [00:02:32.520 --> 00:02:37.800] Occasionally, as the mother moves around on the nest, one of the eggs will roll out and settle on the grass nearby.
+[00:02:32.520 --> 00:02:37.800] 偶爾，當母親在巢上移動時，其中一個卵會滾出並落在附近的草地上。
 [00:02:38.620 --> 00:02:44.140] Whenever this happens, the goose will waddle over to the egg and use its beak and neck to pull it back into the nest.
+[00:02:38.620 --> 00:02:44.140] 每當發生這種情況時，鵝都會搖搖晃晃地爬到蛋上，並用它的喙和頸部將其拉回巢穴。
 [00:02:45.520 --> 00:02:51.860] Tinbergen discovered that the goose will pull any nearby round object, such as a billiard ball or a light bulb, back into the nest.
+[00:02:45.520 --> 00:02:51.860] Tinbergen發現，鵝會將附近的任何圓形物體（如臺球或燈泡）拉回巢穴。
 [00:02:52.180 --> 00:02:54.580] The bigger the object, the greater their response.
+[00:02:52.180 --> 00:02:54.580] 物體越大，他們的反應就越大。
 [00:02:55.160 --> 00:02:59.060] One goose even made a tremendous effort to roll a volleyball back and sit on top.
+[00:02:55.160 --> 00:02:59.060] 一隻鵝甚至做出了巨大的努力，把排球滾回去坐在上面。
 [00:02:59.720 --> 00:03:05.280] Like the baby gulls automatically pecking at red dots, the gray -lagged goose was following an instinctive rule.
+[00:02:59.720 --> 00:03:05.280] 就像小海鷗自動啄食紅點一樣，灰色滯後的鵝也遵循著本能的規則。
 [00:03:05.680 --> 00:03:09.100] When I see a round object nearby, I must roll it back into the nest.
+[00:03:05.680 --> 00:03:09.100] 當我在附近看到一個圓形物體時，我必須把它滾回巢穴。
 [00:03:09.280 --> 00:03:12.100] The bigger the round object, the harder I should try to get it.
+[00:03:09.280 --> 00:03:12.100] 圓形物體越大，我越難拿到它。
 [00:03:13.000 --> 00:03:21.540] It's like the brain of each animal is preloaded with certain rules for behavior, and when it comes across an exaggerated version of that rule, it lights up like a Christmas tree.
+[00:03:13.000 --> 00:03:21.540] 這就像每個動物的大腦都預先載入了某些行為規則，當它遇到那條規則的誇張版本時，它會像聖誕樹一樣亮起來。
 [00:03:22.520 --> 00:03:26.440] Scientists refer to these exaggerated cues as supernormal stimuli.
+[00:03:22.520 --> 00:03:26.440] 科學家將這些誇張的線索稱為超常刺激。
 [00:03:26.440 --> 00:03:31.940] A supernormal stimulus is a heightened version of reality, like a beak with three red dots,
+[00:03:26.440 --> 00:03:31.940] 超常刺激是現實的高度版本，就像有三個紅點的喙
 [00:03:32.060 --> 00:03:36.180] or an egg the size of a volleyball, and it elicits a stronger response than usual.
+[00:03:32.060 --> 00:03:36.180] 或排球大小的雞蛋，它會引發比平常更強烈的反應
 [00:03:37.020 --> 00:03:40.360] Humans are also prone to fall for exaggerated versions of reality.
+[00:03:37.020 --> 00:03:40.360] 人類也容易陷入誇張的現實版本。
 [00:03:40.360 --> 00:03:44.540] Junk food, for example, drives our reward systems into a frenzy.
+[00:03:40.360 --> 00:03:44.540] 例如，垃圾食品會讓我們的獎勵系統變得瘋狂。
 [00:03:44.920 --> 00:03:53.360] After spending hundreds of thousands of years hunting and foraging for food in the wild, the human brain has evolved to place a high value on salt, sugar, and fat.
+[00:03:44.920 --> 00:03:53.360] 經過數十萬年的野外狩獵和覓食，人類大腦已經進化到高度重視鹽、糖和脂肪。
 [00:03:54.160 --> 00:03:59.740] Such foods are often calorie -dense, and they were quite rare when our ancient ancestors were roaming the savanna.
+[00:03:54.160 --> 00:03:59.740] 這種食物通常是卡路裏密集的，當我們的古老祖先在稀樹草原上漫遊時，它們非常罕見。
 [00:04:00.440 --> 00:04:05.660] When you don't know where your next meal is coming from, eating as much as possible is an excellent strategy for survival.
+[00:04:00.440 --> 00:04:05.660] 當您不知道下一餐的來源時，盡可能多吃是生存的絕佳策略。
 [00:04:06.240 --> 00:04:09.220] Today, however, we live in a calorie -rich environment.
+[00:04:06.240 --> 00:04:09.220] 然而，今天我們生活在一個富含卡路裏的環境中。
 [00:04:09.540 --> 00:04:12.980] Food is abundant, but your brain continues to crave it like it is scarce.
+[00:04:09.540 --> 00:04:12.980] 食物豐富，但你的大腦繼續渴望它，就像它稀缺一樣。
 [00:04:14.060 --> 00:04:24.360] Placing a high value on salt, sugar, and fat is no longer advantageous to our health, but the craving persists because the brain's reward centers have not changed for approximately 50 ,000 years.
+[00:04:14.060 --> 00:04:24.360] 對鹽、糖和脂肪的高度重視不再對我們的健康有益，但由於大腦的獎勵中心在大約5萬年內沒有改變，因此這種渴望仍然存在。
 [00:04:24.780 --> 00:04:30.240] The modern food industry relies on stretching our paleolithic instincts beyond their evolutionary purpose.
+[00:04:24.780 --> 00:04:30.240] 現代食品工業依賴於將舊石器時代的本能延伸到進化目的之外。
 [00:04:30.780 --> 00:04:37.000] A primary goal of food science is to create products that are more attractive to consumers, Nearly
+[00:04:30.780 --> 00:04:37.000] 食品科學的主要目標是創造對消費者更具吸引力的產品，幾乎
 [00:04:37.000 --> 00:04:42.220] every food in a bag, box, or jar has been enhanced in some way, if only with additional flavoring.
+[00:04:37.000 --> 00:04:42.220] 袋子、盒子或罐子中的每種食物都以某種方式得到了增強，即使只是添加了額外的調味料。
 [00:04:43.080 --> 00:04:49.720] Companies spend millions of dollars to discover the most satisfying level of crunch in a potato chip, or the perfect amount of fizz in a soda.
+[00:04:43.080 --> 00:04:49.720] 公司花費數百萬美元來發現薯片中最令人滿意的脆度，或蘇打水中完美的汽水量。
 [00:04:50.400 --> 00:04:56.440] Entire departments are dedicated to optimizing how a product feels in your mouth, a quality known as oro -sensation.
+[00:04:50.400 --> 00:04:56.440] 整個部門都致力於優化產品在您口中的感覺，這種品質被稱為oro -sensation。
 [00:04:57.040 --> 00:05:03.880] French fries, for example, are a potent combination, golden brown and crunchy on the outside, light and smooth on the inside.
+[00:04:57.040 --> 00:05:03.880] 例如，炸薯條是一種強有力的組合，外面是金棕色和酥脆，裡面是輕盈光滑的。
 [00:05:04.700 --> 00:05:11.780] Other processed foods enhance dynamic contrast, which refers to items with a combination of sensations, like crunchy and creamy.
+[00:05:04.700 --> 00:05:11.780] 其他加工食品可增強動態對比度，指的是具有酥脆感和奶油感等感覺的物品。
 [00:05:12.260 --> 00:05:19.400] Imagine the gooeyness of melted cheese on top of a crispy pizza crust, or the crunch of an Oreo cookie combined with its smooth center.
+[00:05:12.260 --> 00:05:19.400] 想像一下，融化的奶酪在酥脆的比薩餅皮上面有多黏稠，或者奧利奧餅乾的酥脆與其光滑的中心相結合。
 [00:05:20.060 --> 00:05:27.620] With natural, unprocessed foods, you tend to experience the same sensations over and over. How's that 17th bite of kale taste?
+[00:05:20.060 --> 00:05:27.620] 對於未加工的天然食物，您往往會一遍又一遍地體驗到同樣的感覺。第17口羽衣甘藍味道如何？
 [00:05:28.320 --> 00:05:31.840] After a few minutes, your brain loses interest, and you begin to feel full.
+[00:05:28.320 --> 00:05:31.840] 幾分鐘後，你的大腦失去興趣，你開始感到飽足。
 [00:05:32.420 --> 00:05:38.060] But foods that are high in dynamic contrast keep the experience novel and interesting, encouraging you to eat more.
+[00:05:32.420 --> 00:05:38.060] 但是，動態對比度高的食物會讓體驗保持新穎和有趣，鼓勵您多吃。
 [00:05:39.060 --> 00:05:45.960] Ultimately, such strategies enable food scientists to find the bliss point for each product, which is the precise combination of salt, sugar,
+[00:05:39.060 --> 00:05:45.960] 最終，這些策略使食品科學家能夠找到每種產品的幸福點，即鹽，糖，
 [00:05:45.980 --> 00:05:48.940] and fat that excites your brain and keeps you coming back for more.
+[00:05:45.980 --> 00:05:48.940] 和脂肪會刺激你的大腦並讓你回來獲得更多
 [00:05:49.320 --> 00:05:54.840] The result, of course, is that you overeat because hyperpalatable foods are more attractive to the human brain.
+[00:05:49.320 --> 00:05:54.840] 當然，結果是你吃得太多，因為超級美味的食物對人類大腦更具吸引力。
 [00:05:55.580 --> 00:06:03.060] As Stéphane Guillén, a neuroscientist who specializes in eating behavior and obesity, says, we've gotten too good at pushing our own buttons.
+[00:05:55.580 --> 00:06:03.060] 正如專門研究飲食行為和肥胖症的神經科學家Stéphane Guillén所說，我們太擅長按自己的按鈕了。
 [00:06:03.900 --> 00:06:11.300] The modern food industry and the overeating habits it has spawned is just one example of the second law of behavior change. Make it attractive.
+[00:06:03.900 --> 00:06:11.300] 現代食品工業及其產生的暴飲暴食習慣只是行為改變第二定律的一個例子。讓它變得有吸引力。
 [00:06:11.880 --> 00:06:17.760] The more attractive an opportunity is, the more likely it is to become habit -forming. Look around.
+[00:06:11.880 --> 00:06:17.760] 機會越有吸引力，就越有可能養成習慣。環顧四周。
 [00:06:18.040 --> 00:06:24.400] Society is filled with highly engineered versions of reality that are more attractive than the world our ancestors evolved in.
+[00:06:18.040 --> 00:06:24.400] 社會充滿了高度精心設計的現實版本，比我們祖先進化的世界更具吸引力。
 [00:06:24.860 --> 00:06:28.820] Stores feature mannequins with exaggerated hips and breasts to sell clothes.
+[00:06:24.860 --> 00:06:28.820] 商店設有誇張的臀部和胸部的人體模特，以出售衣服。
 [00:06:28.820 --> 00:06:34.400] Social media delivers more likes and praise in a few minutes than we could ever get in the office or at home.
+[00:06:28.820 --> 00:06:34.400] 社交媒體在幾分鐘內就能帶來比在辦公室或家中更多的讚好。
 [00:06:34.820 --> 00:06:40.160] Online porn splices together stimulating scenes at a rate that would be impossible to replicate in real life.
+[00:06:34.820 --> 00:06:40.160] 線上色情以現實生活中無法複製的速度將刺激場景拼接在一起。

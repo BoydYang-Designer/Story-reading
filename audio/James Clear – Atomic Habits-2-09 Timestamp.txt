@@ -1,59 +1,118 @@
 [00:00:00.080 --> 00:00:05.060] At first glance, this sounds reasonable, but soon I realized that the trigger was unclear.
+[00:00:00.080 --> 00:00:05.060] 乍一看，這聽起來合理，但很快我意識到扳機不清楚。
 [00:00:05.720 --> 00:00:10.120] Would I do my push -ups before I ate lunch? After I ate lunch? Where would I do them?
+[00:00:05.720 --> 00:00:10.120] 午餐前我會做伏地挺身嗎？我吃完午餐後？我應該在哪裡做？
 [00:00:10.820 --> 00:00:16.220] After a few inconsistent days, I changed my habit stack to, when I close my laptop for lunch,
+[00:00:10.820 --> 00:00:16.220] 不一致的幾天後，我將習慣堆疊改為，當我關閉筆記本電腦吃午餐時，
 [00:00:16.260 --> 00:00:19.500] I will do 10 push -ups next to my desk. Ambiguity gone.
+[00:00:16.260 --> 00:00:19.500] 我會在我的桌子旁邊做10次伏地挺身。模糊不清。
 [00:00:20.760 --> 00:00:30.080] Habits like read more or eat better are worthy causes, but these goals do not provide instruction on how and when to act. You need to be specific and clear.
+[00:00:20.760 --> 00:00:30.080] 像閱讀更多或吃得更好這樣的習慣是值得追求的，但這些目標並沒有提供如何以及何時採取行動的指導。你必須具體明確。
 [00:00:30.280 --> 00:00:35.620] After I close the door, after I brush my teeth, after I sit down at the table, the specificity is important.
+[00:00:30.280 --> 00:00:35.620] 關門後、刷牙後、坐桌後，特異性都很重要。
 [00:00:36.360 --> 00:00:43.300] The more tightly bound your new habit is to a specific cue, the better the odds are that you will notice when the time comes to act.
+[00:00:36.360 --> 00:00:43.300] 您的新習慣與特定提示的關係越緊密，您就越有可能在採取行動時注意到。
 [00:00:44.240 --> 00:00:47.680] Remember, the first law of behavior change is to make it obvious.
+[00:00:44.240 --> 00:00:47.680] 請記住，行為改變的第一個法則是讓它變得明顯。
 [00:00:48.360 --> 00:00:58.980] Strategies like implementation intentions and habit stacking are among the most practical ways to create obvious cues for your habits and design a clear plan for when and where to take action.
+[00:00:48.360 --> 00:00:58.980] 實施意圖和習慣堆疊等策略是最實用的方法，可以為您的習慣創造明顯的線索，並為何時何地採取行動設計明確的計劃。
 [00:01:00.840 --> 00:01:05.420] Chapter Summary The first law of behavior change is make it obvious.
+[00:01:00.840 --> 00:01:05.420] 章節摘要行為改變的第一個法則是讓它變得明顯。
 [00:01:06.220 --> 00:01:09.580] The two most common cues are time and location.
+[00:01:06.220 --> 00:01:09.580] 最常見的兩個提示是時間和地點。
 [00:01:10.340 --> 00:01:16.860] Creating an implementation intention is a strategy you can use to pair a new habit with a specific time and location.
+[00:01:10.340 --> 00:01:16.860] 建立實施意圖是一種策略，可用於將新習慣與特定時間和地點配對。
 [00:01:17.400 --> 00:01:24.220] The implementation intention formula is I will behavior at time in location.
+[00:01:17.400 --> 00:01:24.220] 實施意向公式是I will behavior at time in location。
 [00:01:25.120 --> 00:01:29.560] Habit stacking is a strategy you can use to pair a new habit with a current habit.
+[00:01:25.120 --> 00:01:29.560] 習慣堆疊是一種可以用來將新習慣與當前習慣配對的策略。
 [00:01:30.040 --> 00:01:44.680] The habit stacking formula is after current habit, I will new habit. Chapter six. Motivation is overrated. Environment often matters more.
+[00:01:30.040 --> 00:01:44.680] 習慣堆疊公式是按照目前的習慣，我會改變習慣。第六章動機被高估了環境往往更重要。
 [00:01:47.110 --> 00:01:52.950] Anne Thorndyke, a primary care physician at Massachusetts General Hospital in Boston, had a crazy idea.
+[00:01:47.110 --> 00:01:52.950] 波士頓麻薩諸塞州總醫院的初級保健醫生Anne Thorndyke有一個瘋狂的想法。
 [00:01:53.610 --> 00:02:01.750] She believed she could improve the eating habits of thousands of hospital staff and visitors without changing their willpower or motivation in the slightest way.
+[00:01:53.610 --> 00:02:01.750] 她相信她可以改善成千上萬醫院工作人員和訪客的飲食習慣，而不會改變他們的意志力或動機。
 [00:02:02.170 --> 00:02:04.830] In fact, she didn't plan on talking to them at all.
+[00:02:02.170 --> 00:02:04.830] 事實上，她根本沒打算跟他們說話。
 [00:02:05.890 --> 00:02:11.590] Thorndyke and her colleagues designed a six -month study to alter the choice architecture of the hospital cafeteria.
+[00:02:05.890 --> 00:02:11.590] Thorndyke和她的同事設計了一項為期六個月的研究，以改變醫院自助餐廳的選擇架構。
 [00:02:12.650 --> 00:02:18.590] Originally, the refrigerators located next to the cash registers in the cafeteria were filled with only soda.
+[00:02:12.650 --> 00:02:18.590] 最初，自助餐廳收銀機旁邊的冰箱只裝滿了汽水。
 [00:02:19.030 --> 00:02:22.110] The researchers added water as an option to each one.
+[00:02:19.030 --> 00:02:22.110] 研究人員將水作為每個選項的選項。
 [00:02:22.930 --> 00:02:27.390] Additionally, they placed baskets of bottled water next to the food stations throughout the room.
+[00:02:22.930 --> 00:02:27.390] 此外，他們在整個房間的食品站旁邊放置了一籃瓶裝水。
 [00:02:28.330 --> 00:02:33.870] Soda was still in the primary refrigerators, but now water was an option available at all drink locations.
+[00:02:28.330 --> 00:02:33.870] 蘇打水仍在主冰箱中，但現在所有飲料店都可以選擇水。
 [00:02:35.030 --> 00:02:40.010] Over the next three months, the number of soda sales at the hospital dropped by 11 .4%.
+[00:02:35.030 --> 00:02:40.010] 在接下來的三個月中，醫院的汽水銷售量下降了11.4 ％。
 [00:02:40.010 --> 00:02:44.570] Meanwhile, sales of bottled water increased by 25 .8%.
+[00:02:40.010 --> 00:02:44.570] 同時，瓶裝水銷售額增長了25.8 ％。
 [00:02:44.570 --> 00:02:49.530] They made similar adjustments and saw similar results with the food in the cafeteria.
+[00:02:44.570 --> 00:02:49.530] 他們進行了類似的調整，並在自助餐廳的餐點上看到了類似的結果。
 [00:02:49.970 --> 00:02:52.450] Nobody had said a word to anyone eating there.
+[00:02:49.970 --> 00:02:52.450] 沒有人對在那裡吃飯的人說過一句話。
 [00:02:53.030 --> 00:03:01.670] To see a graphical representation of the layouts in the cafeteria before and after the changes, visit atomichabits .com slash media.
+[00:02:53.030 --> 00:03:01.670] 若要查看變更前後自助餐廳佈局的圖形表示，請造訪atomichabits .com斜線媒體。
 [00:03:02.730 --> 00:03:07.630] People often choose products not because of what they are, but because of where they are.
+[00:03:02.730 --> 00:03:07.630] 人們選擇產品通常不是因為它們是什麼，而是因為它們在哪裡。
 [00:03:07.970 --> 00:03:13.290] If I walk into the kitchen and see a plate of cookies on the counter, I'll pick up half a dozen and start eating,
+[00:03:07.970 --> 00:03:13.290] 如果我走進廚房，看到櫃檯上有一盤餅乾，我就會拿起半打開始吃飯，
 [00:03:13.490 --> 00:03:17.410] even if I hadn't been thinking about them beforehand and didn't necessarily feel hungry.
+[00:03:13.490 --> 00:03:17.410] 即使我事先沒有想到它們也不一定會感到飢餓
 [00:03:17.950 --> 00:03:24.310] If the communal table at the office is always filled with donuts and bagels, it's going to be hard not to grab one every now and then.
+[00:03:17.950 --> 00:03:24.310] 如果辦公室的公共餐桌上總是裝滿甜甜圈和百吉餅，那麼很難不偶爾拿一個。
 [00:03:24.750 --> 00:03:28.750] Your habits change depending on the room you're in and the queues in front of you.
+[00:03:24.750 --> 00:03:28.750] 你的習慣會根據你所在的房間和前面的排隊人數而改變。
 [00:03:29.610 --> 00:03:32.530] Environment is the invisible hand that shapes human behavior.
+[00:03:29.610 --> 00:03:32.530] 環境是塑造人類行為的無形之手。
 [00:03:32.910 --> 00:03:39.490] Despite our unique personalities, certain behaviors tend to arise again and again under certain environmental conditions.
+[00:03:32.910 --> 00:03:39.490] 儘管我們擁有獨特的個性，但在某些環境條件下，某些行為往往會一次又一次地出現。
 [00:03:40.070 --> 00:03:42.330] In church, people tend to talk in whispers.
+[00:03:40.070 --> 00:03:42.330] 在教會中，人們傾向於低聲說話。
 [00:03:42.530 --> 00:03:45.230] On a dark street, people act wary and guarded.
+[00:03:42.530 --> 00:03:45.230] 在黑暗的街道上，人們保持警惕和警惕。
 [00:03:45.630 --> 00:03:49.890] In this way, the most common form of change is not internal, but external.
+[00:03:45.630 --> 00:03:49.890] 通過這種方式，最常見的變革形式不是內部變革，而是外部變革。
 [00:03:50.170 --> 00:03:54.730] We are changed by the world around us. Every habit is context dependent.
+[00:03:50.170 --> 00:03:54.730] 我們被周圍的世界改變了。每個習慣都取決於上下文。
 [00:03:55.570 --> 00:04:01.370] In 1936, psychologist Kurt Lewin wrote a simple equation that makes a powerful statement.
+[00:03:55.570 --> 00:04:01.370] 1936年，心理學家庫爾特·勒溫（ Kurt Lewin ）寫了一個簡單的方程式，做出了強有力的陳述。
 [00:04:01.710 --> 00:04:07.030] Behavior is a function of the person in their environment, or B equals FPE.
+[00:04:01.710 --> 00:04:07.030] 行為是該人在其環境中的功能，或B等於FPE。
 [00:04:07.710 --> 00:04:10.990] It didn't take long for Lewin's equation to be tested in business.
+[00:04:07.710 --> 00:04:10.990] 沒過多久， Lewin的方程式在商業上得到了驗證。
 [00:04:11.350 --> 00:04:23.450] In 1952, the economist Hawkins Stern described a phenomenon he called suggestion impulse buying, which is triggered when a shopper sees a product for the first time and visualizes the need for it.
+[00:04:11.350 --> 00:04:23.450] 1952年，經濟學家霍金斯·斯特恩（ Hawkins Stern ）描述了一種他稱之為建議沖動購買的現象，這是當購物者第一次看到產品並可視化其需求時觸發的。
 [00:04:23.790 --> 00:04:30.650] In other words, customers will occasionally buy products not because they want them, but because of how they are presented to them.
+[00:04:23.790 --> 00:04:30.650] 換句話說，客戶偶爾會購買產品，不是因為他們想要它們，而是因為它們被呈現給他們的方式。
 [00:04:31.250 --> 00:04:35.870] For example, items at eye level tend to be purchased more than those down near the floor.
+[00:04:31.250 --> 00:04:35.870] 例如，在眼睛高度購買的物品往往多於在地板附近購買的物品。
 [00:04:36.150 --> 00:04:46.030] For this reason, you'll find expensive brand names featured in easy -to -reach locations on store shelves because they drive the most profit, while cheaper alternatives are tucked away in harder -to -reach spots.
+[00:04:36.150 --> 00:04:46.030] 因此，您會在商店貨架上找到易於到達的地點的昂貴品牌名稱，因為它們帶來最多的利潤，而更便宜的替代品則藏在更難到達的地方。
 [00:04:46.370 --> 00:04:49.690] The same goes for end caps, which are the units at the end of aisles.
+[00:04:46.370 --> 00:04:49.690] 端蓋也是如此，端蓋是過道末端的單元。
 [00:04:50.670 --> 00:04:55.950] End caps are money -making machines for retailers because they are obvious locations that encounter a lot of foot traffic.
+[00:04:50.670 --> 00:04:55.950] 端蓋是零售商的賺錢機器，因為它們是明顯的位置，會遇到大量的人流量。
 [00:04:56.290 --> 00:05:01.750] For example, 45 % of Coca -Cola sales come specifically from end -of -the -aisle racks.
+[00:04:56.290 --> 00:05:01.750] 例如， 45 ％的可口可樂銷售額專門來自過道架的末端。
 [00:05:02.550 --> 00:05:07.310] The more obviously available a product or service is, the more likely you are to try it.
+[00:05:02.550 --> 00:05:07.310] 產品或服務的可用性越明顯，您嘗試的可能性就越大。
 [00:05:07.470 --> 00:05:12.250] People drink by light because it is in every bar and visit Starbucks because it is on every corner.
+[00:05:07.470 --> 00:05:12.250] 人們在光線下喝酒，因為它在每個酒吧，參觀星巴克，因為它在每個角落。
 [00:05:12.450 --> 00:05:14.630] We like to think that we are in control.
+[00:05:12.450 --> 00:05:14.630] 我們喜歡認為自己掌控一切。
 [00:05:15.190 --> 00:05:19.050] If we choose water over soda, we assume it is because we wanted to do so.
+[00:05:15.190 --> 00:05:19.050] 如果我們選擇水而不是汽水，我們認為這是因為我們想這樣做。
 [00:05:19.270 --> 00:05:27.130] The truth, however, is that many of the actions we take each day are shaped not by purposeful drive and choice, but by the most obvious option.
+[00:05:19.270 --> 00:05:27.130] 然而，事實是，我們每天採取的許多行動並非由有目的的驅動力和選擇所決定，而是由最明顯的選擇所決定。
 [00:05:27.890 --> 00:05:34.510] Every living being has its own methods for sensing and understanding the world. Eagles have remarkable long -distance vision.
+[00:05:27.890 --> 00:05:34.510] 每個生物都有自己的感知和理解世界的方法。老鷹擁有非凡的遠距離視力。
 [00:05:34.870 --> 00:05:38.230] Snakes can smell by tasting the air with their highly sensitive tongues.
+[00:05:34.870 --> 00:05:38.230] 蛇可以通過用高度敏感的舌頭品嚐空氣來聞到氣味。
 [00:05:38.970 --> 00:05:43.810] Sharks can detect small amounts of electricity and vibrations in the water caused by nearby fish.
+[00:05:38.970 --> 00:05:43.810] 鯊魚可以偵測到附近魚類在水中造成的少量電流和振動。
 [00:05:44.230 --> 00:05:50.690] Even bacteria have chemoreceptors, tiny sensory cells that allow them to detect toxic chemicals in their environment.
+[00:05:44.230 --> 00:05:50.690] 即使是細菌也有化學感受器，這是一種微小的感覺細胞，可以讓它們檢測環境中的有毒化學物質。
 [00:05:51.370 --> 00:05:54.830] In humans, perception is directed by the sensory nervous system.
+[00:05:51.370 --> 00:05:54.830] 在人類中，感知是由感官神經系統指導的。
