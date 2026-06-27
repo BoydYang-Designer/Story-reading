@@ -2494,7 +2494,9 @@ function playAudioSnippet(startTime, endTime) {
 
 // 根據目前 scrollTop 找出「最靠近畫面中央 40% 位置」的句子 index
 function getReadingCenterIndex() {
-    const midY = textContainer.scrollTop + textContainer.clientHeight * 0.38;
+    // highlight 鎖點放在可見區 55% 處（偏中下）
+    // 原本 38% 太靠上，句子快速被推離視野；55% 讓目前句在畫面停留更久
+    const midY = textContainer.scrollTop + textContainer.clientHeight * 0.55;
     let bestIdx = -1, bestDist = Infinity;
     timestampData.forEach((line, i) => {
         const el = sentenceElementMap.get(String(line.start));
@@ -2883,6 +2885,11 @@ function renderTimestampContent() {
     });
     textContainer.appendChild(frag);
     lastHighlightedSentence = null;
+
+    // 底部緩衝：讓最後幾句也能被 highlight（否則捲到底時 55% 鎖點找不到它們）
+    const bottomSpacer = document.createElement('div');
+    bottomSpacer.className = 'reading-bottom-spacer';
+    textContainer.appendChild(bottomSpacer);
 
     // FIX: 預先建立 start → DOM element 的 Map，避免 timestampUpdateLoop 每次句子切換都做 O(n) querySelector 掃描
     sentenceElementMap = new Map();

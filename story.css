@@ -5749,3 +5749,15 @@ textarea:focus-visible {
   opacity: 0.7;
   font-variant-numeric: tabular-nums;
 }
+
+/* ── 閱讀模式：底部緩衝空白 ──────────────────────────────
+   讓最後幾句在 55% 鎖點還能被 highlight，
+   平常瀏覽時高度 0 不佔位。
+   ─────────────────────────────────────────────────────── */
+.reading-bottom-spacer {
+  height: 0;
+  pointer-events: none;
+}
+#text-container.reading-active .reading-bottom-spacer {
+  height: 45vh;
+}
