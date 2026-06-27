@@ -1,14 +1,28 @@
 [00:00:00.000 --> 00:00:01.620] You should know this industrial designer.
+[00:00:00.000 --> 00:00:01.620] 你應該認識這位工業設計師
 [00:00:01.800 --> 00:00:10.620] This is James Dyson, who while most consumer products were chasing new features and styling, built a career around fixing that one thing that people actually feel. Performance that degrades over time.
+[00:00:01.800 --> 00:00:10.620] 這是James Dyson ，雖然大多數消費者產品都在追求新功能和造型，但他的職業生涯是圍繞著修復人們實際感受到的一件事。性能會隨著時間的推移而降低。
 [00:00:10.760 --> 00:00:16.980] James Dyson is a British industrial designer, and he got fed up in 1978 when his vacuum lost suction as the bag got clogged.
+[00:00:10.760 --> 00:00:16.980] 詹姆斯·戴森（ James Dyson ）是英國工業設計師， 1978年，他的真空吸塵器因袋子堵塞而失去吸力，他對此感到厭倦。
 [00:00:17.080 --> 00:00:22.140] To fix this, he borrowed Cyclone Separating, which he saw being used in a local sawmill and started prototyping.
+[00:00:17.080 --> 00:00:22.140] 為了解決這個問題，他借用了Cyclone Separating ，他看到它在當地的鋸木廠中使用，並開始製作原型。
 [00:00:22.320 --> 00:00:29.540] After 5 years and 5 ,127 prototypes, he had a working bagless prototype, but manufacturers were rejecting it.
+[00:00:22.320 --> 00:00:29.540] 在5年和5,127個原型之後，他有了一個工作的無袋原型，但製造商拒絕了它。
 [00:00:29.640 --> 00:00:37.380] So he went independent and launched his first mass -produced vacuum, which was the DC -01 in 1993. His core idea is ruthless.
+[00:00:29.640 --> 00:00:37.380] 因此，他獨立推出了他的第一個大規模生產的真空吸塵器，即1993年的DC -01。他的核心思想是無情的。
 [00:00:37.400 --> 00:00:40.880] If the design gets worse with use, that means the design has failed.
+[00:00:37.400 --> 00:00:40.880] 如果設計因使用而變差，則表示設計失敗。
 [00:00:41.080 --> 00:00:42.720] The DC -01 is clear proof of that.
+[00:00:41.080 --> 00:00:42.720] 華盛頓特區-01清楚地證明了這一點。
 [00:00:42.800 --> 00:00:48.740] The dual cyclone tech was designed not to lose suction, plus a clear bin that market research generally said people didn't want.
+[00:00:42.800 --> 00:00:48.740] 雙旋風技術旨在不失去吸引力，加上市場研究普遍認為人們不想要的清晰垃圾桶。
 [00:00:48.820 --> 00:00:52.440] But clearly being able to see the dirt is clear evidence that the vacuum is working.
+[00:00:48.820 --> 00:00:52.440] 但很明顯，能夠看到污垢是吸塵器正在工作的明顯證據。
 [00:00:52.700 --> 00:00:54.920] He matters because he made a clear principle mainstream.
+[00:00:52.700 --> 00:00:54.920] 他很重要，因為他制定了明確的主流原則。
 [00:00:55.240 --> 00:00:58.200] Start in failure mode, engineer it out, and then make the product visible.
+[00:00:55.240 --> 00:00:58.200] 從故障模式開始，設計出來，然後讓產品可見。
 [00:00:58.440 --> 00:01:00.900] If he wanted to follow in his footsteps, don't ask what can I add.
+[00:00:58.440 --> 00:01:00.900] 如果他想跟隨他的腳步，不要問我能添加什麼。
 [00:01:01.000 --> 00:01:03.640] Ask what degrades over time and design so it can't.
+[00:01:01.000 --> 00:01:03.640] 詢問哪些內容會隨著時間和設計而退化，以免退化。

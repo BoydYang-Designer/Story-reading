@@ -1,5 +1,10 @@
 [00:00:00.000 --> 00:00:07.240] To give a clearer view of how the stroller frame works during folding, I made the seat and basket transparent so you can see how the frame tubes move.
+[00:00:00.000 --> 00:00:07.240] 為了更清楚地了解嬰兒車框架在摺疊過程中的運作方式，我將座椅和籃子變得透明，以便您可以看到框架管的移動方式。
 [00:00:08.080 --> 00:00:13.120] As you can see, after the handlebar rotates to a certain angle, the seat folds automatically.
+[00:00:08.080 --> 00:00:13.120] 如您所見，車把旋轉到一定角度後，座椅會自動折疊。
 [00:00:14.020 --> 00:00:22.340] This is because the seat locking mechanism is released by the handlebar rotation, and both the front leg and rear leg hinges are released at the same time.
+[00:00:14.020 --> 00:00:22.340] 這是因為座椅鎖定機構由車把旋轉釋放，前腿和後腿鉸鏈同時釋放。
 [00:00:22.720 --> 00:00:27.820] You then simply push the handlebar downward to achieve the final compact fold.
+[00:00:22.720 --> 00:00:27.820] 然後，只需向下推動車把，即可完成最後的緊湊折疊。
 [00:00:27.820 --> 00:00:33.120] After folding, the handlebar remains upright and the stroller can stand on its own.
+[00:00:27.820 --> 00:00:33.120] 折疊後，車把保持直立，嬰兒車可以獨立站立。

@@ -1,75 +1,150 @@
 [00:00:00.000 --> 00:00:05.160] Chapter 4 The Man Who Didn't Look Right In
+[00:00:00.000 --> 00:00:05.160] 第四章不看正眼的人
 [00:00:05.160 --> 00:00:17.140] Chapter 4 of Atomic Habits, James Clear introduces us to the incredible power of cues and how our brains are constantly scanning our environments for them, often without our conscious awareness.
+[00:00:05.160 --> 00:00:17.140] 詹姆斯·克利爾（ James Clear ）在《原子習慣》（ Atomic Habits ）第4章中向我們介紹了線索令人難以置信的力量，以及我們的大腦如何不斷掃描我們的環境，往往沒有意識到它們。
 [00:00:17.780 --> 00:00:25.660] He illustrates this with a real -life story about a woman who sensed something was wrong with her husband just by the way he looked,
+[00:00:17.780 --> 00:00:25.660] 他用一個真實的故事來說明這一點，一個女人從丈夫的樣子中感覺到她的丈夫有問題，
 [00:00:26.120 --> 00:00:28.520] even though he seemed fine on the surface.
+[00:00:26.120 --> 00:00:28.520] 儘管他表面上看起來很好
 [00:00:29.040 --> 00:00:38.080] Her brain had unconsciously detected subtle cues that something was off. Moments later, he collapsed. The point.
+[00:00:29.040 --> 00:00:38.080] 她的大腦在不知不覺中發現了一些微妙的線索，表明有什麼不對勁。片刻之後，他倒下了。重點是
 [00:00:38.360 --> 00:00:44.600] Our brains are constantly picking up patterns and signals, learning how to predict what happens next.
+[00:00:38.360 --> 00:00:44.600] 我們的大腦不斷拾取模式和信號，學習如何預測接下來會發生什麼。
 [00:00:44.980 --> 00:00:48.880] This pattern recognition forms the basis of habit formation.
+[00:00:44.980 --> 00:00:48.880] 這種模式識別構成了習慣形成的基礎。
 [00:00:49.400 --> 00:00:52.500] A cue triggers your brain to initiate a behavior.
+[00:00:49.400 --> 00:00:52.500] 提示會觸發你的大腦啟動行為。
 [00:00:52.880 --> 00:00:58.320] Over time, your mind learns to associate certain contexts with certain outcomes.
+[00:00:52.880 --> 00:00:58.320] 隨著時間的推移，你的大腦會學習將某些情境與某些結果聯繫起來。
 [00:00:58.660 --> 00:01:03.180] You see a donut box at work, and suddenly you're craving sugar.
+[00:00:58.660 --> 00:01:03.180] 你看到一個甜甜圈盒在工作，突然間你渴望糖。
 [00:01:03.560 --> 00:01:07.620] You hear a notification ding and instinctively check your phone.
+[00:01:03.560 --> 00:01:07.620] 你聽到通知叮鈴聲，本能地檢查你的手機。
 [00:01:08.000 --> 00:01:13.120] These automatic responses are habits built from years of cues and responses.
+[00:01:08.000 --> 00:01:13.120] 這些自動反應是從多年的暗示和反應中建立起來的習慣。
 [00:01:14.240 --> 00:01:17.480] Clear emphasizes that awareness is the first step to change.
+[00:01:14.240 --> 00:01:17.480] Clear強調，覺察是改變的第一步。
 [00:01:17.800 --> 00:01:20.000] You can't change a habit you don't notice.
+[00:01:17.800 --> 00:01:20.000] 你不能改變你沒有注意到的習慣。
 [00:01:20.480 --> 00:01:24.360] That's why he introduces the concept of a habit scorecard.
+[00:01:20.480 --> 00:01:24.360] 這就是為什麼他引入了習慣計分卡的概念。
 [00:01:24.640 --> 00:01:44.660] It's a simple but powerful tool where you list your daily habits and evaluate them as positive, negative, or neutral. For example, wake up. Check mark positive. Check phone immediately. Negative. Drink a glass of water. Positive. Skip breakfast. Negative.
+[00:01:24.640 --> 00:01:44.660] 這是一個簡單但強大的工具，您可以列出自己的日常習慣，並將其評估為正面、負面或中性。例如，醒醒。檢查標記為正。立即檢查電話。不行，喝一杯水正面。不吃早餐。負面。
 [00:01:45.100 --> 00:01:49.480] The point isn't to judge yourself. It's to become aware.
+[00:01:45.100 --> 00:01:49.480] 重點不在於評斷自己。這就是要變得有意識。
 [00:01:49.920 --> 00:01:52.080] Most of our habits are unconscious.
+[00:01:49.920 --> 00:01:52.080] 我們的大多數習慣都是無意識的。
 [00:01:52.560 --> 00:01:55.820] The habits scorecard brings them into the light.
+[00:01:52.560 --> 00:01:55.820] 習慣計分卡將它們帶入光明。
 [00:01:56.600 --> 00:02:05.760] Clear then introduces implementation intentions and habit stacking as ways to make cues more obvious. Implementation intention.
+[00:01:56.600 --> 00:02:05.760] Clear然後介紹實施意圖和習慣堆疊，作為使提示更明顯的方法。實施意圖。
 [00:02:06.320 --> 00:02:11.820] I will behavior at time in location. Habit stacking.
+[00:02:06.320 --> 00:02:11.820] 我會在時間的位置行為。習慣堆疊。
 [00:02:11.820 --> 00:02:17.440] After current habit, I will new habit. For instance,
+[00:02:11.820 --> 00:02:17.440] 在目前的習慣之後，我會有新的習慣，例如
 [00:02:18.240 --> 00:02:21.960] after I brush my teeth, I will meditate for one minute.
+[00:02:18.240 --> 00:02:21.960] 刷完牙後，我會冥想一分鐘
 [00:02:22.760 --> 00:02:28.020] After I pour my morning coffee, I will write down one thing I'm grateful for.
+[00:02:22.760 --> 00:02:28.020] 在我倒完早上的咖啡後，我會寫下一件我很感激的事情。
 [00:02:28.740 --> 00:02:40.100] These techniques link a new habit to a cue that already exists in your life, making the behavior much more likely to stick. Clear also discusses environment design.
+[00:02:28.740 --> 00:02:40.100] 這些技巧將新習慣與生活中已經存在的暗示聯繫起來，使這種行為更有可能堅持下去。CLEAR還討論了環境設計。
 [00:02:40.480 --> 00:02:45.840] Your surroundings can dramatically influence your habits. Want to eat healthier?
+[00:02:40.480 --> 00:02:45.840] 您的周圍環境會極大地影響您的習慣。想吃得更健康嗎？
 [00:02:46.360 --> 00:02:51.180] Leave fruit out on the counter instead of chips. Want to read more?
+[00:02:46.360 --> 00:02:51.180] 把水果放在櫃檯上，而不是薯條。想閱讀更多內容嗎？
 [00:02:51.740 --> 00:02:53.340] Leave a book on your pillow.
+[00:02:51.740 --> 00:02:53.340] 在枕頭上留下一本書。
 [00:02:54.380 --> 00:03:02.320] In summary, Chapter 4 teaches, Our brains constantly respond to cues, often without us realizing.
+[00:02:54.380 --> 00:03:02.320] 總而言之，第4章教導我們，我們的大腦不斷對線索作出反應，而我們往往沒有意識到。
 [00:03:03.060 --> 00:03:06.320] Awareness is the first step toward changing habits.
+[00:03:03.060 --> 00:03:06.320] 意識是改變習慣的第一步。
 [00:03:07.060 --> 00:03:10.900] The habits scorecard helps identify current behaviors.
+[00:03:07.060 --> 00:03:10.900] 習慣計分卡有助於識別當前的行為。
 [00:03:11.840 --> 00:03:15.640] Implementation intentions and habit stacking make cues obvious.
+[00:03:11.840 --> 00:03:15.640] 實施意圖和習慣堆疊使線索變得明顯。
 [00:03:16.220 --> 00:03:21.180] Designing your environment makes good cues easier to spot and follow.
+[00:03:16.220 --> 00:03:21.180] 設計您的環境可以讓您更容易發現和追蹤良好的線索。
 [00:03:21.640 --> 00:03:26.680] If you want to change your habits, start by changing what your brain sees.
+[00:03:21.640 --> 00:03:26.680] 如果你想改變你的習慣，從改變你的大腦看到的東西開始。
 [00:03:27.140 --> 00:03:30.740] Make the cues for good habits impossible to ignore.
+[00:03:27.140 --> 00:03:30.740] 讓良好習慣的線索不容忽視。
 [00:03:31.200 --> 00:03:40.140] When you do, your new behavior becomes automatic. Awareness plus design equals transformation. Chapter 5.
+[00:03:31.200 --> 00:03:40.140] 當你這樣做時，你的新行為就會自動化。意識加設計等於轉型。第5章。
 [00:03:40.300 --> 00:03:42.820] The best way to start a new habit.
+[00:03:40.300 --> 00:03:42.820] 養成新習慣的最佳方式。
 [00:03:43.440 --> 00:03:49.500] James Clear kicks off Chapter 5 with one powerful idea. Make it obvious.
+[00:03:43.440 --> 00:03:49.500] 詹姆斯·克利爾以一個強大的想法開啟了第5章。讓它變得明顯。
 [00:03:49.940 --> 00:03:58.500] And he takes it a step further by explaining the method behind the madness. Implementation intentions and habit stacking.
+[00:03:49.940 --> 00:03:58.500] 他更進一步解釋了瘋狂背後的方法。實施意向與習慣堆疊。
 [00:03:59.080 --> 00:04:01.480] So how do you actually start a habit?
+[00:03:59.080 --> 00:04:01.480] 那麼，你實際上如何開始養成一個習慣？
 [00:04:01.720 --> 00:04:04.680] How do you go from intention to action?
+[00:04:01.720 --> 00:04:04.680] 您如何從意圖到行動？
 [00:04:05.600 --> 00:04:12.120] Clear reveals that the most successful people don't leave their habits to chance. They plan for them.
+[00:04:05.600 --> 00:04:12.120] Clear揭示了最成功的人不會將他們的習慣留給機會。他們為他們計劃。
 [00:04:12.500 --> 00:04:18.820] They use implementation intentions a specific formula. I will at in.
+[00:04:12.500 --> 00:04:18.820] 他們使用具體的公式來實施意圖。我會在。
 [00:04:19.240 --> 00:04:24.920] It sounds simple, but this clarity removes the uncertainty. For example,
+[00:04:19.240 --> 00:04:24.920] 聽起來很簡單，但這種清晰度消除了不確定性。例如，
 [00:04:25.540 --> 00:04:30.220] I will do 15 push -ups at 6 .30 a .m. in my bedroom.
+[00:04:25.540 --> 00:04:30.220] 我會在早上6點30分在我的臥室裡做15次伏地挺身。
 [00:04:30.680 --> 00:04:34.100] I will drink a glass of water at 7 a .m. in my kitchen.
+[00:04:30.680 --> 00:04:34.100] 我會在早上7點在我的廚房裏喝一杯水。
 [00:04:34.480 --> 00:04:38.620] I will read 10 pages at 9 p .m. in the living room.
+[00:04:34.480 --> 00:04:38.620] 我會在下午9點在客廳閱讀10頁。
 [00:04:39.460 --> 00:04:48.640] Once a behavior is clearly defined and tied to a time and place, it becomes much easier to execute. But Clear doesn't stop there.
+[00:04:39.460 --> 00:04:48.640] 一旦一個行為被明確定義並與時間和地點綁定，它就變得更容易執行。但克利爾並沒有止步於此。
 [00:04:48.940 --> 00:04:54.440] He introduces habit stacking, a way to use your current routines to trigger new ones.
+[00:04:48.940 --> 00:04:54.440] 他介紹了習慣堆疊，這是一種使用當前例程來觸發新例程的方法。
 [00:04:54.860 --> 00:05:03.140] Instead of tying a new habit to time, you tie it to another habit. After, I will. Examples.
+[00:04:54.860 --> 00:05:03.140] 與其將一個新習慣與時間綁在一起，不如將它與另一個習慣綁在一起。之後，我會舉例說明
 [00:05:03.660 --> 00:05:07.540] After I pour my morning coffee, I will journal for one minute.
+[00:05:03.660 --> 00:05:07.540] 倒完早上的咖啡後，我會記錄一分鐘。
 [00:05:08.060 --> 00:05:12.640] After I take off my work shoes, I will change into workout clothes.
+[00:05:08.060 --> 00:05:12.640] 脫掉工作鞋後，我會換上運動服。
 [00:05:13.540 --> 00:05:16.660] After I brush my teeth, I will floss.
+[00:05:13.540 --> 00:05:16.660] 刷牙後，我會使用牙線。
 [00:05:17.440 --> 00:05:23.640] This is powerful because it uses something you already do as a reliable cue for the new habit.
+[00:05:17.440 --> 00:05:23.640] 這很強大，因為它使用你已經做的事情作為新習慣的可靠提示。
 [00:05:24.680 --> 00:05:31.520] Clear emphasizes that stacking works best when the cue and new behavior are tightly linked in time and space.
+[00:05:24.680 --> 00:05:31.520] Clear強調，當線索和新行為在時間和空間上緊密相連時，堆疊效果最好。
 [00:05:31.780 --> 00:05:36.440] And the more consistent your cue, the more automatic your habit becomes.
+[00:05:31.780 --> 00:05:36.440] 你的提示越一致，你的習慣就越自動化。
 [00:05:37.000 --> 00:05:40.060] He also warns about choosing the right anchor habit.
+[00:05:37.000 --> 00:05:40.060] 他還警告不要選擇正確的錨點習慣。
 [00:05:40.500 --> 00:05:46.980] The original habit needs to be something you do regularly and, ideally, at the same time of day.
+[00:05:40.500 --> 00:05:46.980] 最初的習慣必須是您經常做的事情，最好是在一天中的同一時間。
 [00:05:47.320 --> 00:05:51.340] It's no use stacking a habit onto something you only do once a week.
+[00:05:47.320 --> 00:05:51.340] 將習慣累積到每週只做一次的事情上是沒有用的。
 [00:05:51.820 --> 00:05:57.620] In this chapter, Clear also revisits the idea that environment is stronger than motivation.
+[00:05:51.820 --> 00:05:57.620] 在本章中， Clear還重溫了環境比動機更強大的觀念。
 [00:05:58.120 --> 00:06:03.160] If your cues aren't visible or accessible, your brain won't pick up on them.
+[00:05:58.120 --> 00:06:03.160] 如果您的線索不可見或無法存取，您的大腦就無法接收到這些線索。
 [00:06:03.420 --> 00:06:09.660] But if you intentionally craft your surroundings, your environment becomes a silent coach.
+[00:06:03.420 --> 00:06:09.660] 但如果你刻意打造環境，你的環境就會變成一個沉默的教練。
 [00:06:10.120 --> 00:06:16.580] Here's a recap of key strategies from Chapter 5. 1. Implementation Intentions.
+[00:06:10.120 --> 00:06:16.580] 以下是第5章中的關鍵策略摘要。1.實施意圖。
 [00:06:16.820 --> 00:06:22.300] Turn Vague Intentions into Concrete Plans. Not, I'll start running.
+[00:06:16.820 --> 00:06:22.300] 將模糊的意圖轉化為具體計劃。不，我會開始逃跑。
 [00:06:23.000 --> 00:06:30.240] But, I'll run at 5 p .m. in the park after work. 2. Habit Stacking.
+[00:06:23.000 --> 00:06:30.240] 但是，我會在下班後下午5點在公園跑步。2.習慣堆疊。
 [00:06:30.580 --> 00:06:32.920] Anchor new habits to current behaviors.
+[00:06:30.580 --> 00:06:32.920] 將新習慣與當前行為聯繫起來。
 [00:06:33.780 --> 00:06:41.380] After I brush my teeth, I'll stretch for two minutes. 3. Optimize your environment.
+[00:06:33.780 --> 00:06:41.380] 刷牙後，我會伸展兩分鐘。3.最佳化您的環境。
 [00:06:41.900 --> 00:06:44.400] Make the cues for good habits obvious.
+[00:06:41.900 --> 00:06:44.400] 讓良好習慣的線索變得明顯。
 [00:06:44.900 --> 00:06:47.060] Leave your guitar in the middle of the room.
+[00:06:44.900 --> 00:06:47.060] 將吉他放在房間中央。
 [00:06:47.480 --> 00:06:49.840] Put your workout clothes on your chair.
+[00:06:47.480 --> 00:06:49.840] 把健身衣放在椅子上。
 [00:06:50.480 --> 00:06:55.020] When these techniques are used together, starting a habit becomes seamless.
+[00:06:50.480 --> 00:06:55.020] 當這些技巧一起使用時，開始養成習慣變得無縫接軌。
 [00:06:55.500 --> 00:07:02.680] The clearer your plan, the less willpower you need. Chapter 5 reminds us.
+[00:06:55.500 --> 00:07:02.680] 你的計劃越清晰，你需要的意志力就越少。第5章提醒我們。
 [00:07:03.000 --> 00:07:05.520] Habits don't form from vague intentions.
+[00:07:03.000 --> 00:07:05.520] 習慣不是由模糊的意圖形成的。
 [00:07:05.900 --> 00:07:16.860] They're built through clear, specific cues and reinforced by a supportive environment. Want to change your life? Start by making it obvious.
+[00:07:05.900 --> 00:07:16.860] 它們通過清晰、具體的線索構建，並由支持性環境加強。想改變你的生活嗎？首先，請說明這一點。
 [00:07:16.860 --> 00:07:24.120] To watch the full video, head over to my YouTube channel, The Lit Breakdown. Don't miss the complete summary.
+[00:07:16.860 --> 00:07:24.120] 如要觀看完整影片，請前往我的YouTube頻道「The Lit Breakdown」。千萬別錯過完整的摘要。

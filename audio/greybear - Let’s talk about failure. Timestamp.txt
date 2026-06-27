@@ -1,21 +1,42 @@
 [00:00:00.000 --> 00:00:05.740] Let's talk about failure. Every designer has rejected ideas, broken prototypes, and ideas that don't really work out.
+[00:00:00.000 --> 00:00:05.740] 讓我們來談談失敗。每位設計師都拒絕了構想、破碎的原型，以及無法真正實現的構想。
 [00:00:05.860 --> 00:00:09.860] And the mistake being made here isn't the failures, it's that you're trying to avoid those failures.
+[00:00:05.860 --> 00:00:09.860] 這裡犯的錯誤不是失敗，而是你試圖避免這些失敗。
 [00:00:10.180 --> 00:00:13.280] In design, failure isn't just inevitable, it's actually quite useful.
+[00:00:10.180 --> 00:00:13.280] 在設計中，失敗不僅僅是不可避免的，它實際上是非常有用的。
 [00:00:13.460 --> 00:00:20.600] Every test that fails, every prototype that breaks, and every idea that your client might hate isn't just failure, it's actually feedback.
+[00:00:13.460 --> 00:00:20.600] 每個失敗的測試，每個中斷的原型，以及您的客戶可能討厭的每個想法不僅僅是失敗，它實際上是反饋。
 [00:00:20.760 --> 00:00:26.740] It's feedback because iteration and progression is built on small failures, small repeated failures.
+[00:00:20.760 --> 00:00:26.740] 這是反饋，因為迭代和進步建立在小失敗、小重複失敗的基礎上。
 [00:00:27.000 --> 00:00:30.140] If nothing you've ever made fails, then you're probably not pushing far enough.
+[00:00:27.000 --> 00:00:30.140] 如果你從未做過任何事情失敗，那麼你可能不夠努力。
 [00:00:30.200 --> 00:00:37.320] You should really stop treating failure as a roadblock or an outcome and treat it more as data points that you can use to progress and further work on your product.
+[00:00:30.200 --> 00:00:37.320] 您真的應該停止將失敗視為障礙或結果，而更多地將其視為可用於產品進展和進一步工作的數據點。
 [00:00:37.560 --> 00:00:38.940] I mean, just look at James Dyson.
+[00:00:37.560 --> 00:00:38.940] 我的意思是，看看詹姆斯戴森
 [00:00:39.120 --> 00:00:44.720] He went through 5 ,127 different failed prototypes before he actually made his vacuum work.
+[00:00:39.120 --> 00:00:44.720] 在他真正完成吸塵工作之前，他經歷了5,127個不同的失敗原型。
 [00:00:44.780 --> 00:00:47.500] And the thing is, he didn't see each of those prototypes as wasted attempts.
+[00:00:44.780 --> 00:00:47.500] 問題是，他並沒有把每個原型視為浪費的嘗試。
 [00:00:47.720 --> 00:00:50.300] Each one of those attempts taught him something different about his problem.
+[00:00:47.720 --> 00:00:50.300] 這些嘗試中的每一次都教會了他一些不同的問題。
 [00:00:50.520 --> 00:00:54.880] That mindset is what turned failure into progression and ultimately his success.
+[00:00:50.520 --> 00:00:54.880] 這種心態將失敗轉化為進步，最終成為他的成功。
 [00:00:55.160 --> 00:00:56.720] I'm pretty sure you can see this everywhere.
+[00:00:55.160 --> 00:00:56.720] 我敢肯定，你到處都可以看到這一點。
 [00:00:56.940 --> 00:01:00.100] If a chair collapses, then you know the materials or the joints were wrong.
+[00:00:56.940 --> 00:01:00.100] 如果椅子倒塌，那麼您就知道材料或關節是錯誤的。
 [00:01:00.280 --> 00:01:04.000] If a client rejects your pitch, then you know what kind of questions you should have asked earlier on.
+[00:01:00.280 --> 00:01:04.000] 如果客戶拒絕你的簡報，那麼你知道你應該提前問什麼樣的問題。
 [00:01:04.080 --> 00:01:07.440] User testing destroys your first product, then you know exactly what you need to fix.
+[00:01:04.080 --> 00:01:07.440] 用戶測試會破壞您的第一個產品，然後您確切地知道您需要修復什麼。
 [00:01:07.620 --> 00:01:10.220] Good design hardly ever comes from getting it right on the first try.
+[00:01:07.620 --> 00:01:10.220] 好的設計很少來自於第一次嘗試就把它做好。
 [00:01:10.360 --> 00:01:13.760] It comes from learning faster each time and making progress from those failures.
+[00:01:10.360 --> 00:01:13.760] 它來自於每次學習更快，並從這些失敗中取得進步。
 [00:01:14.000 --> 00:01:15.920] So I urge you to rethink what failure means.
+[00:01:14.000 --> 00:01:15.920] 因此，我敦促你重新思考失敗的意義。
 [00:01:16.160 --> 00:01:22.780] It's never going to be a reflection of your ability, it's just going to be a reflection of your progress and your ability to continue progressing forward.
+[00:01:16.160 --> 00:01:22.780] 它永遠不會反映你的能力，它只是反映你的進步和你繼續前進的能力。
 [00:01:22.960 --> 00:01:25.280] The only real failure in design is one you don't learn from.
+[00:01:22.960 --> 00:01:25.280] 設計中唯一真正的失敗是你無法學習的失敗。

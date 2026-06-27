@@ -1,26 +1,52 @@
 [00:00:00.000 --> 00:00:01.740] You should add these things to your portfolio.
+[00:00:00.000 --> 00:00:01.740] 您應該將這些內容新增至您的專案集。
 [00:00:02.060 --> 00:00:03.420] End -to -end process story.
+[00:00:02.060 --> 00:00:03.420] 結束-到-結束過程故事。
 [00:00:03.620 --> 00:00:06.200] Pick one project and lay it out in a single line that's scannable.
+[00:00:03.620 --> 00:00:06.200] 選擇一個專案，並將其排列在可掃描的單行中。
 [00:00:06.340 --> 00:00:08.760] Problems inside sketches, iterations, and tests.
+[00:00:06.340 --> 00:00:08.760] 草圖、迭代和測試中的問題。
 [00:00:09.060 --> 00:00:11.660] But also the final solution, the outcome, and the reflection.
+[00:00:09.060 --> 00:00:11.660] 還有最終解決方案、結果和反思。
 [00:00:12.040 --> 00:00:13.520] Try to use blunt headings for these.
+[00:00:12.040 --> 00:00:13.520] 請嘗試使用直言不諱的標題。
 [00:00:13.840 --> 00:00:15.660] You can also add a short before and after.
+[00:00:13.840 --> 00:00:15.660] 您也可以添加之前和之後的簡短訊息。
 [00:00:15.940 --> 00:00:18.480] Also writing short annotations that explain your decisions helps.
+[00:00:15.940 --> 00:00:18.480] 此外，撰寫簡短的註釋來解釋您的決定也會有所幫助。
 [00:00:18.780 --> 00:00:22.240] You should do this because you don't want to avoid trying to hide the messy middle of your project.
+[00:00:18.780 --> 00:00:22.240] 您應該這樣做，因為您不想嘗試隱藏專案中的雜亂。
 [00:00:22.400 --> 00:00:25.340] You want to show what changed, when it changed, and why you changed it.
+[00:00:22.400 --> 00:00:25.340] 你想顯示變更內容、變更時間，以及變更原因。
 [00:00:25.580 --> 00:00:26.480] Quantifiable impacts.
+[00:00:25.580 --> 00:00:26.480] 可量化的影響。
 [00:00:26.480 --> 00:00:30.780] Add a final result box to either your final design or some of the case studies that you looked at.
+[00:00:26.480 --> 00:00:30.780] 將最終結果框添加到您的最終設計或您查看的一些案例研究中。
 [00:00:30.900 --> 00:00:32.560] And make sure to use numbers when you do this.
+[00:00:30.900 --> 00:00:32.560] 執行此操作時，請務必使用數字。
 [00:00:32.760 --> 00:00:38.260] Try to show time saved, errors removed, assembly steps removed, parts reduced, weight changed, and success rate.
+[00:00:32.760 --> 00:00:38.260] 嘗試顯示節省的時間、刪除的錯誤、刪除的組裝步驟、減少的零件、重量變更和成功率。
 [00:00:38.400 --> 00:00:41.160] But there's still a lot of other things that you could try adding or showing.
+[00:00:38.400 --> 00:00:41.160] 不過，您還是可以嘗試新增或顯示許多其他內容。
 [00:00:41.380 --> 00:00:44.700] If you don't have lab data, then you can just try and use a very clearly labeled estimate.
+[00:00:41.380 --> 00:00:44.700] 如果您沒有實驗室數據，那麼您可以嘗試使用標籤非常明確的估計值。
 [00:00:44.940 --> 00:00:46.280] Show constraints and trade -offs.
+[00:00:44.940 --> 00:00:46.280] 顯示限制和取捨。
 [00:00:46.520 --> 00:00:52.300] Make the limits visible by showing manufacturing process, cost target, assembly sequence, material, and durability.
+[00:00:46.520 --> 00:00:52.300] 透過顯示製造過程、成本目標、組裝順序、材料和耐用性，使限制可見。
 [00:00:52.780 --> 00:00:54.900] Include one rejected option and why it was rejected.
+[00:00:52.780 --> 00:00:54.900] 包含一個已拒絕的選項，以及拒絕的原因。
 [00:00:54.900 --> 00:00:57.100] You could also add two to three call -outs.
+[00:00:54.900 --> 00:00:57.100] 您也可以添加2到3次呼叫。
 [00:00:57.360 --> 00:00:59.480] For alignment tolerances or failure points.
+[00:00:57.360 --> 00:00:59.480] 用於對準公差或故障點。
 [00:00:59.760 --> 00:01:01.160] Show research and testing evidence.
+[00:00:59.760 --> 00:01:01.160] 展示研究和測試證據。
 [00:01:01.460 --> 00:01:04.380] Show that real people or real constraints forced iteration.
+[00:01:01.460 --> 00:01:04.380] 展示真實的人或真實的約束強制迭代。
 [00:01:04.740 --> 00:01:06.740] Try to show this in some sort of observable loop.
+[00:01:04.740 --> 00:01:06.740] 嘗試以某種可觀察的循環來顯示這一點。
 [00:01:06.820 --> 00:01:10.940] Observation, test, failure, design change, retest, and improvement.
+[00:01:06.820 --> 00:01:10.940] 觀察、測試、失敗、設計變更、重新測試和改進。
 [00:01:11.240 --> 00:01:14.800] It would also be beneficial to show how each iteration fixed a certain issue.
+[00:01:11.240 --> 00:01:14.800] 展示每次迭代如何解決特定問題也是有益的。

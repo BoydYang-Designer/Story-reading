@@ -1,15 +1,30 @@
 [00:00:00.000 --> 00:00:06.220] The reason I created this concept is that in the current stroller market, most stroller handlebars rotate downward during folding.
+[00:00:00.000 --> 00:00:06.220] 我創造這個概念的原因是，在目前的嬰兒車市場中，大多數嬰兒車把手在摺疊時向下旋轉。
 [00:00:06.860 --> 00:00:13.700] Even when a folding stroller can stand upright on its own, users still need to carefully find the right balance to ensure it stands firmly.
+[00:00:06.860 --> 00:00:13.700] 即使折疊嬰兒車可以獨立站立，用戶仍然需要仔細尋找適當的平衡，以確保其穩固地站立。
 [00:00:14.580 --> 00:00:20.280] In addition, many auto -fold strollers require the seat to be folded first before the frame can fold.
+[00:00:14.580 --> 00:00:20.280] 此外，許多自動折疊嬰兒車需要先折疊座椅，才能折疊車架。
 [00:00:20.940 --> 00:00:25.120] Some designs allow the seat to fold and then automatically trigger the frame folding.
+[00:00:20.940 --> 00:00:25.120] 有些設計允許座椅摺疊，然後自動觸發車架摺疊。
 [00:00:25.720 --> 00:00:29.500] But this creates safety concerns as there is a risk of accidental folding.
+[00:00:25.720 --> 00:00:29.500] 但這會造成安全疑慮，因為有意外摺疊的風險。
 [00:00:30.000 --> 00:00:34.800] Even strollers with a one -press button for fully automatic folding face similar safety issues.
+[00:00:30.000 --> 00:00:34.800] 即使是按下一個按鈕可自動折疊的嬰兒車，也會面臨類似的安全問題。
 [00:00:36.080 --> 00:00:42.740] The main idea of this concept is to achieve a single continuous folding motion without compromising safety.
+[00:00:36.080 --> 00:00:42.740] 此概念的主要思想是實現單次連續摺疊運動，而不會影響安全性。
 [00:00:43.240 --> 00:00:48.000] First, the user releases the one -hand folding button and rotates the handlebar.
+[00:00:43.240 --> 00:00:48.000] 首先，用戶放開單手折疊按鈕並旋轉車把。
 [00:00:48.660 --> 00:00:51.720] As the handlebar rotates, the seat rotates simultaneously.
+[00:00:48.660 --> 00:00:51.720] 當車把旋轉時，座椅會同時旋轉。
 [00:00:52.760 --> 00:00:55.960] At this stage, the stroller is not yet committed to folding.
+[00:00:52.760 --> 00:00:55.960] 在這個階段，嬰兒車尚未開始摺疊。
 [00:00:55.960 --> 00:01:00.700] The user can simply rotate the handlebar back to return it to the open position.
+[00:00:55.960 --> 00:01:00.700] 用戶可以簡單地旋轉車把以將其恢復到打開位置。
 [00:01:01.700 --> 00:01:06.960] Once the user is certain they want to fold the stroller, they continue rotating the handlebar to the upright position.
+[00:01:01.700 --> 00:01:06.960] 使用者確定要摺疊嬰兒車後，請繼續將車把旋轉至直立位置。
 [00:01:08.180 --> 00:01:13.880] At this point, the seat locking mechanism is released, allowing the seat to fold automatically by gravity.
+[00:01:08.180 --> 00:01:13.880] 此時，座椅鎖定機構被釋放，允許座椅通過重力自動摺疊。
 [00:01:14.960 --> 00:01:18.700] Simultaneously, both the front leg hinge and rear leg hinge are released.
+[00:01:14.960 --> 00:01:18.700] 同時釋放前腿鉸鏈和後腿鉸鏈。
 [00:01:19.620 --> 00:01:27.600] The user then continues the motion by pushing the handlebar downward, bringing the front and rear legs closer together to reach the final folded position.
+[00:01:19.620 --> 00:01:27.600] 然後，使用者將把手向下推，將前腿和後腿靠得更近，以達到最終折疊位置，繼續動作。

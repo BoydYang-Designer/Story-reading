@@ -1,82 +1,164 @@
 [00:00:00.000 --> 00:00:08.440] Welcome to The Lit Breakdown, where we transform the world's most powerful books into audio experiences you can absorb in minutes.
+[00:00:00.000 --> 00:00:08.440] 歡迎來到The Lit Breakdown ，我們將世界上最強大的書籍轉化為您可以在幾分鐘內吸收的音頻體驗。
 [00:00:09.080 --> 00:00:16.120] Today, we're diving into Atomic Habits by James Clear, a book that doesn't just talk about success,
+[00:00:09.080 --> 00:00:16.120] 今天，我們將介紹詹姆斯·克利爾的《原子習慣》，這本書不僅談論成功，
 [00:00:16.300 --> 00:00:19.780] it shows you how to build it one small habit at a time.
+[00:00:16.300 --> 00:00:19.780] 它告訴你如何一次養成一個小習慣
 [00:00:20.040 --> 00:00:22.520] If you've ever struggled with motivation,
+[00:00:20.040 --> 00:00:22.520] 如果你曾經在積極性上掙扎過
 [00:00:23.120 --> 00:00:28.520] consistency, or falling back into old routines, this book is for you.
+[00:00:23.120 --> 00:00:28.520] 一致性，或回到舊的例行公事，這本書是給你的。
 [00:00:28.520 --> 00:00:33.700] Because Atomic Habits doesn't rely on hype, it delivers a system,
+[00:00:28.520 --> 00:00:33.700] 因為Atomic Habits不依賴炒作，它提供了一個系統，
 [00:00:34.160 --> 00:00:42.540] a method you can use to rewire your brain, shift your identity, and unlock sustainable results without burning out.
+[00:00:34.160 --> 00:00:42.540] 您可以使用這種方法來重新布線您的大腦，轉變您的身份，並解鎖可持續的結果，而不會耗盡。
 [00:00:43.240 --> 00:00:57.380] Throughout this summary, you'll learn Why Tiny Changes Lead to Remarkable Results How to Break Bad Habits and Form New Ones That Stick The Science Behind Cues,
+[00:00:43.240 --> 00:00:57.380] 在本摘要中，您將了解為什麼微小的變化會導致顯著的結果如何打破壞習慣並形成堅持科學的新習慣，
 [00:00:57.620 --> 00:01:08.160] Cravings, Responses, and Rewards And The Secret to Becoming the Person You've Always Wanted to Be So grab your headphones, get comfortable,
+[00:00:57.620 --> 00:01:08.160] 渴望、回應和獎勵，以及成為你一直想成為的人的祕訣因此，戴上耳機，感到舒適，
 [00:01:08.380 --> 00:01:16.860] and let's break down the core ideas behind one of the most life -changing books on behavior change ever written. Chapter 1.
+[00:01:08.380 --> 00:01:16.860] 讓我們分解有史以來最能改變人生的一本關於行為改變的書背後的核心思想。第1章。
 [00:01:17.220 --> 00:01:24.600] The Surprising Power of Atomic Habits Most people think massive success comes from massive action.
+[00:01:17.220 --> 00:01:24.600] 原子習慣的驚人力量大多數人認為巨大的成功來自於大規模的行動。
 [00:01:25.160 --> 00:01:36.100] They believe it's the big wins, the overnight transformation, the huge leap, the life -changing breakthrough that defines success. But that's a myth.
+[00:01:25.160 --> 00:01:36.100] 他們認為，重大勝利、一夜之間的轉型、巨大的飛躍、改變生活的突破，才是成功的定義。但這是一個流言
 [00:01:36.600 --> 00:01:46.120] In reality, it's the tiny changes, the small wins, the atomic habits you build day after day, that shape your destiny.
+[00:01:36.600 --> 00:01:46.120] 事實上，正是你日復一日建立的微小變化、微小勝利、原子習慣，塑造了你的命運。
 [00:01:46.880 --> 00:01:51.640] James Clear starts his story with a moment that changed his life forever.
+[00:01:46.880 --> 00:01:51.640] James Clear以一個永遠改變他一生的時刻開始他的故事。
 [00:01:52.240 --> 00:01:56.700] In high school, he was an athlete, a promising baseball player.
+[00:01:52.240 --> 00:01:56.700] 在高中時，他是一名運動員，是一名有前途的棒球運動員。
 [00:01:56.700 --> 00:02:03.400] Then, one day, during a routine game, he was hit in the face with a baseball bat.
+[00:01:56.700 --> 00:02:03.400] 然後，有一天，在一場例行比賽中，他被棒球棒擊中臉部。
 [00:02:03.800 --> 00:02:19.300] It shattered his nose, broke his skull, nearly ended his life. The recovery took months. It wrecked his body. He couldn't even breathe properly. He couldn't train. He couldn't play.
+[00:02:03.800 --> 00:02:19.300] 它打碎了他的鼻子，打破了他的頭骨，幾乎結束了他的生命。恢復過程花了好幾個月。它摧毀了他的身體。他甚至無法正常呼吸。他不會訓練。他不能玩。
 [00:02:19.920 --> 00:02:21.820] Most people would have given up.
+[00:02:19.920 --> 00:02:21.820] 大多數人都會放棄。
 [00:02:22.220 --> 00:02:48.880] But James didn't try to change everything at once. Instead, he started small. He focused on the basics. Waking up early. Going to bed on time. Eating clean. Reading every day. Training consistently. Nothing fancy. Just simple, consistent actions. 1 % better every day.
+[00:02:22.220 --> 00:02:48.880] 但詹姆斯並沒有試圖一下子改變一切。相反，他從小事做起。他專注於基礎知識。早起，準時上牀睡覺清潔飲食，每天閱讀。持續訓練，沒甚麼好玩的只需簡單、一致的行動。每天提升1%。
 [00:02:49.340 --> 00:02:52.740] And slowly, those tiny gains added up.
+[00:02:49.340 --> 00:02:52.740] 慢慢地，這些微小的收益加起來。
 [00:02:53.240 --> 00:02:59.820] By the end of college, he was one of the top players in his team. An ESPN academic, all -American.
+[00:02:53.240 --> 00:02:59.820] 大學畢業時，他是團隊中的頂尖球員之一。一名ESPN學者，全是美國人。
 [00:03:00.220 --> 00:03:06.380] A success story built not on huge leaps, but on invisible, incremental progress.
+[00:03:00.220 --> 00:03:06.380] 一個成功的故事不是建立在巨大的飛躍之上，而是建立在看不見的、漸進的進步之上。
 [00:03:06.860 --> 00:03:11.120] This is the power of atomic habits. They're small.
+[00:03:06.860 --> 00:03:11.120] 這就是原子習慣的力量。它們很小
 [00:03:11.580 --> 00:03:14.320] So small, they often feel meaningless.
+[00:03:11.580 --> 00:03:14.320] 如此渺小，他們常常覺得毫無意義。
 [00:03:14.740 --> 00:03:21.240] Like brushing your teeth for two minutes. Writing a single paragraph. Doing five push -ups.
+[00:03:14.740 --> 00:03:21.240] 就像刷牙兩分鐘一樣。撰寫單一段落。做五次伏地挺身。
 [00:03:21.860 --> 00:03:27.700] Drinking one glass of water instead of soda. Individually, they seem like nothing.
+[00:03:21.860 --> 00:03:27.700] 喝一杯水而不是汽水。就個人而言，它們看起來什麼都不是。
 [00:03:28.180 --> 00:03:33.760] But over time, those small actions compound. That's what people forget.
+[00:03:28.180 --> 00:03:33.760] 但隨著時間的推移，這些小動作會變得更加複雜人們會忘記這一點。
 [00:03:34.680 --> 00:03:49.100] Improving by just 1 % every day doesn't seem like much. Until a year goes by. Then, you're 37 times better. Not twice as good. Not five times better. 37 times.
+[00:03:34.680 --> 00:03:49.100] 每天只提高1%似乎並不多。直到一年過去。然後，你比我強37倍。不是兩倍好。不是好五倍，是37倍
 [00:03:49.100 --> 00:03:52.100] That's the power of compound growth.
+[00:03:49.100 --> 00:03:52.100] 這就是複合成長的力量
 [00:03:52.480 --> 00:03:57.060] Not just for money, but for habits. And the reverse?
+[00:03:52.480 --> 00:03:57.060] 不只是為了錢，也是為了習慣。相反呢？
 [00:03:57.520 --> 00:04:04.540] If you get 1 % worse every day, you don't notice it right away. You skip the gym once.
+[00:03:57.520 --> 00:04:04.540] 如果你每天都變差1% ，你不會馬上注意到。你有一次不去健身房。
 [00:04:04.880 --> 00:04:11.320] You scroll for an extra hour. You eat one more cookie. Nothing breaks instantly.
+[00:04:04.880 --> 00:04:11.320] 你多捲動一小時。你再吃一塊餅乾沒有任何東西會立即中斷。
 [00:04:11.740 --> 00:04:14.880] But slowly, you drift off course.
+[00:04:11.740 --> 00:04:14.880] 但慢慢地，你偏離了航道。
 [00:04:14.880 --> 00:04:23.680] A small error in direction today leads to a completely different destination in the future. Clear puts it like this.
+[00:04:14.880 --> 00:04:23.680] 今天方向上的一個小錯誤導致未來的目的地完全不同。Clear就是這樣說的。
 [00:04:24.240 --> 00:04:27.560] Habits are the compound interest of self -improvement.
+[00:04:24.240 --> 00:04:27.560] 習慣是自我提升的複利。
 [00:04:28.140 --> 00:04:30.360] We think outcomes are about goals.
+[00:04:28.140 --> 00:04:30.360] 我們認為結果與目標有關。
 [00:04:30.820 --> 00:04:33.220] But James Clear reveals a deeper truth.
+[00:04:30.820 --> 00:04:33.220] 但詹姆斯·克利爾揭示了一個更深層次的真理。
 [00:04:33.940 --> 00:04:36.460] You do not rise to the level of your goals.
+[00:04:33.940 --> 00:04:36.460] 您沒有達到目標的水平。
 [00:04:36.680 --> 00:04:40.920] You fall to the level of your systems. Let that sink in.
+[00:04:36.680 --> 00:04:40.920] 你墜落到系統的水平。讓它沉下去吧。
 [00:04:41.460 --> 00:04:43.340] Goals are the results you want.
+[00:04:41.460 --> 00:04:43.340] 目標是您想要的結果。
 [00:04:43.340 --> 00:04:49.640] But systems are the processes that lead you there. Want to write a book? That's a goal.
+[00:04:43.340 --> 00:04:49.640] 但系統是引導您到達那裡的過程。想寫一本書嗎？這是一個目標。
 [00:04:49.980 --> 00:04:56.000] But the system is writing 500 words a day. Want to get fit? That's a goal.
+[00:04:49.980 --> 00:04:56.000] 但這個系統每天寫500個字。想健身嗎？這是一個目標。
 [00:04:56.300 --> 00:04:59.200] But the system is hitting the gym three times a week.
+[00:04:56.300 --> 00:04:59.200] 但系統每週打三次健身房。
 [00:04:59.520 --> 00:05:04.420] It's not the goal that gets you results. It's the system. Your habits.
+[00:04:59.520 --> 00:05:04.420] 這不是讓你獲得結果的目標。是系統，是你的習慣
 [00:05:04.900 --> 00:05:11.480] And here's the trap most people fall into. They set big goals. They change their environment.
+[00:05:04.900 --> 00:05:11.480] 這是大多數人落入的陷阱他們設定了遠大的目標。他們改變他們的環境。
 [00:05:11.480 --> 00:05:17.000] They push hard for a week or two. And then they crash. Why?
+[00:05:11.480 --> 00:05:17.000] 他們努力推了一兩個星期。然後它們墜毀了，為甚麼？
 [00:05:17.600 --> 00:05:20.920] Because they're relying on motivation instead of identity.
+[00:05:17.600 --> 00:05:20.920] 因為他們依賴於動機而不是身份。
 [00:05:21.500 --> 00:05:24.860] Here's where Chapter 1 drops its biggest insight.
+[00:05:21.500 --> 00:05:24.860] 這裡是第1章提供最大見解的地方。
 [00:05:25.220 --> 00:05:28.420] True behavior change is identity change.
+[00:05:25.220 --> 00:05:28.420] 真正的行為改變是身份的改變。
 [00:05:28.420 --> 00:05:31.300] You don't just want to read more books.
+[00:05:28.420 --> 00:05:31.300] 您不僅想閱讀更多書籍。
 [00:05:31.540 --> 00:05:33.040] You want to become a reader.
+[00:05:31.540 --> 00:05:33.040] 你想成為讀者。
 [00:05:33.620 --> 00:05:35.580] You don't just want to work out.
+[00:05:33.620 --> 00:05:35.580] 你不只是想鍛煉
 [00:05:35.920 --> 00:05:37.580] You want to become an athlete.
+[00:05:35.920 --> 00:05:37.580] 你想成為一名運動員。
 [00:05:38.140 --> 00:05:39.680] You don't just want to write.
+[00:05:38.140 --> 00:05:39.680] 你不只是想寫作。
 [00:05:40.040 --> 00:05:41.400] You want to become a writer.
+[00:05:40.040 --> 00:05:41.400] 你想成爲一名作家。
 [00:05:41.920 --> 00:05:45.980] When your habits are tied to your identity, everything shifts.
+[00:05:41.920 --> 00:05:45.980] 當你的習慣與你的身份聯繫在一起時，一切都會改變。
 [00:05:45.980 --> 00:05:55.460] Every action becomes a vote for the kind of person you wish to become. Skip a workout? One missed vote. But hit the gym?
+[00:05:45.980 --> 00:05:55.460] 每一個行動都會成為你希望成為的那種人的投票。跳過鍛煉？一票錯過。但去健身房？
 [00:05:55.860 --> 00:06:01.180] That's a vote for, I am someone who doesn't quit. Write a page today?
+[00:05:55.860 --> 00:06:01.180] 這是一票贊成，我是一個不會放棄的人。要立即撰寫頁面嗎？
 [00:06:01.760 --> 00:06:05.320] That's a vote for, I am a disciplined creator.
+[00:06:01.760 --> 00:06:05.320] 這是一票贊成，我是一個紀律嚴明的創作人。
 [00:06:06.160 --> 00:06:14.540] James Clear says, The more you repeat a behavior, the more you reinforce the identity associated with that behavior.
+[00:06:06.160 --> 00:06:14.540] James Clear說：「重複一種行為越多，就越能強化與該行為相關的身份。
 [00:06:15.360 --> 00:06:17.380] Your habits are not just actions.
+[00:06:15.360 --> 00:06:17.380] 你的習慣不僅僅是行動。
 [00:06:17.880 --> 00:06:22.180] They are proof to yourself, every day, of who you are becoming.
+[00:06:17.880 --> 00:06:22.180] 它們每天都在向你自己證明你正在成為誰。
 [00:06:22.180 --> 00:06:28.820] So how do you actually change? Not by setting bigger goals. Not by wishing harder.
+[00:06:22.180 --> 00:06:28.820] 那麼，你實際上如何改變？不是通過設定更大的目標。而不是更努力地許願。
 [00:06:29.280 --> 00:06:38.100] But by focusing on systems over goals. Identity over motivation. And process over perfection. Clear's formula?
+[00:06:29.280 --> 00:06:38.100] 而是專注於系統而非目標。認同重於動機。過程重於完美。清除的公式？
 [00:06:38.680 --> 00:06:42.280] Outcome -based habits focus on what you want to achieve.
+[00:06:38.680 --> 00:06:42.280] 以結果為基礎的習慣專注於您想要實現的目標。
 [00:06:42.960 --> 00:06:46.720] Identity -based habits focus on who you wish to become.
+[00:06:42.960 --> 00:06:46.720] 以身分為基礎的習慣著重於你想成為的人。
 [00:06:47.380 --> 00:06:49.900] Don't say, I want to run a marathon.
+[00:06:47.380 --> 00:06:49.900] 別說，我想跑馬拉鬆
 [00:06:49.900 --> 00:06:54.580] Don't say, I'm becoming the kind of person who runs every day.
+[00:06:49.900 --> 00:06:54.580] 別說，我正在成為那種每天跑步的人。
 [00:06:55.080 --> 00:06:57.700] Don't say, I want to lose weight.
+[00:06:55.080 --> 00:06:57.700] 別說，我想減肥
 [00:06:58.500 --> 00:07:02.280] Say, I'm becoming the kind of person who values health.
+[00:06:58.500 --> 00:07:02.280] 說，我正在成為那種重視健康的人。
 [00:07:02.760 --> 00:07:15.760] And then act on it, in the smallest possible way. Why? Because small habits are sustainable. They don't rely on willpower. They don't require massive effort.
+[00:07:02.760 --> 00:07:15.760] 然後以最小的方式採取行動。為什麼？因為小習慣是可持續的。他們不依賴意志力。他們不需要付出巨大的努力。
 [00:07:16.080 --> 00:07:29.780] They sneak into your life and become automatic. One push -up. One page. One glass of water. One minute of silence. And then, the ripple begins.
+[00:07:16.080 --> 00:07:29.780] 它們潛入你的生活，變得自動化。一推一上，一頁一杯水。默哀一分鐘。然後，漣漪開始了。
 [00:07:30.760 --> 00:07:34.180] Chapter 1 leaves us with a powerful message.
+[00:07:30.760 --> 00:07:34.180] 第1章給我們留下了強有力的訊息。
 [00:07:35.000 --> 00:07:43.540] Success is not a goal to reach. It's a system to build. It's an identity to embody. It's a process to trust.
+[00:07:35.000 --> 00:07:43.540] 成功不是要達成的目標。這是一個需要建造的系統。這是一個要體現的身份。這是一個值得信賴的過程。
 [00:07:44.280 --> 00:07:47.560] Habits are the invisible architecture of your life.
+[00:07:44.280 --> 00:07:47.560] 習慣是你生活中看不見的建築。
 [00:07:47.960 --> 00:07:52.600] They work for you or against you, whether you notice or not.
+[00:07:47.960 --> 00:07:52.600] 無論您是否注意到，他們都會為您工作或對您不利。
 [00:07:53.020 --> 00:07:55.940] The question isn't whether you have habits.
+[00:07:53.020 --> 00:07:55.940] 問題不在於你是否有習慣。
 [00:07:56.260 --> 00:08:00.620] It's whether your habits are helping you or holding you back.
+[00:07:56.260 --> 00:08:00.620] 這取決於你的習慣是幫助你還是阻礙你。
 [00:08:00.620 --> 00:08:06.400] This is where your transformation begins. Not with a grand announcement.
+[00:08:00.620 --> 00:08:06.400] 這是你的轉型開始的地方。不是在一個盛大的公告中。
 [00:08:06.880 --> 00:08:13.880] Not with a 30 -day challenge. But with one tiny action. One atomic habit.
+[00:08:06.880 --> 00:08:13.880] 不是30天的挑戰。但只需一個小動作。一個原子習慣。
 [00:08:14.360 --> 00:08:18.360] One choice that says, This is who I am now.
+[00:08:14.360 --> 00:08:18.360] 其中一個選擇是，這就是我現在的樣子。
 [00:08:18.360 --> 00:08:18.580] This is who I am now.
+[00:08:18.360 --> 00:08:18.580] 這就是我現在的樣子。

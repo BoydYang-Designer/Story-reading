@@ -1,56 +1,112 @@
 [00:00:00.000 --> 00:00:11.800] Chapter 3. How to Build Better Habits in Four Simple Steps All habits follow the same pattern. Cue, Craving, Response, and Reward.
+[00:00:00.000 --> 00:00:11.800] 第3章如何通過四個簡單的步驟建立更好的習慣所有習慣都遵循相同的模式。提示、渴望、回應和獎勵。
 [00:00:12.260 --> 00:00:16.380] James Clear introduces this as the Four Laws of Behavior Change.
+[00:00:12.260 --> 00:00:16.380] 詹姆斯·克利爾（ James Clear ）將此稱為行為改變的四大法則。
 [00:00:17.180 --> 00:00:24.180] It's a simple, powerful framework for building good habits and breaking bad ones. Here's how it works.
+[00:00:17.180 --> 00:00:24.180] 這是建立好習慣和打破壞習慣的簡單而強大的框架。運作方式如下。
 [00:00:24.740 --> 00:00:28.860] First, there's the cue, the trigger that initiates behavior.
+[00:00:24.740 --> 00:00:28.860] 首先，有提示，觸發行為的觸發因素。
 [00:00:28.860 --> 00:00:32.380] It's the signal your brain uses to begin a habit.
+[00:00:28.860 --> 00:00:32.380] 這是你的大腦用來開始習慣的信號。
 [00:00:32.680 --> 00:00:40.780] A cue can be anything, a notification, a time of day, a specific location, or even an emotional state.
+[00:00:32.680 --> 00:00:40.780] 提示可以是任何東西、通知、一天中的某個時間、特定地點，甚至是情緒狀態。
 [00:00:41.320 --> 00:00:46.280] Next comes the craving, the motivational force behind every habit.
+[00:00:41.320 --> 00:00:46.280] 接下來是渴望，每個習慣背後的動力。
 [00:00:46.720 --> 00:00:51.380] It's not the habit itself you crave, but the change in state it delivers.
+[00:00:46.720 --> 00:00:51.380] 你渴望的不是習慣本身，而是它帶來的狀態變化。
 [00:00:51.880 --> 00:00:55.840] You don't crave brushing your teeth. You crave a clean mouth.
+[00:00:51.880 --> 00:00:55.840] 你不渴望刷牙。你渴望一張乾淨的嘴巴。
 [00:00:56.080 --> 00:00:58.160] You don't crave smoking a cigarette.
+[00:00:56.080 --> 00:00:58.160] 你不會渴望抽煙。
 [00:00:58.160 --> 00:01:02.840] You crave the relief it gives. Cravings give habits their power.
+[00:00:58.160 --> 00:01:02.840] 你渴望得到它提供的安慰。渴望賦予習慣力量。
 [00:01:03.480 --> 00:01:07.820] Then we have the response, the habit or action you perform.
+[00:01:03.480 --> 00:01:07.820] 然後，我們會看到您的回應、習慣或行動。
 [00:01:08.580 --> 00:01:17.180] This could be physical, doing push -ups, mental, making a decision, or emotional, sending a text when you're lonely.
+[00:01:08.580 --> 00:01:17.180] 這可能是身體上的、做俯臥撐、精神上的、做決定或情緒上的，在孤獨時發送短信。
 [00:01:17.700 --> 00:01:23.480] The response depends on how motivated you are and how much friction is involved.
+[00:01:17.700 --> 00:01:23.480] 回應取決於您的動機以及涉及的摩擦程度。
 [00:01:23.480 --> 00:01:27.000] If a habit is too difficult, you won't do it.
+[00:01:23.480 --> 00:01:27.000] 如果習慣太難，你就不會去做。
 [00:01:27.680 --> 00:01:31.880] Finally, there's the reward, the benefit you get from the habit.
+[00:01:27.680 --> 00:01:31.880] 最後，還有獎勵，你從習慣中獲得的好處。
 [00:01:32.200 --> 00:01:38.000] This satisfies your craving and teaches your brain. This behavior is worth remembering.
+[00:01:32.200 --> 00:01:38.000] 這可以滿足您的渴望，並教導您的大腦。這種行為值得記住。
 [00:01:38.000 --> 00:01:41.240] Every habit loops through these four stages.
+[00:01:38.000 --> 00:01:41.240] 每個習慣都會經歷這四個階段。
 [00:01:41.680 --> 00:01:47.540] And once you understand this cycle, you can begin to design habits that actually stick.
+[00:01:41.680 --> 00:01:47.540] 一旦你了解這個週期，你就可以開始設計真正堅持下去的習慣。
 [00:01:48.560 --> 00:01:50.700] Clear calls this the habit loop.
+[00:01:48.560 --> 00:01:50.700] Clear稱之為習慣循環。
 [00:01:50.700 --> 00:02:12.000] And to make it practical, he reframes each step into a law. Make it obvious. Cue. Make it attractive. Craving. Make it easy. Response. Make it satisfying. Reward. Let's break them down. 1. Make it obvious.
+[00:01:50.700 --> 00:02:12.000] 為了切實可行，他將每個步驟重新定義為法律。讓它變得明顯，暗示讓它變得有吸引力。渴望。輕鬆回覆。讓您滿意。獎勵。讓我們將它們分解。1.讓它變得明顯。
 [00:02:12.560 --> 00:02:20.200] If you want to build a habit, you need to be clear about when and where it happens. Ambiguity kills action.
+[00:02:12.560 --> 00:02:20.200] 如果你想養成一個習慣，你需要清楚它何時何地發生。含糊不清會扼殺行動。
 [00:02:20.640 --> 00:02:22.940] I don't just say, I'll eat healthier.
+[00:02:20.640 --> 00:02:22.940] 我不只是說，我會吃得更健康。
 [00:02:23.260 --> 00:02:27.660] Say, I will eat a vegetable with lunch at 1 p .m. in my kitchen.
+[00:02:23.260 --> 00:02:27.660] 比方說，我會在下午1點在我的廚房吃午餐時吃蔬菜。
 [00:02:28.280 --> 00:02:30.860] This is called an implementation intention.
+[00:02:28.280 --> 00:02:30.860] 這被稱為實施意圖。
 [00:02:31.160 --> 00:02:35.520] A clear plan that defines the behavior, time, and place.
+[00:02:31.160 --> 00:02:35.520] 明確的計劃，定義行為、時間和地點。
 [00:02:35.520 --> 00:02:40.280] When you make the cue obvious, your brain knows exactly what to do.
+[00:02:35.520 --> 00:02:40.280] 當你讓提示顯而易見時，你的大腦就知道該怎麼做。
 [00:02:41.080 --> 00:02:46.940] You can also use habit stacking, where you attach a new habit to an existing one. For example,
+[00:02:41.080 --> 00:02:46.940] 您也可以使用習慣堆疊，將新習慣附加到現有習慣上。例如，
 [00:02:47.600 --> 00:02:50.660] after I make my coffee, I will journal for one minute.
+[00:02:47.600 --> 00:02:50.660] 煮完咖啡後，我會記錄一分鐘
 [00:02:51.040 --> 00:02:58.180] This way, your existing routines become triggers for new behaviors. 2. Make it attractive.
+[00:02:51.040 --> 00:02:58.180] 這樣一來，你現有的例行公事就會成為觸發新行為的觸發因素。2.讓它變得有吸引力。
 [00:02:58.780 --> 00:03:02.880] The more appealing a habit is, the more likely you are to do it.
+[00:02:58.780 --> 00:03:02.880] 習慣越吸引人，你越有可能去做。
 [00:03:02.880 --> 00:03:06.580] Clear explains that we are motivated by anticipation.
+[00:03:02.880 --> 00:03:06.580] Clear解釋說，我們的動力來自於預期。
 [00:03:07.420 --> 00:03:11.260] So, when a habit looks enjoyable, your brain leans in.
+[00:03:07.420 --> 00:03:11.260] 所以，當一個習慣看起來很愉快時，你的大腦就會傾斜。
 [00:03:11.940 --> 00:03:15.580] One way to make a habit attractive is temptation bundling.
+[00:03:11.940 --> 00:03:15.580] 使習慣具有吸引力的一種方法是將誘惑捆綁在一起。
 [00:03:16.020 --> 00:03:18.960] Pair something you want to do with something you need to do.
+[00:03:16.020 --> 00:03:18.960] 將您想做的事情與您需要做的事情配對。
 [00:03:19.260 --> 00:03:23.520] For example, only listen to your favorite podcast while running.
+[00:03:19.260 --> 00:03:23.520] 舉例來說，跑步時只收聽你最喜愛的Podcast。
 [00:03:24.240 --> 00:03:28.960] Another technique is to join a culture where your desired habit is the norm.
+[00:03:24.240 --> 00:03:28.960] 另一種技巧是加入一種文化，讓你想要的習慣成為常態。
 [00:03:28.960 --> 00:03:34.120] If everyone around you exercises, you're more likely to adopt that behavior.
+[00:03:28.960 --> 00:03:34.120] 如果你周圍的每個人都鍛煉，你更有可能採取這種行為。
 [00:03:34.960 --> 00:03:40.280] Humans imitate the habits of those close to them. 3. Make it easy.
+[00:03:34.960 --> 00:03:40.280] 人類會模仿身邊人的習慣。3.輕鬆完成。
 [00:03:41.000 --> 00:03:46.000] The key to long -term consistency isn't discipline. It's reducing friction.
+[00:03:41.000 --> 00:03:46.000] 長期一致性的關鍵不在於紀律。它減少了摩擦。
 [00:03:46.480 --> 00:03:53.400] The easier a habit is, the more likely it becomes automatic. Use the two -minute rule.
+[00:03:46.480 --> 00:03:53.400] 習慣越容易，就越有可能變得自動化。使用兩分鐘法則。
 [00:03:54.280 --> 00:04:05.500] Downscale any habit into something you can do in under two minutes. Want to read more? Just read one page. Want to work out? Just change into workout clothes.
+[00:03:54.280 --> 00:04:05.500] 在不到兩分鐘的時間內，將任何習慣縮小為可以做的事情。想閱讀更多內容嗎？只需閱讀一頁。想健身嗎？只需換上健身服。
 [00:04:06.280 --> 00:04:11.840] The goal is to master the art of showing up. Also, optimize your environment.
+[00:04:06.280 --> 00:04:11.840] 我們的目標是掌握現身的藝術。此外，還要優化您的環境。
 [00:04:12.220 --> 00:04:15.700] If you want to drink more water, leave a bottle on your desk.
+[00:04:12.220 --> 00:04:15.700] 如果您想多喝水，請將瓶子放在桌子上。
 [00:04:16.060 --> 00:04:20.300] If you want to stop wasting time on social media, delete the apps.
+[00:04:16.060 --> 00:04:20.300] 如果你想停止在社交媒體上浪費時間，請刪除應用程式。
 [00:04:20.300 --> 00:04:27.720] Small environmental tweaks have massive effects. 5. Make it satisfying.
+[00:04:20.300 --> 00:04:27.720] 小的環境調整會產生巨大的影響。5.讓你感到滿意。
 [00:04:28.530 --> 00:04:30.840] We repeat behaviors that feel good.
+[00:04:28.530 --> 00:04:30.840] 我們重複感覺良好的行為。
 [00:04:31.160 --> 00:04:36.220] If a habit rewards you instantly, your brain marks it as worth doing again.
+[00:04:31.160 --> 00:04:36.220] 如果一種習慣立即獎勵你，你的大腦會將其標記為值得再做一次。
 [00:04:36.860 --> 00:04:40.560] Use immediate rewards to reinforce positive habits.
+[00:04:36.860 --> 00:04:40.560] 使用即時獎勵來強化積極的習慣。
 [00:04:41.100 --> 00:04:46.320] Track your progress with a habit tracker. Celebrate small wins.
+[00:04:41.100 --> 00:04:46.320] 使用習慣追蹤器追蹤進度。慶祝小小的勝利。
 [00:04:46.320 --> 00:04:50.300] Even crossing off a to -do list creates satisfaction.
+[00:04:46.320 --> 00:04:50.300] 即使將待辦事項清單劃掉，也能帶來滿意度。
 [00:04:50.940 --> 00:05:01.780] On the flip side, to break a bad habit, make it unsatisfying. Introduce accountability. Make failure visible. Tell a friend.
+[00:04:50.940 --> 00:05:01.780] 另一方面，要打破一個壞習慣，讓它不滿意。引入問責制。讓失敗可見。告訴朋友。
 [00:05:02.520 --> 00:05:06.800] Or use a commitment contract where breaking your habit costs you money.
+[00:05:02.520 --> 00:05:06.800] 或者使用承諾合約，打破習慣會讓你付出代價。
 [00:05:06.800 --> 00:05:21.940] The four laws of behavior change aren't just theory. They're a blueprint. Make the cue obvious. Make the craving attractive. Make the response easy. Make the reward satisfying.
+[00:05:06.800 --> 00:05:21.940] 行為改變的四大法則不僅僅是理論。它們是藍圖。讓提示顯而易見。讓您對美食的渴望更具吸引力。輕鬆回覆。讓獎勵令人滿意。
 [00:05:23.160 --> 00:05:29.520] This is how you shape your behavior and take control of your future. It's not about radical change.
+[00:05:23.160 --> 00:05:29.520] 這就是你塑造行為和掌控未來的方式。這與徹底改變無關。
 [00:05:29.860 --> 00:05:35.000] It's about small changes that, repeated daily, become who you are.
+[00:05:29.860 --> 00:05:35.000] 這是關於每天重複的微小變化，成為你自己。

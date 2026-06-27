@@ -1,16 +1,29 @@
 [00:00:00.000 --> 00:00:05.180] Page 1, Introduction. This is my latest concept stroller design, named Neostrol.
+[00:00:00.000 --> 00:00:05.180] 第1頁，簡介。這是我最新的概念嬰兒車設計，名為Neostrol。
 [00:00:05.660 --> 00:00:10.020] Neostrol features a new folding mechanism developed to achieve true one -handed operation.
+[00:00:05.660 --> 00:00:10.020] Neostrol具有新的折疊機制，可實現真正的單手操作。
 [00:00:10.560 --> 00:00:13.920] The design goal is very clear. One -hand operation,
+[00:00:10.560 --> 00:00:13.920] 設計目標非常明確。單手操作，
 [00:00:14.580 --> 00:00:20.900] one continuous motion, no separate seat folding steps, safe and secure, intuitive and easy to understand.
+[00:00:14.580 --> 00:00:20.900] 一個連續的動作，沒有獨立的座椅折疊步驟，安全可靠，直觀易懂。
 [00:00:21.900 --> 00:00:28.580] Neostrol is designed to eliminate unnecessary steps and design trade -offs commonly found in existing folding strollers.
+[00:00:21.900 --> 00:00:28.580] Neostrol旨在消除現有折疊嬰兒車中常見的不必要步驟和設計折衷。
 [00:00:29.240 --> 00:00:31.960] Page 2, How the Folding Mechanism Works.
+[00:00:29.240 --> 00:00:31.960] 第2頁，摺疊機構的運作方式。
 [00:00:32.820 --> 00:00:37.600] The folding process begins by pressing the one -hand button to unlock the rotating handlebar.
+[00:00:32.820 --> 00:00:37.600] 折疊過程首先按下單手按鈕以解鎖旋轉車把。
 [00:00:37.860 --> 00:00:40.940] As the handlebar is rotated, the seat rotates simultaneously.
+[00:00:37.860 --> 00:00:40.940] 當車把旋轉時，座椅會同時旋轉。
 [00:00:41.060 --> 00:00:44.780] When the handlebar reaches a specific angle, the seat folds automatically.
+[00:00:41.060 --> 00:00:44.780] 當車把到達特定角度時，座椅會自動折疊。
 [00:00:45.300 --> 00:00:49.660] At the same time, the front leg hinge and rear leg hinge are released simultaneously.
+[00:00:45.300 --> 00:00:49.660] 同時，同時釋放前腿鉸鏈和後腿鉸鏈。
 [00:00:50.340 --> 00:00:55.860] By pushing the handlebar downward, the front and rear legs move closer together, creating a compact fold.
+[00:00:50.340 --> 00:00:55.860] 藉由向下推動車把，前腿和後腿會互相靠近，形成緊湊的摺疊。
 [00:00:56.920 --> 00:01:03.260] Finally, the upper section of the handlebar can be rotated further to achieve an even more compact folded size.
+[00:00:56.920 --> 00:01:03.260] 最後，車把的上部可以進一步旋轉，以實現更緊湊的摺疊尺寸。
 [00:01:04.680 --> 00:01:11.600] Once folded, the stroller stands upright on its own and can be pulled like a trolley, making it easy to transport and store.
+[00:01:04.680 --> 00:01:11.600] 折疊後，嬰兒車可以獨立站立，像手推車一樣拉動，方便運輸和存放。
 [00:01:12.380 --> 00:01:15.320] Hasher Page 3, Forward -Facing Seat, Overall View.
 [00:01:15.900 --> 00:01:26.660] This page shows the overall design of the stroller in the forward -facing seat configuration, highlighting its proportions and structure in daily use. Page 4, Folding Scenario.
 [00:01:27.400 --> 00:01:33.080] On this page, I present a quick usage scenario showing how the stroller can be folded elegantly and naturally.

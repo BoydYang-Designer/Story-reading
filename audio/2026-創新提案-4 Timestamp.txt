@@ -1,8 +1,16 @@
 [00:00:00.000 --> 00:00:02.940] The initial idea for this project came from a simple observation.
+[00:00:00.000 --> 00:00:02.940] 這個專案的最初構想來自於一個簡單的觀察。
 [00:00:03.680 --> 00:00:08.660] Although there are strollers with one hand folding mechanisms, many are not truly convenient.
+[00:00:03.680 --> 00:00:08.660] 雖然有單手折疊機構的嬰兒車，但很多都不太方便。
 [00:00:09.260 --> 00:00:18.140] Some require folding the seat first, and most leave the handlebar pointing toward the ground, making operation awkward for users, such as the Cybex stroller.
+[00:00:09.260 --> 00:00:18.140] 有些需要先摺疊座椅，而大多數則將把手指向地面，讓使用者操作尷尬，例如Cybex嬰兒車。
 [00:00:19.020 --> 00:00:24.440] Before, we made a stroller that could fold with one button, letting the seat and frame fold at the same time.
+[00:00:19.020 --> 00:00:24.440] 之前，我們製作了一款可以一鍵摺疊的嬰兒車，讓座椅和車架可以同時摺疊。
 [00:00:25.240 --> 00:00:27.900] This worked, but it had two problems.
+[00:00:25.240 --> 00:00:27.900] 這行得通，但有兩個問題。
 [00:00:27.900 --> 00:00:31.200] It could fold unintentionally, and the button was hard to press.
+[00:00:27.900 --> 00:00:31.200] 它可能無意中折疊，按鈕很難按下。
 [00:00:31.960 --> 00:00:38.520] In our new design, one button only unlocks the handle rotation, and the seat and frame fold by turning the handlebar.
+[00:00:31.960 --> 00:00:38.520] 在我們的新設計中，一個按鈕只能解鎖手柄旋轉，並通過轉動車把來解鎖座椅和車架折疊。
 [00:00:39.120 --> 00:00:40.800] This makes folding safer and easier.
+[00:00:39.120 --> 00:00:40.800] 這樣可以更安全、更輕鬆地摺疊。
