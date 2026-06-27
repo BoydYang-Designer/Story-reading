@@ -498,6 +498,7 @@ let _quizIsEditingAudio = false;
 let _fcPlayWord = null;   // 正面：播單字
 let _fcPlayBack = null;   // 背面：播句子
 let _fcIsFlipped = false; // 是否已翻到背面（給非同步音訊設定用）
+let _fcTranslation = '';  // 當前卡片的例句中文翻譯
 // Flashcard+
 let _fcpPlayWord = null;  // 正面：播單字
 let _fcpPlayBack = null;  // 背面：播句子
@@ -2113,6 +2114,21 @@ function showFlashcard() {
     _fcPlayWord = _playWordAudio;  // Space 鍵直接呼叫
     _fcPlayBack = null;            // 背面音訊尚未設定，先清空
     _fcIsFlipped = false;          // 重置翻面狀態
+    _fcTranslation = '';           // 重置翻譯（異步查詢後才填入）
+
+    // 異步查詢例句對應的中文翻譯（填入 _fcTranslation 供翻面時顯示）
+    if (_ctxTitle && ctx) {
+        getTimestampForStoryWithCache(_ctxTitle).then(tsData => {
+            if (!tsData) return;
+            const _norm = t => t.trim().replace(/[.,?!'"`\u201c\u201d\u2018\u2019]/g, '').toLowerCase();
+            const _match = tsData.find(l => l.sentence && _norm(l.sentence) === _norm(ctx));
+            if (_match && _match.translation) {
+                _fcTranslation = _match.translation;
+                // 若已翻面（音訊稍晚就緒），立即更新翻譯顯示
+                if (_fcIsFlipped) _fcUpdateTranslationEl();
+            }
+        }).catch(() => {});
+    }
 
     // 自動播放（三層降級；iOS Safari 非手勢觸發可能被封鎖，偵測後改用 pulse 提示）
     // iOS Fix: 使用 timer ref，讓 onEnd callback 可以取消偵測計時器，
@@ -2205,6 +2221,29 @@ function showFlashcard() {
     document.getElementById('flashcard-correct').style.visibility = 'hidden';
 }
 
+// 更新 Flashcard 背面翻譯顯示
+function _fcUpdateTranslationEl() {
+    // 確保翻譯容器存在（若 HTML 未包含，動態建立並插入 #flashcard-context 後方）
+    let el = document.getElementById('flashcard-context-translation');
+    if (!el) {
+        const contextEl = document.getElementById('flashcard-context');
+        if (contextEl && contextEl.parentNode) {
+            el = document.createElement('div');
+            el.id = 'flashcard-context-translation';
+            el.className = 'is-hidden';
+            contextEl.parentNode.insertBefore(el, contextEl.nextSibling);
+        }
+    }
+    if (!el) return;
+    if (_fcTranslation) {
+        el.textContent = _fcTranslation;
+        el.classList.remove('is-hidden');
+    } else {
+        el.textContent = '';
+        el.classList.add('is-hidden');
+    }
+}
+
 // Flip card on tap — 按鈕已在卡片 DOM 外，整張卡片點擊都翻牌
 document.getElementById('flashcard').addEventListener('click', () => {
     const card     = document.getElementById('flashcard');
@@ -2220,6 +2259,7 @@ document.getElementById('flashcard').addEventListener('click', () => {
         document.getElementById('flashcard-wrong').style.visibility = 'visible';
         document.getElementById('flashcard-correct').style.visibility = 'visible';
         _fcIsFlipped = true;
+        _fcUpdateTranslationEl(); // 顯示中文翻譯
         if (_fcPlayBack) _fcPlayBack();
     } else {
         // 翻回正面：顯示正面播放，強制 disable 背面按鈕，確保空白鍵不誤播句子
@@ -2227,6 +2267,9 @@ document.getElementById('flashcard').addEventListener('click', () => {
         if (backOvl)  backOvl.classList.add('is-hidden');
         if (backBtn)  backBtn.disabled = true;
         _fcIsFlipped = false;
+        // 翻回正面時隱藏翻譯
+        const _trEl = document.getElementById('flashcard-context-translation');
+        if (_trEl) _trEl.classList.add('is-hidden');
         // 翻回正面後自動重播單字發音，Space 鍵也恢復播單字
         if (_fcPlayWord) _fcPlayWord();
     }
@@ -2326,7 +2369,7 @@ async function startDictation() {
         if (tsData) {
             const match = tsData.find(l => normalize(l.sentence) === normalize(sent));
             if (match) {
-                questions.push({ sentence: sent, start: match.start, end: match.end, title });
+                questions.push({ sentence: sent, start: match.start, end: match.end, title, translation: match.translation || '' });
             }
         } else {
             questions.push({ sentence: sent, start: null, end: null, title: null });
@@ -2534,6 +2577,11 @@ function handleDictationAnswer(selected, correct, btn) {
         quizState.wrongItems.push(correct);
     }
 
+    // 顯示中文翻譯（答對答錯皆顯示）
+    if (q.translation) {
+        feedbackEl.innerHTML += `<div class="quiz-translation">${q.translation}</div>`;
+    }
+
     // Record for review
     quizState.answeredQuestions.push({
         type: 'sentence',
@@ -2543,7 +2591,8 @@ function handleDictationAnswer(selected, correct, btn) {
         isCorrect,
         start: q.start,
         end: q.end,
-        title: q.title
+        title: q.title,
+        translation: q.translation || ''
     });
 
     document.getElementById('dictation-next').classList.remove('is-hidden');
@@ -2751,11 +2800,12 @@ async function startArticleQuiz() {
     // 讓 article-listen（Dictation From Article）也享有間隔重複——
     // 熟悉的句子少出，未測驗或答錯的句子優先出題，與其他模式行為一致。
     const allMappedPool = pool.map(l => ({
-        sentence:  l.sentence.trim(),
-        start:     l.start,
-        end:       l.end,
+        sentence:    l.sentence.trim(),
+        translation: l.translation || '',
+        start:       l.start,
+        end:         l.end,
         title,
-        wordCount: l.sentence.trim().split(/\s+/).length,
+        wordCount:   l.sentence.trim().split(/\s+/).length,
     }));
     const sampledPool = weightedSample(
         allMappedPool,
@@ -2772,13 +2822,14 @@ async function startArticleQuiz() {
             ? getAdjustedTiming(title, l.sentence, l.start, l.end)
             : { start: l.start, end: l.end };
         return {
-            sentence:  l.sentence,
-            start:     _timing.start,
-            end:       _timing.end,
-            origStart: l.start,
-            origEnd:   l.end,
+            sentence:    l.sentence,
+            translation: l.translation || '',
+            start:       _timing.start,
+            end:         _timing.end,
+            origStart:   l.start,
+            origEnd:     l.end,
             title,
-            wordCount: l.wordCount,
+            wordCount:   l.wordCount,
         };
     });
 
@@ -3267,6 +3318,11 @@ function handleArticleListenAnswer(selected, q, btn) {
         quizState.wrongItems.push(q.sentence);
     }
 
+    // 顯示中文翻譯（答對答錯皆顯示）
+    if (q.translation) {
+        feedbackEl.innerHTML += `<div class="quiz-translation">${q.translation}</div>`;
+    }
+
     quizState.answeredQuestions.push({
         type: 'sentence',
         question: q.sentence,
@@ -3275,7 +3331,8 @@ function handleArticleListenAnswer(selected, q, btn) {
         isCorrect,
         start: q.start,
         end: q.end,
-        title: q.title
+        title: q.title,
+        translation: q.translation || ''
     });
 
     document.getElementById('article-listen-next').classList.remove('is-hidden');
@@ -3391,6 +3448,16 @@ function handleArticleClozeAnswer(selected, correct, q, btn) {
         quizState.wrong++;
         _playWrongSound();
         quizState.wrongItems.push(correct);
+    }
+
+    // 克漏字：提交後才顯示翻譯，且設計為摺疊式（需點擊才展開）
+    if (q.translation) {
+        const toggleId = `cloze-tr-toggle-${Date.now()}`;
+        const trHtml = `<details class="quiz-translation-details">
+            <summary class="quiz-translation-summary">📖 查看中文翻譯</summary>
+            <div class="quiz-translation">${q.translation}</div>
+        </details>`;
+        feedbackEl.innerHTML += trHtml;
     }
 
     quizState.answeredQuestions.push({
@@ -3543,9 +3610,10 @@ async function startReorder(source) {
         // BUG-4 FIX: 改用 weightedSample 取代純隨機 shuffle().slice()，
         // 讓 article 來源的 Reorder 也享有間隔重複（熟悉的句子少出，不熟的優先出）。
         const allMappedArticle = rawPool.map(l => ({
-            sentence: l.sentence.trim(),
-            start: l.start,
-            end: l.end,
+            sentence:    l.sentence.trim(),
+            translation: l.translation || '',
+            start:       l.start,
+            end:         l.end,
             title
         }));
         sentences = weightedSample(
@@ -3587,14 +3655,14 @@ async function startReorder(source) {
         const allMapped = filteredNoteSents.map(s => {
             const trimmed = s.trim();
             const _norm = t => t.trim().replace(/[.,?!'"`\u201c\u201d\u2018\u2019]/g, '').toLowerCase();
-            let start = null, end = null, matchTitle = null;
+            let start = null, end = null, matchTitle = null, translation = '';
             if (tsData) {
                 const match = tsData.find(l =>
                     l.sentence && _norm(l.sentence) === _norm(trimmed)
                 );
-                if (match) { start = match.start; end = match.end; matchTitle = title; }
+                if (match) { start = match.start; end = match.end; matchTitle = title; translation = match.translation || ''; }
             }
-            return { sentence: trimmed, start, end, title: matchTitle };
+            return { sentence: trimmed, start, end, title: matchTitle, translation };
         });
 
         sentences = weightedSample(
@@ -4431,6 +4499,7 @@ document.getElementById('reorder-check-btn').addEventListener('click', () => {
         start: q.start ?? null,
         end:   q.end   ?? null,
         title: q.title ?? null,
+        translation: q.translation || '',
     });
     if (typeof recordItemResult === 'function') {
         const _rtype = (typeof subpanelSource !== 'undefined' && subpanelSource.reorder === 'article') ? 'articleSentences' : 'noteSentences';
@@ -4444,6 +4513,11 @@ document.getElementById('reorder-check-btn').addEventListener('click', () => {
     checkBtn.classList.add('quiz-btn-next-mode', 'reorder-check-full');
     checkBtn.disabled = false;
     checkBtn.dataset.mode = 'next';
+
+    // 顯示中文翻譯（答對答錯皆顯示）
+    if (q.translation) {
+        feedback.innerHTML += `<div class="quiz-translation">${q.translation}</div>`;
+    }
 
     // 評分完成 → 顯示 Practice 按鈕（答對答錯皆顯示）
     _reorderPracticeTransition('CHECKED');
@@ -5909,7 +5983,7 @@ async function startVoiceReorder(source) {
             showNotification('No sentences match the selected difficulty.', 'warning');
             return;
         }
-        sentences = filtered.map(l => ({ text: l.sentence.trim(), start: l.start, end: l.end }));
+        sentences = filtered.map(l => ({ text: l.sentence.trim(), start: l.start, end: l.end, translation: l.translation || '' }));
 
         // Set audio src
         const story = stories.find(s => s['標題'] === quizState.titleName);
@@ -5940,6 +6014,7 @@ async function startVoiceReorder(source) {
         }
         sentences = filtered.map(s => ({
             text: typeof s === 'string' ? s : s.text || '',
+            translation: '',
         }));
         hasAudio = false;
     }
@@ -6551,16 +6626,24 @@ function _vrCheckAnswer() {
         _vrState.wrongItems.push({ text: correctText, qIndex: _vrState.qIndex });
     }
 
+    // 顯示中文翻譯（答對答錯皆顯示）
+    const _vrCurItem = _vrState.sentences[_vrState.qIndex];
+    if (_vrCurItem && _vrCurItem.translation) {
+        const _vrFbEl = _vrEl('vr-feedback');
+        _vrFbEl.innerHTML += `<div class="quiz-translation">${_vrCurItem.translation}</div>`;
+    }
+
     // Track in answeredQuestions — 欄位對齊 showQuizResult 期望格式
     quizState.answeredQuestions.push({
-        type:      'sentence',
-        question:  correctText,
-        selected:  userText,       // result screen 用 item.selected 顯示「Your answer」
-        correct:   correctText,    // result screen 用 item.correct 顯示正確答案（字串）
-        isCorrect,                 // result screen 用 item.isCorrect 判斷對錯 CSS
-        start:     _vrState.currentTs?.start ?? null,
-        end:       _vrState.currentTs?.end   ?? null,
-        title:     quizState.titleName ?? null,
+        type:        'sentence',
+        question:    correctText,
+        selected:    userText,
+        correct:     correctText,
+        isCorrect,
+        start:       _vrState.currentTs?.start ?? null,
+        end:         _vrState.currentTs?.end   ?? null,
+        title:       quizState.titleName ?? null,
+        translation: _vrCurItem?.translation || '',
     });
 
     // Bug 2 Fix: 記錄 item-level 分數到 scores dashboard
@@ -7372,3 +7455,63 @@ function _vrReleasePlaybackBlob() {
 document.getElementById('vr-playback-btn')?.addEventListener('click', _vrPlayback);
 
 console.log('✅ VR Audio Recording module loaded.');
+
+// ════════════════════════════════════════════════════════════
+//  TRANSLATION STYLES — 中文翻譯顯示樣式（動態注入）
+// ════════════════════════════════════════════════════════════
+(function _injectTranslationStyles() {
+    if (document.getElementById('quiz-translation-styles')) return;
+    const style = document.createElement('style');
+    style.id = 'quiz-translation-styles';
+    style.textContent = `
+        /* 通用翻譯區塊（Dictation / Reorder / VR / Article-Listen 答案顯示後） */
+        .quiz-translation {
+            margin-top: 8px;
+            font-size: 0.88em;
+            color: var(--color-text-light, #888);
+            font-style: italic;
+            line-height: 1.5;
+            padding: 4px 0 0;
+            border-top: 1px dashed var(--color-border, #e0d9d0);
+        }
+
+        /* Article Cloze 摺疊式翻譯 */
+        .quiz-translation-details {
+            margin-top: 8px;
+        }
+        .quiz-translation-summary {
+            font-size: 0.85em;
+            color: var(--color-text-light, #888);
+            cursor: pointer;
+            user-select: none;
+            list-style: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 0;
+        }
+        .quiz-translation-summary::-webkit-details-marker { display: none; }
+        .quiz-translation-details[open] .quiz-translation-summary {
+            color: var(--color-accent, #8b6914);
+        }
+        .quiz-translation-details .quiz-translation {
+            border-top: none;
+            padding-top: 4px;
+        }
+
+        /* Flashcard 背面例句下方翻譯 */
+        #flashcard-context-translation {
+            margin-top: 8px;
+            font-size: 0.82em;
+            color: var(--color-text-light, #999);
+            font-style: italic;
+            line-height: 1.45;
+            border-top: 1px dashed var(--color-border, #e0d9d0);
+            padding-top: 6px;
+        }
+        #flashcard-context-translation.is-hidden {
+            display: none;
+        }
+    `;
+    document.head.appendChild(style);
+})();
