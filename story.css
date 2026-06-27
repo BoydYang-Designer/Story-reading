@@ -5608,13 +5608,14 @@ textarea:focus-visible {
   flex-shrink: 0;
 }
 
-/* ── 播放控制列 ──────────────────────────────────────── */
+/* ── 播放控制列（含速度＋字級按鈕同排）────────────────── */
 .reading-controls-row {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  padding: 4px 0;   /* 上下留白，與兩側滑桿拉開間距 */
+  gap: 8px;
+  padding: 4px 6px;
+  flex-wrap: nowrap;
 }
 
 .reading-exit-btn {
@@ -5677,20 +5678,21 @@ textarea:focus-visible {
 .reading-record-playback {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 4px 2px;
+  gap: 10px;
+  padding: 8px 6px 4px;
   flex-wrap: wrap;
+  justify-content: center;
 }
 .reading-record-playback audio {
   flex: 1;
-  min-width: 140px;
-  height: 32px;
+  min-width: 180px;
+  height: 40px;
 }
 .reading-record-action-btn {
   border: none;
   border-radius: 99px;
-  padding: 6px 12px;
-  font-size: 13px;
+  padding: 9px 18px;
+  font-size: 15px;
   font-weight: 600;
   background: var(--color-primary);
   color: var(--color-surface);
@@ -5708,13 +5710,9 @@ textarea:focus-visible {
   border-color: #d64545;
 }
 
-/* ── 閱讀模式：速度＋字級 觸控按鈕列 ──────────────────────── */
+/* ── 閱讀模式：速度＋字級 觸控按鈕（與播放鍵同排）──────── */
 .reading-adjust-row {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  padding: 4px 12px 6px;
+  display: none; /* 已移入播放控制列，不再獨立一排 */
 }
 
 .reading-adjust-btn {
@@ -5723,9 +5721,9 @@ textarea:focus-visible {
   align-items: center;
   justify-content: center;
   gap: 1px;
-  min-width: 72px;
-  padding: 6px 12px;
-  border-radius: 20px;
+  min-width: 58px;
+  padding: 5px 8px;
+  border-radius: 16px;
   border: 1.5px solid var(--color-border);
   background: var(--color-surface);
   color: var(--color-text);
@@ -5735,6 +5733,7 @@ textarea:focus-visible {
   touch-action: none;
   transition: background-color 0.15s, border-color 0.15s, box-shadow 0.15s;
   box-shadow: var(--shadow-sm);
+  flex-shrink: 0;
 }
 
 .reading-adjust-btn:active,
@@ -5875,26 +5874,14 @@ textarea:focus-visible {
   cursor: pointer;
 }
 
-/* ── 中央 Highlight：琥珀/暖黃背景 + 加粗 ─────────────── */
+/* ── 中央 Highlight：已關閉（閱讀模式不顯示 highlight）── */
 #text-container.reading-active .timestamp-sentence.is-reading-current {
-  background-color: rgba(201, 169, 122, 0.22);   /* --color-accent 的淡版 */
-  border-radius: 6px;
-  padding-left: 6px;
-  padding-right: 6px;
-  margin-left: -6px;
-  margin-right: -6px;
-  font-weight: 600;
-  color: var(--color-primary-dark);
+  /* highlight 已移除 */
 }
 
-/* 目前句的中文翻譯行一起加底色（稍淡） */
+/* 目前句的中文翻譯行（同步不顯示底色） */
 #text-container.reading-active .timestamp-translation.is-reading-current {
-  background-color: rgba(201, 169, 122, 0.10);
-  border-radius: 0 0 6px 6px;
-  padding-left: 6px;
-  padding-right: 6px;
-  margin-left: -6px;
-  margin-right: -6px;
+  /* highlight 已移除 */
 }
 
 /* 點擊句子短暫回饋 */
@@ -5904,9 +5891,13 @@ textarea:focus-visible {
 
 @media (max-width: 420px) {
   .reading-play-btn { width: 50px; height: 50px; }
-  .reading-exit-btn { width: 38px; height: 38px; }
-  .reading-record-btn { width: 38px; height: 38px; }
+  .reading-exit-btn { width: 34px; height: 34px; }
+  .reading-record-btn { width: 34px; height: 34px; }
   .reading-speed-label { display: none; }
+  .reading-adjust-btn { min-width: 46px; padding: 4px 6px; }
+  .reading-adjust-icon { font-size: 13px; }
+  .reading-adjust-value { font-size: 11px; }
+  .reading-controls-row { gap: 5px; }
 }
 
 /* ── 閱讀模式：開頭緩衝空白 ──────────────────────────────

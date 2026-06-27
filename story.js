@@ -2793,7 +2793,7 @@ function initReadingSpeedSlider() {
 
         // ── 字級按鈕 ──
         let _fHeld = false;
-        let _fStartX = 0, _fBaseVal = 20;
+        let _fStartX = 0, _fStartY = 0, _fBaseVal = 20;
         let _fDecided = false, _fIsHoriz = false;
 
         function fontActivate() { _fHeld = true; fontBtn.classList.add('is-held'); }
@@ -2806,6 +2806,7 @@ function initReadingSpeedSlider() {
             if (!isReadingMode) return;
             e.preventDefault();
             _fStartX = e.touches[0].clientX;
+            _fStartY = e.touches[0].clientY;   // ← 修正：記錄 Y 起始座標
             _fBaseVal = readingFontSize;
             _fDecided = false; _fIsHoriz = false;
             fontActivate();
@@ -2816,8 +2817,9 @@ function initReadingSpeedSlider() {
             const dx = e.touches[0].clientX - _fStartX;
             const dy = e.touches[0].clientY - _fStartY;
             if (!_fDecided) {
-                if (Math.abs(dx) < 5) return;
-                _fDecided = true; _fIsHoriz = true;
+                if (Math.abs(dx) < 5 && Math.abs(dy) < 5) return;
+                _fDecided = true;
+                _fIsHoriz = Math.abs(dx) > Math.abs(dy) * 1.1;
             }
             if (!_fIsHoriz) return;
             e.preventDefault();

@@ -590,27 +590,9 @@
                    class="reading-progress-slider" title="點擊後可拖曳跳轉進度">
             <span id="reading-progress-time" class="reading-progress-time">0%</span>
           </div>
-          <!-- 播放控制列 -->
+          <!-- 播放控制列（含速度＋字級按鈕，與播放鍵同排） -->
           <div class="reading-controls-row">
-            <button id="reading-mode-exit-btn" class="reading-exit-btn" title="退出閱讀模式">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-            </button>
-            <button id="reading-play-pause" class="reading-play-btn" title="播放/暫停捲動">
-              <svg class="icon-play" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-              <svg class="icon-pause" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
-            </button>
-            <button id="reading-record-btn" class="reading-record-btn" title="錄下我跟讀的內容">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="9"></circle></svg>
-            </button>
-          </div>
-          <!-- 錄音試聽面板：錄完才顯示，可試聽 / 下載 / 捨棄重錄 -->
-          <div id="reading-record-playback" class="reading-record-playback is-hidden">
-            <audio id="reading-record-audio" controls></audio>
-            <button id="reading-record-download-btn" class="reading-record-action-btn" title="下載到手機">⬇️ 下載</button>
-            <button id="reading-record-discard-btn" class="reading-record-action-btn secondary" title="捨棄並重新錄製">🗑️</button>
-          </div>
-          <!-- 速度＋字級 觸控按鈕列（長按後左右滑動調整） -->
-          <div class="reading-adjust-row">
+            <!-- 速度按鈕（左側） -->
             <button id="reading-speed-btn" class="reading-adjust-btn" title="按住後左右滑動調整速度">
               <span class="reading-adjust-icon">🐢</span>
               <span class="reading-adjust-label">速度</span>
@@ -621,11 +603,31 @@
                    class="reading-speed-slider" style="display:none" aria-hidden="true">
             <input type="range" id="reading-font-slider" min="14" max="28" step="1" value="20"
                    class="reading-font-slider" style="display:none" aria-hidden="true">
+            <!-- 退出按鈕 -->
+            <button id="reading-mode-exit-btn" class="reading-exit-btn" title="退出閱讀模式">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+            <!-- 播放／暫停主按鈕（中央） -->
+            <button id="reading-play-pause" class="reading-play-btn" title="播放/暫停捲動">
+              <svg class="icon-play" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+              <svg class="icon-pause" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+            </button>
+            <!-- 錄音按鈕 -->
+            <button id="reading-record-btn" class="reading-record-btn" title="錄下我跟讀的內容">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="9"></circle></svg>
+            </button>
+            <!-- 字級按鈕（右側） -->
             <button id="reading-font-btn" class="reading-adjust-btn" title="按住後左右滑動調整字級">
               <span class="reading-adjust-icon">㊊</span>
               <span class="reading-adjust-label">字級</span>
               <span class="reading-adjust-value" id="reading-font-value">20px</span>
             </button>
+          </div>
+          <!-- 錄音試聽面板：錄完才顯示，可試聽 / 下載 / 捨棄重錄 -->
+          <div id="reading-record-playback" class="reading-record-playback is-hidden">
+            <audio id="reading-record-audio" controls></audio>
+            <button id="reading-record-download-btn" class="reading-record-action-btn" title="下載到手機">⬇️ 下載</button>
+            <button id="reading-record-discard-btn" class="reading-record-action-btn secondary" title="捨棄並重新錄製">🗑️</button>
           </div>
         </div>
         <div class="controls">
