@@ -5499,3 +5499,253 @@ textarea:focus-visible {
 .reorder-practice-zone .is-hidden {
     display: none !important;
 }
+
+/* ===================================================================
+   閱讀挑戰模式 (Reading Challenge Mode)
+   - 連續平滑捲動（Teleprompter 風格）
+   - 中央句子以顏色 highlight
+   - 速度滑桿可即時調整
+   =================================================================== */
+
+#reading-mode-btn.is-reading-mode-active {
+  background: var(--color-accent-light);
+  border-color: var(--color-accent);
+  color: var(--color-primary-dark);
+  font-weight: 700;
+}
+
+#playback-view.is-reading-mode #staging-area {
+  display: none;
+}
+
+#playback-view.is-reading-mode #fixed-controls-container .controls {
+  display: none;
+}
+
+/* ── 控制列容器 ──────────────────────────────────────── */
+#reading-mode-controls {
+  max-width: 880px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 18px 6px;
+}
+
+/* ── 速度滑桿列 ──────────────────────────────────────── */
+.reading-speed-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.reading-speed-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-light);
+  white-space: nowrap;
+  flex-shrink: 0;
+  width: 28px;
+}
+
+.reading-speed-slider {
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 99px;
+  background: var(--color-border);
+  outline: none;
+  cursor: pointer;
+}
+.reading-speed-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+.reading-speed-slider::-moz-range-thumb {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  cursor: pointer;
+  border: none;
+}
+
+.reading-speed-value {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-primary);
+  min-width: 26px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* ── 播放控制列 ──────────────────────────────────────── */
+.reading-controls-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.reading-exit-btn {
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  background: transparent;
+  border: 1.5px solid var(--color-border);
+  color: var(--color-text-light);
+  display: flex; align-items: center; justify-content: center;
+  padding: 0;
+}
+.reading-exit-btn:hover {
+  color: var(--color-primary);
+  border-color: var(--color-accent);
+  background: var(--color-accent-light);
+}
+
+.reading-play-btn {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+  color: var(--color-surface);
+  display: flex; align-items: center; justify-content: center;
+  padding: 0; border: none;
+}
+.reading-play-btn:hover { background-color: var(--color-primary-dark); }
+.reading-play-btn svg { width: 22px; height: 22px; fill: currentColor; stroke: currentColor; stroke-width: 1.5; }
+.reading-play-btn .icon-play { margin-left: 2px; }
+.reading-play-btn .icon-pause { display: none; }
+.reading-play-btn.is-playing .icon-play { display: none; }
+.reading-play-btn.is-playing .icon-pause { display: block; }
+
+.reading-controls-spacer { width: 42px; flex-shrink: 0; }
+
+/* ── 文字容器：連續捲動，禁止 CSS smooth 干擾 ─────────── */
+#text-container.reading-active {
+  scroll-behavior: auto !important;
+}
+
+/* 閱讀模式下所有句子正常顯示（不淡化），cursor 提示可點擊 */
+#text-container.reading-active .timestamp-sentence,
+#text-container.reading-active .timestamp-translation {
+  opacity: 1;
+  transform: none;
+  transition: background-color 0.2s ease;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+/* ── 中央 Highlight：琥珀/暖黃背景 + 加粗 ─────────────── */
+#text-container.reading-active .timestamp-sentence.is-reading-current {
+  background-color: rgba(201, 169, 122, 0.22);   /* --color-accent 的淡版 */
+  border-radius: 6px;
+  padding-left: 6px;
+  padding-right: 6px;
+  margin-left: -6px;
+  margin-right: -6px;
+  font-weight: 600;
+  color: var(--color-primary-dark);
+}
+
+/* 目前句的中文翻譯行一起加底色（稍淡） */
+#text-container.reading-active .timestamp-translation.is-reading-current {
+  background-color: rgba(201, 169, 122, 0.10);
+  border-radius: 0 0 6px 6px;
+  padding-left: 6px;
+  padding-right: 6px;
+  margin-left: -6px;
+  margin-right: -6px;
+}
+
+/* 點擊句子短暫回饋 */
+#text-container.reading-active .timestamp-sentence:active {
+  background-color: rgba(201, 169, 122, 0.38) !important;
+}
+
+@media (max-width: 420px) {
+  .reading-play-btn { width: 50px; height: 50px; }
+  .reading-exit-btn { width: 38px; height: 38px; }
+  .reading-controls-spacer { width: 38px; }
+  .reading-speed-label { display: none; }
+}
+
+/* ── 閱讀模式：開頭緩衝空白 ──────────────────────────────
+   平常瀏覽時高度為 0（不佔位），
+   進入閱讀模式（.reading-active）才展開為 40vh，
+   讓第一句從畫面下緣自然捲入，不會一開始就頂在上面。
+   ─────────────────────────────────────────────────────── */
+.reading-top-spacer {
+  height: 0;
+  pointer-events: none;
+}
+#text-container.reading-active .reading-top-spacer {
+  height: 20vh;
+}
+
+/* ── 閱讀模式：捲動進度條 ────────────────────────────────
+   刻意與速度滑桿做視覺區分：
+   - 軌道細（2px）、顏色偏灰藍（accent），表示「位置」
+   - 速度滑桿軌道較粗（4px）、顏色偏棕（primary），表示「速度」
+   ─────────────────────────────────────────────────────── */
+.reading-progress-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 2px;
+}
+
+.reading-progress-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-light);
+  white-space: nowrap;
+  flex-shrink: 0;
+  width: 28px;
+  opacity: 0.7;
+}
+
+.reading-progress-slider {
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 2px;
+  border-radius: 99px;
+  background: var(--color-accent, #c9a97a);
+  outline: none;
+  cursor: pointer;
+  opacity: 0.55;
+  transition: opacity 0.15s;
+}
+.reading-progress-slider:hover,
+.reading-progress-slider:focus {
+  opacity: 1;
+}
+.reading-progress-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: var(--color-accent, #c9a97a);
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+}
+.reading-progress-slider::-moz-range-thumb {
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: var(--color-accent, #c9a97a);
+  cursor: pointer;
+  border: none;
+}
+
+.reading-progress-time {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-light);
+  min-width: 42px;
+  text-align: right;
+  flex-shrink: 0;
+  opacity: 0.7;
+  font-variant-numeric: tabular-nums;
+}

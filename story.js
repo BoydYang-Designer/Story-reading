@@ -113,6 +113,33 @@ let lastHighlightedSentence = null;
 let timestampUpdateRafId = null; // For smooth scrolling animation
 let sentenceElementMap = new Map(); // FIX: cache start→element to avoid per-frame querySelector
 
+// ── 閱讀挑戰模式（Reading Challenge Mode）狀態 ──────────────────────────────
+// 全新「連續平滑捲動」提詞器機制：
+//   - 整個文字區塊以固定 px/秒持續向上捲動
+//   - 目前可見區中央的句子以顏色 highlight
+//   - 與 mp3 完全脫鉤；點擊句子才臨時播放該句音訊
+let isReadingMode = false;
+let readingIsPlaying = false;
+let readingIndex = -1;         // 目前 highlight 的句子 index
+let readingRafId = null;
+let readingLastFrameTs = 0;
+let readingScrollTopBeforeEnter = 0; // 進入閱讀模式前的 scrollTop，退出時還原
+
+// 單一速度數值（px/秒），範圍 5–80，預設 20
+const READING_SPEED_DEFAULT = 20;
+const READING_SPEED_WPS = { slow: 2.5, medium: 4, fast: 6 }; // 僅保留供 getReadingSentenceDurationMs 參考
+const READING_MIN_DURATION_MS = 1100;
+
+let readingSpeedPx = (function () {
+    try {
+        const v = parseInt(localStorage.getItem('readingModeSpeedPx'), 10);
+        return (!isNaN(v) && v >= 5 && v <= 80) ? v : READING_SPEED_DEFAULT;
+    } catch (e) { return READING_SPEED_DEFAULT; }
+})();
+
+// 舊版 key（三檔）僅保留讓其他地方不報錯
+let readingSpeedKey = 'medium';
+
 // Binary search: find the active sentence index for a given currentTime
 function findActiveSentenceIndex(time) {
     let lo = 0, hi = timestampData.length - 1;
@@ -2078,6 +2105,23 @@ textContainer.addEventListener('click', (e) => {
     // 忽略使用者用滑鼠選取/反白文字時的點擊
     if (window.getSelection().toString().length > 0) return;
 
+    // ── 閱讀挑戰模式：點擊句子 → 暫停自動捲動 + 播放該句 mp3 ──────────────
+    // mp3 播完後維持暫停，等使用者按播放鍵才繼續往下捲動。
+    if (isReadingMode) {
+        const sentenceSpan = e.target.closest('.timestamp-sentence');
+        if (sentenceSpan) {
+            pauseReadingScroll();
+            const startTime = parseFloat(sentenceSpan.dataset.start);
+            const endTime = parseFloat(sentenceSpan.dataset.end);
+            const idx = timestampData.findIndex(l => String(l.start) === sentenceSpan.dataset.start);
+            if (idx !== -1) readingIndex = idx; // 記錄焦點，但不觸發捲動
+            if (!isNaN(startTime) && !isNaN(endTime)) {
+                playAudioSnippet(startTime, endTime);
+            }
+        }
+        return;
+    }
+
     if (isTimestampMode) {
         if (isPlaying) {
             // 播放中：點擊會跳轉音訊並將整個句子加入暫存區
@@ -2403,6 +2447,12 @@ function playAudioSnippet(startTime, endTime) {
         snippetStopTimeout = null;
     }
 
+    // 若主音訊尚未載入（沒有 src 或 duration 尚未確定），給使用者明確提示
+    if (!audio.src || audio.src === window.location.href) {
+        showNotification('⚠️ 音訊尚未載入，無法播放片段。', 'warn');
+        return;
+    }
+
     if (!isFinite(audio.duration) || isPlaying) return;
 
     const duration = endTime - startTime;
@@ -2429,6 +2479,271 @@ function playAudioSnippet(startTime, endTime) {
     } else {
         audio.addEventListener('canplay', _doSnippetPlay, { once: true });
     }
+}
+
+
+// ════════════════════════════════════════════════════════════════════════
+// 閱讀挑戰模式 (Reading Challenge Mode)
+// 連續滾動提詞器風格：目前句放大/加亮，捲動速度（慢/中/快）純粹依字數計算，
+// 與 mp3 完全脫鉤；點擊句子才會臨時播放該句音訊。
+// ════════════════════════════════════════════════════════════════════════
+
+// ════════════════════════════════════════════════════════════════════════
+//  連續平滑捲動（Teleprompter）+ 中央句子 Highlight
+// ════════════════════════════════════════════════════════════════════════
+
+// 根據目前 scrollTop 找出「最靠近畫面中央 40% 位置」的句子 index
+function getReadingCenterIndex() {
+    const midY = textContainer.scrollTop + textContainer.clientHeight * 0.38;
+    let bestIdx = -1, bestDist = Infinity;
+    timestampData.forEach((line, i) => {
+        const el = sentenceElementMap.get(String(line.start));
+        if (!el) return;
+        const dist = Math.abs(el.offsetTop - midY);
+        if (dist < bestDist) { bestDist = dist; bestIdx = i; }
+    });
+    return bestIdx;
+}
+
+// 套用 highlight：只標記 centerIdx 那一句，其餘清除
+function applyReadingHighlightByIndex(centerIdx) {
+    if (centerIdx === readingIndex) return; // 沒變就不動 DOM
+    readingIndex = centerIdx;
+    timestampData.forEach((line, i) => {
+        const el = sentenceElementMap.get(String(line.start));
+        if (!el) return;
+        el.classList.toggle('is-reading-current', i === centerIdx);
+        // 中文翻譯行同步
+        const zhEl = el.nextElementSibling;
+        if (zhEl && zhEl.classList.contains('timestamp-translation')) {
+            zhEl.classList.toggle('is-reading-current', i === centerIdx);
+        }
+    });
+}
+
+// 連續捲動主迴圈：每幀推進 scrollTop + 更新 highlight
+// 用浮點數累加器解決低速時瀏覽器整數捨入導致「卡死不動」問題
+let _readingScrollAccum = 0; // 累加尚未整數化的小數部分
+
+function readingModeLoop(ts) {
+    if (!isReadingMode || !readingIsPlaying) { readingRafId = null; return; }
+
+    if (!readingLastFrameTs) readingLastFrameTs = ts;
+    const delta = (ts - readingLastFrameTs) / 1000; // 秒
+    readingLastFrameTs = ts;
+
+    // 累加浮點位移，只有整數部分才真正寫入 scrollTop
+    _readingScrollAccum += readingSpeedPx * delta;
+    const intStep = Math.floor(_readingScrollAccum);
+    _readingScrollAccum -= intStep;
+
+    const newScrollTop = textContainer.scrollTop + intStep;
+
+    if (newScrollTop >= scrollMax) {
+        textContainer.scrollTop = scrollMax;
+        _readingScrollAccum = 0;
+        readingIsPlaying = false;
+        updateReadingPlayBtnUI();
+        readingRafId = null;
+        applyReadingHighlightByIndex(getReadingCenterIndex());
+        return;
+    }
+
+    if (intStep > 0) textContainer.scrollTop = newScrollTop;
+
+    // 每幀更新 highlight（低成本：只比對 index，不動 DOM）
+    applyReadingHighlightByIndex(getReadingCenterIndex());
+
+    // 同步進度條 UI
+    updateReadingProgressUI();
+
+    readingRafId = requestAnimationFrame(readingModeLoop);
+}
+
+// 取得目前可見區中間位置最近的句子 index（供點擊後記錄 & 退出模式對齊）
+function getReadingVisibleIndex() {
+    return getReadingCenterIndex();
+}
+
+// 跳轉到指定句子並讓它出現在畫面中段（點擊跳轉用，不啟動捲動）
+function scrollToSentenceInstant(idx) {
+    if (idx < 0 || idx >= timestampData.length) return;
+    const el = sentenceElementMap.get(String(timestampData[idx].start));
+    if (!el) return;
+    const targetPos = el.offsetTop - textContainer.clientHeight * 0.32;
+    textContainer.scrollTop = Math.max(0, Math.min(targetPos, scrollMax));
+}
+
+function startReadingScroll() {
+    readingIsPlaying = true;
+    readingLastFrameTs = 0;
+    _readingScrollAccum = 0; // 每次重新播放都從 0 開始累加
+    updateReadingPlayBtnUI();
+    if (!readingRafId) readingRafId = requestAnimationFrame(readingModeLoop);
+}
+
+function getReadingSentenceDurationMs(sentenceText) {
+    const wordCount = String(sentenceText || '').trim().split(/\s+/).filter(Boolean).length || 1;
+    const wps = READING_SPEED_WPS['medium'];
+    return Math.max(READING_MIN_DURATION_MS, (wordCount / wps) * 1000);
+}
+
+// setReadingIndex：點擊句子後記錄位置
+function setReadingIndex(idx, { scroll = true } = {}) {
+    if (idx < 0 || idx >= timestampData.length) return;
+    readingIndex = idx;
+    if (scroll) scrollToSentenceInstant(idx);
+    applyReadingHighlightByIndex(idx);
+}
+
+// applyReadingHighlight：舊介面保留，轉接到新函式
+function applyReadingHighlight(idx) { applyReadingHighlightByIndex(idx); }
+
+// 初始化速度滑桿 UI（enterReadingMode 時呼叫）
+// ── 速度統一設定器：鍵盤 / 觸控 / 滑桿 都走這裡 ──────────────────────────
+function setReadingSpeedPx(v) {
+    readingSpeedPx = Math.max(5, Math.min(80, Math.round(v)));
+    safeSetItem('readingModeSpeedPx', String(readingSpeedPx)); // 統一走 safeSetItem（含容量警告）
+    // 同步更新滑桿 UI（若存在）
+    const slider  = document.getElementById('reading-speed-slider');
+    const valueEl = document.getElementById('reading-speed-value');
+    if (slider)  slider.value        = readingSpeedPx;
+    if (valueEl) valueEl.textContent = readingSpeedPx;
+}
+
+// 初始化速度滑桿 UI（enterReadingMode 時呼叫）
+function initReadingSpeedSlider() {
+    const slider  = document.getElementById('reading-speed-slider');
+    const valueEl = document.getElementById('reading-speed-value');
+    if (!slider || !valueEl) return;
+    slider.value        = readingSpeedPx;
+    valueEl.textContent = readingSpeedPx;
+    slider.oninput = () => setReadingSpeedPx(parseInt(slider.value, 10));
+}
+
+// ── 閱讀進度條：初始化 & 即時更新 ────────────────────────
+let _readingProgressDragging = false; // 拖拉中暫停 rAF 寫入，避免相互干擾
+
+function initReadingProgressSlider() {
+    const slider  = document.getElementById('reading-progress-slider');
+    const timeEl  = document.getElementById('reading-progress-time');
+    if (!slider) return;
+
+    slider.value = 0;
+    if (timeEl) timeEl.textContent = '0%';
+
+    // 開始拖拉：暫停捲動，讓使用者自由定位
+    slider.addEventListener('mousedown',  () => { _readingProgressDragging = true; }, { passive: true });
+    slider.addEventListener('touchstart', () => { _readingProgressDragging = true; }, { passive: true });
+
+    // 拖拉中：即時跳轉 scrollTop（不啟動捲動）
+    slider.oninput = () => {
+        if (!scrollMax) return;
+        const pct = parseInt(slider.value, 10) / 1000;
+        textContainer.scrollTop = Math.round(pct * scrollMax);
+        if (timeEl) timeEl.textContent = Math.round(pct * 100) + '%';
+    };
+
+    // 放開：恢復捲動（若原本在播放中）
+    const onRelease = () => {
+        if (!_readingProgressDragging) return;
+        _readingProgressDragging = false;
+        // 讓 rAF 迴圈從新位置繼續，重設 lastFrameTs 避免大跳幀
+        readingLastFrameTs = 0;
+    };
+    slider.addEventListener('mouseup',  onRelease, { passive: true });
+    slider.addEventListener('touchend', onRelease, { passive: true });
+}
+
+function updateReadingProgressUI() {
+    if (_readingProgressDragging || !scrollMax) return;
+    const slider  = document.getElementById('reading-progress-slider');
+    const timeEl  = document.getElementById('reading-progress-time');
+    if (!slider) return;
+    const pct = textContainer.scrollTop / scrollMax;
+    slider.value = Math.round(pct * 1000);
+    if (timeEl) timeEl.textContent = Math.round(pct * 100) + '%';
+}
+
+function pauseReadingScroll() {
+    readingIsPlaying = false;
+    readingLastFrameTs = 0;
+    updateReadingPlayBtnUI();
+    if (readingRafId) { cancelAnimationFrame(readingRafId); readingRafId = null; }
+}
+
+function updateReadingPlayBtnUI() {
+    const btn = document.getElementById('reading-play-pause');
+    if (btn) btn.classList.toggle('is-playing', readingIsPlaying);
+}
+
+function updateReadingSpeedBtnUI() {
+    // 舊三檔按鈕已移除，改用滑桿（initReadingSpeedSlider）；此函式保留供現有呼叫點不報錯
+}
+
+function enterReadingMode() {
+    if (!hasTimestampFile || !timestampData.length) {
+        showNotification('這篇文章沒有逐句時間戳資料，無法使用閱讀挑戰模式。', 'error');
+        return;
+    }
+
+    // 閱讀模式有自己的節奏，不跟 mp3 同步播放；先確保主音訊是暫停的
+    if (isPlaying) pauseAudio(true);
+    if (snippetStopTimeout) { clearTimeout(snippetStopTimeout); snippetStopTimeout = null; }
+    audio.pause();
+
+    // 關閉句子編輯模式，避免跟閱讀模式互相干擾
+    if (typeof resetTsEditMode === 'function') resetTsEditMode();
+
+    // 儲存進入前的捲動位置，供退出時還原
+    readingScrollTopBeforeEnter = textContainer.scrollTop;
+
+    isReadingMode = true;
+    document.getElementById('playback-view')?.classList.add('is-reading-mode');
+    textContainer.classList.add('reading-active');
+    document.getElementById('reading-mode-controls')?.classList.remove('is-hidden');
+    document.getElementById('reading-mode-btn')?.classList.add('is-reading-mode-active');
+
+    updateReadingSpeedBtnUI();
+    initReadingSpeedSlider();
+    initReadingProgressSlider();
+
+    // 連續捲動：從頂部開始（提詞器體驗，完整從頭閱讀）
+    textContainer.scrollTop = 0;
+    readingIndex = -1;
+
+    // 短暫延遲後自動開始捲動（讓使用者感覺到模式切換）
+    setTimeout(() => {
+        if (isReadingMode) startReadingScroll();
+    }, 400);
+}
+
+function exitReadingMode() {
+    pauseReadingScroll();
+    isReadingMode = false;
+    _readingProgressDragging = false;
+
+    document.getElementById('playback-view')?.classList.remove('is-reading-mode');
+    textContainer.classList.remove('reading-active');
+    document.getElementById('reading-mode-controls')?.classList.add('is-hidden');
+    document.getElementById('reading-mode-btn')?.classList.remove('is-reading-mode-active');
+
+    // 清除閱讀模式留下的樣式 class（連續捲動模式理論上不加，但防禦性清除）
+    timestampData.forEach(line => {
+        const el = sentenceElementMap.get(String(line.start));
+        if (el) {
+            el.classList.remove('is-reading-current', 'is-reading-passed');
+            const zhEl = el.nextElementSibling;
+            if (zhEl && zhEl.classList.contains('timestamp-translation')) {
+                zhEl.classList.remove('is-reading-current', 'is-reading-passed');
+            }
+        }
+    });
+    readingIndex = -1;
+
+    // 還原進入前的捲動位置，讓使用者回到原本閱讀的地方繼續
+    textContainer.scrollTop = readingScrollTopBeforeEnter;
+    readingScrollTopBeforeEnter = 0;
 }
 
 
@@ -2475,6 +2790,12 @@ function renderTimestampContent() {
     textContainer.innerHTML = '';
     textContainer.scrollTop = 0;
     const frag = document.createDocumentFragment();
+
+    // 閱讀模式開頭緩衝：插入一個高度約 40% 視口的空白，
+    // 讓第一句從畫面下方捲入，而不是一開始就卡在頂部
+    const topSpacer = document.createElement('div');
+    topSpacer.className = 'reading-top-spacer';
+    frag.appendChild(topSpacer);
 
     const { wordSet, phraseList } = getSavedSetsForTimestamp(currentCategoryName, currentStoryTitle);
 
@@ -2647,8 +2968,8 @@ function computeScrollTarget(element) {
 let _lerpScrollRafId = null;
 
 function smoothScrollTo(target, instant = false) {
-    // 暫停時使用者自由滾動中，不強制跳回聚焦位置
-    if (userIsScrollingManually) return;
+    // 暫停時使用者自由滾動中，不強制跳回聚焦位置（閱讀挑戰模式不受此限制，因為它有自己的捲動節奏）
+    if (userIsScrollingManually && !isReadingMode) return;
 
     const clamped = Math.max(0, Math.min(target, scrollMax));
 
@@ -3194,6 +3515,9 @@ async function showPlayback(index, startTime = 0, maintainTimestampMode = false)
   // 儲存切換前的模式狀態
   const wasTimestampMode = maintainTimestampMode && isTimestampMode;
 
+  // 切換文章前，若還在閱讀挑戰模式中，先退出（避免殘留樣式/計時器指向舊文章的句子）
+  if (isReadingMode) exitReadingMode();
+
   // 停止當前的動畫循環和音訊
   stopTimestampUpdateLoop();
   stopJsonModeHighlightLoop();
@@ -3233,6 +3557,10 @@ async function showPlayback(index, startTime = 0, maintainTimestampMode = false)
   // 根據是否有 timestamp 檔案，顯示/隱藏頂部 ✏️ 編輯模式按鈕
   const tsEditModeBtn = document.getElementById('ts-edit-mode-btn');
   if (tsEditModeBtn) tsEditModeBtn.style.display = hasTimestampFile ? '' : 'none';
+
+  // 根據是否有 timestamp 檔案，顯示/隱藏頂部 📖 閱讀挑戰模式按鈕
+  const readingModeBtnEl = document.getElementById('reading-mode-btn');
+  if (readingModeBtnEl) readingModeBtnEl.style.display = hasTimestampFile ? '' : 'none';
 
   // 顯示/隱藏中文翻譯 Toggle 按鈕
   const toggleTranslationBtn = document.getElementById('toggle-translation-btn');
@@ -3282,6 +3610,9 @@ async function showPlayback(index, startTime = 0, maintainTimestampMode = false)
 // ===== END OF MODIFIED FUNCTION =====
 
 function stopAudioAndReset() {
+  // 離開文章時，若還在閱讀挑戰模式中，先退出並清理樣式/計時器
+  if (isReadingMode) exitReadingMode();
+
   stagedWordsContainer.innerHTML = ''; if (typeof updateStagingBtnState === 'function') updateStagingBtnState();
   stopTimestampUpdateLoop();
   stopJsonModeHighlightLoop();
@@ -3301,11 +3632,15 @@ function stopAudioAndReset() {
   lastHighlightedSentence = null;
   lastHighlightedWords = [];
   lastActiveSentenceStart = -1;
+  readingScrollTopBeforeEnter = 0; // 切換/離開文章時清除暫存的捲動位置
 
   // 離開文章時關閉編輯模式，並隱藏頂部 ✏️ 按鈕
   if (typeof resetTsEditMode === 'function') resetTsEditMode();
   const _tsBtn = document.getElementById('ts-edit-mode-btn');
   if (_tsBtn) _tsBtn.style.display = 'none';
+  // 離開文章時隱藏頂部 📖 閱讀挑戰模式按鈕
+  const _readingBtn = document.getElementById('reading-mode-btn');
+  if (_readingBtn) _readingBtn.style.display = 'none';
   // 離開文章時隱藏中文翻譯按鈕，並重設狀態
   const _toggleZhBtn = document.getElementById('toggle-translation-btn');
   if (_toggleZhBtn) _toggleZhBtn.style.display = 'none';
@@ -3432,6 +3767,23 @@ if (toggleTranslationBtn) {
     });
 }
 
+// ── 閱讀挑戰模式：進入/退出、播放暫停（控制捲動）、速度切換 ──────────────
+const readingModeBtn = document.getElementById('reading-mode-btn');
+if (readingModeBtn) {
+    readingModeBtn.addEventListener('click', () => {
+        if (isReadingMode) exitReadingMode();
+        else enterReadingMode();
+    });
+}
+
+document.getElementById('reading-mode-exit-btn')?.addEventListener('click', exitReadingMode);
+
+document.getElementById('reading-play-pause')?.addEventListener('click', () => {
+    if (readingIsPlaying) pauseReadingScroll();
+    else startReadingScroll();
+});
+
+
 rewindBtn.addEventListener('click', () => { 
     if (isTimestampMode && hasTimestampFile) {
         skipToPrevSentence();
@@ -3507,6 +3859,9 @@ backToStoryFromNoteBtn.addEventListener('click', () => {
 audio.addEventListener('play', () => { 
     isPlaying = true; 
     playPauseBtn.classList.add('is-playing'); 
+    // 閱讀挑戰模式下，捲動/高亮/進度保存完全由獨立邏輯處理（見 readingModeLoop），
+    // 這裡只需要維持 isPlaying 旗標一致，避免跟原本的播放邏輯互相干擾。
+    if (isReadingMode) return;
     saveLastPlaybackState();
     // 恢復播放時，關閉自由滾動，立刻跳回目前高亮句子
     userIsScrollingManually = false;
@@ -3556,6 +3911,14 @@ audio.addEventListener('pause', () => {
 
 // ===== MODIFIED EVENT LISTENER =====
 audio.addEventListener('ended', () => {
+    // 閱讀挑戰模式下播放的只是單句片段（會在播完前被 playAudioSnippet 的計時器主動暫停），
+    // 理論上不會自然觸發 ended；多一層防護避免邊界情況下誤觸發切換下一篇文章。
+    if (isReadingMode) {
+        isPlaying = false;
+        playPauseBtn.classList.remove('is-playing');
+        return;
+    }
+
     clearLastPlaybackState();
     document.getElementById('continue-last-session-btn')?.remove();
 
@@ -3621,13 +3984,98 @@ progressBar.addEventListener('input', () => {
 document.addEventListener('keydown', (event) => {
   if (!playbackView.classList.contains('is-hidden')) {
     if (event.target.tagName === 'INPUT') return;
-    // 編輯模式開啟時，停用鍵盤快捷鍵（避免干擾句子編輯操作）
     if (typeof isTsEditModeActive === 'function' && isTsEditModeActive()) return;
+
+    // ── 閱讀模式：左右鍵調速，Space 播放/暫停捲動 ──────────
+    if (isReadingMode) {
+      if (event.code === 'ArrowLeft')  { event.preventDefault(); setReadingSpeedPx(readingSpeedPx - 3); return; }
+      if (event.code === 'ArrowRight') { event.preventDefault(); setReadingSpeedPx(readingSpeedPx + 3); return; }
+      if (event.code === 'Space') {
+        event.preventDefault();
+        document.getElementById('reading-play-pause')?.click();
+        return;
+      }
+      return;
+    }
+
+    // ── 一般播放模式 ─────────────────────────────────────────
     if (event.code === 'Space') { event.preventDefault(); playPauseBtn.click(); }
     if (event.code === 'ArrowLeft') { event.preventDefault(); rewindBtn.click(); }
     if (event.code === 'ArrowRight') { event.preventDefault(); forwardBtn.click(); }
   }
 });
+
+
+// ── 閱讀模式：觸控橫向 scrubbing 調速 ─────────────────────────────────────
+// 手指橫向滑動（右 = 加速、左 = 減速），每 8px 調整 ±1 px/s
+// 縱向判定時不攔截，讓瀏覽器正常捲動；閱讀模式外不介入
+(function () {
+    let _startX = 0, _startY = 0;
+    let _baseSpeed = 20;
+    let _decided = false, _isHoriz = false;
+
+    // 速度 Toast（固定在畫面底部中央）
+    let _toastEl = null, _toastTimer = null;
+    function showSpeedToast(v) {
+        if (!_toastEl) {
+            _toastEl = document.createElement('div');
+            Object.assign(_toastEl.style, {
+                position: 'fixed', bottom: '90px', left: '50%',
+                transform: 'translateX(-50%)',
+                background: 'rgba(122,107,90,0.9)',
+                color: '#fff', padding: '5px 18px',
+                borderRadius: '99px', fontSize: '13px', fontWeight: '700',
+                pointerEvents: 'none', zIndex: '2000',
+                opacity: '0', transition: 'opacity 0.15s ease',
+                whiteSpace: 'nowrap', letterSpacing: '0.04em'
+            });
+            document.body.appendChild(_toastEl);
+        }
+        _toastEl.textContent = '速度 ' + v;
+        _toastEl.style.opacity = '1';
+        clearTimeout(_toastTimer);
+        _toastTimer = setTimeout(() => { _toastEl.style.opacity = '0'; }, 1000);
+    }
+
+    document.addEventListener('touchstart', (e) => {
+        if (!isReadingMode || e.touches.length !== 1) return;
+        _startX    = e.touches[0].clientX;
+        _startY    = e.touches[0].clientY;
+        _baseSpeed = readingSpeedPx;
+        _decided   = false;
+        _isHoriz   = false;
+    }, { passive: true });
+
+    document.addEventListener('touchmove', (e) => {
+        if (!isReadingMode || e.touches.length !== 1) return;
+
+        const dx = e.touches[0].clientX - _startX;
+        const dy = e.touches[0].clientY - _startY;
+
+        // 方向尚未決定：等位移 > 6px 後才判定一次
+        if (!_decided) {
+            if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
+            _decided = true;
+            _isHoriz = Math.abs(dx) > Math.abs(dy) * 1.2;
+        }
+
+        if (!_isHoriz) return; // 縱向：放行讓瀏覽器捲動
+
+        e.preventDefault(); // 橫向：攔截（不讓頁面左右偏移）
+
+        const steps  = Math.trunc(dx / 8); // 每 8px = 1 步
+        const newVal = Math.max(5, Math.min(80, _baseSpeed + steps));
+        if (newVal !== readingSpeedPx) {
+            setReadingSpeedPx(newVal);
+            showSpeedToast(newVal);
+        }
+    }, { passive: false });
+
+    document.addEventListener('touchend', () => {
+        _decided = false;
+        _isHoriz = false;
+    }, { passive: true });
+})();
 
 
 // ============================================================
