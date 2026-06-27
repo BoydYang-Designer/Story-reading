@@ -238,10 +238,12 @@ h1 {
   transition: font-size 0.2s ease;
 }
 
-/* ── 閱讀模式：加大字級，並支援 JS 動態調整 ── */
+/* ── 閱讀模式：撐高 container 填滿可用空間，減少底部空白 ── */
 #text-container.reading-active {
   font-size: var(--reading-font-size, 20px);
   line-height: 1.85;
+  height: calc(100vh - 220px);
+  max-height: calc(100vh - 220px);
 }
 
 
@@ -1305,10 +1307,12 @@ button.secondary:hover {
         padding-bottom: 15px;
     }
 
-    /* 手機閱讀模式：優先套用 JS 動態字級，base 為 18px */
+    /* 手機閱讀模式：填滿可用空間，控制列約 200px */
     #text-container.reading-active {
         font-size: var(--reading-font-size, 18px);
         line-height: 1.8;
+        height: calc(100vh - 210px);
+        max-height: calc(100vh - 210px);
     }
     
     #text-container p {
