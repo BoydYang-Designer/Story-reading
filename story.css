@@ -219,7 +219,7 @@ h1 {
 /* 3. Playback View & Text
 ------------------------------------------ */
 #text-container {
-  height: 380px;
+  height: 460px;
   overflow-y: auto;
   background-color: var(--color-surface);
   padding: 1.2em 1.4em;
@@ -235,6 +235,13 @@ h1 {
   letter-spacing: -0.005em;
   word-spacing: -0.02em;
   box-shadow: inset 0 1px 3px rgba(0,0,0,0.03);
+  transition: font-size 0.2s ease;
+}
+
+/* ── 閱讀模式：加大字級，並支援 JS 動態調整 ── */
+#text-container.reading-active {
+  font-size: var(--reading-font-size, 20px);
+  line-height: 1.85;
 }
 
 
@@ -1288,7 +1295,7 @@ button.secondary:hover {
     
     /* 2. Text Container - Optimized for small screens */
     #text-container {
-        height: 280px;
+        height: 360px;
         font-size: 16px;
         line-height: 1.55; /* 平衡的行高 */
         letter-spacing: -0.01em; /* 平衡的字距 */
@@ -1296,6 +1303,12 @@ button.secondary:hover {
         padding: 0.8em;
         border-radius: 12px;
         padding-bottom: 15px;
+    }
+
+    /* 手機閱讀模式：優先套用 JS 動態字級，base 為 18px */
+    #text-container.reading-active {
+        font-size: var(--reading-font-size, 18px);
+        line-height: 1.8;
     }
     
     #text-container p {
@@ -5691,7 +5704,62 @@ textarea:focus-visible {
   border-color: #d64545;
 }
 
-/* ── 文字容器：連續捲動，禁止 CSS smooth 干擾 ─────────── */
+/* ── 閱讀模式：字級調整列 ──────────────────────────────── */
+.reading-font-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.reading-font-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-light);
+  white-space: nowrap;
+  flex-shrink: 0;
+  width: 28px;
+}
+
+.reading-font-slider {
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 99px;
+  background: var(--color-border);
+  outline: none;
+  cursor: pointer;
+}
+.reading-font-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+.reading-font-slider::-moz-range-thumb {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  cursor: pointer;
+  border: none;
+}
+
+.reading-font-value {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-accent);
+  min-width: 34px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+@media (max-width: 420px) {
+  .reading-font-label { display: none; }
+}
+
+/* ── 閱讀模式：字級 ──────────────────────────────────────*/
 #text-container.reading-active {
   scroll-behavior: auto !important;
 }

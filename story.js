@@ -148,6 +148,48 @@ let readingSpeedPx = (function () {
 // 舊版 key（三檔）僅保留讓其他地方不報錯
 let readingSpeedKey = 'medium';
 
+// ── 閱讀模式字級：範圍 14–28px，預設 20px，存入 localStorage ─────────────
+const READING_FONT_DEFAULT = 20;
+let readingFontSize = (function () {
+    try {
+        const v = parseInt(localStorage.getItem('readingModeFontSize'), 10);
+        return (!isNaN(v) && v >= 14 && v <= 28) ? v : READING_FONT_DEFAULT;
+    } catch (e) { return READING_FONT_DEFAULT; }
+})();
+
+function applyReadingFontSize(size) {
+    readingFontSize = Math.max(14, Math.min(28, Math.round(size)));
+    try { localStorage.setItem('readingModeFontSize', String(readingFontSize)); } catch (e) {}
+    // 寫入 CSS 變數，讓 #text-container.reading-active 套用
+    document.documentElement.style.setProperty('--reading-font-size', readingFontSize + 'px');
+    // 同步滑桿 UI
+    const slider  = document.getElementById('reading-font-slider');
+    const valueEl = document.getElementById('reading-font-value');
+    if (slider)  slider.value        = readingFontSize;
+    if (valueEl) valueEl.textContent = readingFontSize + 'px';
+}
+
+function initReadingFontSlider() {
+    const slider  = document.getElementById('reading-font-slider');
+    const valueEl = document.getElementById('reading-font-value');
+    if (!slider || !valueEl) return;
+
+    // 清除舊監聽器（替換節點）
+    const newSlider = slider.cloneNode(true);
+    slider.parentNode.replaceChild(newSlider, slider);
+    const s = document.getElementById('reading-font-slider');
+
+    // 套用已儲存的字級
+    applyReadingFontSize(readingFontSize);
+    s.value        = readingFontSize;
+    valueEl.textContent = readingFontSize + 'px';
+
+    s.oninput = () => {
+        applyReadingFontSize(parseInt(s.value, 10));
+    };
+}
+// ── 閱讀模式字級 end ──────────────────────────────────────────────────────
+
 // Binary search: find the active sentence index for a given currentTime
 function findActiveSentenceIndex(time) {
     let lo = 0, hi = timestampData.length - 1;
@@ -2917,6 +2959,7 @@ function enterReadingMode() {
 
     updateReadingSpeedBtnUI();
     initReadingSpeedSlider();
+    initReadingFontSlider();
     initReadingProgressSlider();
 
     // 連續捲動：從頂部開始（提詞器體驗，完整從頭閱讀）
@@ -5175,3 +5218,5 @@ function annotateTokens(tokens, wordSet, phraseList) {
     }
     return ann;
 }
+// 頁面載入時立即套用已儲存的閱讀字級（CSS 變數）
+applyReadingFontSize(readingFontSize);
