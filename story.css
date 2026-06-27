@@ -5630,7 +5630,66 @@ textarea:focus-visible {
 .reading-play-btn.is-playing .icon-play { display: none; }
 .reading-play-btn.is-playing .icon-pause { display: block; }
 
-.reading-controls-spacer { width: 42px; flex-shrink: 0; }
+.reading-record-btn {
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  background: transparent;
+  border: 1.5px solid var(--color-border);
+  color: var(--color-text-light);
+  display: flex; align-items: center; justify-content: center;
+  padding: 0;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+.reading-record-btn:hover {
+  color: #d64545;
+  border-color: #d64545;
+  background: rgba(214, 69, 69, 0.08);
+}
+.reading-record-btn.is-recording {
+  background-color: #d64545;
+  border-color: #d64545;
+  color: #fff;
+  animation: reading-record-pulse 1.4s ease-in-out infinite;
+}
+@keyframes reading-record-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(214, 69, 69, 0.45); }
+  50% { box-shadow: 0 0 0 8px rgba(214, 69, 69, 0); }
+}
+
+/* ── 錄音試聽面板 ───────────────────────────────────── */
+.reading-record-playback {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 4px 2px;
+  flex-wrap: wrap;
+}
+.reading-record-playback audio {
+  flex: 1;
+  min-width: 140px;
+  height: 32px;
+}
+.reading-record-action-btn {
+  border: none;
+  border-radius: 99px;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--color-primary);
+  color: var(--color-surface);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.reading-record-action-btn:hover { background-color: var(--color-primary-dark); }
+.reading-record-action-btn.secondary {
+  background: transparent;
+  border: 1.5px solid var(--color-border);
+  color: var(--color-text-light);
+}
+.reading-record-action-btn.secondary:hover {
+  color: #d64545;
+  border-color: #d64545;
+}
 
 /* ── 文字容器：連續捲動，禁止 CSS smooth 干擾 ─────────── */
 #text-container.reading-active {
@@ -5677,7 +5736,7 @@ textarea:focus-visible {
 @media (max-width: 420px) {
   .reading-play-btn { width: 50px; height: 50px; }
   .reading-exit-btn { width: 38px; height: 38px; }
-  .reading-controls-spacer { width: 38px; }
+  .reading-record-btn { width: 38px; height: 38px; }
   .reading-speed-label { display: none; }
 }
 

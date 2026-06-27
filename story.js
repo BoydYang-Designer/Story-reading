@@ -121,6 +121,14 @@ let sentenceElementMap = new Map(); // FIX: cache start→element to avoid per-f
 let isReadingMode = false;
 let readingIsPlaying = false;
 let readingIndex = -1;         // 目前 highlight 的句子 index
+
+// ── 閱讀挑戰模式：跟讀錄音狀態 ──────────────────────────────
+let readingMediaRecorder = null;
+let readingMediaStream = null;
+let readingRecordedChunks = [];
+let readingRecordingBlobUrl = null;
+let readingRecordingMimeType = '';
+let isReadingRecording = false;
 let readingRafId = null;
 let readingLastFrameTs = 0;
 let readingScrollTopBeforeEnter = 0; // 進入閱讀模式前的 scrollTop，退出時還原
@@ -2725,6 +2733,10 @@ function exitReadingMode() {
     isReadingMode = false;
     _readingProgressDragging = false;
 
+    // 離開閱讀模式時，若還在錄音中先停止，並清除暫存的試聽錄音（避免下次進入殘留舊錄音）
+    if (isReadingRecording) stopReadingRecording();
+    discardReadingRecording();
+
     document.getElementById('playback-view')?.classList.remove('is-reading-mode');
     textContainer.classList.remove('reading-active');
     document.getElementById('reading-mode-controls')?.classList.add('is-hidden');
@@ -2746,6 +2758,96 @@ function exitReadingMode() {
     // 還原進入前的捲動位置，讓使用者回到原本閱讀的地方繼續
     textContainer.scrollTop = readingScrollTopBeforeEnter;
     readingScrollTopBeforeEnter = 0;
+}
+
+// ── 閱讀挑戰模式：跟讀錄音（麥克風）─────────────────────────────
+function updateReadingRecordBtnUI() {
+    document.getElementById('reading-record-btn')?.classList.toggle('is-recording', isReadingRecording);
+}
+
+async function startReadingRecording() {
+    if (isReadingRecording) return;
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        showNotification('此瀏覽器不支援錄音功能。', 'error');
+        return;
+    }
+    // 開始新錄音前，先清掉舊的試聽結果
+    discardReadingRecording();
+    try {
+        readingMediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    } catch (err) {
+        showNotification('無法取得麥克風權限，請到瀏覽器設定中允許麥克風存取。', 'error');
+        return;
+    }
+    const mimeCandidates = ['audio/mp4', 'audio/webm;codecs=opus', 'audio/webm'];
+    readingRecordingMimeType = mimeCandidates.find(t => window.MediaRecorder && MediaRecorder.isTypeSupported(t)) || '';
+    readingRecordedChunks = [];
+    try {
+        readingMediaRecorder = readingRecordingMimeType
+            ? new MediaRecorder(readingMediaStream, { mimeType: readingRecordingMimeType })
+            : new MediaRecorder(readingMediaStream);
+    } catch (err) {
+        readingMediaRecorder = new MediaRecorder(readingMediaStream);
+        readingRecordingMimeType = readingMediaRecorder.mimeType || '';
+    }
+    readingMediaRecorder.ondataavailable = (e) => {
+        if (e.data && e.data.size > 0) readingRecordedChunks.push(e.data);
+    };
+    readingMediaRecorder.onstop = finalizeReadingRecording;
+    readingMediaRecorder.start();
+    isReadingRecording = true;
+    updateReadingRecordBtnUI();
+}
+
+function stopReadingRecording() {
+    if (!isReadingRecording || !readingMediaRecorder) return;
+    readingMediaRecorder.stop(); // onstop 會呼叫 finalizeReadingRecording
+    isReadingRecording = false;
+    updateReadingRecordBtnUI();
+    if (readingMediaStream) {
+        readingMediaStream.getTracks().forEach(track => track.stop());
+        readingMediaStream = null;
+    }
+}
+
+function finalizeReadingRecording() {
+    if (!readingRecordedChunks.length) return;
+    const blobType = readingRecordingMimeType || 'audio/webm';
+    const blob = new Blob(readingRecordedChunks, { type: blobType });
+    if (readingRecordingBlobUrl) URL.revokeObjectURL(readingRecordingBlobUrl);
+    readingRecordingBlobUrl = URL.createObjectURL(blob);
+
+    const audioEl = document.getElementById('reading-record-audio');
+    if (audioEl) audioEl.src = readingRecordingBlobUrl;
+    document.getElementById('reading-record-playback')?.classList.remove('is-hidden');
+}
+
+function discardReadingRecording() {
+    if (readingRecordingBlobUrl) {
+        URL.revokeObjectURL(readingRecordingBlobUrl);
+        readingRecordingBlobUrl = null;
+    }
+    readingRecordedChunks = [];
+    const audioEl = document.getElementById('reading-record-audio');
+    if (audioEl) { audioEl.pause(); audioEl.removeAttribute('src'); audioEl.load(); }
+    document.getElementById('reading-record-playback')?.classList.add('is-hidden');
+}
+
+function downloadReadingRecording() {
+    if (!readingRecordingBlobUrl) return;
+    const ext = readingRecordingMimeType.includes('mp4') ? 'm4a'
+              : readingRecordingMimeType.includes('webm') ? 'webm'
+              : 'audio';
+    const safeTitle = String(currentStoryTitle || '跟讀錄音').replace(/[\\/:*?"<>|]/g, '').trim() || '跟讀錄音';
+    const now = new Date();
+    const pad = (n) => String(n).padStart(2, '0');
+    const stamp = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}-${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+    const a = document.createElement('a');
+    a.href = readingRecordingBlobUrl;
+    a.download = `${safeTitle}_${stamp}.${ext}`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
 }
 
 
@@ -3789,6 +3891,14 @@ document.getElementById('reading-play-pause')?.addEventListener('click', () => {
     if (readingIsPlaying) pauseReadingScroll();
     else startReadingScroll();
 });
+
+document.getElementById('reading-record-btn')?.addEventListener('click', () => {
+    if (isReadingRecording) stopReadingRecording();
+    else startReadingRecording();
+});
+
+document.getElementById('reading-record-download-btn')?.addEventListener('click', downloadReadingRecording);
+document.getElementById('reading-record-discard-btn')?.addEventListener('click', discardReadingRecording);
 
 
 rewindBtn.addEventListener('click', () => { 
