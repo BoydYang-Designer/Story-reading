@@ -2663,61 +2663,197 @@ function setReadingSpeedPx(v) {
     if (valueEl) valueEl.textContent = readingSpeedPx;
 }
 
-// 初始化速度滑桿 UI（enterReadingMode 時呼叫）
-// ── 速度條：點擊鎖定模式 ──────────────────────────────────
-// 點擊速度條 → 進入「速度調整模式（鎖定）」，此時：
-//   - 左右滑動畫面 或 鍵盤 ←→ 皆可調整速度
-//   - 再次點擊速度條 → 解鎖，離開調整模式
+// ── 速度鎖定狀態（按鈕長按模式：觸控 scrubbing 判斷用）──
 let _readingSpeedLocked = false;
-
-function _toggleReadingSpeedLock(e) {
-    e.stopPropagation();
-    if (!isReadingMode) return;
-
-    const slider  = document.getElementById('reading-speed-slider');
-    const valueEl = document.getElementById('reading-speed-value');
-
-    if (!_readingSpeedLocked) {
-        // ── 進入鎖定 ──
-        _readingSpeedLocked = true;
-        if (slider) { slider.classList.add('is-locked'); slider.title = '速度調整中（再按一下解鎖）'; }
-        showNotification('速度調整模式：左右滑動或 ← → 鍵調整速度，再按一下解鎖', 'info', 2000);
-    } else {
-        // ── 解鎖 ──
-        _readingSpeedLocked = false;
-        if (slider) { slider.classList.remove('is-locked'); slider.title = ''; }
-        showNotification('速度解鎖', 'info', 800);
-    }
-}
 
 function initReadingSpeedSlider() {
     const slider  = document.getElementById('reading-speed-slider');
     const valueEl = document.getElementById('reading-speed-value');
-    if (!slider || !valueEl) return;
+    if (!slider) return;
 
     // 清除舊監聽器
     const newSlider = slider.cloneNode(true);
     slider.parentNode.replaceChild(newSlider, slider);
     const s = document.getElementById('reading-speed-slider');
 
-    s.value        = readingSpeedPx;
-    document.getElementById('reading-speed-value').textContent = readingSpeedPx;
+    s.value = readingSpeedPx;
+    if (valueEl) valueEl.textContent = readingSpeedPx;
 
     // 重設鎖定狀態
     _readingSpeedLocked = false;
-    s.classList.remove('is-locked');
 
-    // 點擊 → 鎖定/解鎖
-    s.addEventListener('click',    _toggleReadingSpeedLock);
-    s.addEventListener('touchend', (e) => { e.preventDefault(); _toggleReadingSpeedLock(e); }, { passive: false });
-
-    // 拖拉調整（鎖定後 oninput 仍可用）
+    // 同步 oninput（給隱藏 range 用）
     s.oninput = () => {
         setReadingSpeedPx(parseInt(s.value, 10));
         const v = document.getElementById('reading-speed-value');
         if (v) v.textContent = readingSpeedPx;
     };
 }
+
+// ── 速度按鈕：長按後左右滑動調整速度 ─────────────────────────────
+(function () {
+    let _held = false;
+    let _startX = 0, _startY = 0, _baseVal = 20;
+    let _decided = false, _isHoriz = false;
+    let _holdTimer = null;
+
+    // Toast
+    let _toastEl = null, _toastTimer = null;
+    function showAdjToast(label, v) {
+        if (!_toastEl) {
+            _toastEl = document.createElement('div');
+            Object.assign(_toastEl.style, {
+                position: 'fixed', bottom: '90px', left: '50%',
+                transform: 'translateX(-50%)',
+                background: 'rgba(122,107,90,0.92)',
+                color: '#fff', padding: '6px 20px',
+                borderRadius: '99px', fontSize: '14px', fontWeight: '700',
+                pointerEvents: 'none', zIndex: '2000',
+                opacity: '0', transition: 'opacity 0.15s ease',
+                whiteSpace: 'nowrap', letterSpacing: '0.04em'
+            });
+            document.body.appendChild(_toastEl);
+        }
+        _toastEl.textContent = label + ' ' + v;
+        _toastEl.style.opacity = '1';
+        clearTimeout(_toastTimer);
+        _toastTimer = setTimeout(() => { if (_toastEl) _toastEl.style.opacity = '0'; }, 800);
+    }
+
+    function activate(btn) {
+        _held = true;
+        btn.classList.add('is-held');
+    }
+    function deactivate(btn) {
+        _held = false;
+        _decided = false; _isHoriz = false;
+        btn.classList.remove('is-held');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const speedBtn = document.getElementById('reading-speed-btn');
+        const fontBtn  = document.getElementById('reading-font-btn');
+        if (!speedBtn || !fontBtn) return;
+
+        // ── 速度按鈕 ──
+        function speedTouchStart(e) {
+            if (!isReadingMode) return;
+            e.preventDefault();
+            _startX = e.touches[0].clientX;
+            _startY = e.touches[0].clientY;
+            _baseVal = readingSpeedPx;
+            _decided = false; _isHoriz = false;
+            activate(speedBtn);
+        }
+        function speedTouchMove(e) {
+            if (!_held) return;
+            const dx = e.touches[0].clientX - _startX;
+            const dy = e.touches[0].clientY - _startY;
+            if (!_decided) {
+                if (Math.abs(dx) < 5 && Math.abs(dy) < 5) return;
+                _decided = true;
+                _isHoriz = Math.abs(dx) > Math.abs(dy) * 1.1;
+            }
+            if (!_isHoriz) return;
+            e.preventDefault();
+            const steps = Math.trunc(dx / 7);
+            const newVal = Math.max(5, Math.min(80, _baseVal + steps));
+            if (newVal !== readingSpeedPx) {
+                setReadingSpeedPx(newVal);
+                showAdjToast('速度', newVal);
+            }
+        }
+        function speedTouchEnd() { deactivate(speedBtn); }
+
+        speedBtn.addEventListener('touchstart', speedTouchStart, { passive: false });
+        speedBtn.addEventListener('touchmove',  speedTouchMove,  { passive: false });
+        speedBtn.addEventListener('touchend',   speedTouchEnd,   { passive: true });
+        // 桌機：滑鼠拖曳
+        speedBtn.addEventListener('mousedown', (e) => {
+            if (!isReadingMode) return;
+            _startX = e.clientX; _baseVal = readingSpeedPx;
+            activate(speedBtn);
+            function onMove(ev) {
+                const dx = ev.clientX - _startX;
+                const steps = Math.trunc(dx / 7);
+                const newVal = Math.max(5, Math.min(80, _baseVal + steps));
+                if (newVal !== readingSpeedPx) {
+                    setReadingSpeedPx(newVal);
+                    showAdjToast('速度', newVal);
+                }
+            }
+            function onUp() {
+                deactivate(speedBtn);
+                document.removeEventListener('mousemove', onMove);
+                document.removeEventListener('mouseup', onUp);
+            }
+            document.addEventListener('mousemove', onMove);
+            document.addEventListener('mouseup', onUp);
+        });
+
+        // ── 字級按鈕 ──
+        let _fHeld = false;
+        let _fStartX = 0, _fBaseVal = 20;
+        let _fDecided = false, _fIsHoriz = false;
+
+        function fontActivate() { _fHeld = true; fontBtn.classList.add('is-held'); }
+        function fontDeactivate() {
+            _fHeld = false; _fDecided = false; _fIsHoriz = false;
+            fontBtn.classList.remove('is-held');
+        }
+
+        fontBtn.addEventListener('touchstart', (e) => {
+            if (!isReadingMode) return;
+            e.preventDefault();
+            _fStartX = e.touches[0].clientX;
+            _fBaseVal = readingFontSize;
+            _fDecided = false; _fIsHoriz = false;
+            fontActivate();
+        }, { passive: false });
+
+        fontBtn.addEventListener('touchmove', (e) => {
+            if (!_fHeld) return;
+            const dx = e.touches[0].clientX - _fStartX;
+            const dy = e.touches[0].clientY - _fStartY;
+            if (!_fDecided) {
+                if (Math.abs(dx) < 5) return;
+                _fDecided = true; _fIsHoriz = true;
+            }
+            if (!_fIsHoriz) return;
+            e.preventDefault();
+            const steps = Math.trunc(dx / 12);
+            const newVal = Math.max(14, Math.min(28, _fBaseVal + steps));
+            if (newVal !== readingFontSize) {
+                applyReadingFontSize(newVal);
+                showAdjToast('字級', newVal + 'px');
+            }
+        }, { passive: false });
+
+        fontBtn.addEventListener('touchend', fontDeactivate, { passive: true });
+
+        fontBtn.addEventListener('mousedown', (e) => {
+            if (!isReadingMode) return;
+            _fStartX = e.clientX; _fBaseVal = readingFontSize;
+            fontActivate();
+            function onMove(ev) {
+                const dx = ev.clientX - _fStartX;
+                const steps = Math.trunc(dx / 12);
+                const newVal = Math.max(14, Math.min(28, _fBaseVal + steps));
+                if (newVal !== readingFontSize) {
+                    applyReadingFontSize(newVal);
+                    showAdjToast('字級', newVal + 'px');
+                }
+            }
+            function onUp() {
+                fontDeactivate();
+                document.removeEventListener('mousemove', onMove);
+                document.removeEventListener('mouseup', onUp);
+            }
+            document.addEventListener('mousemove', onMove);
+            document.addEventListener('mouseup', onUp);
+        });
+    });
+})();
 
 // 速度條鎖定模式下的觸控橫向 scrubbing
 (function () {
@@ -2802,7 +2938,7 @@ function _toggleReadingProgressLock(e) {
 
         const slider = document.getElementById('reading-progress-slider');
         if (slider) {
-            slider.classList.add('is-locked');
+            slider.classList.add('is-active');
             slider.title = '進度調整中（再按一下解鎖）';
         }
         showNotification('進度調整模式：左右滑動或 ← → 鍵調整進度，再按一下解鎖', 'info', 2000);
@@ -2814,8 +2950,8 @@ function _toggleReadingProgressLock(e) {
 
         const slider = document.getElementById('reading-progress-slider');
         if (slider) {
-            slider.classList.remove('is-locked');
-            slider.title = '';
+            slider.classList.remove('is-active');
+            slider.title = '點擊後可拖曳調整進度';
         }
         // 若之前在播放，解鎖後恢復播放
         if (_readingProgressWasPlaying) startReadingScroll();
@@ -2839,7 +2975,7 @@ function initReadingProgressSlider() {
     // 重設鎖定狀態
     _readingProgressLocked = false;
     _readingProgressDragging = false;
-    s.classList.remove('is-locked');
+    s.classList.remove('is-active');
 
     // 點擊 → 鎖定/解鎖
     s.addEventListener('click',      _toggleReadingProgressLock);
@@ -2976,7 +3112,7 @@ function exitReadingMode() {
     _readingProgressLocked = false;
     _readingSpeedLocked = false;
     // 清除進度條/速度條的鎖定視覺狀態
-    document.getElementById('reading-progress-slider')?.classList.remove('is-locked');
+    document.getElementById('reading-progress-slider')?.classList.remove('is-active');
     document.getElementById('reading-speed-slider')?.classList.remove('is-locked');
 
     // 離開閱讀模式時，若還在錄音中先停止，並清除暫存的試聽錄音（避免下次進入殘留舊錄音）

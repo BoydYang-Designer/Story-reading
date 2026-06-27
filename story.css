@@ -5708,8 +5708,105 @@ textarea:focus-visible {
   border-color: #d64545;
 }
 
-/* ── 閱讀模式：字級調整列 ──────────────────────────────── */
-.reading-font-row {
+/* ── 閱讀模式：速度＋字級 觸控按鈕列 ──────────────────────── */
+.reading-adjust-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 4px 12px 6px;
+}
+
+.reading-adjust-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  min-width: 72px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1.5px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+  transition: background-color 0.15s, border-color 0.15s, box-shadow 0.15s;
+  box-shadow: var(--shadow-sm);
+}
+
+.reading-adjust-btn:active,
+.reading-adjust-btn.is-held {
+  background: var(--color-accent-light);
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(201,169,122,0.25);
+}
+
+.reading-adjust-icon {
+  font-size: 15px;
+  line-height: 1;
+}
+
+.reading-adjust-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--color-text-light);
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+
+.reading-adjust-value {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-primary);
+  line-height: 1.2;
+  min-width: 32px;
+  text-align: center;
+}
+
+/* ── 進度條：預設鎖定，點擊後才可拖曳 ──────────────── */
+.reading-progress-slider {
+  pointer-events: none; /* 預設不可互動 */
+  opacity: 0.45;
+  transition: opacity 0.15s;
+}
+.reading-progress-slider.is-locked,
+.reading-progress-slider.is-active {
+  pointer-events: auto;
+  opacity: 1;
+  cursor: grab;
+}
+.reading-progress-slider.is-active:active {
+  cursor: grabbing;
+}
+
+/* 進度條按鈕（thumb）預設縮小，啟用後放大 */
+.reading-progress-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--color-accent, #c9a97a);
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+  transition: width 0.15s, height 0.15s;
+}
+.reading-progress-slider.is-active::-webkit-slider-thumb {
+  width: 22px; height: 22px;
+}
+.reading-progress-slider::-moz-range-thumb {
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--color-accent, #c9a97a);
+  cursor: pointer;
+  border: none;
+}
+.reading-progress-slider.is-active::-moz-range-thumb {
+  width: 22px; height: 22px;
+}
+
+
   display: flex;
   align-items: center;
   gap: 10px;
@@ -5855,28 +5952,6 @@ textarea:focus-visible {
   border-radius: 99px;
   background: var(--color-accent, #c9a97a);
   outline: none;
-  cursor: pointer;
-  opacity: 0.55;
-  transition: opacity 0.15s;
-}
-.reading-progress-slider:hover,
-.reading-progress-slider:focus {
-  opacity: 1;
-}
-.reading-progress-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 22px; height: 22px;
-  border-radius: 50%;
-  background: var(--color-accent, #c9a97a);
-  cursor: pointer;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.25);
-}
-.reading-progress-slider::-moz-range-thumb {
-  width: 22px; height: 22px;
-  border-radius: 50%;
-  background: var(--color-accent, #c9a97a);
-  cursor: pointer;
-  border: none;
 }
 
 .reading-progress-time {
