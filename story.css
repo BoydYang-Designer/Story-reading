@@ -3582,12 +3582,20 @@ textarea:focus-visible {
 }
 #progress-bar::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 14px;
-  height: 14px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   background: var(--color-primary);
   cursor: pointer;
   box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+#progress-bar::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  cursor: pointer;
+  border: none;
 }
 
 /* Fixed controls backdrop improvement */
@@ -5560,14 +5568,14 @@ textarea:focus-visible {
 }
 .reading-speed-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 18px; height: 18px;
+  width: 22px; height: 22px;
   border-radius: 50%;
   background: var(--color-primary);
   cursor: pointer;
   box-shadow: 0 1px 4px rgba(0,0,0,0.2);
 }
 .reading-speed-slider::-moz-range-thumb {
-  width: 18px; height: 18px;
+  width: 22px; height: 22px;
   border-radius: 50%;
   background: var(--color-primary);
   cursor: pointer;
@@ -5589,6 +5597,7 @@ textarea:focus-visible {
   align-items: center;
   justify-content: center;
   gap: 10px;
+  padding: 4px 0;   /* 上下留白，與兩側滑桿拉開間距 */
 }
 
 .reading-exit-btn {
@@ -5725,14 +5734,14 @@ textarea:focus-visible {
 }
 .reading-progress-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 12px; height: 12px;
+  width: 22px; height: 22px;
   border-radius: 50%;
   background: var(--color-accent, #c9a97a);
   cursor: pointer;
   box-shadow: 0 1px 3px rgba(0,0,0,0.25);
 }
 .reading-progress-slider::-moz-range-thumb {
-  width: 12px; height: 12px;
+  width: 22px; height: 22px;
   border-radius: 50%;
   background: var(--color-accent, #c9a97a);
   cursor: pointer;
