@@ -2622,48 +2622,249 @@ function setReadingSpeedPx(v) {
 }
 
 // 初始化速度滑桿 UI（enterReadingMode 時呼叫）
+// ── 速度條：點擊鎖定模式 ──────────────────────────────────
+// 點擊速度條 → 進入「速度調整模式（鎖定）」，此時：
+//   - 左右滑動畫面 或 鍵盤 ←→ 皆可調整速度
+//   - 再次點擊速度條 → 解鎖，離開調整模式
+let _readingSpeedLocked = false;
+
+function _toggleReadingSpeedLock(e) {
+    e.stopPropagation();
+    if (!isReadingMode) return;
+
+    const slider  = document.getElementById('reading-speed-slider');
+    const valueEl = document.getElementById('reading-speed-value');
+
+    if (!_readingSpeedLocked) {
+        // ── 進入鎖定 ──
+        _readingSpeedLocked = true;
+        if (slider) { slider.classList.add('is-locked'); slider.title = '速度調整中（再按一下解鎖）'; }
+        showNotification('速度調整模式：左右滑動或 ← → 鍵調整速度，再按一下解鎖', 'info', 2000);
+    } else {
+        // ── 解鎖 ──
+        _readingSpeedLocked = false;
+        if (slider) { slider.classList.remove('is-locked'); slider.title = ''; }
+        showNotification('速度解鎖', 'info', 800);
+    }
+}
+
 function initReadingSpeedSlider() {
     const slider  = document.getElementById('reading-speed-slider');
     const valueEl = document.getElementById('reading-speed-value');
     if (!slider || !valueEl) return;
-    slider.value        = readingSpeedPx;
-    valueEl.textContent = readingSpeedPx;
-    slider.oninput = () => setReadingSpeedPx(parseInt(slider.value, 10));
+
+    // 清除舊監聽器
+    const newSlider = slider.cloneNode(true);
+    slider.parentNode.replaceChild(newSlider, slider);
+    const s = document.getElementById('reading-speed-slider');
+
+    s.value        = readingSpeedPx;
+    document.getElementById('reading-speed-value').textContent = readingSpeedPx;
+
+    // 重設鎖定狀態
+    _readingSpeedLocked = false;
+    s.classList.remove('is-locked');
+
+    // 點擊 → 鎖定/解鎖
+    s.addEventListener('click',    _toggleReadingSpeedLock);
+    s.addEventListener('touchend', (e) => { e.preventDefault(); _toggleReadingSpeedLock(e); }, { passive: false });
+
+    // 拖拉調整（鎖定後 oninput 仍可用）
+    s.oninput = () => {
+        setReadingSpeedPx(parseInt(s.value, 10));
+        const v = document.getElementById('reading-speed-value');
+        if (v) v.textContent = readingSpeedPx;
+    };
 }
 
-// ── 閱讀進度條：初始化 & 即時更新 ────────────────────────
-let _readingProgressDragging = false; // 拖拉中暫停 rAF 寫入，避免相互干擾
+// 速度條鎖定模式下的觸控橫向 scrubbing
+(function () {
+    let _sStartX = 0, _sStartY = 0, _sBaseSpeed = 20;
+    let _sDecided = false, _sIsHoriz = false;
+
+    // 速度 Toast
+    let _toastEl = null, _toastTimer = null;
+    function showSpeedToast(v) {
+        if (!_toastEl) {
+            _toastEl = document.createElement('div');
+            Object.assign(_toastEl.style, {
+                position: 'fixed', bottom: '90px', left: '50%',
+                transform: 'translateX(-50%)',
+                background: 'rgba(122,107,90,0.9)',
+                color: '#fff', padding: '5px 18px',
+                borderRadius: '99px', fontSize: '13px', fontWeight: '700',
+                pointerEvents: 'none', zIndex: '2000',
+                opacity: '0', transition: 'opacity 0.15s ease',
+                whiteSpace: 'nowrap', letterSpacing: '0.04em'
+            });
+            document.body.appendChild(_toastEl);
+        }
+        _toastEl.textContent = '速度 ' + v;
+        _toastEl.style.opacity = '1';
+        clearTimeout(_toastTimer);
+        _toastTimer = setTimeout(() => { _toastEl.style.opacity = '0'; }, 1000);
+    }
+
+    document.addEventListener('touchstart', (e) => {
+        if (!isReadingMode || !_readingSpeedLocked || e.touches.length !== 1) return;
+        _sStartX    = e.touches[0].clientX;
+        _sStartY    = e.touches[0].clientY;
+        _sBaseSpeed = readingSpeedPx;
+        _sDecided   = false;
+        _sIsHoriz   = false;
+    }, { passive: true });
+
+    document.addEventListener('touchmove', (e) => {
+        if (!isReadingMode || !_readingSpeedLocked || e.touches.length !== 1) return;
+        const dx = e.touches[0].clientX - _sStartX;
+        const dy = e.touches[0].clientY - _sStartY;
+        if (!_sDecided) {
+            if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
+            _sDecided = true;
+            _sIsHoriz = Math.abs(dx) > Math.abs(dy) * 1.2;
+        }
+        if (!_sIsHoriz) return;
+        e.preventDefault();
+        const steps  = Math.trunc(dx / 8);
+        const newVal = Math.max(5, Math.min(80, _sBaseSpeed + steps));
+        if (newVal !== readingSpeedPx) {
+            setReadingSpeedPx(newVal);
+            showSpeedToast(newVal);
+        }
+    }, { passive: false });
+
+    document.addEventListener('touchend', () => {
+        _sDecided = false; _sIsHoriz = false;
+    }, { passive: true });
+})();
+
+// ── 閱讀進度條：點擊鎖定模式 ─────────────────────────────
+// 點擊進度條 → 進入「進度調整模式」（鎖定），此時：
+//   - 左右滑動畫面 或 鍵盤 ←→ 皆可調整進度
+//   - 再次點擊進度條 → 解鎖，離開調整模式
+let _readingProgressDragging = false; // 進度調整模式中，暫停 rAF 寫入
+let _readingProgressLocked   = false; // 是否處於「進度調整模式（鎖定）」
+let _readingProgressWasPlaying = false; // 鎖定前是否在播放中
+
+// 進度條點擊觸發：鎖定 / 解鎖切換
+function _toggleReadingProgressLock(e) {
+    e.stopPropagation();
+    if (!isReadingMode) return;
+
+    if (!_readingProgressLocked) {
+        // ── 進入鎖定 ──
+        _readingProgressLocked = true;
+        _readingProgressDragging = true;
+        _readingProgressWasPlaying = readingIsPlaying;
+        if (readingIsPlaying) pauseReadingScroll();
+
+        const slider = document.getElementById('reading-progress-slider');
+        if (slider) {
+            slider.classList.add('is-locked');
+            slider.title = '進度調整中（再按一下解鎖）';
+        }
+        showNotification('進度調整模式：左右滑動或 ← → 鍵調整進度，再按一下解鎖', 'info', 2000);
+    } else {
+        // ── 解鎖 ──
+        _readingProgressLocked = false;
+        _readingProgressDragging = false;
+        readingLastFrameTs = 0;
+
+        const slider = document.getElementById('reading-progress-slider');
+        if (slider) {
+            slider.classList.remove('is-locked');
+            slider.title = '';
+        }
+        // 若之前在播放，解鎖後恢復播放
+        if (_readingProgressWasPlaying) startReadingScroll();
+        showNotification('進度解鎖', 'info', 800);
+    }
+}
 
 function initReadingProgressSlider() {
     const slider  = document.getElementById('reading-progress-slider');
     const timeEl  = document.getElementById('reading-progress-time');
     if (!slider) return;
 
-    slider.value = 0;
+    // 清除舊監聽器（重新進入模式時）
+    const newSlider = slider.cloneNode(true);
+    slider.parentNode.replaceChild(newSlider, slider);
+    const s = document.getElementById('reading-progress-slider');
+
+    s.value = 0;
     if (timeEl) timeEl.textContent = '0%';
 
-    // 開始拖拉：暫停捲動，讓使用者自由定位
-    slider.addEventListener('mousedown',  () => { _readingProgressDragging = true; }, { passive: true });
-    slider.addEventListener('touchstart', () => { _readingProgressDragging = true; }, { passive: true });
+    // 重設鎖定狀態
+    _readingProgressLocked = false;
+    _readingProgressDragging = false;
+    s.classList.remove('is-locked');
 
-    // 拖拉中：即時跳轉 scrollTop（不啟動捲動）
-    slider.oninput = () => {
+    // 點擊 → 鎖定/解鎖
+    s.addEventListener('click',      _toggleReadingProgressLock);
+    s.addEventListener('touchend',   (e) => { e.preventDefault(); _toggleReadingProgressLock(e); }, { passive: false });
+
+    // 拖拉中即時跳轉（鎖定狀態下 oninput 仍可用）
+    s.oninput = () => {
         if (!scrollMax) return;
-        const pct = parseInt(slider.value, 10) / 1000;
+        const pct = parseInt(s.value, 10) / 1000;
         textContainer.scrollTop = Math.round(pct * scrollMax);
-        if (timeEl) timeEl.textContent = Math.round(pct * 100) + '%';
+        const t = document.getElementById('reading-progress-time');
+        if (t) t.textContent = Math.round(pct * 100) + '%';
     };
-
-    // 放開：恢復捲動（若原本在播放中）
-    const onRelease = () => {
-        if (!_readingProgressDragging) return;
-        _readingProgressDragging = false;
-        // 讓 rAF 迴圈從新位置繼續，重設 lastFrameTs 避免大跳幀
-        readingLastFrameTs = 0;
-    };
-    slider.addEventListener('mouseup',  onRelease, { passive: true });
-    slider.addEventListener('touchend', onRelease, { passive: true });
 }
+
+// 進度條鎖定模式下的鍵盤 ← → 調整進度（步進 2%）
+function _readingProgressKeyStep(dir) {
+    if (!_readingProgressLocked) return false;
+    const slider = document.getElementById('reading-progress-slider');
+    if (!slider || !scrollMax) return true;
+    const step = Math.round(1000 * 0.02); // 每次 2%
+    const newVal = Math.max(0, Math.min(1000, parseInt(slider.value, 10) + dir * step));
+    slider.value = newVal;
+    slider.dispatchEvent(new Event('input'));
+    return true;
+}
+
+// 進度條鎖定模式下的觸控橫向 scrubbing
+(function () {
+    let _pStartX = 0, _pStartY = 0, _pStartVal = 0;
+    let _pDecided = false, _pIsHoriz = false;
+
+    document.addEventListener('touchstart', (e) => {
+        if (!isReadingMode || !_readingProgressLocked || e.touches.length !== 1) return;
+        _pStartX   = e.touches[0].clientX;
+        _pStartY   = e.touches[0].clientY;
+        const slider = document.getElementById('reading-progress-slider');
+        _pStartVal = slider ? parseInt(slider.value, 10) : 0;
+        _pDecided  = false;
+        _pIsHoriz  = false;
+    }, { passive: true });
+
+    document.addEventListener('touchmove', (e) => {
+        if (!isReadingMode || !_readingProgressLocked || e.touches.length !== 1) return;
+        const dx = e.touches[0].clientX - _pStartX;
+        const dy = e.touches[0].clientY - _pStartY;
+        if (!_pDecided) {
+            if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
+            _pDecided = true;
+            _pIsHoriz = Math.abs(dx) > Math.abs(dy) * 1.2;
+        }
+        if (!_pIsHoriz) return;
+        e.preventDefault();
+        // 全螢幕寬度 = 1000 單位
+        const screenW = window.innerWidth || 375;
+        const delta = Math.round((dx / screenW) * 1000);
+        const slider = document.getElementById('reading-progress-slider');
+        if (!slider) return;
+        const newVal = Math.max(0, Math.min(1000, _pStartVal + delta));
+        slider.value = newVal;
+        slider.dispatchEvent(new Event('input'));
+    }, { passive: false });
+
+    document.addEventListener('touchend', () => {
+        _pDecided = false; _pIsHoriz = false;
+    }, { passive: true });
+})();
 
 function updateReadingProgressUI() {
     if (_readingProgressDragging || !scrollMax) return;
@@ -2722,16 +2923,18 @@ function enterReadingMode() {
     textContainer.scrollTop = 0;
     readingIndex = -1;
 
-    // 短暫延遲後自動開始捲動（讓使用者感覺到模式切換）
-    setTimeout(() => {
-        if (isReadingMode) startReadingScroll();
-    }, 400);
+    // 不自動播放，讓使用者自行點擊播放鍵開始
 }
 
 function exitReadingMode() {
     pauseReadingScroll();
     isReadingMode = false;
     _readingProgressDragging = false;
+    _readingProgressLocked = false;
+    _readingSpeedLocked = false;
+    // 清除進度條/速度條的鎖定視覺狀態
+    document.getElementById('reading-progress-slider')?.classList.remove('is-locked');
+    document.getElementById('reading-speed-slider')?.classList.remove('is-locked');
 
     // 離開閱讀模式時，若還在錄音中先停止，並清除暫存的試聽錄音（避免下次進入殘留舊錄音）
     if (isReadingRecording) stopReadingRecording();
@@ -4103,10 +4306,18 @@ document.addEventListener('keydown', (event) => {
     if (event.target.tagName === 'INPUT') return;
     if (typeof isTsEditModeActive === 'function' && isTsEditModeActive()) return;
 
-    // ── 閱讀模式：左右鍵調速，Space 播放/暫停捲動 ──────────
+    // ── 閱讀模式：左右鍵邏輯 ──────────────────────────────
     if (isReadingMode) {
-      if (event.code === 'ArrowLeft')  { event.preventDefault(); setReadingSpeedPx(readingSpeedPx - 3); return; }
-      if (event.code === 'ArrowRight') { event.preventDefault(); setReadingSpeedPx(readingSpeedPx + 3); return; }
+      // 速度條鎖定中：左右鍵調速
+      if (_readingSpeedLocked) {
+        if (event.code === 'ArrowLeft')  { event.preventDefault(); setReadingSpeedPx(readingSpeedPx - 3); return; }
+        if (event.code === 'ArrowRight') { event.preventDefault(); setReadingSpeedPx(readingSpeedPx + 3); return; }
+      }
+      // 進度條鎖定中：左右鍵調進度
+      if (_readingProgressLocked) {
+        if (event.code === 'ArrowLeft')  { event.preventDefault(); _readingProgressKeyStep(-1); return; }
+        if (event.code === 'ArrowRight') { event.preventDefault(); _readingProgressKeyStep( 1); return; }
+      }
       if (event.code === 'Space') {
         event.preventDefault();
         document.getElementById('reading-play-pause')?.click();
@@ -4121,78 +4332,6 @@ document.addEventListener('keydown', (event) => {
     if (event.code === 'ArrowRight') { event.preventDefault(); forwardBtn.click(); }
   }
 });
-
-
-// ── 閱讀模式：觸控橫向 scrubbing 調速 ─────────────────────────────────────
-// 手指橫向滑動（右 = 加速、左 = 減速），每 8px 調整 ±1 px/s
-// 縱向判定時不攔截，讓瀏覽器正常捲動；閱讀模式外不介入
-(function () {
-    let _startX = 0, _startY = 0;
-    let _baseSpeed = 20;
-    let _decided = false, _isHoriz = false;
-
-    // 速度 Toast（固定在畫面底部中央）
-    let _toastEl = null, _toastTimer = null;
-    function showSpeedToast(v) {
-        if (!_toastEl) {
-            _toastEl = document.createElement('div');
-            Object.assign(_toastEl.style, {
-                position: 'fixed', bottom: '90px', left: '50%',
-                transform: 'translateX(-50%)',
-                background: 'rgba(122,107,90,0.9)',
-                color: '#fff', padding: '5px 18px',
-                borderRadius: '99px', fontSize: '13px', fontWeight: '700',
-                pointerEvents: 'none', zIndex: '2000',
-                opacity: '0', transition: 'opacity 0.15s ease',
-                whiteSpace: 'nowrap', letterSpacing: '0.04em'
-            });
-            document.body.appendChild(_toastEl);
-        }
-        _toastEl.textContent = '速度 ' + v;
-        _toastEl.style.opacity = '1';
-        clearTimeout(_toastTimer);
-        _toastTimer = setTimeout(() => { _toastEl.style.opacity = '0'; }, 1000);
-    }
-
-    document.addEventListener('touchstart', (e) => {
-        if (!isReadingMode || e.touches.length !== 1) return;
-        _startX    = e.touches[0].clientX;
-        _startY    = e.touches[0].clientY;
-        _baseSpeed = readingSpeedPx;
-        _decided   = false;
-        _isHoriz   = false;
-    }, { passive: true });
-
-    document.addEventListener('touchmove', (e) => {
-        if (!isReadingMode || e.touches.length !== 1) return;
-
-        const dx = e.touches[0].clientX - _startX;
-        const dy = e.touches[0].clientY - _startY;
-
-        // 方向尚未決定：等位移 > 6px 後才判定一次
-        if (!_decided) {
-            if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
-            _decided = true;
-            _isHoriz = Math.abs(dx) > Math.abs(dy) * 1.2;
-        }
-
-        if (!_isHoriz) return; // 縱向：放行讓瀏覽器捲動
-
-        e.preventDefault(); // 橫向：攔截（不讓頁面左右偏移）
-
-        const steps  = Math.trunc(dx / 8); // 每 8px = 1 步
-        const newVal = Math.max(5, Math.min(80, _baseSpeed + steps));
-        if (newVal !== readingSpeedPx) {
-            setReadingSpeedPx(newVal);
-            showSpeedToast(newVal);
-        }
-    }, { passive: false });
-
-    document.addEventListener('touchend', () => {
-        _decided = false;
-        _isHoriz = false;
-    }, { passive: true });
-})();
 
 
 // ============================================================
