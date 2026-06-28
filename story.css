@@ -5838,6 +5838,26 @@ textarea:focus-visible {
 .rec-play-btn.is-playing .icon-play { display: none; }
 .rec-play-btn.is-playing .icon-pause { display: block; }
 
+/* ── 刪除 / 下載按鈕 ─────────────────────────────────── */
+.rec-discard-btn {
+  color: #c62828;
+  border-color: #ef9a9a;
+}
+.rec-discard-btn:hover {
+  background: #ffebee;
+  border-color: #c62828;
+  color: #c62828;
+}
+.rec-download-btn {
+  color: #1565c0;
+  border-color: #90caf9;
+}
+.rec-download-btn:hover {
+  background: #e3f2fd;
+  border-color: #1565c0;
+  color: #1565c0;
+}
+
 /* ── 進度條：預設鎖定，啟用後可拖曳 ─────────────────── */
 .reading-progress-slider {
   pointer-events: none;
