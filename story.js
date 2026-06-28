@@ -4267,6 +4267,8 @@ if (toggleTranslationBtn) {
             el.style.display = showTranslation ? 'block' : 'none';
         });
         toggleTranslationBtn.textContent = showTranslation ? '隱藏中文' : '顯示中文';
+        // ✅ 修正：中文翻譯顯示/隱藏後，內容高度改變，需重算 scrollMax
+        computeScrollMax();
     });
 }
 
