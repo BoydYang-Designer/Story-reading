@@ -4269,8 +4269,6 @@ if (readingModeBtn) {
     });
 }
 
-document.getElementById('reading-mode-exit-btn')?.addEventListener('click', exitReadingMode);
-
 document.getElementById('reading-play-pause')?.addEventListener('click', () => {
     if (readingIsPlaying) pauseReadingScroll();
     else startReadingScroll();
