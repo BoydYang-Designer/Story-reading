@@ -640,11 +640,38 @@
               <span class="reading-adjust-pair-label">字級</span>
             </div>
           </div>
-          <!-- 錄音試聽面板：錄完才顯示，可試聽 / 下載 / 捨棄重錄 -->
+          <!-- 錄音試聽面板：錄完才顯示，可試聽 / 倒轉 / 快轉 / 捨棄重錄 -->
           <div id="reading-record-playback" class="reading-record-playback is-hidden">
-            <audio id="reading-record-audio" controls></audio>
-            <button id="reading-record-download-btn" class="reading-record-action-btn" title="下載到手機">⬇️ 下載</button>
-            <button id="reading-record-discard-btn" class="reading-record-action-btn secondary" title="捨棄並重新錄製">🗑️</button>
+            <!-- 隱藏原生 audio，供 JS 控制 -->
+            <audio id="reading-record-audio" style="display:none"></audio>
+            <!-- 自訂播放器 UI -->
+            <div class="rec-player">
+              <div class="rec-player-top">
+                <span class="rec-player-label">跟讀錄音</span>
+                <span class="rec-player-time"><span id="rec-current-time">0:00</span> / <span id="rec-total-time">0:00</span></span>
+              </div>
+              <input type="range" id="rec-progress-bar" class="rec-progress-bar" min="0" max="1000" step="1" value="0">
+              <div class="rec-player-btns">
+                <button id="rec-rewind-btn" class="rec-ctrl-btn" title="倒轉5秒">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="1 4 1 10 7 10"></polyline>
+                    <path d="M3.51 15a9 9 0 1 0 .49-3.95"></path>
+                  </svg>
+                  <span class="rec-ctrl-label">5</span>
+                </button>
+                <button id="rec-play-pause-btn" class="rec-play-btn" title="播放/暫停">
+                  <svg class="icon-play" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                  <svg class="icon-pause" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+                </button>
+                <button id="rec-forward-btn" class="rec-ctrl-btn" title="快轉5秒">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="23 4 23 10 17 10"></polyline>
+                    <path d="M20.49 15a9 9 0 1 1-.49-3.95"></path>
+                  </svg>
+                  <span class="rec-ctrl-label">5</span>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
         <div class="controls">

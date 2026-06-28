@@ -3202,7 +3202,17 @@ function finalizeReadingRecording() {
     readingRecordingBlobUrl = URL.createObjectURL(blob);
 
     const audioEl = document.getElementById('reading-record-audio');
-    if (audioEl) audioEl.src = readingRecordingBlobUrl;
+    if (audioEl) {
+        audioEl.src = readingRecordingBlobUrl;
+        audioEl.load();
+    }
+    // 重置自訂播放器 UI
+    const recPlayBtn = document.getElementById('rec-play-pause-btn');
+    if (recPlayBtn) recPlayBtn.classList.remove('is-playing');
+    const recProgress = document.getElementById('rec-progress-bar');
+    if (recProgress) { recProgress.value = 0; recProgress.style.setProperty('--rec-progress', '0%'); }
+    const recCurrent = document.getElementById('rec-current-time');
+    if (recCurrent) recCurrent.textContent = '0:00';
     document.getElementById('reading-record-playback')?.classList.remove('is-hidden');
 }
 
@@ -4279,8 +4289,87 @@ document.getElementById('reading-record-btn')?.addEventListener('click', () => {
     else startReadingRecording();
 });
 
+// ── 自訂錄音播放器邏輯 ─────────────────────────────────
+(function initRecPlayer() {
+    const audioEl = document.getElementById('reading-record-audio');
+    const playPauseBtn = document.getElementById('rec-play-pause-btn');
+    const rewindBtn5 = document.getElementById('rec-rewind-btn');
+    const forwardBtn5 = document.getElementById('rec-forward-btn');
+    const progressBar = document.getElementById('rec-progress-bar');
+    const currentTimeEl = document.getElementById('rec-current-time');
+    const totalTimeEl = document.getElementById('rec-total-time');
+
+    if (!audioEl || !playPauseBtn) return;
+
+    function formatTime(s) {
+        if (!isFinite(s)) return '0:00';
+        const m = Math.floor(s / 60);
+        const sec = Math.floor(s % 60);
+        return m + ':' + String(sec).padStart(2, '0');
+    }
+
+    function updateProgress() {
+        if (!audioEl.duration) return;
+        const pct = audioEl.currentTime / audioEl.duration;
+        if (progressBar) {
+            progressBar.value = Math.round(pct * 1000);
+            progressBar.style.setProperty('--rec-progress', (pct * 100) + '%');
+        }
+        if (currentTimeEl) currentTimeEl.textContent = formatTime(audioEl.currentTime);
+    }
+
+    audioEl.addEventListener('timeupdate', updateProgress);
+    audioEl.addEventListener('loadedmetadata', () => {
+        if (totalTimeEl) totalTimeEl.textContent = formatTime(audioEl.duration);
+        if (currentTimeEl) currentTimeEl.textContent = '0:00';
+        if (progressBar) { progressBar.value = 0; progressBar.style.setProperty('--rec-progress', '0%'); }
+    });
+    audioEl.addEventListener('ended', () => {
+        if (playPauseBtn) playPauseBtn.classList.remove('is-playing');
+        updateProgress();
+    });
+
+    if (playPauseBtn) {
+        playPauseBtn.addEventListener('click', () => {
+            if (audioEl.paused) {
+                audioEl.play();
+                playPauseBtn.classList.add('is-playing');
+            } else {
+                audioEl.pause();
+                playPauseBtn.classList.remove('is-playing');
+            }
+        });
+    }
+
+    if (rewindBtn5) {
+        rewindBtn5.addEventListener('click', () => {
+            audioEl.currentTime = Math.max(0, audioEl.currentTime - 5);
+        });
+    }
+
+    if (forwardBtn5) {
+        forwardBtn5.addEventListener('click', () => {
+            audioEl.currentTime = Math.min(audioEl.duration || 0, audioEl.currentTime + 5);
+        });
+    }
+
+    if (progressBar) {
+        progressBar.addEventListener('input', () => {
+            if (!audioEl.duration) return;
+            const pct = parseInt(progressBar.value, 10) / 1000;
+            audioEl.currentTime = pct * audioEl.duration;
+            progressBar.style.setProperty('--rec-progress', (pct * 100) + '%');
+        });
+    }
+})();
+
+// 更多選項裡的下載/捨棄按鈕（原有功能保留供外部呼叫）
 document.getElementById('reading-record-download-btn')?.addEventListener('click', downloadReadingRecording);
-document.getElementById('reading-record-discard-btn')?.addEventListener('click', discardReadingRecording);
+document.getElementById('reading-record-discard-btn')?.addEventListener('click', () => {
+    const playPauseBtn = document.getElementById('rec-play-pause-btn');
+    if (playPauseBtn) playPauseBtn.classList.remove('is-playing');
+    discardReadingRecording();
+});
 
 
 rewindBtn.addEventListener('click', () => { 
