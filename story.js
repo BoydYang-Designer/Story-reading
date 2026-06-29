@@ -3181,6 +3181,8 @@ async function startReadingRecording() {
     readingMediaRecorder.start();
     isReadingRecording = true;
     updateReadingRecordBtnUI();
+    // 錄音開始後 UI 可能改變高度，重算 scrollMax
+    requestAnimationFrame(computeScrollMax);
 }
 
 function stopReadingRecording() {
@@ -3188,6 +3190,8 @@ function stopReadingRecording() {
     readingMediaRecorder.stop(); // onstop 會呼叫 finalizeReadingRecording
     isReadingRecording = false;
     updateReadingRecordBtnUI();
+    // 停止錄音後 UI 高度變化，重算 scrollMax
+    requestAnimationFrame(computeScrollMax);
     if (readingMediaStream) {
         readingMediaStream.getTracks().forEach(track => track.stop());
         readingMediaStream = null;
@@ -3214,6 +3218,8 @@ function finalizeReadingRecording() {
     const recCurrent = document.getElementById('rec-current-time');
     if (recCurrent) recCurrent.textContent = '0:00';
     document.getElementById('reading-record-playback')?.classList.remove('is-hidden');
+    // 錄音播放器出現後高度改變，重算 scrollMax 避免捲動提早停止
+    requestAnimationFrame(computeScrollMax);
 }
 
 function discardReadingRecording() {
@@ -3225,6 +3231,8 @@ function discardReadingRecording() {
     const audioEl = document.getElementById('reading-record-audio');
     if (audioEl) { audioEl.pause(); audioEl.removeAttribute('src'); audioEl.load(); }
     document.getElementById('reading-record-playback')?.classList.add('is-hidden');
+    // 錄音播放器消失後高度改變，重算 scrollMax
+    requestAnimationFrame(computeScrollMax);
 }
 
 function downloadReadingRecording() {
@@ -5217,6 +5225,14 @@ function init() {
   if (signInFromGuestBtn) signInFromGuestBtn.addEventListener('click', signIn);
  
   window.addEventListener('resize', computeScrollMax, { passive: true });
+
+  // ResizeObserver：監聽 textContainer 本身尺寸變化（錄音 UI 展開/收起、字級調整、旋轉等）
+  // 確保 scrollMax 永遠正確，避免閱讀模式捲動提早停在文章中段
+  if (typeof ResizeObserver !== 'undefined' && textContainer) {
+    const _scrollMaxObserver = new ResizeObserver(() => computeScrollMax());
+    _scrollMaxObserver.observe(textContainer);
+  }
+
   initCustomArticles();
 }
 
