@@ -1,12 +1,24 @@
 [00:00:00.000 --> 00:00:03.240] I have another idea. What if we design a carryable stroller?
+[00:00:00.000 --> 00:00:03.240] 我有另一個主意。如果我們設計一個可攜式嬰兒車呢？
 [00:00:03.540 --> 00:00:04.940] Could this be a promising direction?
+[00:00:03.540 --> 00:00:04.940] 這會是一個有希望的方向嗎？
 [00:00:05.600 --> 00:00:12.420] The concept is inspired by products like the MaxiCosi Coral Detachable Infant Car Seat, but applied to a stroller system.
+[00:00:05.600 --> 00:00:12.420] 這個概念的靈感來自MaxiCosi Coral可拆卸嬰兒汽車座椅等產品，但應用於嬰兒車系統。
 [00:00:12.740 --> 00:00:19.460] When users encounter environments where pushing a stroller is difficult or impossible, such as stairs, underpasses,
+[00:00:12.740 --> 00:00:19.460] 當使用者遇到難以或無法推動嬰兒車的環境時，例如樓梯、地下通道、
 [00:00:19.580 --> 00:00:23.680] or entrances without elevators, the stroller can be separated into two parts.
+[00:00:19.580 --> 00:00:23.680] 或沒有電梯的入口，嬰兒車可以分成兩部分。
 [00:00:23.880 --> 00:00:28.080] Upper module, the seat unit with the baby, designed to be safely lifted.
+[00:00:23.880 --> 00:00:28.080] 上部模組，帶有嬰兒的座椅單元，設計可安全擡起。
 [00:00:28.580 --> 00:00:33.220] Lower module, the frame and wheels, which can be quickly folded and handled separately.
+[00:00:28.580 --> 00:00:33.220] 下部模組、車架和車輪，可快速折疊並分開處理。
 [00:00:33.860 --> 00:00:42.040] In this scenario, the user only needs to carry the lighter upper module with the baby, making stair climbing safer and far less physically demanding.
+[00:00:33.860 --> 00:00:42.040] 在這種情況下，使用者只需要隨嬰兒攜帶較輕的鞋面模組，從而使爬樓梯更安全，體力要求也低得多。
 [00:00:42.680 --> 00:00:50.420] This approach reduces lifting weight while effectively solving terrain limitations that traditional strollers struggle with.
+[00:00:42.680 --> 00:00:50.420] 這種方法減輕了起重量，同時有效地解決了傳統嬰兒車所面臨的地形限制。
 [00:00:50.760 --> 00:00:56.140] For safety and ergonomic reasons, this concept would likely require clear usage limits.
+[00:00:50.760 --> 00:00:56.140] 出於安全和人體工程學的原因，這個概念可能需要明確的使用限制。
 [00:00:56.260 --> 00:01:02.280] such as suitable for infants under one year old, or a maximum load of 10 kilograms.
+[00:00:56.260 --> 00:01:02.280] 例如適合一歲以下的嬰兒，或最大重量為10公斤。
 [00:01:03.480 --> 00:01:14.020] Overall, this idea is not intended to replace a full -feature stroller, but rather to offer a practical, urban -oriented solution for short -distance carrying scenarios where pushing is simply not feasible.
+[00:01:03.480 --> 00:01:14.020] 總體而言，這個想法並不是要取代功能齊全的嬰兒車，而是為推動根本不可行的短距離運輸場景提供實用的城市導向解決方案。

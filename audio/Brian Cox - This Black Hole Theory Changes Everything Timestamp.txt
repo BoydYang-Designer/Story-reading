@@ -1,34 +1,68 @@
 [00:00:00.000 --> 00:00:11.540] And so the picture of a black hole is kind of similar to that, in that we're developing this picture where the interior of the black hole,
+[00:00:00.000 --> 00:00:11.540] 所以黑洞的圖像有點類似，因為我們正在沖洗這張圖片，黑洞的內部，
 [00:00:11.700 --> 00:00:17.440] when viewed from one perspective, is the exterior of the black hole when viewed from another perspective.
+[00:00:11.700 --> 00:00:17.440] 從一個角度來看，是從另一個角度來看黑洞的外部。
 [00:00:17.880 --> 00:00:23.060] And so what you're getting there, we think, and this is, and again,
+[00:00:17.880 --> 00:00:23.060] 所以我們認為，你現在的結果是，再說一次，
 [00:00:23.360 --> 00:00:28.720] even as I say this, there are papers being written saying different things, it's really cutting edge stuff.
+[00:00:23.360 --> 00:00:28.720] 即使我這麼說，有些論文說的是不同的東西，這真的是尖端的東西。
 [00:00:28.720 --> 00:00:36.880] But I think what everybody agrees on, pretty much, is that you're seeing something called the holographic principle at work here.
+[00:00:28.720 --> 00:00:36.880] 但我認為每個人都同意的是，你在這裡看到了所謂的全息原理。
 [00:00:37.140 --> 00:00:39.560] So it's a dual description of nature.
+[00:00:37.140 --> 00:00:39.560] 所以這是對大自然的雙重描述
 [00:00:39.880 --> 00:00:46.620] So it's a very famous paper by Maldesina, it's called the ADS -CFT Conjecture,
+[00:00:39.880 --> 00:00:46.620] 所以這是Maldesina的一篇非常著名的論文，它被稱為廣告-CFT猜想，
 [00:00:46.740 --> 00:00:51.160] and I think I'm right in saying it's the most cited paper in all of theoretical physics.
+[00:00:46.740 --> 00:00:51.160] 我想我說得對，這是所有理論物理學中被引用次數最多的論文
 [00:00:52.220 --> 00:00:59.580] And it was a very particular model of quantum mechanics on a surface.
+[00:00:52.220 --> 00:00:59.580] 這是一個非常特別的表面量子力學模型。
 [00:00:59.940 --> 00:01:03.180] That's what CFT, conformal field theory, it means.
+[00:00:59.940 --> 00:01:03.180] 這就是CFT ，共形場論的意思。
 [00:01:03.380 --> 00:01:04.340] It's quantum mechanics on a surface.
+[00:01:03.380 --> 00:01:04.340] 這是表面上的量子力學。
 [00:01:04.910 --> 00:01:08.560] And a precise proof that there's a dual description.
+[00:01:04.910 --> 00:01:08.560] 並精確證明有雙重描述
 [00:01:09.190 --> 00:01:18.540] This quantum theory describes an interior geometry of space, which was not there in the surface theory.
+[00:01:09.190 --> 00:01:18.540] 這種量子理論描述了空間的內部幾何，這在表面理論中是不存在的。
 [00:01:18.800 --> 00:01:22.300] And the space is called an ADS space, an anti -de -sitter space or whatever.
+[00:01:18.800 --> 00:01:22.300] 這個空間被稱為廣告空間、反德西特空間或其他空間。
 [00:01:22.480 --> 00:01:30.220] But it's a very, it's a perfect, a proof that there's a one -to -one description between these two things.
+[00:01:22.480 --> 00:01:30.220] 但這是一個非常完美的證據，證明這兩件事之間有一對一的描述。
 [00:01:30.700 --> 00:01:37.700] And I think it's fair to say that the black holes, the strange apparent paradoxes,
+[00:01:30.700 --> 00:01:37.700] 我認為可以公平地說，黑洞，奇怪的明顯悖論，
 [00:01:37.820 --> 00:01:42.840] are telling us that such a thing, our universe can be described in such a way.
+[00:01:37.820 --> 00:01:42.840] 告訴我們，這樣的事情，我們的宇宙可以用這樣的方式來描述
 [00:01:42.840 --> 00:01:49.520] So there are different ways of describing the same physics, and they're radically different ways.
+[00:01:42.840 --> 00:01:49.520] 因此，有不同的方式來描述相同的物理學，它們是完全不同的方式。
 [00:01:50.020 --> 00:01:58.260] Ultimately, the thing is, it shouldn't be so problematic in that, in both descriptions, the information comes out.
+[00:01:50.020 --> 00:01:58.260] 最終，事情是，它不應該那麼有問題，因為在兩種描述中，信息都會出現。
 [00:01:59.040 --> 00:02:04.880] But the way it came out is radically different, depending on your point of view.
+[00:01:59.040 --> 00:02:04.880] 但它出現的方式完全不同，取決於你的觀點。
 [00:02:05.100 --> 00:02:12.220] And so I think most people would say we're seeing glimpses of some kind of holographic.
+[00:02:05.100 --> 00:02:12.220] 所以我想大多數人會說我們看到了某種全息圖
 [00:02:12.380 --> 00:02:25.060] They're called holographic, by the way, because if you think of, what does it mean to have a complete description of a higher dimensional thing? So let's be very concrete. This room.
+[00:02:12.380 --> 00:02:25.060] 順便說一句，它們被稱為全息圖，因為如果你想想，對更高維度的事物進行完整的描述是什麼意思？所以讓我們非常具體，這個房間
 [00:02:25.580 --> 00:02:27.980] So let's say that this principle is correct.
+[00:02:25.580 --> 00:02:27.980] 所以假設這個原則是正確的。
 [00:02:28.100 --> 00:02:30.680] And many people think it is, by the way, for this room.
+[00:02:28.100 --> 00:02:30.680] 順便說一句，很多人認為這是這個房間的情況
 [00:02:31.060 --> 00:02:34.700] So we have a surface surrounding the room, the walls, let's say.
+[00:02:31.060 --> 00:02:34.700] 所以我們有一個圍繞房間的表面，比如說牆壁。
 [00:02:35.060 --> 00:02:37.000] And there's a theory that lives just there.
+[00:02:35.060 --> 00:02:37.000] 有一個理論就存在於那裡
 [00:02:37.140 --> 00:02:42.780] And it describes fully everything that's in the room. In that sense, we're holograms.
+[00:02:37.140 --> 00:02:42.780] 它完全描述了房間裡的一切。從這個意義上說，我們是全息圖。
 [00:02:43.120 --> 00:02:49.060] We are both holograms, because we're described by a theory that lives on a,
+[00:02:43.120 --> 00:02:49.060] 我們都是全息圖，因為我們被一個生活在
 [00:02:49.160 --> 00:02:51.680] I mean, a hologram is a piece of film like that.
+[00:02:49.160 --> 00:02:51.680] 我的意思是，全息圖是像那樣的一塊膠卷
 [00:02:51.780 --> 00:02:57.640] And it has a perfect, a perfect hologram would be a perfect 3D image would be encoded in the surface.
+[00:02:51.780 --> 00:02:57.640] 它有一個完美的，完美的全息圖將是一個完美的3D圖像將被編碼在表面上。
 [00:02:58.420 --> 00:03:01.880] So it's a perfect 3D image encoded in this 2D surface.
+[00:02:58.420 --> 00:03:01.880] 因此，這是一個完美的3D圖像，在這個2D表面中編碼。
 [00:03:02.440 --> 00:03:05.920] That really is the picture that we're talking about here.
+[00:03:02.440 --> 00:03:05.920] 這真的是我們在這裡談論的圖片
 [00:03:06.080 --> 00:03:11.520] You can see it with the event horizon and all the information on the outside and there's the interior there and what happens.
+[00:03:06.080 --> 00:03:11.520] 你可以通過事件視界和外面的所有信息看到它，那裡有內部以及發生了什麼。
 [00:03:11.720 --> 00:03:16.680] So it looks like we're flipping between descriptions of the world.
+[00:03:11.720 --> 00:03:16.680] 因此，我們似乎在對世界的描述之間切換。

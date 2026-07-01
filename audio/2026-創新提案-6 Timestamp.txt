@@ -1,6 +1,12 @@
 [00:00:00.000 --> 00:00:14.860] i realized that the same concept could be applied to conventional frame strollers by rotating the handlebar the seat rotates simultaneously and at a defined angle it triggers a release mechanism allowing the seat to fold automatically by gravity this
+[00:00:00.000 --> 00:00:14.860] 我意識到，同樣的概念可以應用於傳統的車架嬰兒車，通過旋轉座椅同時旋轉的車把，並以一定的角度觸發一個釋放機構，允許座椅通過重力自動折疊
 [00:00:14.860 --> 00:00:24.800] is how a previously designed stroller functions as you can see i simply applied this feature to demonstrate how it can create a more convenient folding process for the user to
+[00:00:14.860 --> 00:00:24.800] 先前設計的嬰兒車如何運作，正如您所看到的，我只是應用此功能來演示它如何為用戶創造更方便的折疊過程
 [00:00:24.800 --> 00:00:30.540] fold the stroller the user presses the one hand button to unlock the rotating handlebar as
+[00:00:24.800 --> 00:00:30.540] 折疊嬰兒車，用戶按下單手按鈕以解鎖旋轉車把
 [00:00:30.540 --> 00:00:33.540] the handlebar rotates the seat moves together with it
+[00:00:30.540 --> 00:00:33.540] 把手旋轉座椅與它一起移動
 [00:00:34.500 --> 00:00:38.280] when the handlebar reaches a specific angle the seat folds automatically
+[00:00:34.500 --> 00:00:38.280] 當車把到達特定角度時，座椅會自動折疊
 [00:00:38.990 --> 00:00:45.960] the user then continues the same motion until the stroller reaches its fully folded state all in one smooth continuous action
+[00:00:38.990 --> 00:00:45.960] 然後用戶繼續相同的動作，直到嬰兒車在一個平滑的連續動作中達到其完全折疊的狀態

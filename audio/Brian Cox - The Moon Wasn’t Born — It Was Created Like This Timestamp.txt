@@ -1,57 +1,114 @@
 [00:00:00.000 --> 00:00:07.660] It's one of the big questions in theoretical physics whether those things first of all can exist.
+[00:00:00.000 --> 00:00:07.660] 這是理論物理學的重大問題之一，這些東西是否首先可以存在。
 [00:00:07.920 --> 00:00:14.320] They can, given Einstein's theory, but there's a question about whether they would be stable.
+[00:00:07.920 --> 00:00:14.320] 考慮到愛因斯坦的理論，它們可以，但有一個關於它們是否穩定的問題。
 [00:00:14.680 --> 00:00:20.920] So there's a question about whether if you try to send information through them then they would collapse.
+[00:00:14.680 --> 00:00:20.920] 因此，有一個問題是，如果你嘗試通過它們發送信息，那麼它們是否會崩潰。
 [00:00:21.200 --> 00:00:23.820] And it's a big debate at the moment actually.
+[00:00:21.200 --> 00:00:23.820] 這實際上是一場大辯論
 [00:00:23.900 --> 00:00:25.800] You use it as a time machine to go into the past.
+[00:00:23.900 --> 00:00:25.800] 你用它作為時間機器來回顧過去。
 [00:00:26.040 --> 00:00:28.720] And I think most physicists think not.
+[00:00:26.040 --> 00:00:28.720] 我認為大多數物理學家不這麼認為
 [00:00:29.140 --> 00:00:33.920] They think that whilst they could exist they would be unstable and collapse again.
+[00:00:29.140 --> 00:00:33.920] 他們認為，雖然他們可能存在，但他們會不穩定並再次崩潰。
 [00:00:34.400 --> 00:00:37.580] And so you'd never be able to send information through, let alone a person.
+[00:00:34.400 --> 00:00:37.580] 因此，你永遠無法傳送資訊，更不用說傳送個人資訊了。
 [00:00:37.940 --> 00:00:41.220] Even one little light signal wouldn't get through it into the past.
+[00:00:37.940 --> 00:00:41.220] 即使是一個小小的光信號也無法通過它進入過去。
 [00:00:41.340 --> 00:00:47.420] But we need the more advanced theory, the quantum theory of gravity, to be sure. How the Moon was made.
+[00:00:41.340 --> 00:00:47.420] 但我們確實需要更先進的理論，引力的量子理論。月球是如何形成的。
 [00:00:47.580 --> 00:00:49.240] It was made in an impact.
+[00:00:47.580 --> 00:00:49.240] 它是在撞擊中製造的。
 [00:00:49.580 --> 00:00:54.960] So very early on in the life of the solar system, so let's say four and a half billion years ago or so.
+[00:00:49.580 --> 00:00:54.960] 所以在太陽系生命的早期，比方說45億年前左右。
 [00:00:55.500 --> 00:01:00.360] We think that a planet about the size of Mars collided with the young Earth.
+[00:00:55.500 --> 00:01:00.360] 我們認為一顆火星大小的行星與年輕的地球相撞
 [00:01:00.480 --> 00:01:08.120] It's sort of a glancing blow actually, which caused a lot of rubble to go out into space, formed momentarily a ring around the Earth,
+[00:01:00.480 --> 00:01:08.120] 這實際上是一個掠過的打擊，導致大量碎石進入太空，在地球周圍短暫形成一個環
 [00:01:08.300 --> 00:01:10.040] somewhat like the rings around Saturn.
+[00:01:08.300 --> 00:01:10.040] 有點像土星周圍的光環
 [00:01:10.460 --> 00:01:13.460] But then that ring very quickly coalesced into the Moon.
+[00:01:10.460 --> 00:01:13.460] 但後來那個戒指很快結合成月球
 [00:01:13.680 --> 00:01:20.760] So we think that the Moon is made of mainly bits of the Earth and also bits of this other planet that glanced off it.
+[00:01:13.680 --> 00:01:20.760] 所以我們認為月球主要是由地球的碎片以及其他行星的碎片組成
 [00:01:20.920 --> 00:01:22.660] Something like four and a half billion years ago.
+[00:01:20.920 --> 00:01:22.660] 大約45億年前
 [00:01:22.780 --> 00:01:26.020] It's very, very early, very soon after the Earth formed.
+[00:01:22.780 --> 00:01:26.020] 它非常非常早，在地球形成後不久。
 [00:01:26.320 --> 00:01:30.560] As Jupiter is made of gas, could you fly a rocket straight through? Er, no.
+[00:01:26.320 --> 00:01:30.560] 由於木星是由氣體組成的，你可以用火箭直接飛過去嗎？呃，不。
 [00:01:30.860 --> 00:01:37.760] So you could fly a rocket through the upper bits of its atmosphere, where it's not quite as dense.
+[00:01:30.860 --> 00:01:37.760] 所以你可以用火箭飛過它的上層大氣層，那裡沒有那麼密集。
 [00:01:37.980 --> 00:01:45.240] But if you go down towards the core of Jupiter, the pressure becomes so high and the temperatures become very high.
+[00:01:37.980 --> 00:01:45.240] 但如果你向木星的核心下行，壓力會變得如此之高，溫度也會變得非常高。
 [00:01:45.820 --> 00:01:48.500] We think there are all sorts of exotic materials.
+[00:01:45.820 --> 00:01:48.500] 我們認為有各種奇特的材料
 [00:01:48.500 --> 00:01:50.960] We don't really know what's at the centre of Jupiter.
+[00:01:48.500 --> 00:01:50.960] 我們真的不知道木星的中心是什麼
 [00:01:50.980 --> 00:01:58.240] We have a spacecraft called Juno at the moment, which is orbiting around Jupiter, to answer that very question, trying to work out what is actually in the middle.
+[00:01:50.980 --> 00:01:58.240] 我們現在有一艘名為朱諾的太空船，它正在繞木星運行，來回答這個問題，試圖弄清楚中間到底是什麼。
 [00:01:58.540 --> 00:02:05.020] We think there are exotic things called metallic liquid hydrogen and all sorts of really strange materials.
+[00:01:58.540 --> 00:02:05.020] 我們認為有一種奇特的東西叫做金屬液氫和各種非常奇怪的材料
 [00:02:05.260 --> 00:02:08.780] But then if you tried to fly a rocket through the centre, it wouldn't get very far.
+[00:02:05.260 --> 00:02:08.780] 但如果你試圖用火箭穿過中心，它不會走得很遠。
 [00:02:09.160 --> 00:02:11.540] It'd get squashed and crushed and melted.
+[00:02:09.160 --> 00:02:11.540] 它會被壓扁、壓碎和融化。
 [00:02:11.820 --> 00:02:16.200] And then it may well hit something very solid indeed in the core.
+[00:02:11.820 --> 00:02:16.200] 然後它可能會撞擊到核心非常堅固的東西
 [00:02:16.200 --> 00:02:19.220] And is there actually any proof for the multiverse theory?
+[00:02:16.200 --> 00:02:19.220] 多元宇宙理論真的有證據嗎？
 [00:02:19.960 --> 00:02:21.660] So first of all, there's no proof.
+[00:02:19.960 --> 00:02:21.660] 所以首先，沒有證據
 [00:02:22.080 --> 00:02:25.520] And secondly, there are lots of different versions.
+[00:02:22.080 --> 00:02:25.520] 其次，有很多不同的版本。
 [00:02:25.720 --> 00:02:30.700] One of the ones that's interesting to physicists is something called the inflationary multiverse. So what is that?
+[00:02:25.720 --> 00:02:30.700] 對物理學家來說，其中一個有趣的東西是所謂的暴脹多元宇宙。那是甚麼？
 [00:02:31.100 --> 00:02:39.180] Well, the idea is our best theory of, let's say, the way that the galaxies are distributed in the sky. So we can map that.
+[00:02:31.100 --> 00:02:39.180] 嗯，這個想法是我們最好的理論，比如說，星系在天空中的分佈方式。所以我們可以繪製地圖
 [00:02:39.300 --> 00:02:40.360] So it's something we can observe.
+[00:02:39.300 --> 00:02:40.360] 所以這是我們可以觀察到的東西
 [00:02:40.500 --> 00:02:41.820] We can look at where the galaxies are.
+[00:02:40.500 --> 00:02:41.820] 我們可以查看星系的位置。
 [00:02:41.820 --> 00:02:43.120] Then we have a big map.
+[00:02:41.820 --> 00:02:43.120] 然後我們有一張大地圖
 [00:02:43.120 --> 00:02:46.920] It's called the Sloan Digital Sky Survey of where the galaxies are.
+[00:02:43.120 --> 00:02:46.920] 它被稱為星系位置的斯隆數字巡天。
 [00:02:47.160 --> 00:02:53.180] And when you look at them, then they're random in a sense, but there's also some pattern to it.
+[00:02:47.160 --> 00:02:53.180] 當你看到它們時，它們在某種意義上是隨機的，但也有一些模式。
 [00:02:54.120 --> 00:03:00.940] And in particular, they tend to, roughly speaking, lie on circles in the sky.
+[00:02:54.120 --> 00:03:00.940] 特別是，粗略地說，他們傾向於躺在天空中的圓圈上。
 [00:03:01.080 --> 00:03:03.600] So they're not completely randomly distributed.
+[00:03:01.080 --> 00:03:03.600] 所以它們不是完全隨機分佈的
 [00:03:03.600 --> 00:03:09.620] We can trace that all the way back to patterns that we see in the oldest light in the universe, which
+[00:03:03.600 --> 00:03:09.620] 我們可以追溯到我們在宇宙中最古老的光線中看到的模式，
 [00:03:09.620 --> 00:03:14.880] is the light that if we look as far as we can out into space, then we're looking back in time.
+[00:03:09.620 --> 00:03:14.880] 是光，如果我們盡可能地向太空中看，那麼我們就會回顧過去
 [00:03:15.120 --> 00:03:25.220] You might be ready to participate in the record event, to go in the Stargazing World Record, to go and look out at the night sky and get the most people ever looking out into the night sky at the same time.
+[00:03:15.120 --> 00:03:25.220] 您可能已經準備好參加記錄活動，參加觀星世界紀錄，去眺望夜空，同時讓最多人眺望夜空。
 [00:03:25.640 --> 00:03:29.540] You could also likely, I think, see the Andromeda Galaxy.
+[00:03:25.640 --> 00:03:29.540] 我想你也可能看到仙女座星系。
 [00:03:29.800 --> 00:03:33.960] Not quite sure about the time and when it's going to be up, but look at the Andromeda Galaxy.
+[00:03:29.800 --> 00:03:33.960] 不太確定時間和時間，但看看仙女座星系。
 [00:03:34.260 --> 00:03:37.840] You're seeing light coming from it, which has traveled for two million years.
+[00:03:34.260 --> 00:03:37.840] 你正在看到來自它的光，它已經旅行了兩百萬年。
 [00:03:38.120 --> 00:03:43.540] So you're looking back in time, two million years, because you're seeing the Andromeda Galaxy as it was two million years ago.
+[00:03:38.120 --> 00:03:43.540] 所以你回顧過去，兩百萬年前，因為你看到的是兩百萬年前的仙女座星系。
 [00:03:44.360 --> 00:03:50.380] And many physicists think that that inflation doesn't all stop at once, but stops in little patches.
+[00:03:44.360 --> 00:03:50.380] 許多物理學家認為，通貨膨脹不會一下子全部停止，而是會在一小段時間內停止。
 [00:03:50.660 --> 00:03:56.380] And so you have a little patch of this rapidly expanding universe that slows down and makes a big bang,
+[00:03:50.660 --> 00:03:56.380] 所以你有一小塊快速膨脹的宇宙會減速並產生大爆炸
 [00:03:56.500 --> 00:03:57.720] and that would be our universe.
+[00:03:56.500 --> 00:03:57.720] 那就是我們的宇宙
 [00:03:58.140 --> 00:04:04.180] And then the rest of it carries on, another little patch slows down and stops, and you get another big bang, and that would be a different universe.
+[00:03:58.140 --> 00:04:04.180] 然後其餘的部分繼續進行，另一個小補丁減慢並停止，然後你得到另一個大爆炸，那將是一個不同的宇宙。
 [00:04:04.460 --> 00:04:07.620] Another bit stops, and you get a big bang and a different universe, and so on.
+[00:04:04.460 --> 00:04:07.620] 另一點停下來，你會得到一個大爆炸和一個不同的宇宙，等等。
 [00:04:07.820 --> 00:04:12.560] So that's called the inflationary multiverse, which is what was in your question. A multiverse.
+[00:04:07.820 --> 00:04:12.560] 所以這被稱為膨脹多元宇宙，這就是你所提出的問題。多元宇宙
 [00:04:12.860 --> 00:04:16.800] A load of bubble universes, if you like, essentially an infinite number.
+[00:04:12.860 --> 00:04:16.800] 大量的泡泡宇宙，如果你喜歡，基本上是無限的數字。
 [00:04:17.260 --> 00:04:19.240] And that could be our reality.
+[00:04:17.260 --> 00:04:19.240] 這可能是我們的現實。
 [00:04:19.420 --> 00:04:29.380] It really could be that our entire universe, which is much bigger than the universe we can see, with two trillion galaxies in it, is one bubble in a multiverse of bubble universes.
+[00:04:19.420 --> 00:04:29.380] 這真的可能是我們的整個宇宙，比我們所能看到的宇宙大得多，其中有兩萬億個星系，是多重宇宙泡沫宇宙中的一個泡沫。

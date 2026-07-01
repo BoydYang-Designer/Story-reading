@@ -1,35 +1,70 @@
 [00:00:00.000 --> 00:00:03.420] You know, there's something I find myself thinking about quite often.
+[00:00:00.000 --> 00:00:03.420] 你知道嗎，我發現自己經常在想一些事情
 [00:00:03.900 --> 00:00:09.800] It's one of those ideas that sounds simple at first, almost obvious.
+[00:00:03.900 --> 00:00:09.800] 這是一開始聽起來很簡單的想法之一，幾乎是顯而易見的。
 [00:00:10.000 --> 00:00:17.680] It sits there in the collective imagination of our species, glowing with a kind of romantic inevitability.
+[00:00:10.000 --> 00:00:17.680] 它坐落在我們物種的集體想像力中，散發著一種浪漫的必然性。
 [00:00:17.780 --> 00:00:31.560] It's the idea that we are going, that it is our destiny, that we are leaving this cradle and stepping out into the black to build a new home, sending human beings to Mars.
+[00:00:17.780 --> 00:00:31.560] 我們的想法是，我們要去，這是我們的命運，我們要離開這個搖籃，走向黑暗，建立一個新的家園，將人類送上火星。
 [00:00:31.980 --> 00:00:43.020] It's spoken about now as if it's already happened in the future tense. NASA has plans. SpaceX has plans. China has plans.
+[00:00:31.980 --> 00:00:43.020] 它現在被談論，就好像它已經在未來時態中發生了一樣。NASA有計劃， SpaceX有計劃中國有計劃。
 [00:00:43.640 --> 00:00:49.180] We see the CGI renders of gleaming cities under glass domes.
+[00:00:43.640 --> 00:00:49.180] 我們看到玻璃圓頂下閃閃發光的城市的CGI渲染。
 [00:00:49.360 --> 00:00:54.920] We see the rockets landing in unison, kicking up the rust -coloured dust.
+[00:00:49.360 --> 00:00:54.920] 我們看到火箭一致降落，踢起鐵鏽色的灰塵。
 [00:00:55.380 --> 00:01:04.000] We see astronauts looking out over the valves, marineries, watching a blue sunset, feeling the pride of a species that has conquered two worlds.
+[00:00:55.380 --> 00:01:04.000] 我們看到太空人俯瞰閥門，水手隊，看著藍色的日落，感受到徵服兩個世界的物種的驕傲。
 [00:01:04.880 --> 00:01:11.120] Everyone seems to agree that Mars is where we're headed next. It feels like a promise.
+[00:01:04.880 --> 00:01:11.120] 每個人似乎都同意火星是我們接下來要去的地方。這感覺像是一個承諾。
 [00:01:11.380 --> 00:01:16.840] And on the surface, it sounds almost routine, like
+[00:01:11.380 --> 00:01:16.840] 從表面上看，這聽起來幾乎是例行公事，就像
 [00:01:16.840 --> 00:01:20.420] a natural continuation of what we've already done.
+[00:01:16.840 --> 00:01:20.420] 是我們已經做過的事情的自然延續
 [00:01:20.660 --> 00:01:23.980] We looked at the oceans and we crossed them.
+[00:01:20.660 --> 00:01:23.980] 我們看著海洋，然後跨越它們
 [00:01:23.980 --> 00:01:27.480] We looked at the skies and we flew in them.
+[00:01:23.980 --> 00:01:27.480] 我們看著天空，然後在天空中飛翔
 [00:01:27.700 --> 00:01:34.900] We looked at the moon and we walked on it. First the moon, then Mars.
+[00:01:27.700 --> 00:01:34.900] 我們看著月亮，然後在月亮上行走。首先是月球，然後是火星。
 [00:01:35.440 --> 00:01:37.820] It's just the next step on the ladder.
+[00:01:35.440 --> 00:01:37.820] 這只是梯子上的下一步
 [00:01:38.320 --> 00:01:41.160] But here is what fascinates me as a physicist.
+[00:01:38.320 --> 00:01:41.160] 但這就是物理學家令我著迷的地方。
 [00:01:41.760 --> 00:01:45.220] And it's something that troubles me deeply as a human being.
+[00:01:41.760 --> 00:01:45.220] 作為人類，這讓我深感煩惱。
 [00:01:45.220 --> 00:01:56.060] When you actually calculate what's involved, when you strip away the music and the artwork and the speeches, when you sit down with the cold, hard numbers of mass,
+[00:01:45.220 --> 00:01:56.060] 當你實際計算所涉及的內容時，當你剝離音樂，藝術品和演講時，當你坐下來與寒冷，堅硬的質量數字，
 [00:01:56.340 --> 00:02:02.520] energy, distance and biology, you begin to realise that this is not just another step outward.
+[00:01:56.340 --> 00:02:02.520] 能量，距離和生物學，你開始意識到這不僅僅是向外邁出的一步。
 [00:02:02.860 --> 00:02:04.880] It is not like crossing the Atlantic.
+[00:02:02.860 --> 00:02:04.880] 這不像穿越大西洋。
 [00:02:05.400 --> 00:02:07.400] It is not like climbing Everest.
+[00:02:05.400 --> 00:02:07.400] 這不像攀登珠穆朗瑪峯。
 [00:02:07.400 --> 00:02:10.640] It is not even like going to the moon.
+[00:02:07.400 --> 00:02:10.640] 它甚至不像去月球。
 [00:02:10.940 --> 00:02:18.240] It may be the most difficult thing our species has ever seriously contemplated.
+[00:02:10.940 --> 00:02:18.240] 這可能是我們這個物種有史以來認真考慮過的最困難的事情。
 [00:02:18.500 --> 00:02:20.820] And I want to be very careful with my language here.
+[00:02:18.500 --> 00:02:20.820] 我想要非常小心我的語言。
 [00:02:20.980 --> 00:02:24.720] When I say difficult, I don't mean it's expensive.
+[00:02:20.980 --> 00:02:24.720] 當我說困難時，我並不是說它很貴。
 [00:02:24.720 --> 00:02:27.460] It will be expensive, of course.
+[00:02:24.720 --> 00:02:27.460] 當然，這將是昂貴的。
 [00:02:28.020 --> 00:02:31.280] Trillions upon trillions of dollars poured into the void.
+[00:02:28.020 --> 00:02:31.280] 數萬億美元湧入虛無。
 [00:02:31.500 --> 00:02:38.860] And I don't mean it's an engineering challenge. We have brilliant engineers. We can build remarkable machines.
+[00:02:31.500 --> 00:02:38.860] 我不是說這是工程上的挑戰我們有優秀的工程師我們可以建造出色的機器。
 [00:02:39.420 --> 00:02:42.840] I mean, difficult in a deeper, more fundamental sense.
+[00:02:39.420 --> 00:02:42.840] 我的意思是，在更深刻、更基本的意義上是困難的。
 [00:02:43.540 --> 00:02:48.020] Difficult in the sense that the physics itself seems to resist us.
+[00:02:43.540 --> 00:02:48.020] 在物理學本身似乎抵抗我們的意義上是困難的。
 [00:02:48.340 --> 00:02:54.660] Difficult in the sense that the universe is quietly, passive -aggressively pushing back against our ambition.
+[00:02:48.340 --> 00:02:54.660] 在宇宙靜靜地、被動地反擊我們的野心的意義上是困難的。
 [00:02:54.940 --> 00:02:58.000] I believe that humans will never reach Mars.
+[00:02:54.940 --> 00:02:58.000] 我相信人類永遠不會到達火星。
 [00:02:58.420 --> 00:03:00.160] Not in the way that matters.
+[00:02:58.420 --> 00:03:00.160] 這並不重要。
 [00:03:00.600 --> 00:03:02.340] Not in the way we dream of.
+[00:03:00.600 --> 00:03:02.340] 不是我們夢寐以求的。
 [00:03:02.640 --> 00:03:07.440] We might send a few brave souls to die there. We might plant a flag.
+[00:03:02.640 --> 00:03:07.440] 我們可能會派遣一些勇敢的靈魂死在那裡。我們可能會插上旗幟。

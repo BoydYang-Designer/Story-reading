@@ -1,15 +1,30 @@
 [00:00:00.000 --> 00:00:01.600] You should know this industrial designer.
+[00:00:00.000 --> 00:00:01.600] 你應該認識這位工業設計師
 [00:00:01.800 --> 00:00:05.400] This is Johnny Ive, the designer that made simplicity feel inevitable.
+[00:00:01.800 --> 00:00:05.400] 這位是Johnny Ive ，這位設計師讓簡單變得無可避免。
 [00:00:05.620 --> 00:00:08.440] At Apple, Ive's philosophy wasn't about minimalism.
+[00:00:05.620 --> 00:00:08.440] 在Apple ， Ive的哲學不是極簡主義。
 [00:00:08.580 --> 00:00:13.740] He believed that true simplicity came from understanding complexity, then removing that friction for the user.
+[00:00:08.580 --> 00:00:13.740] 他認為，真正的簡單性來自於理解複雜性，然後為用戶消除摩擦。
 [00:00:13.880 --> 00:00:17.240] He put it as, true simplicity is more than the absence of clutter.
+[00:00:13.880 --> 00:00:17.240] 他說，真正的簡單不僅僅是沒有雜亂。
 [00:00:17.420 --> 00:00:20.360] If a detail didn't serve any purpose, then it was removed.
+[00:00:17.420 --> 00:00:20.360] 如果細節沒有任何用途，則會被刪除。
 [00:00:20.560 --> 00:00:23.360] That discipline shaped products that feel obvious in hindsight.
+[00:00:20.560 --> 00:00:23.360] 該紀律塑造了事後感覺明顯的產品。
 [00:00:23.520 --> 00:00:26.660] The original 2007 iPhone is a clear example of that.
+[00:00:23.520 --> 00:00:26.660] 最初的2007款iPhone就是一個明顯的例子。
 [00:00:26.760 --> 00:00:31.660] At a time, that was quite radical, but it made the iPhone instantly intuitive. You didn't really need instructions.
+[00:00:26.760 --> 00:00:31.660] 有一段時間，這是相當激進的，但它使iPhone立刻變得直觀。你真的不需要說明。
 [00:00:31.720 --> 00:00:33.200] You were just able to use it.
+[00:00:31.720 --> 00:00:33.200] 你剛剛可以使用它。
 [00:00:33.280 --> 00:00:35.300] The iMac G3 applied the same logic.
+[00:00:33.280 --> 00:00:35.300] IMac G3採用了相同的邏輯。
 [00:00:35.640 --> 00:00:39.920] Translucent colors turned something that was rather intimidating into something that was meant for the home.
+[00:00:35.640 --> 00:00:39.920] 半透明的顏色將一些相當令人生畏的東西變成了適合家居的東西。
 [00:00:40.040 --> 00:00:44.580] Across the iMac, iPhone, and iPod, Ives clearly showed that clarity meant confidence.
+[00:00:40.040 --> 00:00:44.580] 在iMac、iPhone和iPod上，艾夫斯清楚地表明，清晰度意味着信心。
 [00:00:44.900 --> 00:00:48.120] The takeaway isn't just to make it more minimal. It's to design with empathy.
+[00:00:44.900 --> 00:00:48.120] 外賣不僅僅是讓它變得更簡單。設計時要有同理心。
 [00:00:48.300 --> 00:00:51.800] Remove distractions, respect the user, and let simplicity do the work.
+[00:00:48.300 --> 00:00:51.800] 消除幹擾，尊重用戶，讓簡單的工作完成。

@@ -1,7 +1,14 @@
 [00:00:00.000 --> 00:00:06.960] From my perspective, with the current stage of AI development, AI is not yet capable of replacing industrial designers.
+[00:00:00.000 --> 00:00:06.960] 在我看來，在AI發展的現階段， AI還無法取代工業設計師。
 [00:00:07.360 --> 00:00:14.040] However, it has already proven to be a powerful tool for significantly improving both design efficiency and quality.
+[00:00:07.360 --> 00:00:14.040] 然而，它已被證明是顯著提高設計效率和質量的強大工具。
 [00:00:14.320 --> 00:00:24.620] This shift is comparable to the transformation that occurred over 20 years ago, when 3D software replaced 2D CAD and became a fundamental milestone in industrial design.
+[00:00:14.320 --> 00:00:24.620] 這種轉變與20多年前發生的轉型相當，當時3D軟件取代了2D CAD ，成為工業設計的基本裏程碑。
 [00:00:25.280 --> 00:00:29.920] Today, industrial design can no longer exist without 3D -assisted design tools.
+[00:00:25.280 --> 00:00:29.920] 如今，沒有3D輔助設計工具，工業設計就無法存在。
 [00:00:30.280 --> 00:00:33.940] I believe the same will soon be true for AI -assisted design tools.
+[00:00:30.280 --> 00:00:33.940] 我相信人工智慧輔助設計工具很快也會如此。
 [00:00:34.280 --> 00:00:45.440] In the near future, industrial designers who do not adopt AI will gradually lose their competitive edge in terms of speed, insight, and overall capability. AI will not replace designers.
+[00:00:34.280 --> 00:00:45.440] 在不久的將來，不採用AI的工業設計師在速度、洞察力和整體能力方面將逐漸失去競爭優勢。人工智慧不會取代設計師。
 [00:00:46.080 --> 00:00:49.480] Designers who effectively use AI will replace those who do not.
+[00:00:46.080 --> 00:00:49.480] 有效使用AI的設計師將取代那些不使用AI的設計師。

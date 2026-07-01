@@ -1,58 +1,116 @@
 [00:00:00.000 --> 00:00:03.220] Did they just close shop and go home? No.
+[00:00:00.000 --> 00:00:03.220] 他們剛剛關門回家嗎？沒有
 [00:00:03.580 --> 00:00:11.320] I mean, particle physics is, because we're talking about quantum mechanics, basically, it's statistical in the sense that you collide.
+[00:00:03.580 --> 00:00:11.320] 我的意思是，粒子物理學是，因為我們談論的是量子力學，基本上，它是統計學的，從某種意義上說，你碰撞。
 [00:00:11.460 --> 00:00:13.820] What we do there is collide protons together at high energy.
+[00:00:11.460 --> 00:00:13.820] 我們所做的是將質子以高能量碰撞在一起。
 [00:00:14.360 --> 00:00:17.380] And we collide a lot of protons together at high energy.
+[00:00:14.360 --> 00:00:17.380] 我們以高能量將許多質子碰撞在一起。
 [00:00:17.700 --> 00:00:25.500] Protons have a charge so that you can put them in a magnetic field and accelerate them to very high speeds. Yeah, so they go around.
+[00:00:17.700 --> 00:00:25.500] 質子帶有電荷，因此你可以將它們置於磁場中，並將它們加速到非常高的速度。對，所以他們四處走動
 [00:00:25.580 --> 00:00:30.280] So the LHC in kilometers is 27 kilometers, and that's the number I was at. It's a conference.
+[00:00:25.580 --> 00:00:30.280] 以公裏為單位的大型強子對撞機是27公裏，這就是我當時的數字。這是個會議
 [00:00:30.540 --> 00:00:32.800] Yes, it comes out to about 16 miles or something like that.
+[00:00:30.540 --> 00:00:32.800] 是的，大約16英裏左右。
 [00:00:33.060 --> 00:00:38.700] And the protons go around that ring 11 ,000 times a second.
+[00:00:33.060 --> 00:00:38.700] 質子以每秒11000次的速度繞過那個環。
 [00:00:38.780 --> 00:00:41.540] Well, I suppose Ernest Rutherford initially,
+[00:00:38.780 --> 00:00:41.540] 嗯，我想歐內斯特·拉塞福一開始
 [00:00:42.560 --> 00:00:53.900] so we go back to Manchester, the turn of the 20th century, and Rutherford was using radioactive decay to essentially produce the particles.
+[00:00:42.560 --> 00:00:53.900] 所以我們回到20世紀之交的曼徹斯特，拉塞福利用放射性衰變來產生粒子。
 [00:00:54.180 --> 00:00:59.660] I mean, it's just the decay of atomic nuclei that naturally happens to produce high energy particles,
+[00:00:54.180 --> 00:00:59.660] 我的意思是，只是原子核的衰變自然而然地產生高能粒子
 [00:00:59.840 --> 00:01:04.360] which he then fired into gold foil and bounced them off the foil.
+[00:00:59.840 --> 00:01:04.360] 然後他射入金箔並將它們從金箔上反彈下來
 [00:01:04.840 --> 00:01:07.220] In doing that, he discovered the atomic nucleus.
+[00:01:04.840 --> 00:01:07.220] 在這樣做的過程中，他發現了原子核。
 [00:01:07.760 --> 00:01:15.940] So one way to think about particle physics is that when you collide things together, what are you doing? You're really building a microscope.
+[00:01:07.760 --> 00:01:15.940] 因此，考慮粒子物理學的一種方法是，當你將事物碰撞在一起時，你在做什麼？你真的在建造一個顯微鏡
 [00:01:16.420 --> 00:01:25.000] One way to think of it is that the higher the energy of the collision, the faster these things are traveling, the smaller the objects you can see.
+[00:01:16.420 --> 00:01:25.000] 一種思考方法是，碰撞的能量越高，這些東西行進得越快，你可以看到的物體就越小。
 [00:01:25.180 --> 00:01:32.820] So we were talking about seeing for the first time in those experiments the atomic nucleus. You move forward to the,
+[00:01:25.180 --> 00:01:32.820] 所以我們談論的是在這些實驗中第一次看到原子核你前進到
 [00:01:33.980 --> 00:01:42.440] well, ultimately through the 50s and 60s, and we have higher and higher energy collisions, you start seeing that the nucleus is made of protons and neutrons,
+[00:01:33.980 --> 00:01:42.440] 最終在50年代和60年代，我們有越來越高的能量碰撞，你開始看到原子核是由質子和中子組成的，
 [00:01:42.500 --> 00:01:49.880] and then you start seeing in the 50s and 60s that the protons and neutrons are made of smaller things called quarks. And so we discover those.
+[00:01:42.500 --> 00:01:49.880] 然後在50年代和60年代，你開始看到質子和中子是由稱為誇克的小東西組成的。所以我們發現了這些
 [00:01:50.280 --> 00:01:52.900] We've not discovered anything smaller than that, by the way.
+[00:01:50.280 --> 00:01:52.900] 順便說一下，我們沒有發現比這更小的東西。
 [00:01:52.980 --> 00:01:56.120] Is it because you don't have enough energy to bust up a quark? Yes.
+[00:01:52.980 --> 00:01:56.120] 是因為你沒有足夠的能量來摧毀誇克嗎？是的。
 [00:01:56.300 --> 00:02:00.440] Well, or to resolve what's inside it, let's say, to build a microscope.
+[00:01:56.300 --> 00:02:00.440] 好吧，或者解決裡面有什麼，比如說，建造一個顯微鏡。
 [00:02:00.980 --> 00:02:05.840] Because right now, the inventory of fundamental particles includes quarks. Yeah.
+[00:02:00.980 --> 00:02:05.840] 因為現在基本粒子的清單包括誇克
 [00:02:06.000 --> 00:02:12.980] So somebody's saying that's fundamental, which sounds a little like the Greeks saying atoms are fundamental. They won't be fundamental. You're absolutely right.
+[00:02:06.000 --> 00:02:12.980] 所以有人說這是基本的，這聽起來有點像希臘人說原子是基本的。它們不會成為根本。你完全正確。
 [00:02:12.980 --> 00:02:18.960] But they look point -like from the point of view, from the energies that we can generate today.
+[00:02:12.980 --> 00:02:18.960] 但它們看起來很像-從我們今天可以產生的能量來看。
 [00:02:19.140 --> 00:02:21.400] But that's one side of particle physics.
+[00:02:19.140 --> 00:02:21.400] 但這是粒子物理學的一面
 [00:02:21.600 --> 00:02:26.700] So we've been exploring the structure of matter, which is historically, you know, it goes back to Rutherford, I suppose.
+[00:02:21.600 --> 00:02:26.700] 所以我們一直在探索物質的結構，從歷史上看，我想這可以追溯到拉塞福。
 [00:02:26.800 --> 00:02:36.300] And again, you have confidence that when you break matter apart, you didn't break the matter. You're just deconstructing it. Yeah.
+[00:02:26.800 --> 00:02:36.300] 再一次，你有信心，當你把物質分開時，你沒有打破這個問題。你只是在解構它
 [00:02:36.920 --> 00:02:40.500] Really, I think the way to think about it, I mean, you think about what a collision is.
+[00:02:36.920 --> 00:02:40.500] 真的，我認為這是思考的方式，我的意思是，你想想什麼是碰撞。
 [00:02:40.500 --> 00:02:46.340] So let's say you collide, as we did in my PhD, electrons and protons together.
+[00:02:40.500 --> 00:02:46.340] 假設你碰撞，就像我在博士學位時所做的那樣，電子和質子一起碰撞。
 [00:02:46.400 --> 00:02:51.280] So you get an electron beam and a proton beam, and you smash them into each other. What's actually happening?
+[00:02:46.400 --> 00:02:51.280] 所以你得到一個電子束和一個質子束，然後你將它們互相撞擊。到底發生了甚麼事？
 [00:02:51.720 --> 00:02:57.940] What's actually happening is, one way that the collision can happen, is that the electron can emit a photon,
+[00:02:51.720 --> 00:02:57.940] 實際發生的是，發生碰撞的一種方式是電子可以發射光子，
 [00:02:58.140 --> 00:02:59.460] which is a particle of light.
+[00:02:58.140 --> 00:02:59.460] 它是一種光粒子
 [00:02:59.820 --> 00:03:03.240] And the particle of light goes, and it hits the photon.
+[00:02:59.820 --> 00:03:03.240] 光粒子撞擊光子
 [00:03:04.440 --> 00:03:10.080] Now, the wavelength of that light, which is telling you how small a thing you can see,
+[00:03:04.440 --> 00:03:10.080] 現在，光的波長告訴你可以看到多小的東西
 [00:03:11.320 --> 00:03:13.300] is proportional to the energy of the thing.
+[00:03:11.320 --> 00:03:13.300] 與物體的能量成正比
 [00:03:13.480 --> 00:03:15.240] That's how hard we're smashing the things together.
+[00:03:13.480 --> 00:03:15.240] 這就是我們把東西砸在一起的努力。
 [00:03:15.900 --> 00:03:21.280] So the faster you smash them together, yeah, so the faster you smash them together, the higher the energy, the smaller the wavelength. Smaller the wavelength.
+[00:03:15.900 --> 00:03:21.280] 所以你砸在一起的速度越快，是的，所以你砸在一起的速度越快，能量越高，波長就越小。波長越小。
 [00:03:21.420 --> 00:03:23.140] So the smaller the things that you can see.
+[00:03:21.420 --> 00:03:23.140] 所以你可以看到的東西越小
 [00:03:23.680 --> 00:03:26.520] So that's a way of thinking about particle collisions.
+[00:03:23.680 --> 00:03:26.520] 所以這是一種思考粒子碰撞的方式
 [00:03:26.760 --> 00:03:29.680] So it really is a microscope in that sense. That analogy works.
+[00:03:26.760 --> 00:03:29.680] 所以在這個意義上，它確實是一個顯微鏡。這個比喻行得通。
 [00:03:29.900 --> 00:03:34.120] I'm just thinking, if I were a proton, I wouldn't want to be busted apart into quarks.
+[00:03:29.900 --> 00:03:34.120] 我只是在想，如果我是質子，我不會想被打成誇克。
 [00:03:34.120 --> 00:03:36.280] That would not be a nice day for me.
+[00:03:34.120 --> 00:03:36.280] 那對我來說不是個好日子。
 [00:03:36.520 --> 00:03:41.740] In some ways, I suppose it's like having, it's kind of like having an x -ray, I suppose, isn't it? You're right, though.
+[00:03:36.520 --> 00:03:41.740] 在某些方面，我想這就像有，有點像有X光片，不是嗎？不過你說得對。
 [00:03:41.780 --> 00:03:45.260] You hit them hard enough, and they fall to bits, but that would be the same for you. Wouldn't it?
+[00:03:41.780 --> 00:03:45.260] 你用力打它們，它們就會摔成碎片，但對你來說也是一樣。不是嗎？
 [00:03:46.260 --> 00:03:49.040] But we would try not to hit you that hard.
+[00:03:46.260 --> 00:03:49.040] 但我們會盡量不要打得那麼重。
 [00:03:49.380 --> 00:03:55.060] Yeah, except the bits that I fell into, no one's considered them fundamental bits of Neo. Right.
+[00:03:49.380 --> 00:03:55.060] 對，除了我掉進的那些碎片，沒有人認為它們是尼奧的基本碎片。
 [00:03:55.300 --> 00:03:59.840] But the other way to think about particle physics, which is, I think, so you say the Higgs particle you mentioned.
+[00:03:55.300 --> 00:03:59.840] 但另一種思考粒子物理的方式，我認為，你說的是你提到的希格斯粒子。
 [00:04:00.280 --> 00:04:01.700] So that's not in the proton.
+[00:04:00.280 --> 00:04:01.700] 所以這不在質子中
 [00:04:02.240 --> 00:04:06.340] You're not smashing the things together and finding a Higgs particle buried in there somewhere.
+[00:04:02.240 --> 00:04:06.340] 你不會把東西砸在一起，然後發現一個希格斯粒子埋在那裡。
 [00:04:06.580 --> 00:04:12.060] The other side is really, so you think of Einstein's famous equation, E equals mc squared.
+[00:04:06.580 --> 00:04:12.060] 另一面真的是，所以你想想愛因斯坦的著名方程式， E等於mc平方。
 [00:04:12.580 --> 00:04:15.640] So energy and mass are interchangeable, let's put it like that.
+[00:04:12.580 --> 00:04:15.640] 因此，能量和質量是可以互換的，讓我們這樣說吧。
 [00:04:16.120 --> 00:04:24.560] So it also says that if we have loads of energy in these collisions, then we can make new particles that are extremely massive, much more massive.
+[00:04:16.120 --> 00:04:24.560] 因此，它還說，如果我們在這些碰撞中有大量的能量，那麼我們可以製造極其巨大的新粒子，質量要大得多。
 [00:04:24.620 --> 00:04:28.440] That would come spontaneously out of the available energy that would otherwise be doing nothing.
+[00:04:24.620 --> 00:04:28.440] 這會自發地從可用的能量中產生，否則什麼都不做。
 [00:04:28.620 --> 00:04:39.060] Yeah, so we have, when you collide protons together, these energies, you have plenty of energy there to make a Higgs particle, for example,
+[00:04:28.620 --> 00:04:39.060] 是啊，所以我們有，當你把質子碰撞在一起，這些能量，你有足夠的能量在那裡製造希格斯粒子，例如，
 [00:04:39.480 --> 00:04:44.700] or a top quark, which is a very heavy particle as well, far more massive than the protons.
+[00:04:39.480 --> 00:04:44.700] 或者頂誇克，它也是一個非常重的粒子，比質子質量大得多。
 [00:04:44.980 --> 00:04:51.340] So that's, I suppose, the way to think about trying to manufacture Higgs particles so you can observe them.
+[00:04:44.980 --> 00:04:51.340] 所以我想，這就是試圖製造希格斯粒子的方式，這樣你就可以觀察到它們。
 [00:04:51.480 --> 00:04:53.060] You need enough energy to make them.
+[00:04:51.480 --> 00:04:53.060] 你需要足夠的能量來製造它們。
 [00:04:53.060 --> 00:04:53.120] You need enough energy to make them happen.
+[00:04:53.060 --> 00:04:53.120] 你需要足夠的能量來實現它們。

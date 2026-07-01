@@ -1,51 +1,102 @@
 [00:00:00.000 --> 00:00:11.060] So the first thing to say is that it's right at the heart of Einstein's theory is something called the equivalence principle, which was the idea that really led Einstein to the theory itself of gravity.
+[00:00:00.000 --> 00:00:11.060] 因此，首先要說的是，愛因斯坦理論的核心是所謂的等效原理，這個想法真正引導愛因斯坦找到了引力理論本身。
 [00:00:11.680 --> 00:00:13.900] And so you don't feel it, Paul.
+[00:00:11.680 --> 00:00:13.900] 所以你感覺不到，保羅
 [00:00:14.440 --> 00:00:17.540] What you do is you just fall freely towards it.
+[00:00:14.440 --> 00:00:17.540] 你所做的就是自由地向它墜落。
 [00:00:17.680 --> 00:00:26.060] So we're falling towards this thing there and we turn our rocket motors off and we can't tell. We can't look outside.
+[00:00:17.680 --> 00:00:26.060] 所以我們正朝那邊的東西墜落，我們關掉火箭發動機，但我們無法分辨。我們不能往外看。
 [00:00:26.060 --> 00:00:29.400] We can't look out the windows. We're just in free fall. We're just floating.
+[00:00:26.060 --> 00:00:29.400] 我們無法向窗外看。我們正處於自由落體狀態。我們只是在漂浮。
 [00:00:29.400 --> 00:00:35.120] So it's like the astronauts on the International Space Station. We're just there.
+[00:00:29.400 --> 00:00:35.120] 就像國際太空站上的太空人一樣我們就在那裡。
 [00:00:35.280 --> 00:00:38.000] So it's fundamental to Einstein's theory.
+[00:00:35.280 --> 00:00:38.000] 所以這是愛因斯坦理論的基礎
 [00:00:38.080 --> 00:00:45.320] It's very important, actually, for the problems that follow that we're going to talk about, that you just freely fall towards this thing.
+[00:00:38.080 --> 00:00:45.320] 實際上，對於我們將要討論的接下來的問題非常重要，你會自由地陷入這種情況。
 [00:00:45.460 --> 00:00:53.100] So we could be approaching this in this room now and we would have no clue that that's what's happening.
+[00:00:45.460 --> 00:00:53.100] 所以我們現在可以在這個房間裡接近這一點，我們不知道發生了什麼事。
 [00:00:53.100 --> 00:00:59.780] And in fact, so we're approaching the event horizon of a very big black hole like this.
+[00:00:53.100 --> 00:00:59.780] 事實上，我們正在接近像這樣一個非常大的黑洞的事件視界。
 [00:01:00.520 --> 00:01:11.260] For a black hole of this mass, then we wouldn't even notice something, according to Einstein's theory, as we fall across the horizon into the interior of the black hole.
+[00:01:00.520 --> 00:01:11.260] 根據愛因斯坦的理論，對於這種質量的黑洞，當我們越過地平線進入黑洞內部時，我們甚至不會注意到任何東西。
 [00:01:11.260 --> 00:01:14.580] So we could, we would, we'd fall across the horizon.
+[00:01:11.260 --> 00:01:14.580] 所以我們可以，我們會，我們會跨越地平線
 [00:01:14.920 --> 00:01:26.620] From our perspective in this room, according to Einstein, and we'll go for that caveat a bit later, but according to Einstein, into the interior of the black hole we go and we notice nothing.
+[00:01:14.920 --> 00:01:26.620] 根據愛因斯坦的說法，從我們在這個房間裡的角度來看，我們稍後會去做這個警告，但根據愛因斯坦的說法，我們進入黑洞的內部，我們什麼也沒注意到。
 [00:01:26.900 --> 00:01:28.580] What about when we're in the accretion desk?
+[00:01:26.900 --> 00:01:28.580] 當我們在吸積櫃檯時呢？
 [00:01:28.880 --> 00:01:30.520] Wouldn't we be banged around by a lot of stuff?
+[00:01:28.880 --> 00:01:30.520] 我們不會被很多東西撞到嗎？
 [00:01:30.520 --> 00:01:37.620] So we get, we might get in a bit of a mess as we fall through the accretion desk, but we're talking about the pure gravitational thing. You're absolutely right.
+[00:01:30.520 --> 00:01:37.620] 因此，當我們從吸積桌上掉下來時，可能會陷入一片混亂，但我們談論的是純粹的引力。你完全正確。
 [00:01:38.000 --> 00:01:39.900] It's a bit nasty around these things.
+[00:01:38.000 --> 00:01:39.900] 這些東西有點討厭
 [00:01:40.200 --> 00:01:44.300] So there's stuff, but that's nothing to do with the black hole itself, right?
+[00:01:40.200 --> 00:01:44.300] 所以有東西，但這與黑洞本身無關，對吧？
 [00:01:44.340 --> 00:01:45.780] It's nothing to do with the fundamental physics.
+[00:01:44.340 --> 00:01:45.780] 這與基礎物理學無關。
 [00:01:45.980 --> 00:01:56.400] It's all the x -rays and all this nasty gamma, all this stuff that's been, it radiated from all this hot material around it. So yes, that would be a problem.
+[00:01:45.980 --> 00:01:56.400] 這是所有的X射線，所有這些令人討厭的伽瑪射線，所有這些東西，它們都從周圍的熱物質中輻射出來。所以是的，那會是一個問題。
 [00:01:56.400 --> 00:02:05.300] But if we had a, let's say that our room, this spacecraft is magically insulated from radiation and heat and all those things,
+[00:01:56.400 --> 00:02:05.300] 但如果我們有一個，假設我們的房間，這個太空船神奇地隔絕了輻射和熱量以及所有這些東西，
 [00:02:05.500 --> 00:02:09.880] then nothing in, we would go into the interior.
+[00:02:05.500 --> 00:02:09.880] 然後沒有任何東西進去，我們就會進入內部
 [00:02:10.220 --> 00:02:19.500] The caveat, there's a lot of caveats, but one thing I should say is that it matters that that description I've given, it's for a supermassive black hole.
+[00:02:10.220 --> 00:02:19.500] 警告，有很多警告，但我要說的是，我給出的描述很重要，它是一個超大質量黑洞。
 [00:02:19.900 --> 00:02:25.820] If this was a smaller black hole, so smaller, less massive, you know, a few times the mass of the sun,
+[00:02:19.900 --> 00:02:25.820] 如果這是一個較小的黑洞，那麼小，質量較小，你知道，是太陽質量的幾倍，
 [00:02:26.300 --> 00:02:31.580] then at some point you experience what's called tidal gravity, tidal forces.
+[00:02:26.300 --> 00:02:31.580] 然後在某個時刻，你會體驗到所謂的潮汐重力，潮汐力
 [00:02:31.900 --> 00:02:35.020] So those are things that raise the tides on in the oceans of the earth.
+[00:02:31.900 --> 00:02:35.020] 所以這些是引發地球海洋潮汐的東西
 [00:02:36.700 --> 00:02:47.840] The tidal forces, we will start to, in our freely falling trajectory towards the black hole, at some point you start to get, feel the tides,
+[00:02:36.700 --> 00:02:47.840] 潮汐力，我們將開始在我們朝向黑洞的自由下降軌道上，在某個時刻，你開始感受到潮汐，
 [00:02:48.060 --> 00:02:50.480] you start to get stretched and squashed.
+[00:02:48.060 --> 00:02:50.480] 你開始被拉伸和壓扁
 [00:02:50.480 --> 00:02:54.120] And there's a, you would start, you'll feel it eventually.
+[00:02:50.480 --> 00:02:54.120] 有一個，你會開始，你最終會感覺到它。
 [00:02:54.840 --> 00:03:01.680] You'll really feel it eventually because formally, as you get very close to the singularity, you get infinitely stretched and squashed. So you really feel it.
+[00:02:54.840 --> 00:03:01.680] 你最終會真正感受到它，因為正式地，當你非常接近奇點時，你會被無限拉伸和壓扁。所以你真的感覺到了
 [00:03:01.680 --> 00:03:05.040] I want to talk about that inside. Spaghetti -fication. Yes, that's my favorite one.
+[00:03:01.680 --> 00:03:05.040] 我想在內部談談這件事義大利麵-精緻對，那是我最喜歡的
 [00:03:05.120 --> 00:03:12.180] But so for, for, for, for a smaller black hole, as you approach the horizon, you feel those forces.
+[00:03:05.120 --> 00:03:12.180] 但對於一個較小的黑洞，當你接近地平線時，你會感覺到這些力量。
 [00:03:12.860 --> 00:03:17.840] But for the big ones, you don't feel the tides until you've gone into the interior.
+[00:03:12.860 --> 00:03:17.840] 但對於大型船隻來說，在進入內部之前，你不會感覺到潮汐。
 [00:03:17.840 --> 00:03:20.580] So we're moving toward the event horizon.
+[00:03:17.840 --> 00:03:20.580] 所以我們正朝著事件視界前進
 [00:03:20.880 --> 00:03:25.340] We're somehow insulated from the messiness of the accretion disk. We're moving toward it.
+[00:03:20.880 --> 00:03:25.340] 我們以某種方式與雜亂的吸積盤隔離。我們正在向它邁進。
 [00:03:25.560 --> 00:03:35.140] I've heard that there's a moment where the physics of this are such that if you and I are actually falling in, if we look to the left and the right,
+[00:03:25.560 --> 00:03:35.140] 我聽說有一個時刻，這種物理特性是如此，如果我們真的掉進去，如果我們向左和向右看，
 [00:03:35.200 --> 00:03:37.640] we would actually see the back of our own heads.
+[00:03:35.200 --> 00:03:37.640] 我們實際上會看到自己的後腦勺
 [00:03:38.420 --> 00:03:40.340] Is that anywhere close to correct?
+[00:03:38.420 --> 00:03:40.340] 這是否接近正確？
 [00:03:40.500 --> 00:03:45.680] And can you tell me about the other little details as we approach the event horizon that you think are important? Well,
+[00:03:40.500 --> 00:03:45.680] 當我們接近事件範圍時，你能告訴我其他你認為重要的小細節嗎？好吧，
 [00:03:46.340 --> 00:03:50.200] one of the biggest details, one, it's not even a detail.
+[00:03:46.340 --> 00:03:50.200] 最大的細節之一，一個，它甚至不是一個細節
 [00:03:50.420 --> 00:03:57.820] It's one of the most shocking things about this is I've described this, that us falling in to the black hole.
+[00:03:50.420 --> 00:03:57.820] 這是最令人震驚的事情之一，我已經描述過，我們掉進了黑洞。
 [00:03:58.380 --> 00:04:04.620] And we're saying in this room where we can't see out, what, what do we, what do we feel? What can we measure?
+[00:03:58.380 --> 00:04:04.620] 我們在這個房間裡說，我們看不到外面，我們怎麼辦，我們感覺到什麼？我們可以測量什麼？
 [00:04:05.100 --> 00:04:12.240] And the answer is you can't measure anything and we don't feel anything until we get inside and we approach the singularity for this one.
+[00:04:05.100 --> 00:04:12.240] 答案是，你無法測量任何東西，直到我們進入內部並接近這個奇點，我們才會感覺到任何東西。
 [00:04:12.940 --> 00:04:18.780] But from the point of view of someone outside, the description is very different.
+[00:04:12.940 --> 00:04:18.780] 但從外界的角度來看，描述是非常不同的。
 [00:04:19.460 --> 00:04:24.960] So what would they see happening to us as we fall towards this thing?
+[00:04:19.460 --> 00:04:24.960] 那麼當我們向這東西墜落時，他們會看到我們發生甚麼事？
 [00:04:25.220 --> 00:04:34.440] So even in Einstein's theory with nothing else, no quantum mechanics or anything, then what they would see is time tick more slowly for us.
+[00:04:25.220 --> 00:04:34.440] 因此，即使在愛因斯坦的理論中，沒有其他任何東西，沒有量子力學或任何東西，那麼他們會看到時間對我們來說變得更慢。
 [00:04:35.180 --> 00:04:43.360] So they would start to see as we approach the black hole, if they could see our watches, if we were transmitting to them or whatever it is,
+[00:04:35.180 --> 00:04:43.360] 因此，當我們接近黑洞時，他們會開始看到，如果他們可以看到我們的手錶，如果我們正在傳輸給他們或其他任何東西，
 [00:04:43.440 --> 00:04:51.460] transmitting from these cameras, we're sending it out to the, they would start, they would see our time tick more slowly, more slowly, more slowly.
+[00:04:43.440 --> 00:04:51.460] 從這些攝影機傳輸，我們將它發送到，它們會開始，它們會看到我們的時間變得更慢，更慢，更慢。
 [00:04:52.140 --> 00:04:55.200] And they would see our time stop on the horizon.
+[00:04:52.140 --> 00:04:55.200] 他們會看到我們的時間停止在地平線上。
 [00:04:55.960 --> 00:04:58.580] So they would never see us fall in.
+[00:04:55.960 --> 00:04:58.580] 所以他們永遠不會看到我們掉進去。
 [00:04:59.080 --> 00:05:05.060] So from the point of view of someone outside, nothing goes into the black hole ever.
+[00:04:59.080 --> 00:05:05.060] 所以從外面的人的角度來看，從來沒有任何東西進入黑洞。
