@@ -1,4 +1,5 @@
 [00:00:00.000 --> 00:00:04.600] So one of the questions I get asked a lot is, how do we know how far away the stars are?
+[00:00:00.000 --> 00:00:04.600] 所以我經常被問到的一個問題是，我們如何知道星星有多遠？
 [00:00:04.860 --> 00:00:06.800] I got asked that in the school the other week.
 [00:00:06.960 --> 00:00:08.720] How do we know how far away the stars are?
 [00:00:09.060 --> 00:00:15.240] One of the most important measurements, it was a great astronomer called Henrietta Leavitt,

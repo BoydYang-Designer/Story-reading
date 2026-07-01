@@ -1,27 +1,54 @@
 [00:00:00.000 --> 00:00:04.580] TED Talk Speech, Human and Robot Traits, Building Bridges to the Future.
+[00:00:00.000 --> 00:00:04.580] TED演講、人類與機器人特質、架設通往未來的橋樑。
 [00:00:05.080 --> 00:00:11.220] Imagine waking up to a robot brewing your perfect coffee, exactly 195 degrees Fahrenheit,
+[00:00:05.080 --> 00:00:11.220] 想像一下，當你醒來時，機器人正在準確地沖泡華氏195度的完美咖啡，
 [00:00:11.600 --> 00:00:19.420] just how you like it, while you dream up your next big idea over that first sip. Science fiction? No, it's our future.
+[00:00:11.600 --> 00:00:19.420] 就像你喜歡的那樣，而你在第一口飲料中想出你的下一個大主意。科幻？不，這是我們的未來。
 [00:00:19.940 --> 00:00:27.460] Today, I'm here to show you how humans and robots can build a bridge to a world of extraordinary possibilities, together.
+[00:00:19.940 --> 00:00:27.460] 今天，我在這裡向您展示人類和機器人如何共同建立通往非凡可能性世界的橋樑。
 [00:00:27.460 --> 00:00:33.220] A few years ago, I worked on an app to help doctors diagnose rare diseases faster.
+[00:00:27.460 --> 00:00:33.220] 幾年前，我開發了一個應用程式，幫助醫生更快地診斷罕見疾病。
 [00:00:33.560 --> 00:00:41.720] As a human, I brought empathy, imagining a patient's fear, a family's hope. But the data? Overwhelming.
+[00:00:33.560 --> 00:00:41.720] 作為一個人，我帶來了同理心，想像病人的恐懼，一個家庭的希望。但數據呢？壓倒性的數據
 [00:00:42.000 --> 00:00:47.680] AI stepped in, analyzing thousands of records in seconds, spotting patterns I'd miss.
+[00:00:42.000 --> 00:00:47.680] 人工智慧介入，在幾秒鐘內分析數以千計的記錄，發現我錯過的模式。
 [00:00:47.980 --> 00:00:51.460] Together, we didn't just build an app, we saved lives.
+[00:00:47.980 --> 00:00:51.460] 我們不僅開發了應用程式，還拯救了生命。
 [00:00:51.880 --> 00:00:56.000] That taught me, humans and robots aren't rivals, they're partners.
+[00:00:51.880 --> 00:00:56.000] 這告訴我，人類和機器人不是對手，他們是夥伴。
 [00:00:56.000 --> 00:00:59.960] Humans are the architects of emotion and imagination.
+[00:00:56.000 --> 00:00:59.960] 人類是情感和想像力的建築師。
 [00:01:00.560 --> 00:01:04.160] We feel deeply, create boldly, and dream big.
+[00:01:00.560 --> 00:01:04.160] 我們有深刻的感受、大膽的創造和遠大的夢想。
 [00:01:04.420 --> 00:01:08.880] Think of the artist painting a masterpiece or the inventor sketching the first smartphone.
+[00:01:04.420 --> 00:01:08.880] 想想畫傑作的藝術家，或是畫第一部智慧型手機的發明家。
 [00:01:09.360 --> 00:01:12.920] Robots, on the other hand, are masters of efficiency.
+[00:01:09.360 --> 00:01:12.920] 另一方面，機器人是效率的主人。
 [00:01:13.360 --> 00:01:18.820] They process data at lightning speed, execute with precision, and never tire,
+[00:01:13.360 --> 00:01:18.820] 他們以閃電般的速度處理數據，精確執行，永不疲倦，
 [00:01:19.060 --> 00:01:25.940] revolutionizing diagnostics, manufacturing, even assisting artists with design. Here's the big idea.
+[00:01:19.060 --> 00:01:25.940] 徹底改變診斷、製造，甚至協助藝術家進行設計。這裡有個好主意。
 [00:01:26.240 --> 00:01:28.460] The future isn't human versus robot.
+[00:01:26.240 --> 00:01:28.460] 未來不是人對機器人。
 [00:01:28.740 --> 00:01:31.820] It's human plus robot, building a bridge to progress.
+[00:01:28.740 --> 00:01:31.820] 它是人類加上機器人，為進步架起一座橋樑。
 [00:01:32.220 --> 00:01:37.620] Picture AI crunching climate data while human scientists steer it with ethical vision.
+[00:01:32.220 --> 00:01:37.620] 想像一下，當人類科學家以道德視野引導氣候數據時，人工智能正在處理氣候數據。
 [00:01:37.880 --> 00:01:46.420] Or robots handling repetitive surgeries, freeing doctors to connect with patients. This isn't replacement. It's amplification.
+[00:01:37.880 --> 00:01:46.420] 或者是處理重複手術的機器人，讓醫生可以自由地與病人聯繫。這不是替代品。這是放大。
 [00:01:46.960 --> 00:01:53.100] Yes, there are fears, job loss, machines outsmarting us. But let's flip the script.
+[00:01:46.960 --> 00:01:53.100] 是的，有恐懼、失業、機器比我們聰明。但讓我們翻轉劇本
 [00:01:53.780 --> 00:01:57.440] Self -driving cars are already cutting accidents by 40%.
+[00:01:53.780 --> 00:01:57.440] 自動駕駛汽車已經減少了40 ％的事故。
 [00:01:57.440 --> 00:02:05.380] AI tutors personalized learning for kids. These breakthroughs come from collaboration. So, my challenge to you.
+[00:01:57.440 --> 00:02:05.380] AI導師為孩子提供個人化學習。這些突破來自於協作。所以，我對你的挑戰。
 [00:02:05.520 --> 00:02:10.860] Next time you use AI, your phone's assistant, a work tool, don't ask, will it replace me?
+[00:02:05.520 --> 00:02:10.860] 下次你用AI ，你手機的助手，一個工作工具，別問了，它會代替我嗎？
 [00:02:11.320 --> 00:02:13.660] Ask, how can it elevate me?
+[00:02:11.320 --> 00:02:13.660] 問，它如何提升我？
 [00:02:13.940 --> 00:02:16.540] How can we build a bridge to solve the unsolvable?
+[00:02:13.940 --> 00:02:16.540] 我們如何建立一座橋樑來解決無法解決的問題？
 [00:02:16.540 --> 00:02:22.720] The future isn't humans or machines alone. It's both, hand and circuit,
+[00:02:16.540 --> 00:02:22.720] 未來不僅僅是人類或機器。這兩者，手和電路
 [00:02:23.340 --> 00:02:29.080] forging a bridge to infinite potential. Let's cross it together. Thank you. Let's cross it together. Let's cross it together. Let's cross it together. Let's cross it together. Let's cross it together. Let's cross it together.
+[00:02:23.340 --> 00:02:29.080] 打造通往無限潛力的橋樑讓我們一起渡過難關吧。謝謝，我們一起過去吧讓我們一起渡過難關吧。讓我們一起渡過難關吧。讓我們一起渡過難關吧。讓我們一起渡過難關吧。讓我們一起渡過難關吧。

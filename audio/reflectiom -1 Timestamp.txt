@@ -1,10 +1,20 @@
 [00:00:00.000 --> 00:00:02.240] We've been doing some self -reflection as a team.
+[00:00:00.000 --> 00:00:02.240] 我們團隊一直在進行一些自我反思。
 [00:00:02.400 --> 00:00:08.260] We often come up with very innovative concepts, but we've realized that innovation alone doesn't always connect with the market.
+[00:00:02.400 --> 00:00:08.260] 我們經常提出非常創新的概念，但我們已經意識到，單靠創新並不總是與市場聯繫在一起。
 [00:00:08.560 --> 00:00:14.860] So we started asking ourselves, do products really need brand new features every time?
+[00:00:08.560 --> 00:00:14.860] 所以我們開始問自己，產品真的每次都需要全新的功能嗎？
 [00:00:15.060 --> 00:00:23.660] Or could simpler functional improvements, along with better form, details, and usability, actually work better?
+[00:00:15.060 --> 00:00:23.660] 還是更簡單的功能改進，加上更好的形式、細節和可用性，實際上能更好地運作？
 [00:00:24.180 --> 00:00:30.240] In some cases, we feel these small focused improvements might be more effective than big innovations.
+[00:00:24.180 --> 00:00:30.240] 在某些情況下，我們認為這些小的重點改進可能比大型創新更有效。
 [00:00:31.100 --> 00:00:39.560] We're also wondering if some ideas didn't succeed, not because the concept was wrong, but because the design, execution, aesthetics,
+[00:00:31.100 --> 00:00:39.560] 我們也想知道一些想法是否沒有成功，不是因為概念錯誤，而是因為設計，執行，美學，
 [00:00:39.920 --> 00:00:41.860] or level of detail wasn't strong enough.
+[00:00:39.920 --> 00:00:41.860] 或細節程度不夠強烈
 [00:00:42.300 --> 00:00:48.020] Finding the right balance between function, design, and cost takes experience, and that's something we're still learning.
+[00:00:42.300 --> 00:00:48.020] 在功能、設計和成本之間找到適當的平衡需要經驗，而這正是我們仍在學習的內容。
 [00:00:48.320 --> 00:00:56.040] That's why we'd really love to hear your perspective, how you find that balance, and decide what feels just right for different markets.
+[00:00:48.320 --> 00:00:56.040] 這就是為什麼我們真的很想聽聽你的觀點，你如何找到這種平衡，並決定什麼是適合不同市場的。
 [00:00:56.860 --> 00:01:02.100] We hope to learn from your experience and see if there's a chance for us to complement each other's strengths.
+[00:00:56.860 --> 00:01:02.100] 我們希望能從您的經驗中學習，看看我們是否有機會互補彼此的優勢。

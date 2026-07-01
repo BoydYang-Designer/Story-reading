@@ -121,3 +121,4 @@
 [00:05:52.970 --> 00:05:56.570] You're exploring, exploring, exploring, and then, bam, a reward.
 [00:05:52.970 --> 00:05:56.570] 你正在探索，探索，探索，然後，砰，獎勵。
 [00:05:57.530 --> 00:05:59.970] After you stumble upon an unexpected reward, You're exploring, exploring, and then, bam, a reward, and then, bam, a reward, and then, bam, a reward, and then,
+[00:05:57.530 --> 00:05:59.970] 在你偶然發現一個意想不到的獎勵後，你正在探索，探索，然後，砰，一個獎勵，然後，砰，一個獎勵，然後，砰，一個獎勵，然後，

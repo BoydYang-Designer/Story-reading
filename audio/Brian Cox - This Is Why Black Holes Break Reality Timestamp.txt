@@ -1,46 +1,92 @@
 [00:00:00.000 --> 00:00:02.680] see myself. If someone asks me what I do, I say, I'm a physicist.
+[00:00:00.000 --> 00:00:02.680] 如果有人問我我在做什麼，我會說，我是一個物理學家
 [00:00:03.520 --> 00:00:09.480] But actually, of course, most of my time now is spent on the public engagement side.
+[00:00:03.520 --> 00:00:09.480] 但實際上，我現在的大部分時間都花在公眾參與方面。
 [00:00:09.800 --> 00:00:11.920] And I kind of fell into that accidentally.
+[00:00:09.800 --> 00:00:11.920] 我有點不小心掉進去了
 [00:00:12.320 --> 00:00:16.920] But I still, maybe it's a thing, maybe there's some deep psychological thing going on.
+[00:00:12.320 --> 00:00:16.920] 但我仍然，也許這是一件事，也許有一些深刻的心理上的事情正在發生。
 [00:00:17.040 --> 00:00:22.280] But I never say TV presenter or whatever it is. I just say physicist.
+[00:00:17.040 --> 00:00:22.280] 但我從來不說電視節目主持人之類的我只是說物理學家
 [00:00:23.120 --> 00:00:25.200] Well, that's what I want to talk to you all about today.
+[00:00:23.120 --> 00:00:25.200] 這就是我今天想跟你們談的
 [00:00:25.520 --> 00:00:30.020] So imagine that you and I are on a mission to fall into a black hole.
+[00:00:25.520 --> 00:00:30.020] 所以想像一下，你和我正在執行一項落入黑洞的任務。
 [00:00:30.300 --> 00:00:34.520] And we have some imaginary spaceship that can take us as far and as fast as we want.
+[00:00:30.300 --> 00:00:34.520] 我們有一些想像中的太空船，可以帶我們盡可能快地到達目的地。
 [00:00:34.760 --> 00:00:40.700] So we get up, we walk outside, we get into our spaceship. What now?
+[00:00:34.760 --> 00:00:40.700] 所以我們站起來，走到外面，進入我們的太空船，現在呢？
 [00:00:41.240 --> 00:00:44.020] What is a black hole and how do we find them?
+[00:00:41.240 --> 00:00:44.020] 什麼是黑洞？我們如何找到它們？
 [00:00:44.680 --> 00:00:57.560] So a black hole, it's interesting that the idea or the first glimpse of them theoretically came very shortly after Einstein's theory of gravity was published in 1915.
+[00:00:44.680 --> 00:00:57.560] 因此，有趣的是，黑洞的想法或第一次瞥見它們在理論上是在愛因斯坦的引力理論於1915年發表後不久。
 [00:00:57.560 --> 00:01:01.000] although it wasn't recognised as such at the time, this glimpse.
+[00:00:57.560 --> 00:01:01.000] 雖然當時沒有被認可，但這一瞥
 [00:01:01.560 --> 00:01:06.520] But essentially, what does Einstein's theory do? It's important for what follows.
+[00:01:01.560 --> 00:01:06.520] 但基本上，愛因斯坦的理論是做什麼的？這對接下來的事情很重要。
 [00:01:06.760 --> 00:01:16.400] It's a theory of space and time and how space -time, which is often described as the fabric of the universe, responds, warps
+[00:01:06.760 --> 00:01:16.400] 這是一種關於空間和時間的理論，以及空間-時間（通常被描述為宇宙的結構）如何反應、扭曲
 [00:01:16.400 --> 00:01:19.440] or curves, to matter and energy in the universe.
+[00:01:16.400 --> 00:01:19.440] 或曲線，到宇宙中的物質和能量。
 [00:01:19.940 --> 00:01:30.140] So the equations, basically the theory that Einstein published all those years ago, will say, give me some distribution of matter, something like a ball of matter.
+[00:01:19.940 --> 00:01:30.140] 因此，方程式，基本上是愛因斯坦多年前發表的理論，會說，給我一些物質的分佈，就像一個物質球。
 [00:01:30.520 --> 00:01:33.960] And the equations will tell you how the fabric of the universe is distorted.
+[00:01:30.520 --> 00:01:33.960] 這些方程式會告訴你宇宙的結構是如何扭曲的。
 [00:01:34.280 --> 00:01:41.120] And by the way, the force of gravity in that theory then is the response of everything else in the universe to that distortion.
+[00:01:34.280 --> 00:01:41.120] 順便說一句，那個理論中的重力就是宇宙中其他事物對這種扭曲的反應。
 [00:01:41.480 --> 00:01:44.020] So Einstein would say, what are we feeling now?
+[00:01:41.480 --> 00:01:44.020] 所以愛因斯坦會說，我們現在感覺如何？
 [00:01:44.460 --> 00:01:48.460] Newton would say it's a force between us and the earth, right?
+[00:01:44.460 --> 00:01:48.460] 牛頓會說這是我們與地球之間的力量，對吧？
 [00:01:48.780 --> 00:01:50.660] But Einstein would say, there isn't a force.
+[00:01:48.780 --> 00:01:50.660] 但愛因斯坦會說，沒有力量
 [00:01:50.840 --> 00:01:55.580] What we're responding to the distortion in the fabric of the universe, created by the earth.
+[00:01:50.840 --> 00:01:55.580] 我們對地球創造的宇宙結構扭曲的反應。
 [00:01:56.080 --> 00:01:59.260] So that's, John Wheeler actually, the great physicist, put it beautifully.
+[00:01:56.080 --> 00:01:59.260] 事實上，偉大的物理學家約翰惠勒說得很漂亮
 [00:01:59.520 --> 00:02:07.580] He said, matter tells space -time how to curve, and space -time tells matter how to move. And that's it, right? So that's Einstein's theory.
+[00:01:59.520 --> 00:02:07.580] 他說，物質告訴空間-時間如何曲線，空間-時間告訴物質如何移動。就是這樣，對吧？這就是愛因斯坦的理論
 [00:02:07.580 --> 00:02:21.200] So in 1916, shortly after it was published, a man called Carl Schwarzschild remarkably managed to solve the equations for a perfectly spherical, non -spinning ball of matter.
+[00:02:07.580 --> 00:02:21.200] 因此，在1916年，在它發表後不久，一個名叫卡爾史瓦西的人非常出色地解出了一個完美的球形，非旋轉的物質球的方程式。
 [00:02:21.200 --> 00:02:25.740] It's the simplest thing you could do, which tells you how space and time are distorted by it.
+[00:02:21.200 --> 00:02:25.740] 這是你能做的最簡單的事情，它告訴你空間和時間是如何被它扭曲的。
 [00:02:25.860 --> 00:02:27.260] And that's a model for a star.
+[00:02:25.860 --> 00:02:27.260] 這是一顆明星的模型
 [00:02:27.480 --> 00:02:31.440] It's the simplest thing you could do. So he solved the equations. It's a remarkable thing.
+[00:02:27.480 --> 00:02:31.440] 這是你能做的最簡單的事情。所以他解出了方程式這是一件了不起的事
 [00:02:31.800 --> 00:02:37.240] In those equations, there is a description of a black hole, although it wasn't realised at the time.
+[00:02:31.800 --> 00:02:37.240] 在這些方程中，有對黑洞的描述，儘管當時還沒有意識到。
 [00:02:37.240 --> 00:02:40.580] It's a remarkable piece, simple piece of mathematics, actually.
+[00:02:37.240 --> 00:02:40.580] 事實上，這是一個非常了不起的數學作品。
 [00:02:41.400 --> 00:02:43.640] So essentially, what's the idea behind a black hole?
+[00:02:41.400 --> 00:02:43.640] 所以基本上，黑洞背後的想法是什麼？
 [00:02:44.340 --> 00:02:55.580] One way to think about it is that you could remove, could you remove the star from this fabric, but leave the distortion behind?
+[00:02:44.340 --> 00:02:55.580] 一種思考方法是，你可以移除，你可以從這種織物中移除星星，但留下扭曲嗎？
 [00:02:56.220 --> 00:03:00.640] So if you do that, you get the description of a black hole.
+[00:02:56.220 --> 00:03:00.640] 所以如果你這樣做，你會得到一個黑洞的描述。
 [00:03:00.840 --> 00:03:02.280] But you might say, what do you mean?
+[00:03:00.840 --> 00:03:02.280] 但你可能會說，你是甚麼意思？
 [00:03:02.420 --> 00:03:04.300] How can that be formed in nature?
+[00:03:02.420 --> 00:03:04.300] 它如何在自然界中形成？
 [00:03:04.640 --> 00:03:07.060] So you think about what a star is.
+[00:03:04.640 --> 00:03:07.060] 所以你想想星星是什麼
 [00:03:07.340 --> 00:03:09.560] Then a star is a balancing act.
+[00:03:07.340 --> 00:03:09.560] 那麼明星就是一種平衡行爲。
 [00:03:09.700 --> 00:03:14.700] So it's mainly hydrogen and helium collapsing under its own gravity.
+[00:03:09.700 --> 00:03:14.700] 所以主要是氫和氦在自身重力下坍縮
 [00:03:14.840 --> 00:03:20.020] That's how our sun formed four and a half billion years ago. So it's collapsing. So what stops it collapsing?
+[00:03:14.840 --> 00:03:20.020] 那就是我們的太陽在45億年前形成的方式所以它正在崩潰那麼是什麼阻止它崩潰？
 [00:03:20.480 --> 00:03:26.660] Well, as it collapses, the core heats up and that initiates nuclear fusion reactions in the core.
+[00:03:20.480 --> 00:03:26.660] 當它崩潰時，核心會升溫，並在核心中引發核聚變反應。
 [00:03:26.840 --> 00:03:33.920] In the case of our sun, it's hydrogen being fused into helium that releases energy, which creates a pressure, which holds the thing up.
+[00:03:26.840 --> 00:03:33.920] 就我們的太陽而言，氫被融合成氦，釋放能量，產生壓力，支撐住東西。
 [00:03:34.080 --> 00:03:36.620] So it's balancing, but it needs the fuel.
+[00:03:34.080 --> 00:03:36.620] 所以它是平衡的，但它需要燃料
 [00:03:37.180 --> 00:03:39.480] And it's not infinitely big, of course.
+[00:03:37.180 --> 00:03:39.480] 當然，它也不是無限大。
 [00:03:39.680 --> 00:03:41.380] So at some point it runs out of nuclear fuel.
+[00:03:39.680 --> 00:03:41.380] 因此，在某些時候，它會耗盡核燃料。
 [00:03:41.520 --> 00:03:45.700] And ultimately, no more fusion reactions can occur in any star.
+[00:03:41.520 --> 00:03:45.700] 最終，任何恆星都不會再發生核融合反應。
 [00:03:45.880 --> 00:03:47.820] And so the star will resume its collapse.
+[00:03:45.880 --> 00:03:47.820] 所以恆星會恢復坍塌

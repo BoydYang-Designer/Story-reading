@@ -1,66 +1,132 @@
 [00:00:00.000 --> 00:00:01.480] I mean, this is the central question.
+[00:00:00.000 --> 00:00:01.480] 我的意思是，這是核心問題。
 [00:00:02.080 --> 00:00:08.320] So Stephen's initial calculation, 1974, was
+[00:00:02.080 --> 00:00:08.320] 所以史蒂芬最初的計算， 1974年，是
 [00:00:08.320 --> 00:00:16.720] that this radiation, the Hawking radiation, is information -less. It's information -free. So it's not gone away.
+[00:00:08.320 --> 00:00:16.720] 這種輻射，霍金輻射，是無信息的這是免費的資訊。所以它並沒有消失。
 [00:00:16.820 --> 00:00:18.000] It's not disappeared, the black hole.
+[00:00:16.820 --> 00:00:18.000] 它並沒有消失，黑洞。
 [00:00:18.140 --> 00:00:20.600] It's turned into the radiation, right?
+[00:00:18.140 --> 00:00:20.600] 它變成了輻射，對吧？
 [00:00:22.160 --> 00:00:25.640] But his calculation said there's no information in that.
+[00:00:22.160 --> 00:00:25.640] 但他的計算顯示裡面沒有任何資訊
 [00:00:25.740 --> 00:00:27.900] It's what's called thermal, purely thermal.
+[00:00:25.740 --> 00:00:27.900] 這就是所謂的熱能，純粹的熱能
 [00:00:27.900 --> 00:00:33.580] Not surprising, if you think about it, because it's been kind of shaken out of the vacuum of space.
+[00:00:27.900 --> 00:00:33.580] 如果你仔細想想，這並不奇怪，因為它已經從空間的真空中搖晃出來了。
 [00:00:33.900 --> 00:00:39.200] So it's certainly, you would think, got nothing to do with the stuff that falls in.
+[00:00:33.900 --> 00:00:39.200] 所以你會認為，這當然與掉進去的東西無關。
 [00:00:39.380 --> 00:00:41.440] This is something to do with the horizon.
+[00:00:39.380 --> 00:00:41.440] 這與地平線有關。
 [00:00:41.800 --> 00:00:44.680] It's not anything to do with the singularity, this stuff.
+[00:00:41.800 --> 00:00:44.680] 這與奇點無關，這東西。
 [00:00:45.120 --> 00:00:48.380] So out it comes, and the calculation is very clear.
+[00:00:45.120 --> 00:00:48.380] 所以它出來了，計算非常清楚。
 [00:00:48.960 --> 00:00:57.560] So that would suggest, as you said, that the information, any record of anything that fell in, will have been erased.
+[00:00:48.960 --> 00:00:57.560] 因此，正如你所說，這意味著任何信息，任何掉進去的記錄，都將被刪除。
 [00:00:57.900 --> 00:01:03.420] The energy will be the same, right? The energy is conserved. The black hole hasn't vanished. It's turned into radiation.
+[00:00:57.900 --> 00:01:03.420] 能量會是一樣的，對吧？能量是守恆的。黑洞並沒有消失。它變成了輻射
 [00:01:03.760 --> 00:01:06.400] But the radiation contains no trace of anything that fell in.
+[00:01:03.760 --> 00:01:06.400] 但輻射中沒有任何墜落的痕跡。
 [00:01:06.600 --> 00:01:09.080] That is weird, as you said.
+[00:01:06.600 --> 00:01:09.080] 正如你所說，這很奇怪。
 [00:01:09.440 --> 00:01:12.380] Because if you think, let's imagine, you might say, well, what's the difference?
+[00:01:09.440 --> 00:01:12.380] 因為如果你認為，讓我們想像一下，你可能會說，嗯，有什麼區別？
 [00:01:12.460 --> 00:01:14.760] What if I get this piece of paper and set fire to it?
+[00:01:12.460 --> 00:01:14.760] 如果我拿到這張紙，然後放火燒了呢？
 [00:01:14.860 --> 00:01:18.500] It goes, and there's just stuff, ashes and radiation.
+[00:01:14.860 --> 00:01:18.500] 它消失了，只有灰燼和輻射
 [00:01:18.500 --> 00:01:25.380] And yes, but in principle, then if you could just measure everything,
+[00:01:18.500 --> 00:01:25.380] 是的，但原則上，如果你能測量一切
 [00:01:25.640 --> 00:01:30.620] which you can't, but if you could, then you could reconstruct the information on the page.
+[00:01:25.640 --> 00:01:30.620] 你不能，但如果可以的話，你可以重建頁面上的資訊
 [00:01:30.860 --> 00:01:33.060] And you can see why, because it's got something.
+[00:01:30.860 --> 00:01:33.060] 你可以看到原因，因為它有東西
 [00:01:33.400 --> 00:01:38.360] What's happening when you burn it is chemical reactions and there's oxidation, whatever it is.
+[00:01:33.400 --> 00:01:38.360] 當你燃燒它時發生的是化學反應和氧化，無論它是什麼。
 [00:01:38.420 --> 00:01:40.120] But you can trace everything back.
+[00:01:38.420 --> 00:01:40.120] 但你可以追溯一切。
 [00:01:40.120 --> 00:01:43.880] So you can say all the atoms and things are still around. And there it is.
+[00:01:40.120 --> 00:01:43.880] 所以你可以說所有的原子和東西仍然存在就在那裡。
 [00:01:44.280 --> 00:01:48.900] In a black hole, you can't. So it wasn't surprising.
+[00:01:44.280 --> 00:01:48.900] 在黑洞裏，你不能。所以這並不令人驚訝。
 [00:01:49.240 --> 00:01:56.620] What was surprising is that it appears there is a calculation that tells you that black holes erase everything.
+[00:01:49.240 --> 00:01:56.620] 令人驚訝的是，似乎有一個計算告訴你，黑洞會擦除一切。
 [00:01:56.960 --> 00:02:00.500] And as you said, the laws of nature are quite clear on this.
+[00:01:56.960 --> 00:02:00.500] 正如你所說，自然法則在這方面非常清楚。
 [00:02:01.000 --> 00:02:03.920] Information does not get destroyed in the universe.
+[00:02:01.000 --> 00:02:03.920] 情報不會在宇宙中被摧毀。
 [00:02:04.080 --> 00:02:07.040] It gets scrambled so you can never reconstruct it, but it doesn't get destroyed.
+[00:02:04.080 --> 00:02:07.040] 它被打亂了，所以你永遠不能重建它，但它不會被摧毀。
 [00:02:07.040 --> 00:02:12.260] So that's what bothered everybody for a very long time. What happened?
+[00:02:07.040 --> 00:02:12.260] 這就是困擾大家很長一段時間的原因，發生了甚麼事？
 [00:02:12.460 --> 00:02:13.160] What's the end of the story?
+[00:02:12.460 --> 00:02:13.160] 故事的結局是什麼？
 [00:02:13.220 --> 00:02:14.960] I didn't mean to answer the question.
+[00:02:13.220 --> 00:02:14.960] 我不是故意要回答這個問題。
 [00:02:15.380 --> 00:02:21.740] So at the end of the story, we're not at the end of the story yet, but in 2019, a series of papers were published.
+[00:02:15.380 --> 00:02:21.740] 所以在故事的結尾，我們還沒有到故事的結尾，但在2019年，發表了一系列的論文。
 [00:02:22.460 --> 00:02:27.440] One of the papers was by Jeff Pennington and the other one was by another group of authors.
+[00:02:22.460 --> 00:02:27.440] 其中一篇論文由Jeff Pennington撰寫，另一篇則由另一組作者撰寫。
 [00:02:28.680 --> 00:02:36.800] But those papers suggest that Stephen missed a bit in his calculation, very subtle.
+[00:02:28.680 --> 00:02:36.800] 但這些論文表明斯蒂芬在他的計算中有點失誤，非常微妙。
 [00:02:37.040 --> 00:02:38.400] He could have never seen it.
+[00:02:37.040 --> 00:02:38.400] 他可能從未見過它。
 [00:02:38.720 --> 00:02:42.800] I mean, that's why it took, you know, 50 years, right, to see what he'd missed.
+[00:02:38.720 --> 00:02:42.800] 我的意思是，這就是為什麼，你知道，花了50年，對吧，看看他錯過了什麼。
 [00:02:43.340 --> 00:02:47.620] But it turns out that the radiation is not information -free.
+[00:02:43.340 --> 00:02:47.620] 但事實證明，輻射不是無信息的。
 [00:02:48.280 --> 00:02:56.840] At the end of the process, then all the information about everything that fell in is imprinted in the radiation, as you would normally expect.
+[00:02:48.280 --> 00:02:56.840] 在這個過程結束時，所有有關掉進去的東西的資訊都會印在輻射中，正如你通常所期望的那樣。
 [00:02:58.100 --> 00:03:06.120] But you might, but then it becomes interesting because you say, well, okay, so there's a calculation and this mathematics that was done.
+[00:02:58.100 --> 00:03:06.120] 但你可能會，但隨後它變得有趣，因為你說，好吧，好吧，所以有一個計算和這個數學已經完成了。
 [00:03:06.720 --> 00:03:08.980] But you say, well, what's the picture then? What happened?
+[00:03:06.720 --> 00:03:08.980] 但你說，那畫面是甚麼？發生了甚麼事？
 [00:03:09.080 --> 00:03:16.100] Because I understand if I, if I take this and throw it into the black hole, it's gone across the horizon. It's gone to the singularity.
+[00:03:09.080 --> 00:03:16.100] 因為我明白，如果我把這個丟進黑洞，它就會越過地平線。它去了奇點。
 [00:03:16.440 --> 00:03:20.580] It's definitely true that nothing comes out of the black hole.
+[00:03:16.440 --> 00:03:20.580] 絕對沒有任何東西從黑洞中出來
 [00:03:20.580 --> 00:03:27.180] Or, you know, so how is this information about this thing getting imprinted in the radiation?
+[00:03:20.580 --> 00:03:27.180] 或者，你知道，那麼關於這個東西的資訊是如何在輻射中留下印記的？
 [00:03:27.500 --> 00:03:33.680] And it turns out that it's not just, so initially quite a few people thought, well, it must be just right at the end,
+[00:03:27.500 --> 00:03:33.680] 事實證明，這不僅僅是，所以最初有相當多的人認為，好吧，它必須正好在最後
 [00:03:33.900 --> 00:03:36.700] when it's all quantum gravity and all this stuff.
+[00:03:33.900 --> 00:03:36.700] 當一切都是量子引力之類的東西
 [00:03:36.700 --> 00:03:39.500] So the thing's just about to disappear back into the universe.
+[00:03:36.700 --> 00:03:39.500] 所以事情就要消失在宇宙中了
 [00:03:39.640 --> 00:03:43.140] And it's getting hotter and hotter, by the way, as it gets smaller and smaller.
+[00:03:39.640 --> 00:03:43.140] 順便說一句，它越來越熱，因為它越來越小。
 [00:03:43.260 --> 00:03:47.240] So there's more and more, it's getting more and more violent and something weird happens and everything comes out.
+[00:03:43.260 --> 00:03:47.240] 所以越來越多，越來越暴力，一些奇怪的事情發生了，一切都出現了。
 [00:03:48.740 --> 00:04:06.360] But it was known for a long time, it was worked by a great physicist called Don Page, that the problem about this, about the information and the structure of space, these problems occur about halfway through the black hole's life.
+[00:03:48.740 --> 00:04:06.360] 但很長一段時間以來，由一位名叫唐·佩奇的偉大物理學家研究，關於這個問題，關於信息和空間結構，這些問題發生在黑洞生命的一半。
 [00:04:07.040 --> 00:04:08.900] So it's called the page time.
+[00:04:07.040 --> 00:04:08.900] 所以它被稱為頁面時間。
 [00:04:09.120 --> 00:04:20.420] So the problems with the information structure of this thing occur way before you should be thinking about quantum gravity and a load of weird stuff.
+[00:04:09.120 --> 00:04:20.420] 因此，這種東西的信息結構的問題發生在你應該思考量子引力和一大堆奇怪的東西之前。
 [00:04:20.980 --> 00:04:23.460] So there was a big challenge to physics.
+[00:04:20.980 --> 00:04:23.460] 所以物理學面臨了很大的挑戰
 [00:04:23.700 --> 00:04:28.880] It's like, we should be able to calculate stuff when the black hole is halfway through its life.
+[00:04:23.700 --> 00:04:28.880] 這就像，我們應該能夠在黑洞生命的一半時計算東西。
 [00:04:29.060 --> 00:04:33.880] There's nothing weird at the horizon, but yet something weird appears to be happening.
+[00:04:29.060 --> 00:04:33.880] 地平線上沒有什麼奇怪的東西，但似乎發生了一些奇怪的事情。
 [00:04:33.880 --> 00:04:35.960] The picture of the thing is breaking down.
+[00:04:33.880 --> 00:04:35.960] 事情的畫面正在崩潰。
 [00:04:37.160 --> 00:04:39.940] And so then we could skiff if you want.
+[00:04:37.160 --> 00:04:39.940] 所以如果你願意的話，我們可以滑行
 [00:04:40.460 --> 00:04:42.560] So what is the picture of this?
+[00:04:40.460 --> 00:04:42.560] 這是甚麼情況？
 [00:04:42.680 --> 00:04:44.500] And I should emphasize the health warning here.
+[00:04:42.680 --> 00:04:44.500] 我應該在這裡強調健康警告。
 [00:04:44.660 --> 00:04:48.800] This is ongoing research and there is no agreed upon picture.
+[00:04:44.660 --> 00:04:48.800] 這是正在進行的研究，沒有商定的圖片。
 [00:04:49.080 --> 00:04:51.440] And there's some other subtleties we'll talk about in a minute.
+[00:04:49.080 --> 00:04:51.440] 我們稍後會討論其他一些微妙之處
 [00:04:51.440 --> 00:04:57.120] But a picture of what's happening is this is related to,
+[00:04:51.440 --> 00:04:57.120] 但一張正在發生的事情的圖片與
 [00:04:57.220 --> 00:05:00.420] it's related to something called a holographic principle at some level, we think.
+[00:04:57.220 --> 00:05:00.420] 我們認為這在某種程度上與全息原理有關
 [00:05:00.560 --> 00:05:07.800] And so another discovery that was made in the seventies, which is quite interesting by quite,
+[00:05:00.560 --> 00:05:07.800] 另一個在七十年代發現的發現相當有趣
 [00:05:07.800 --> 00:05:13.720] I'm using it in the American sense. It's very interesting. Is that, so Jacob Bekenstein. Jacob Bekenstein. Jacob Bekenstein. Jacob Bekenstein. Jacob Bekenstein. Jacob Bekenstein. Jacob Bekenstein.
+[00:05:07.800 --> 00:05:13.720] 我在美國的意義上使用它非常有趣。就是這樣，雅各布·貝肯斯坦雅各布·貝肯斯坦雅各布·貝肯斯坦雅各布·貝肯斯坦雅各布·貝肯斯坦雅各布·貝肯斯坦雅各布·貝肯斯坦

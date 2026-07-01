@@ -1,163 +1,326 @@
 [00:00:00.000 --> 00:00:02.620] CHAPTER VIII. THE QUEEN'S CROKET GROUND
+[00:00:00.000 --> 00:00:02.620] 第八章女王的曲棍球場
 [00:00:03.980 --> 00:00:07.100] A large rose tree stood near the entrance of the garden.
+[00:00:03.980 --> 00:00:07.100] 一棵大玫瑰樹站在花園入口附近。
 [00:00:07.360 --> 00:00:12.640] The roses growing on it were white, but there were three gardeners at it, busily painting them red.
+[00:00:07.360 --> 00:00:12.640] 上面生長的玫瑰是白色的，但有三個園丁在忙著把它們塗成紅色。
 [00:00:13.180 --> 00:00:20.240] Alice thought this a very curious thing, and she went nearer to watch them, and just as she came up to them she heard one of them say,
+[00:00:13.180 --> 00:00:20.240] 愛麗絲認為這是一件非常奇怪的事情，她走近看著他們，就在她走到他們面前時，她聽到其中一個人說
 [00:00:20.480 --> 00:00:24.420] Look out now, Five, don't go splashing paint over me like that.
+[00:00:20.480 --> 00:00:24.420] 小心，五，不要像那樣把油漆濺到我身上。
 [00:00:25.640 --> 00:00:29.920] I couldn't help it, said Five, in a sulky tone. Seven jogged my elbow.
+[00:00:25.640 --> 00:00:29.920] 「我情不自禁，」五人用悶悶不樂的語氣說。七人慢跑我的胳膊肘。
 [00:00:31.080 --> 00:00:37.020] On which Seven looked up and said, That's right, Five, always lay the blame on others.
+[00:00:31.080 --> 00:00:37.020] 七擡起頭來說：「沒錯，五，總是責怪別人。」
 [00:00:37.920 --> 00:00:39.800] You'd better not talk, said Five.
+[00:00:37.920 --> 00:00:39.800] 「你最好不要說話，」五人說。
 [00:00:40.040 --> 00:00:45.020] I heard the queen say only yesterday you deserved to be beheaded. What for?
+[00:00:40.040 --> 00:00:45.020] 我昨天才聽到女王說你應該被斬首。為甚麼？
 [00:00:45.280 --> 00:00:46.800] said the one who had spoken first.
+[00:00:45.280 --> 00:00:46.800] 先說話的人說。
 [00:00:47.700 --> 00:00:50.180] That's none of your business, too, said Seven.
+[00:00:47.700 --> 00:00:50.180] 那也不關你的事，七號說。
 [00:00:51.100 --> 00:00:54.500] Yes, it is his business, said Five, and I'll tell him.
+[00:00:51.100 --> 00:00:54.500] 是的，這是他的事，五號說，我會告訴他。
 [00:00:54.760 --> 00:00:57.820] It was for bringing the cooked tulip roots instead of onions.
+[00:00:54.760 --> 00:00:57.820] 這是為了帶來煮熟的鬱金香根而不是洋蔥。
 [00:00:59.340 --> 00:01:01.920] Seven flung down his brush, and had just begun.
+[00:00:59.340 --> 00:01:01.920] 七人扔下刷子，才剛剛開始。
 [00:01:02.360 --> 00:01:04.520] Well, of all the unjust things!
+[00:01:02.360 --> 00:01:04.520] 好吧，所有不公正的事情！
 [00:01:04.900 --> 00:01:10.840] When his eye chanced to fall upon Alice, as she stood watching them, and he checked himself suddenly.
+[00:01:04.900 --> 00:01:10.840] 當他的眼睛碰巧落在愛麗絲身上時，她站在那裡看著他們，他突然檢查了一下自己。
 [00:01:11.220 --> 00:01:14.440] The others looked round also, and all of them bowed low.
+[00:01:11.220 --> 00:01:14.440] 其他人也看了看四周，全都低着頭。
 [00:01:15.520 --> 00:01:20.500] Would you tell me, said Alice, a little timidly, why you are painting those roses?
+[00:01:15.520 --> 00:01:20.500] 愛麗絲有點膽怯地說，你能告訴我你為什麼要畫那些玫瑰嗎？
 [00:01:22.300 --> 00:01:24.920] Five and Seven said nothing, but looked at Two.
+[00:01:22.300 --> 00:01:24.920] 五七什麼也沒說，只是看着二。
 [00:01:25.600 --> 00:01:27.340] Two began in a low voice.
+[00:01:25.600 --> 00:01:27.340] 兩人低聲說道。
 [00:01:27.920 --> 00:01:34.700] Why, the fact is, you see, Miss, this here ought to have been a red rose tree, and we put a white one in by mistake,
+[00:01:27.920 --> 00:01:34.700] 事實上，小姐，這裡應該是一棵紅玫瑰樹，我們錯放了一棵白玫瑰樹
 [00:01:34.860 --> 00:01:38.960] and if the queen was to find it out, we should all have our heads cut off, you know.
+[00:01:34.860 --> 00:01:38.960] 如果女王發現了，我們都應該被砍掉頭，你知道的
 [00:01:39.260 --> 00:01:42.380] So, you see, Miss, we're doing our best, afore she comes, too.
+[00:01:39.260 --> 00:01:42.380] 所以，你看，小姐，在她來之前，我們也在盡力而為。
 [00:01:43.280 --> 00:01:49.440] At this moment Five, who had been anxiously looking across the garden, called out, The Queen! The Queen!
+[00:01:43.280 --> 00:01:49.440] 此時此刻，焦急地望着花園的另一面，五人喊道：女王！女王！
 [00:01:49.760 --> 00:01:53.900] and the three gardeners instantly threw themselves flat upon their faces.
+[00:01:49.760 --> 00:01:53.900] 三個園丁立刻把自己平放在臉上
 [00:01:54.420 --> 00:01:59.220] There was a sound of many footsteps, and Alice looked round, eager to see the Queen.
+[00:01:54.420 --> 00:01:59.220] 有許多腳步聲，愛麗絲環顧四周，渴望見到女王。
 [00:02:00.580 --> 00:02:03.060] First came ten soldiers carrying clubs.
+[00:02:00.580 --> 00:02:03.060] 首先是十個拿著棍棒的士兵
 [00:02:03.280 --> 00:02:11.860] These were all shaped like the three gardeners, oblong and flat, with their hands and feet at the corners. Next, the ten courtiers.
+[00:02:03.280 --> 00:02:11.860] 他們的形狀都像三個園丁，橢圓形和平坦，手腳在角落裡。接下來是十臣。
 [00:02:12.140 --> 00:02:17.180] These were ornamented all over with diamonds, and walked two and two, as the soldiers did.
+[00:02:12.140 --> 00:02:17.180] 這些裝飾到處都是鑽石，像士兵一樣走過兩個和兩個。
 [00:02:18.520 --> 00:02:20.480] After these came the royal children.
+[00:02:18.520 --> 00:02:20.480] 接下來是王室兒童
 [00:02:20.720 --> 00:02:26.200] There were ten of them, and the little deers came jumping merrily along, hand in hand, in couples.
+[00:02:20.720 --> 00:02:26.200] 他們有十個人，小鹿們手牽手，快樂地跳著。
 [00:02:26.540 --> 00:02:28.620] They were all ornamented with hearts.
+[00:02:26.540 --> 00:02:28.620] 它們都裝飾著愛心。
 [00:02:29.600 --> 00:02:35.900] Next came the guests, mostly kings and queens, and among them Alice recognized the White Rabbit.
+[00:02:29.600 --> 00:02:35.900] 接下來是客人，主要是國王和王後，其中愛麗絲認出了白兔。
 [00:02:36.100 --> 00:02:42.200] It was talking in a hurried, nervous manner, smiling at everything that was said, and went by without noticing her.
+[00:02:36.100 --> 00:02:42.200] 它說話匆忙、緊張，對所說的一切微笑，沒有注意到她就過去了。
 [00:02:43.180 --> 00:02:48.280] Then followed the knave of hearts, carrying the king's crown on a crimson velvet cushion.
+[00:02:43.180 --> 00:02:48.280] 然後跟著紅心騎士，用深紅色天鵝絨墊子扛著國王的王冠。
 [00:02:48.680 --> 00:02:53.460] And, last of all this grand procession came, the King and Queen of Hearts.
+[00:02:48.680 --> 00:02:53.460] 最後，這場盛大的遊行來了，紅心國王和紅心皇後。
 [00:02:55.000 --> 00:03:00.040] Alice was rather doubtful whether she ought not to lie down on her face like the three gardeners,
+[00:02:55.000 --> 00:03:00.040] 愛麗絲相當懷疑她是否應該像三個園丁一樣躺在臉上
 [00:03:00.040 --> 00:03:03.940] but she could not remember ever having heard of such a rule at processions.
+[00:03:00.040 --> 00:03:03.940] 但她不記得在遊行中聽過這樣的規則
 [00:03:04.320 --> 00:03:11.140] And, besides, what would be the use of a procession, thought she, if people had all to lie down upon their faces,
+[00:03:04.320 --> 00:03:11.140] 此外，她認為，如果人們都躺在他們的臉上，那麼遊行又有什麼用呢？
 [00:03:11.340 --> 00:03:12.640] so that they couldn't see it?
+[00:03:11.340 --> 00:03:12.640] 讓他們看不到嗎？
 [00:03:13.420 --> 00:03:15.960] So she stood still where she was, and waited.
+[00:03:13.420 --> 00:03:15.960] 所以她站在原地不動，等待著。
 [00:03:17.700 --> 00:03:25.200] When the procession came opposite to Alice, they all stopped, and looked at her, and the Queen said severely, Who is this?
+[00:03:17.700 --> 00:03:25.200] 當遊行隊伍來到愛麗絲對面時，他們都停下來，看著她，女王嚴厲地說：「這是誰？」
 [00:03:26.060 --> 00:03:30.160] She said it to the knave of hearts, who only bowed and smiled in reply.
+[00:03:26.060 --> 00:03:30.160] 她對著心靈的無賴說道，他只是鞠躬並微笑著回應。
 [00:03:31.700 --> 00:03:34.620] Idiot, said the Queen, tossing her head impatiently.
+[00:03:31.700 --> 00:03:34.620] 白癡，女王不耐煩地搖頭說。
 [00:03:35.180 --> 00:03:39.540] And, turning to Alice, she went on. What's your name, child?
+[00:03:35.180 --> 00:03:39.540] 然後轉向愛麗絲，她繼續說。你叫什麼名字，孩子？
 [00:03:40.980 --> 00:03:45.100] My name is Alice, so please your majesty, said Alice very politely.
+[00:03:40.980 --> 00:03:45.100] 我叫愛麗絲，所以請陛下，愛麗絲非常有禮貌地說。
 [00:03:45.400 --> 00:03:50.560] But she added to herself, Why, they're only a pack of cards, after all.
+[00:03:45.400 --> 00:03:50.560] 但她補充說，畢竟它們只是一包卡片。
 [00:03:50.800 --> 00:03:54.740] I needn't be afraid of them. And who are these?
+[00:03:50.800 --> 00:03:54.740] 我不必害怕他們。這些是誰？
 [00:03:55.060 --> 00:03:59.060] said the Queen, pointing to the three gardeners, who were lying round the rose -tree.
+[00:03:55.060 --> 00:03:59.060] 女王指著躺在玫瑰樹周圍的三個園丁說。
 [00:03:59.200 --> 00:04:07.560] For, you see, as they were lying on their faces, and the pattern on their backs was the same as the rest of the pack, she could not tell whether they were gardeners,
+[00:03:59.200 --> 00:04:07.560] 因為，你看，當他們躺在臉上，背上的圖案與其餘的背包一樣時，她無法分辨他們是否是園丁，
 [00:04:07.640 --> 00:04:12.980] or soldiers, or courtiers, or three of her own children. How should I know?
+[00:04:07.640 --> 00:04:12.980] 或士兵，或朝臣，或她自己的三個孩子我怎麼知道？
 [00:04:13.060 --> 00:04:17.340] said Alice, surprised at her own courage. It's no business of mine.
+[00:04:13.060 --> 00:04:17.340] 愛麗絲說，對自己的勇氣感到驚訝。這不關我的事。
 [00:04:18.500 --> 00:04:28.820] The Queen turned crimson with fury, and, after glaring at her for a moment, like a wild beast, screamed, Off with her head! Off! Nonsense!
+[00:04:18.500 --> 00:04:28.820] 女王憤怒地變成了深紅色，在瞪了她一會兒之後，像野獸一樣尖叫起來，砍下她的頭！滾開！胡說八道！
 [00:04:29.220 --> 00:04:33.220] said Alice very loudly and decidedly, and the Queen was silent.
+[00:04:29.220 --> 00:04:33.220] 愛麗絲非常大聲而果斷地說，女王沉默了。
 [00:04:34.400 --> 00:04:37.400] The King laid his hand upon her arm, and timidly said,
+[00:04:34.400 --> 00:04:37.400] 國王把手放在她的胳膊上，膽怯地說：
 [00:04:38.240 --> 00:04:40.840] Consider, my dear, she is only a child.
+[00:04:38.240 --> 00:04:40.840] 想想看，親愛的，她只是個孩子。
 [00:04:42.100 --> 00:04:46.660] The Queen turned angrily away from him, and said to the Knave, Turn them over.
+[00:04:42.100 --> 00:04:46.660] 女王憤怒地轉身離開他，對無賴說，把他們翻過來。
 [00:04:47.400 --> 00:04:51.880] The Knave did so very carefully, with one foot. Get up!
+[00:04:47.400 --> 00:04:51.880] 無賴用一隻腳小心翼翼地這樣做，起來！
 [00:04:52.000 --> 00:05:05.160] said the Queen, in a shrill, loud voice, and the three gardeners instantly jumped up, and began bowing to the King, the Queen, the Royal Children, and everybody else. Leave off that! screamed the Queen. You make me giddy!
+[00:04:52.000 --> 00:05:05.160] 王後尖銳而大聲地說，三個園丁立刻跳起來，開始向國王、王後、皇室兒童和其他人鞠躬。別說了！女王尖叫起來。你讓我頭暈！
 [00:05:05.160 --> 00:05:08.520] And then, turning to the rose -tree, she went on.
+[00:05:05.160 --> 00:05:08.520] 然後，她轉向玫瑰樹，繼續說下去。
 [00:05:08.880 --> 00:05:10.720] What have you been doing here?
+[00:05:08.880 --> 00:05:10.720] 你在這裡做甚麼？
 [00:05:11.920 --> 00:05:21.120] May it please your Majesty, said Two, in a very humble tone, going down on one knee as he spoke. We were trying. I see!
+[00:05:11.920 --> 00:05:21.120] 二陛下說道，他說話時用非常謙卑的語氣單膝下跪。我們在嘗試，我明白了！
 [00:05:21.280 --> 00:05:25.880] said the Queen, who had meanwhile been examining the roses. Off with their heads!
+[00:05:21.280 --> 00:05:25.880] 女王說，她同時也在檢查玫瑰。砍掉他們的頭！
 [00:05:26.440 --> 00:05:32.800] And the procession moved on, three of the soldiers remaining behind, to execute the unfortunate gardeners,
+[00:05:26.440 --> 00:05:32.800] 遊行隊伍繼續前進，剩下三名士兵，處決不幸的園丁
 [00:05:32.900 --> 00:05:37.600] who ran to Alice for protection. You shan't be beheaded!
+[00:05:32.900 --> 00:05:37.600] 他跑到愛麗絲那裡尋求保護你不會被斬首的！
 [00:05:37.800 --> 00:05:41.560] said Alice, and she put them into a large flower -pot that stood near.
+[00:05:37.800 --> 00:05:41.560] 愛麗絲說，她把它們放進一個大花盆裡，放在旁邊。
 [00:05:42.180 --> 00:05:52.600] The three soldiers wandered about for a minute or two, looking for them, and then quietly marched off after the others. Are their heads off? shouted the Queen.
+[00:05:42.180 --> 00:05:52.600] 三名士兵徘徊了一兩分鐘，尋找他們，然後悄悄地跟著其他人走了。他們瘋了嗎？女王喊道。
 [00:05:53.780 --> 00:06:01.280] Their heads are gone, if it please your Majesty, the soldiers shouted in reply. That's right! shouted the Queen. Can you play croquet?
+[00:05:53.780 --> 00:06:01.280] 他們的頭不見了，如果陛下願意的話，士兵們大聲喊道。沒錯！女王喊道。你可以玩槌球嗎？
 [00:06:02.560 --> 00:06:12.480] The soldiers were silent, and looked at Alice, as the question was evidently meant for her. Yes! shouted Alice. Come on, then!
+[00:06:02.560 --> 00:06:12.480] 士兵們沉默不語，看著愛麗絲，因為這個問題顯然是針對她的。是的！愛麗絲喊道，那來吧！
 [00:06:12.720 --> 00:06:22.520] roared the Queen, and Alice joined the procession, wondering very much what would happen next. It's... it's a very fine day!
+[00:06:12.720 --> 00:06:22.520] 女王咆哮著，愛麗絲加入了遊行隊伍，非常想知道接下來會發生甚麼事。這是…非常晴朗的一天！
 [00:06:22.800 --> 00:06:24.440] said a timid voice at her side.
+[00:06:22.800 --> 00:06:24.440] 旁邊有個膽小的聲音說。
 [00:06:24.680 --> 00:06:34.120] She was walking by the white rabbit, who was peeping anxiously into her face. Very! said Alice. Where's the Duchess? Hush! hush!
+[00:06:24.680 --> 00:06:34.120] 她正從白兔身邊走過，白兔焦急地窺視著她的臉。非常好！愛麗絲說，公爵夫人在哪裡？噓！噓！
 [00:06:34.280 --> 00:06:36.380] said the rabbit, in a low, hurried tone.
+[00:06:34.280 --> 00:06:36.380] 兔子用低沉、匆忙的語氣說道。
 [00:06:36.840 --> 00:06:49.260] He looked anxiously over his shoulder as he spoke, and then raised himself upon tiptoe, put his mouth close to her ear, and whispered, She's under sentence of execution! What for? said Alice.
+[00:06:36.840 --> 00:06:49.260] 他說話時焦急地擡頭看著肩膀，然後腳尖擡起身來，嘴巴靠近她的耳朵，低聲說：她被判處死刑了！「為什麼？」愛麗絲說。
 [00:06:50.040 --> 00:06:55.220] Did you say, What a pity? the rabbit asked. No, I didn't, said Alice.
+[00:06:50.040 --> 00:06:55.220] 你說，可惜嗎？兔子問。不，我沒有，愛麗絲說。
 [00:06:55.380 --> 00:07:02.700] I don't think it's at all a pity. I said, What for? She boxed the Queen's ears! the rabbit began.
+[00:06:55.380 --> 00:07:02.700] 我覺得這一點都不可惜。我說，為甚麼？她塞住了女王的耳朵！兔子開始了。
 [00:07:03.620 --> 00:07:06.940] Alice gave a little scream of laughter. Oh, hush!
+[00:07:03.620 --> 00:07:06.940] 愛麗絲大笑了一聲。噢，安靜！
 [00:07:07.080 --> 00:07:10.460] the rabbit whispered, in a frightened tone. The Queen will hear you.
+[00:07:07.080 --> 00:07:10.460] 兔子驚恐地低聲道。女王會聽到你的。
 [00:07:10.660 --> 00:07:15.460] You see, she came rather late, and the Queen said, Get to your places!
+[00:07:10.660 --> 00:07:15.460] 你看，她來得很晚，女王說，回去你的地方！
 [00:07:15.760 --> 00:07:22.300] shouted the Queen, in a voice of thunder, and people began running about in all directions, tumbling up against each other.
+[00:07:15.760 --> 00:07:22.300] 女王用雷鳴般的聲音喊道，人們開始四處奔跑，互相衝撞。
 [00:07:22.300 --> 00:07:26.440] However, they got settled down in a minute or two, and the game began.
+[00:07:22.300 --> 00:07:26.440] 然而，他們在一兩分鐘內就安頓下來，遊戲開始了。
 [00:07:27.860 --> 00:07:32.320] Alice thought she had never seen such a curious croquet ground in her life.
+[00:07:27.860 --> 00:07:32.320] 愛麗絲以為她一生中從未見過這麼奇怪的槌球場。
 [00:07:32.680 --> 00:07:38.720] It was all ridges and furrows, the balls were live hedgehogs, the mallets live flamingos,
+[00:07:32.680 --> 00:07:38.720] 都是山脊和溝溝，球是活刺蝟，木槌是活火烈鳥
 [00:07:38.860 --> 00:07:44.180] and the soldiers had to double themselves up, and to stand on their hands and feet, to make the arches.
+[00:07:38.860 --> 00:07:44.180] 士兵們必須翻身，用手腳站立，才能造出拱門。
 [00:07:45.520 --> 00:07:49.840] The chief difficulty Alice found at first was in managing her flamingo.
+[00:07:45.520 --> 00:07:49.840] 愛麗絲最初發現的主要困難是管理她的火烈鳥。
 [00:07:49.840 --> 00:07:56.080] She succeeded in getting its body tucked away comfortably enough under her arm, with its legs hanging down.
+[00:07:49.840 --> 00:07:56.080] 她成功地將它的身體舒適地藏在胳膊下，雙腿垂下。
 [00:07:56.380 --> 00:08:03.180] But generally, just as she had got its neck nicely straightened out, and was going to give the hedgehog a blow with its head,
+[00:07:56.380 --> 00:08:03.180] 但總的來說，就像她把脖子挺直，並且要用頭部打刺蝟一樣
 [00:08:03.360 --> 00:08:09.140] it would twist itself round, and look up into her face, with such a puzzled expression,
+[00:08:03.360 --> 00:08:09.140] 它會扭轉自己，擡頭看著她的臉，表情如此困惑
 [00:08:09.340 --> 00:08:11.280] that she could not help bursting out laughing.
+[00:08:09.340 --> 00:08:11.280] 她忍不住大笑起來
 [00:08:11.740 --> 00:08:19.100] And when she had got its head down, and was going to begin again, it was very provoking to find that the hedgehog had unrolled itself,
+[00:08:11.740 --> 00:08:19.100] 當她低下頭，準備重新開始時，發現刺蝟已經展開了自己，這非常激動人心
 [00:08:19.280 --> 00:08:21.200] and was in the act of crawling away.
+[00:08:19.280 --> 00:08:21.200] 並在爬行的過程中
 [00:08:22.260 --> 00:08:28.440] Besides all this, there was generally a ridge or furrow in the way, wherever she wanted to send the hedgehog to,
+[00:08:22.260 --> 00:08:28.440] 除此之外，無論她想把刺蝟送到哪裡，路上通常都有一個山脊或溝，
 [00:08:28.720 --> 00:08:33.860] and as the doubled -up soldiers were always getting up and walking off to other parts of the ground,
+[00:08:28.720 --> 00:08:33.860] 由於加倍的士兵總是站起來走到地面的其他部分
 [00:08:34.500 --> 00:08:38.560] Alice soon came to the conclusion that it was a very difficult game, indeed.
+[00:08:34.500 --> 00:08:38.560] 愛麗絲很快就得出結論，這確實是一場非常艱難的比賽。
 [00:08:40.120 --> 00:08:46.620] The players all played at once without waiting for turns, quarrelling all the while, and fighting for the hedgehogs,
+[00:08:40.120 --> 00:08:46.620] 玩家無需等待輪流，一直爭吵，並為刺蝟而戰
 [00:08:46.700 --> 00:08:52.000] and in a very short time the Queen was in a furious passion, and went stamping about,
+[00:08:46.700 --> 00:08:52.000] 在很短的時間內，女王充滿了憤怒的激情，跺著腳走來走去
 [00:08:52.260 --> 00:08:57.520] and shouting, Off with his head! or Off with her head! about once a minute.
+[00:08:52.260 --> 00:08:57.520] 然後大喊「砍掉他的頭！或砍掉她的頭！大約每分鐘一次」
 [00:08:58.960 --> 00:09:01.220] Alice began to feel very uneasy.
+[00:08:58.960 --> 00:09:01.220] 愛麗絲開始覺得很不自在。
 [00:09:01.620 --> 00:09:07.900] To be sure, she had not as yet had any dispute with the Queen, but she knew that it might happen any minute.
+[00:09:01.620 --> 00:09:07.900] 可以肯定的是，她還沒有與女王有任何爭執，但她知道這可能隨時會發生。
 [00:09:08.520 --> 00:09:11.800] And then, thought she, what would become of me?
+[00:09:08.520 --> 00:09:11.800] 然後，她想，我會怎麼樣？
 [00:09:11.980 --> 00:09:14.400] They're dreadfully fond of beheading people here.
+[00:09:11.980 --> 00:09:14.400] 他們非常喜歡在這裡斬首。
 [00:09:14.620 --> 00:09:17.600] The great wonder is that there's anyone left alive.
+[00:09:14.620 --> 00:09:17.600] 奇妙的是，竟然還有人活著。
 [00:09:18.760 --> 00:09:24.480] She was looking about for some way of escape, and wondering whether she could get away without being seen,
+[00:09:18.760 --> 00:09:24.480] 她在四處尋找逃跑的方法，並懷疑自己是否能在不被看見的情況下逃脫，
 [00:09:24.720 --> 00:09:27.040] when she noticed a curious appearance in the air.
+[00:09:24.720 --> 00:09:27.040] 當她注意到空中出現一種奇怪的外表時
 [00:09:27.520 --> 00:09:33.340] It puzzled her very much at first, but after watching it a minute or two, she made it out to be a grin,
+[00:09:27.520 --> 00:09:33.340] 起初她很困惑，但在看了一兩分鐘後，她笑了，
 [00:09:33.500 --> 00:09:36.740] and she said to herself, It's the Cheshire Cat.
+[00:09:33.500 --> 00:09:36.740] 她對自己說，是柴郡貓
 [00:09:37.000 --> 00:09:41.860] Now I shall have somebody to talk to. How are you getting on?
+[00:09:37.000 --> 00:09:41.860] 現在我要找人談談。你過得怎麼樣？
 [00:09:41.940 --> 00:09:45.520] said the cat, as soon as there was mouth enough for it to speak with.
+[00:09:41.940 --> 00:09:45.520] 貓說，只要有足夠的嘴巴與它說話。
 [00:09:46.820 --> 00:09:50.120] Alice waited till the eyes appeared, and then nodded.
+[00:09:46.820 --> 00:09:50.120] 愛麗絲等到眼睛出現，然後點了點頭。
 [00:09:51.100 --> 00:09:56.060] It's no use speaking to it, she thought, till its ears have come, or at least one of them.
+[00:09:51.100 --> 00:09:56.060] 她想，在它的耳朵或至少其中一個耳朵出現之前，跟它說話是沒有用的。
 [00:09:57.280 --> 00:10:03.640] In another minute, the whole head appeared, and then Alice put down her flamingo, and began an account of the game,
+[00:09:57.280 --> 00:10:03.640] 再過一分鐘，整個頭都出現了，然後愛麗絲放下她的火烈鳥，開始記錄遊戲。
 [00:10:03.920 --> 00:10:06.240] feeling very glad she had someone to listen to her.
+[00:10:03.920 --> 00:10:06.240] 感覺非常高興她有別人聽她說話
 [00:10:06.820 --> 00:10:11.800] The cat seemed to think that there was enough of it now in sight, and no more of it appeared.
+[00:10:06.820 --> 00:10:11.800] 貓似乎認為眼前已經有足夠的了，再也沒有出現。
 [00:10:13.300 --> 00:10:18.600] I don't think they play at all fairly, Alice began, in rather a complaining tone,
+[00:10:13.300 --> 00:10:18.600] 我不認為他們打得不公平，愛麗絲開始用一種抱怨的語氣
 [00:10:18.700 --> 00:10:33.100] and they all quarrel so dreadfully one can't hear oneself speak, and they don't seem to have any rules in particular, at least, if there are, nobody attends to them, and you've no idea how confusing it is, all the things being alive.
+[00:10:18.700 --> 00:10:33.100] 他們都吵得很厲害，聽不到自己說話，他們似乎沒有任何特別的規則，至少，如果有的話，沒有人參加他們，你不知道這是多麼令人困惑，所有的東西都是活的。
 [00:10:33.360 --> 00:10:38.460] For instance, there's the arch I've got to go through next, walking about at the other end of the ground,
+[00:10:33.360 --> 00:10:38.460] 例如，我接下來要經過的拱門，在地面的另一端走來走去
 [00:10:39.020 --> 00:10:44.640] and I should have croqueted the queen's hedgehog just now, only it ran away when it saw mine coming.
+[00:10:39.020 --> 00:10:44.640] 我剛才應該槌球女王的刺蝟，但當它看到我的刺蝟來時就跑了
 [00:10:45.960 --> 00:10:47.300] How do you like the queen?
+[00:10:45.960 --> 00:10:47.300] 你喜歡女王嗎？
 [00:10:47.460 --> 00:10:53.320] said the cat, in a low voice. Not at all, said Alice. She's so extremely...
+[00:10:47.460 --> 00:10:53.320] 貓低聲說。完全沒有，愛麗絲說。她真是太……
 [00:10:54.800 --> 00:10:59.680] Just then she noticed that the queen was close behind her, listening, so she went on.
+[00:10:54.800 --> 00:10:59.680] 就在這時，她注意到女王就在她身後，聽著，所以她繼續說下去。
 [00:11:00.440 --> 00:11:04.060] Likely to win, that it's hardly worth while finishing the game.
+[00:11:00.440 --> 00:11:04.060] 很可能贏，在完成遊戲時幾乎不值得。
 [00:11:05.100 --> 00:11:10.000] The queen smiled, and passed on. Who are you talking to?
+[00:11:05.100 --> 00:11:10.000] 王後微笑着走開了。你在跟誰說話？
 [00:11:10.120 --> 00:11:14.620] said the king, going up to Alice, and looking at the cat's head with great curiosity.
+[00:11:10.120 --> 00:11:14.620] 國王說，走到愛麗絲面前，好奇地看著貓的頭。
 [00:11:15.780 --> 00:11:20.480] It's a friend of mine, a Cheshire cat, said Alice. Allow me to introduce it.
+[00:11:15.780 --> 00:11:20.480] 這是我的一個朋友，一隻柴郡貓，愛麗絲說。請允許我介紹一下。
 [00:11:21.640 --> 00:11:24.240] I don't like the look of it at all, said the king.
+[00:11:21.640 --> 00:11:24.240] 我完全不喜歡它的樣子，國王說。
 [00:11:24.520 --> 00:11:26.880] However, it may kiss my hand if it likes.
+[00:11:24.520 --> 00:11:26.880] 但是，如果它喜歡，它可能會親吻我的手。
 [00:11:28.100 --> 00:11:30.340] I'd rather not, the cat remarked.
+[00:11:28.100 --> 00:11:30.340] 我寧願不要，貓說。
 [00:11:31.320 --> 00:11:34.480] Don't be impertinent, said the king, and don't look at me like that.
+[00:11:31.320 --> 00:11:34.480] 國王說，不要無禮，不要這樣看著我。
 [00:11:35.000 --> 00:11:36.920] He got behind Alice as he spoke.
+[00:11:35.000 --> 00:11:36.920] 他一邊說話一邊跟在愛麗絲身後。
 [00:11:37.800 --> 00:11:40.120] A cat may look at a king, said Alice.
+[00:11:37.800 --> 00:11:40.120] 愛麗絲說：「貓也許會看國王。」
 [00:11:40.340 --> 00:11:43.140] I've read that in some book, but I don't remember where.
+[00:11:40.340 --> 00:11:43.140] 我在一些書上讀過，但我不記得在哪裡。
 [00:11:44.440 --> 00:11:50.500] Well, it must be removed, said the king, very decidedly, and he called the queen, who was passing at the moment.
+[00:11:44.440 --> 00:11:50.500] 國王非常果斷地說，它必須被移除，他打電話給當時正在路過的王後。
 [00:11:50.960 --> 00:11:53.840] My dear, I wish you would have this cat removed.
+[00:11:50.960 --> 00:11:53.840] 親愛的，我希望你能把這隻貓移走。
 [00:11:55.160 --> 00:11:59.540] The queen had only one way of settling all difficulties, great or small.
+[00:11:55.160 --> 00:11:59.540] 女王只有一種方法來解決所有困難，無論大小。
 [00:12:00.180 --> 00:12:03.140] Off with his head, she said, without even looking round.
+[00:12:00.180 --> 00:12:03.140] 她說，砍掉他的頭，甚至連看都不看一眼。
 [00:12:04.300 --> 00:12:08.560] I'll fetch the executioner myself, said the king eagerly, and he hurried off.
+[00:12:04.300 --> 00:12:08.560] 國王急切地說，我自己去找劊子手，他就匆匆離開了。
 [00:12:10.080 --> 00:12:17.720] Alice thought she might as well go back and see how the game was going on, as she heard the queen's voice in the distance, screaming with passion.
+[00:12:10.080 --> 00:12:17.720] 愛麗絲認為她不妨回去看看比賽進行得如何，因為她聽到遠處女王的聲音，激情地尖叫。
 [00:12:18.340 --> 00:12:25.800] She had already heard her sentence three of the players to be executed for having missed their turns, and she did not like the look of things at all,
+[00:12:18.340 --> 00:12:25.800] 她已經聽到三名因錯過輪流而被處決的球員的句子，她根本不喜歡事情的樣子，
 [00:12:25.980 --> 00:12:30.180] as the game was in such confusion that she never knew whether it was her turn or not.
+[00:12:25.980 --> 00:12:30.180] 因為遊戲如此混亂，以至於她永遠不知道輪到她了
 [00:12:30.540 --> 00:12:32.560] So she went in search of her hedgehog.
+[00:12:30.540 --> 00:12:32.560] 所以她去找她的刺蝟
 [00:12:34.060 --> 00:12:42.120] The hedgehog was engaged in a fight with another hedgehog, which seemed to Alice an excellent opportunity for croqueting one of them with the other.
+[00:12:34.060 --> 00:12:42.120] 刺蝟與另一隻刺蝟搏鬥，在愛麗絲看來，這是與其中一隻槌球的絕佳機會。
 [00:12:42.420 --> 00:12:51.660] The only difficulty was that her flamingo was gone across to the other side of the garden, where Alice could see it trying, in a helpless sort of way, to fly up into a tree.
+[00:12:42.420 --> 00:12:51.660] 唯一的困難是她的火烈鳥飛到了花園的另一邊，愛麗絲可以看到它試圖以一種無助的方式飛到一棵樹上。
 [00:12:52.820 --> 00:12:59.060] By the time she had caught the flamingo and brought it back, the fight was over, and both the hedgehogs were out of sight.
+[00:12:52.820 --> 00:12:59.060] 當她抓住火烈鳥並把它帶回來時，戰鬥結束了，兩隻刺蝟都消失在視線之外。
 [00:12:59.960 --> 00:13:05.460] But it doesn't matter much, thought Alice, as all the arches are gone from this side of the ground.
+[00:12:59.960 --> 00:13:05.460] 但這並不重要，愛麗絲想，因為所有的拱門都從地面這邊消失了。
 [00:13:06.580 --> 00:13:13.180] So she tucked it away under her arm, that it might not escape again, and went back for a little more conversation with her friend.
+[00:13:06.580 --> 00:13:13.180] 所以她把它藏在胳膊下面，以免它再次逃脫，然後回去和她的朋友多聊了幾句。
 [00:13:14.360 --> 00:13:20.120] When she got back to the Cheshire Cat, she was surprised to find quite a large crowd collected round it.
+[00:13:14.360 --> 00:13:20.120] 當她回到柴郡貓時，她驚訝地發現一大羣人聚集在它周圍。
 [00:13:20.280 --> 00:13:26.100] There was a dispute going on between the executioner, the king, and the queen, who were all talking at once,
+[00:13:20.280 --> 00:13:26.100] 劊子手、國王和王後之間發生了爭執，他們都在說話
 [00:13:26.320 --> 00:13:30.140] while all the rest were quite silent, and looked very uncomfortable.
+[00:13:26.320 --> 00:13:30.140] 而其餘的都很安靜，看起來很不舒服
 [00:13:31.440 --> 00:13:38.340] The moment Alice appeared, she was appealed to by all three to settle the question, and they repeated their arguments to her,
+[00:13:31.440 --> 00:13:38.340] 愛麗絲出現的那一刻，三個人都呼籲她解決這個問題，他們向她重複了他們的論點，
 [00:13:38.520 --> 00:13:44.120] though, as they all spoke at once, she found it very hard indeed to make out exactly what they said.
+[00:13:38.520 --> 00:13:44.120] 儘管如此，當他們同時說話時，她發現很難準確理解他們說的話
 [00:13:45.400 --> 00:13:51.340] The executioner's argument was that you couldn't cut off a head unless there was a body to cut it off from,
+[00:13:45.400 --> 00:13:51.340] 劊子手的論點是，除非有一具屍體可以砍下頭部，否則你無法砍下頭部
 [00:13:51.560 --> 00:13:57.040] that he had never had to do such a thing before, and he wasn't going to begin at his time of life.
+[00:13:51.560 --> 00:13:57.040] 他以前從未做過這樣的事情，而且他不會在他有生之年開始。
 [00:13:58.680 --> 00:14:05.220] The king's argument was that anything that had a head could be beheaded, and that you weren't to talk nonsense.
+[00:13:58.680 --> 00:14:05.220] 國王的論點是，任何有頭的東西都可能被斬首，而且你不能胡說八道。
 [00:14:06.600 --> 00:14:13.520] The queen's argument was that if something wasn't done about it in less than no time, she'd have everybody executed all round.
+[00:14:06.600 --> 00:14:13.520] 女王的論點是，如果沒有在很短的時間內對此採取行動，她會讓每個人都被處決。
 [00:14:14.360 --> 00:14:19.080] It was this last remark that had made the whole party look so grave and anxious.
+[00:14:14.360 --> 00:14:19.080] 正是這最後一句話，讓全黨看起來如此嚴肅和焦慮。
 [00:14:20.680 --> 00:14:22.720] Alice could think of nothing else to say, but,
+[00:14:20.680 --> 00:14:22.720] 愛麗絲想不出甚麼要說的，但是
 [00:14:23.320 --> 00:14:26.540] it belongs to the duchess, you'd better ask her about it.
+[00:14:23.320 --> 00:14:26.540] 它屬於公爵夫人，你最好問問她
 [00:14:27.400 --> 00:14:31.240] She's in prison, the queen said to the executioner, fetch her here.
+[00:14:27.400 --> 00:14:31.240] 她在監獄裡，女王對劊子手說，把她帶到這裡來。
 [00:14:32.360 --> 00:14:35.060] And the executioner went off like an arrow.
+[00:14:32.360 --> 00:14:35.060] 劊子手像箭一樣飛走了。
 [00:14:36.460 --> 00:14:42.700] The cat's head began fading away the moment he was gone, and by the time he had come back with the duchess,
+[00:14:36.460 --> 00:14:42.700] 貓的頭在他離開的那一刻開始消失，當他帶著公爵夫人回來時，
 [00:14:42.700 --> 00:14:49.780] it had entirely disappeared, so the king and the executioner ran wildly up and down looking for it,
+[00:14:42.700 --> 00:14:49.780] 它完全消失了，所以國王和劊子手瘋狂地跑來跑去尋找它
 [00:14:49.980 --> 00:14:52.980] while the rest of the party went back to the game.
+[00:14:49.980 --> 00:14:52.980] 而隊伍的其餘成員又回到了比賽中
 [00:14:55.370 --> 00:15:01.710] End of chapter 8 Read by Kara Schallenberg March 2010 In San Diego, California
+[00:14:55.370 --> 00:15:01.710] 第8章結尾由Kara Schallenberg於2010年3月在加利福尼亞州聖地牙哥閱讀

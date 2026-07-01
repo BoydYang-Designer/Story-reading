@@ -1,9 +1,18 @@
 [00:00:00.000 --> 00:00:05.900] Have you ever had to compromise a creative idea to meet safety regulations or mechanical limitations?
+[00:00:00.000 --> 00:00:05.900] 您是否曾經為了滿足安全法規或機械限制而必須妥協創意？
 [00:00:06.520 --> 00:00:10.820] Yes, I've definitely had to compromise creative ideas for safety.
+[00:00:06.520 --> 00:00:10.820] 是的，為了安全起見，我絕對不得不妥協創意。
 [00:00:11.240 --> 00:00:19.580] For example, in one stroller project, I originally proposed a very slim, minimalistic frame design to make the stroller look lighter and more elegant.
+[00:00:11.240 --> 00:00:19.580] 例如，在一個嬰兒車項目中，我最初提出了一個非常纖薄，簡約的框架設計，使嬰兒車看起來更輕便，更優雅。
 [00:00:19.940 --> 00:00:27.920] However, during early testing, the engineers raised concerns that the slim tubing would not pass the required durability and rollover safety standards.
+[00:00:19.940 --> 00:00:27.920] 然而，在早期測試期間，工程師們擔心薄型管道無法通過所需的耐用性和翻轉安全標準。
 [00:00:27.920 --> 00:00:33.840] Instead of abandoning the idea, I collaborated closely with the engineers to adjust the design.
+[00:00:27.920 --> 00:00:33.840] 我沒有放棄這個想法，而是與工程師密切合作，調整設計。
 [00:00:34.160 --> 00:00:43.620] We reinforced the stress points by using slightly thicker tubing, and the team also suggested either increasing the size of the main joint or adding support tubes to improve structural durability.
+[00:00:34.160 --> 00:00:43.620] 我們通過使用稍厚的管子來加強應力點，團隊還建議增加主接頭的尺寸或添加支撐管以提高結構耐用性。
 [00:00:44.120 --> 00:00:49.380] Another solution we explored was changing the main joint material from plastic to aluminum casting.
+[00:00:44.120 --> 00:00:49.380] 我們探索的另一個解決方案是將主要接頭材料從塑料改為鋁鑄件。
 [00:00:49.800 --> 00:00:55.980] This allowed us to maintain the original joint size and preserve the minimal, stylish look without adding extra tubes.
+[00:00:49.800 --> 00:00:55.980] 這使我們能夠保持原來的關節尺寸，並保持最小，時尚的外觀，而無需添加額外的管子。
 [00:00:55.980 --> 00:01:03.680] This experience reminded me that safety always has to come first, and creativity comes from solving constraints, not ignoring them.
+[00:00:55.980 --> 00:01:03.680] 這次經驗提醒我，安全永遠是第一位的，創造力來自於解決限制，而不是忽略它們。

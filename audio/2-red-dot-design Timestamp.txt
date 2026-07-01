@@ -1,5 +1,10 @@
 [00:00:00.000 --> 00:00:01.940] This stroller separates into two products.
+[00:00:00.000 --> 00:00:01.940] 這款嬰兒車分為兩種產品。
 [00:00:02.160 --> 00:00:07.660] The upper frame becomes a ground seat, and the lower part transforms into a wagon with a hidden handlebar.
+[00:00:02.160 --> 00:00:07.660] 上車架變成地面座椅，下部變成帶有隱藏車把的旅行車。
 [00:00:08.060 --> 00:00:13.680] From a design perspective, the challenge was not only making the mechanism safe, intuitive, and durable,
+[00:00:08.060 --> 00:00:13.680] 從設計的角度來看，挑戰不僅是使機構安全，直觀和耐用，
 [00:00:13.900 --> 00:00:21.600] but also ensuring that when combined, the two parts form a cohesive, aesthetically pleasing product, not just two pieces joined together.
+[00:00:13.900 --> 00:00:21.600] 同時確保兩個部分結合在一起，形成一個有凝聚力、美觀的產品，而不僅僅是兩個部分結合在一起。
 [00:00:21.980 --> 00:00:28.900] The 2025 Red Dot Design Award recognized the project's innovation, usability, and thoughtful design for families.
+[00:00:21.980 --> 00:00:28.900] 2025年紅點設計大獎表彰了該項目的創新性、可用性和為家庭設計的周到設計。

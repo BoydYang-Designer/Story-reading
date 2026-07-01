@@ -1,51 +1,102 @@
 [00:00:00.050 --> 00:00:03.050] There is a question. So there is a cosmological horizon.
+[00:00:00.050 --> 00:00:03.050] 有一個問題。所以有一個宇宙學的視野。
 [00:00:03.230 --> 00:00:04.970] There are different kinds of cosmological horizons.
+[00:00:03.230 --> 00:00:04.970] 有不同種類的宇宙視野。
 [00:00:05.170 --> 00:00:12.590] And it is a very good question, but people don't even know how to phrase it.
+[00:00:05.170 --> 00:00:12.590] 這是一個非常好的問題，但人們甚至不知道如何表達。
 [00:00:13.010 --> 00:00:24.030] But could it be that you can describe the whole universe in terms of a quantum theory living on a boundary of some description?
+[00:00:13.010 --> 00:00:24.030] 但你可以用量子理論來描述整個宇宙嗎？
 [00:00:24.030 --> 00:00:28.550] And I think the guess is yes, the guess.
+[00:00:24.030 --> 00:00:28.550] 我猜是，我猜是。
 [00:00:28.770 --> 00:00:32.330] But we don't even know what we mean by the boundary, right?
+[00:00:28.770 --> 00:00:32.330] 但我們甚至不知道我們所說的邊界是什麼意思，對吧？
 [00:00:32.490 --> 00:00:34.550] It's one of the problems here.
+[00:00:32.490 --> 00:00:34.550] 這是這裡的問題之一。
 [00:00:34.690 --> 00:00:50.630] So the reason that Maldesina was able to show this works for this very specific thing called ADS space is because there's a boundary you can identify in that particular geometry. Geometry.
+[00:00:34.690 --> 00:00:50.630] 因此， Maldesina能夠展示這種方法適用於這個稱為廣告空間的非常具體的東西的原因是因為你可以在特定的幾何圖形中識別出邊界。幾何圖形。
 [00:00:51.230 --> 00:00:54.730] Whereas our universe is de sitta, right? There isn't.
+[00:00:51.230 --> 00:00:54.730] 而我們的宇宙是de sitta ，對吧？沒有。
 [00:00:54.830 --> 00:00:56.870] It's not obvious what you mean by a boundary.
+[00:00:54.830 --> 00:00:56.870] 你所謂的邊界並不明顯。
 [00:00:57.170 --> 00:00:59.070] It's not a really obvious what question.
+[00:00:57.170 --> 00:00:59.070] 這不是一個很明顯的問題
 [00:00:59.970 --> 00:01:02.630] You know, as you said, it's hard to find the words. It is.
+[00:00:59.970 --> 00:01:02.630] 你知道，正如你所說，很難找到單詞，真的
 [00:01:02.770 --> 00:01:04.350] We don't really know what question we're asking.
+[00:01:02.770 --> 00:01:04.350] 我們真的不知道我們在問甚麼問題。
 [00:01:04.350 --> 00:01:23.210] But that rough picture that there could be a theory of a quantum theory somehow, this network of qubits that gives rise to geometry, space, time is accepted broadly.
+[00:01:04.350 --> 00:01:23.210] 但那幅粗略的畫面，也就是可能存在量子理論的理論，這種產生幾何、空間、時間的量子比特網絡被廣泛接受。
 [00:01:23.570 --> 00:01:33.570] But when you try to get into the detail of it, it's only been fully realized for a very specific model, which is kind of a toy model. It's not our universe.
+[00:01:23.570 --> 00:01:33.570] 但是，當你試圖深入了解它的細節時，它只在一個非常具體的模型中完全實現，這是一種玩具模型。這不是我們的宇宙。
 [00:01:33.750 --> 00:01:37.970] So it could be that our universe does not admit that description. Could be. Could be.
+[00:01:33.750 --> 00:01:37.970] 因此，我們的宇宙可能不承認這種描述。可能是，可能是
 [00:01:38.530 --> 00:01:43.390] But it's certainly beyond us at the moment, technically. But it's a wonderful thought.
+[00:01:38.530 --> 00:01:43.390] 但從技術上來說，這當然超出了我們目前的能力範圍。但這是個很棒的想法
 [00:01:43.590 --> 00:01:56.510] And actually, there's a paper recently that so people are beginning to use the Google chip, the Willow chip, which is a very powerful. It's not a quantum computer. It's not a quantum computer.
+[00:01:43.590 --> 00:01:56.510] 事實上，最近有一篇論文，人們開始使用Google芯片， Willow芯片，這是一個非常強大的芯片。它不是量子電腦。它不是量子電腦。
 [00:01:56.510 --> 00:01:58.250] It's a proto quantum computer kind of thing.
+[00:01:56.510 --> 00:01:58.250] 這是一種原始的量子電腦類似的東西
 [00:01:59.030 --> 00:02:08.290] So and people have started to use it because what it is is a load of qubits that you can entangle and you can set it up. And it's very well controlled.
+[00:01:59.030 --> 00:02:08.290] 所以人們開始使用它，因為它是一堆量子比特，你可以糾纏並設置它。而且控制得很好。
 [00:02:08.810 --> 00:02:15.030] So whilst we don't know how to do quantum calculations on the thing, really, what you can do is try to say,
+[00:02:08.810 --> 00:02:15.030] 因此，雖然我們不知道如何對它進行量子計算，但實際上，你可以做的是嘗試說，
 [00:02:15.030 --> 00:02:20.630] well, could I set them up so that it's like space emerges from them?
+[00:02:15.030 --> 00:02:20.630] 我可以設置它們，讓它們像空間一樣出現嗎？
 [00:02:20.830 --> 00:02:30.170] And there was a paper recently where something that was described in the paper as a one dimensional wormhole was made.
+[00:02:20.830 --> 00:02:30.170] 最近有一篇論文，其中描述了一個一維蟲洞的東西。
 [00:02:30.530 --> 00:02:32.570] It wouldn't be in our universe, this thing.
+[00:02:30.530 --> 00:02:32.570] 這東西不會出現在我們的宇宙中。
 [00:02:32.850 --> 00:02:35.670] But it kind of emerged from this structure.
+[00:02:32.850 --> 00:02:35.670] 但它有點是從這種結構中出現的。
 [00:02:35.670 --> 00:02:42.870] And that's the kind of picture we're trying to get to. It's a good paper. It's been peer reviewed. It's a controversial paper.
+[00:02:35.670 --> 00:02:42.870] 這就是我們正在嘗試的圖片這是一篇好論文我們已進行同行審查。這是一篇有爭議的論文
 [00:02:43.010 --> 00:02:44.150] You'll see loads of stuff online.
+[00:02:43.010 --> 00:02:44.150] 你會在網上看到很多東西。
 [00:02:44.530 --> 00:02:46.370] But it's worth looking at those papers.
+[00:02:44.530 --> 00:02:46.370] 但值得看看那些文件
 [00:02:46.630 --> 00:02:49.850] And by the time this is sent out, there might be some other paper.
+[00:02:46.630 --> 00:02:49.850] 當這封信寄出時，可能會有一些其他的紙張。
 [00:02:49.970 --> 00:02:51.310] A lot of people are working on it.
+[00:02:49.970 --> 00:02:51.310] 很多人都在努力。
 [00:02:51.930 --> 00:02:57.030] So on also actually building little clocks, little quantum clocks, tiny clocks,
+[00:02:51.930 --> 00:02:57.030] 所以實際上還建造了小時鐘，小量子時鐘，小時鐘
 [00:02:57.110 --> 00:03:01.650] because we don't even know what a clock is, right, at the most fundamental level, because we don't know what time is.
+[00:02:57.110 --> 00:03:01.650] 因為我們甚至不知道時鐘是什麼，對，在最基本的層面上，因為我們不知道時間是什麼。
 [00:03:01.650 --> 00:03:09.150] So we're talking about very fundamental questions about reality in this research.
+[00:03:01.650 --> 00:03:09.150] 因此，我們在這項研究中討論的是關於現實的非常基本的問題。
 [00:03:09.310 --> 00:03:11.110] But it all came from that, right?
+[00:03:09.310 --> 00:03:11.110] 但這一切都來自於此，對吧？
 [00:03:11.350 --> 00:03:13.070] Which is, how cool is that?
+[00:03:11.350 --> 00:03:13.070] 也就是說，這有多酷？
 [00:03:13.210 --> 00:03:16.230] It came from thinking about those things. It's so cool.
+[00:03:13.210 --> 00:03:16.230] 它來自於對這些事情的思考。太酷了
 [00:03:16.570 --> 00:03:21.290] And thank you for taking that question so seriously. It's a great question. I appreciate it.
+[00:03:16.570 --> 00:03:21.290] 感謝你如此認真地對待這個問題。這是個很好的問題。我很感激。
 [00:03:21.910 --> 00:03:29.890] And I think it's really instructive that neither of us, because nobody has the language.
+[00:03:21.910 --> 00:03:29.890] 我認為我們兩個都沒有，這真的很有啟發性，因為沒有人有這種語言。
 [00:03:29.890 --> 00:03:35.070] When you get into the real detail, you're talking about mathematics, ultimately.
+[00:03:29.890 --> 00:03:35.070] 當你進入真正的細節時，你最終是在談論數學。
 [00:03:35.830 --> 00:03:37.890] And even the mathematics is not complete.
+[00:03:35.830 --> 00:03:37.890] 甚至數學也不完整
 [00:03:38.490 --> 00:03:42.250] So we're talking about research at the cutting edge.
+[00:03:38.490 --> 00:03:42.250] 所以我們談論的是尖端的研究
 [00:03:42.610 --> 00:03:44.410] And it takes a long time.
+[00:03:42.610 --> 00:03:44.410] 這需要很長的時間。
 [00:03:44.730 --> 00:03:47.230] I mean, even quantum mechanics, you think about quantum mechanics.
+[00:03:44.730 --> 00:03:47.230] 我的意思是，即使是量子力學，你也會想到量子力學。
 [00:03:47.350 --> 00:03:53.530] If we were talking about quantum mechanics, this is a hundred -year -old theory that's very well tested and very well understood.
+[00:03:47.350 --> 00:03:53.530] 如果我們談論量子力學，這是一個百年歷史的理論，經過很好的測試和理解。
 [00:03:54.010 --> 00:04:00.910] But when you try to put it into language, to speak about it, it's much easier to write down the equations or something.
+[00:03:54.010 --> 00:04:00.910] 但當你嘗試用語言表達，談論它時，寫下方程式或其他東西要容易得多。
 [00:04:01.110 --> 00:04:06.630] I mean, even Feynman says that in the Feynman lectures, when he's talking about this thing called the double slit experiment.
+[00:04:01.110 --> 00:04:06.630] 我的意思是，甚至連費曼在費曼的講座中也說過，當他談到這個叫做雙狹縫實驗的東西時。
 [00:04:06.890 --> 00:04:10.010] It's a great description of the way quantum mechanics behaves.
+[00:04:06.890 --> 00:04:10.010] 這是對量子力學行為方式的精彩描述。
 [00:04:10.310 --> 00:04:13.630] But ultimately, Feynman says, you know, mathematically, it's easy, this.
+[00:04:10.310 --> 00:04:13.630] 但最終，費曼說，從數學上講，這很簡單。
 [00:04:13.850 --> 00:04:19.030] I can just write down one line which tells you how this interference works and all those things.
+[00:04:13.850 --> 00:04:19.030] 我可以寫下一條線，告訴你這種幹擾是如何運作的，以及所有這些事情。
 [00:04:19.510 --> 00:04:27.950] But then if you try to say, well, what does it mean, what happens, what does it mean for our picture of reality, then we're still arguing about that now. But the maths is easy.
+[00:04:19.510 --> 00:04:27.950] 但是，如果你試圖說，好吧，這意味著什麼，發生了什麼，這對我們對現實的看法意味著什麼，那麼我們現在仍然在爭論這個問題。但數學很簡單
 [00:04:28.230 --> 00:04:34.930] This is worse, because here the maths is really difficult and we have no idea what it's telling us really about reality.
+[00:04:28.230 --> 00:04:34.930] 這更糟糕，因為這裡的數學真的很困難，我們不知道它告訴我們關於現實的真相。

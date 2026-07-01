@@ -1,29 +1,58 @@
 [00:00:00.000 --> 00:00:02.540] Which is still not enough, right, to get you there in any reasonable time.
+[00:00:00.000 --> 00:00:02.540] 這仍然不足以讓你在任何合理的時間內到達目的地。
 [00:00:02.980 --> 00:00:07.940] But you can, as you approach close to the speed of light, that factor can become arbitrarily large.
+[00:00:02.980 --> 00:00:07.940] 但是，當你接近光速時，這個因素可能會變得任意大。
 [00:00:08.380 --> 00:00:14.120] According to just physics, if you could do that, you can travel between the galaxies.
+[00:00:08.380 --> 00:00:14.120] 根據物理學，如果你能做到這一點，你就可以在星系之間旅行。
 [00:00:14.440 --> 00:00:18.000] But you've got to travel extremely close to the speed of light in a human lifetime.
+[00:00:14.440 --> 00:00:18.000] 但你必須在人類的一生中以非常接近光速的速度旅行。
 [00:00:18.320 --> 00:00:23.380] The limit, by the way, in relativity, which you can't, but if you were to travel at the speed of light,
+[00:00:18.320 --> 00:00:23.380] 順便說一下，在相對論中的極限，你不能，但如果你以光速旅行，
 [00:00:23.940 --> 00:00:25.940] then the distance shrinks to zero.
+[00:00:23.940 --> 00:00:25.940] 然後距離縮小到零
 [00:00:25.940 --> 00:00:34.660] The closer you get to speed of light, from the point of view of someone in the spacecraft traveling between the galaxies, the more the distance shrinks.
+[00:00:25.940 --> 00:00:34.660] 從太空船上在星系之間旅行的人的角度來看，你越接近光速，距離就越縮小。
 [00:00:34.940 --> 00:00:40.700] The flip side is that time passes more slowly on the spacecraft relative to the person on the Earth.
+[00:00:34.940 --> 00:00:40.700] 另一方面，相對於地球上的人來說，太空船上的時間流逝得更慢。
 [00:00:40.840 --> 00:00:41.940] And so you can, all those things.
+[00:00:40.840 --> 00:00:41.940] 所以你可以，所有這些東西。
 [00:00:42.040 --> 00:00:46.580] But that's all, that's just standard first year undergraduate relativity.
+[00:00:42.040 --> 00:00:46.580] 但僅此而已，這只是本科第一年的標準相對論。
 [00:00:47.060 --> 00:00:53.240] So I wouldn't claim the laws of nature, as we understand them, stop you traveling between galaxies.
+[00:00:47.060 --> 00:00:53.240] 所以我不會聲稱我們所理解的自然定律，阻止你在星系之間旅行。
 [00:00:53.900 --> 00:00:59.580] But the challenge of traveling very, very, very close to the speed of light,
+[00:00:53.900 --> 00:00:59.580] 但非常、非常、非常接近光速的旅程所面臨的挑戰
 [00:00:59.840 --> 00:01:03.780] I think it looks impossible from our perspective.
+[00:00:59.840 --> 00:01:03.780] 我認為從我們的角度來看，這似乎是不可能的。
 [00:01:06.290 --> 00:01:13.650] Every star you see in the night sky is likely orbited by planets, many potentially capable of hosting life.
+[00:01:06.290 --> 00:01:13.650] 你在夜空中看到的每顆恆星都可能被行星環繞，其中許多行星可能能夠容納生命。
 [00:01:14.390 --> 00:01:20.090] In fact, scientists estimate that there could be billions of Earth -like worlds in our galaxy alone.
+[00:01:14.390 --> 00:01:20.090] 事實上，科學家估計，僅在我們的銀河系中，可能就有數十億個類似地球的世界。
 [00:01:20.730 --> 00:01:25.550] Yet despite these vast numbers, we've found no evidence of other intelligent beings.
+[00:01:20.730 --> 00:01:25.550] 然而，儘管人數眾多，但我們沒有發現其他智慧生物的證據。
 [00:01:26.550 --> 00:01:31.850] Could alien life truly be so extraordinarily rare? It's a great question.
+[00:01:26.550 --> 00:01:31.850] 外星生命真的會如此罕見嗎？這是個很好的問題。
 [00:01:32.070 --> 00:01:33.650] The answer is we don't know how rare it is.
+[00:01:32.070 --> 00:01:33.650] 答案是我們不知道它有多罕見
 [00:01:33.650 --> 00:01:36.010] And we are trying to detect it.
+[00:01:33.650 --> 00:01:36.010] 我們正在嘗試偵測它。
 [00:01:36.210 --> 00:01:41.510] So in our solar system, primarily, although it is possible,
+[00:01:36.210 --> 00:01:41.510] 所以在我們的太陽系中，儘管這是可能的
 [00:01:41.550 --> 00:01:47.210] I should say, that with the James Webb Space Telescope and other instruments that are coming online now,
+[00:01:41.550 --> 00:01:47.210] 我應該說，隨著詹姆斯韋伯太空望遠鏡和其他正在上線的儀器
 [00:01:47.410 --> 00:01:53.250] that it's possible we could detect biosignatures in the atmospheres of planets around distant stars.
+[00:01:47.410 --> 00:01:53.250] 我們有可能探測到遙遠恆星周圍行星大氣層的生物痕跡
 [00:01:53.590 --> 00:01:56.210] But that's at the edge of our capability at the moment.
+[00:01:53.590 --> 00:01:56.210] 但這是我們目前能力的邊緣。
 [00:01:56.210 --> 00:02:04.310] So at the moment we're talking about, of course, the missions to Mars, not yet quite designed to detect life,
+[00:01:56.210 --> 00:02:04.310] 所以現在我們談論的當然是火星任務，還不是為了探測生命而設計的
 [00:02:04.490 --> 00:02:09.530] but to check if the conditions were present on Mars that may support life.
+[00:02:04.490 --> 00:02:09.530] 但要檢查火星上是否存在可能支持生命的條件
 [00:02:09.530 --> 00:02:20.610] I think it's fair to say we're pretty sure that the conditions on Mars four billion years ago, let's say, were very similar to the conditions that led to the origin of life on Earth.
+[00:02:09.530 --> 00:02:20.610] 我認為可以公平地說，我們非常確定40億年前火星上的條件與導致地球上生命起源的條件非常相似。
 [00:02:20.870 --> 00:02:31.190] And so we've got the Perseverance rover now, which is taking samples as part of the Mars sample return mission, which hopefully, although the timeline is by no means clear,
+[00:02:20.870 --> 00:02:31.190] 所以我們現在有了毅力號火星車，它正在採集樣本作為火星樣本返回任務的一部分，希望儘管時間表不清楚
 [00:02:31.570 --> 00:02:38.470] but hopefully those samples will return to Earth at some point, let's say in the next decade or so, with luck.
+[00:02:31.570 --> 00:02:38.470] 但希望這些樣本能夠在未來十年左右運氣好的時候返回地球
 [00:02:38.470 --> 00:02:44.590] That's because we suspect that there may be evidence that life existed or may still exist on Mars.
+[00:02:38.470 --> 00:02:44.590] 這是因為我們懷疑可能有證據表明火星上存在生命或可能仍然存在生命。

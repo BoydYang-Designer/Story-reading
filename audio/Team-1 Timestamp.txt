@@ -1,2 +1,4 @@
 [00:00:00.000 --> 00:00:07.780] The reason I am confident in proposing this concept is that we have several mechanical engineers with more than 20 years of experience in technical design.
+[00:00:00.000 --> 00:00:07.780] 我之所以有信心提出這個概念，是因為我們有幾位擁有20多年技術設計經驗的機械工程師。
 [00:00:07.800 --> 00:00:12.060] I believe their expertise can help address and resolve these technical challenges.
+[00:00:07.800 --> 00:00:12.060] 我相信他們的專業知識可以幫助解決這些技術挑戰。
