@@ -169,6 +169,41 @@ function applyReadingFontSize(size) {
     if (valueEl) valueEl.textContent = readingFontSize + 'px';
 }
 
+// ── 一般閱讀畫面字級（非閱讀挑戰模式）：範圍 13–26px，預設 17px，存入 localStorage ──
+const NORMAL_FONT_DEFAULT = 17;
+const NORMAL_FONT_MIN = 13;
+const NORMAL_FONT_MAX = 26;
+let normalFontSize = (function () {
+    try {
+        const v = parseInt(localStorage.getItem('normalModeFontSize'), 10);
+        return (!isNaN(v) && v >= NORMAL_FONT_MIN && v <= NORMAL_FONT_MAX) ? v : NORMAL_FONT_DEFAULT;
+    } catch (e) { return NORMAL_FONT_DEFAULT; }
+})();
+
+function applyNormalFontSize(size) {
+    normalFontSize = Math.max(NORMAL_FONT_MIN, Math.min(NORMAL_FONT_MAX, Math.round(size)));
+    try { localStorage.setItem('normalModeFontSize', String(normalFontSize)); } catch (e) {}
+    // 寫入 CSS 變數，讓 #text-container 套用（閱讀挑戰模式時會被 --reading-font-size 覆蓋）
+    document.documentElement.style.setProperty('--normal-font-size', normalFontSize + 'px');
+    updateNormalFontBtnsUI();
+}
+
+function updateNormalFontBtnsUI() {
+    const decBtn = document.getElementById('font-decrease-btn');
+    const incBtn = document.getElementById('font-increase-btn');
+    if (decBtn) decBtn.disabled = (normalFontSize <= NORMAL_FONT_MIN);
+    if (incBtn) incBtn.disabled = (normalFontSize >= NORMAL_FONT_MAX);
+}
+
+function initNormalFontButtons() {
+    const decBtn = document.getElementById('font-decrease-btn');
+    const incBtn = document.getElementById('font-increase-btn');
+    if (!decBtn || !incBtn) return;
+    decBtn.onclick = () => applyNormalFontSize(normalFontSize - 1);
+    incBtn.onclick = () => applyNormalFontSize(normalFontSize + 1);
+    updateNormalFontBtnsUI();
+}
+
 function initReadingFontSlider() {
     const slider  = document.getElementById('reading-font-slider');
     const valueEl = document.getElementById('reading-font-value');
@@ -3094,6 +3129,8 @@ function enterReadingMode() {
     textContainer.classList.add('reading-active');
     document.getElementById('reading-mode-controls')?.classList.remove('is-hidden');
     document.getElementById('reading-mode-btn')?.classList.add('is-reading-mode-active');
+    document.getElementById('font-decrease-btn')?.classList.add('is-hidden');
+    document.getElementById('font-increase-btn')?.classList.add('is-hidden');
 
     updateReadingSpeedBtnUI();
     initReadingSpeedSlider();
@@ -3125,6 +3162,8 @@ function exitReadingMode() {
     textContainer.classList.remove('reading-active');
     document.getElementById('reading-mode-controls')?.classList.add('is-hidden');
     document.getElementById('reading-mode-btn')?.classList.remove('is-reading-mode-active');
+    document.getElementById('font-decrease-btn')?.classList.remove('is-hidden');
+    document.getElementById('font-increase-btn')?.classList.remove('is-hidden');
 
     // 清除閱讀模式留下的樣式 class（連續捲動模式理論上不加，但防禦性清除）
     timestampData.forEach(line => {
@@ -5463,3 +5502,6 @@ function annotateTokens(tokens, wordSet, phraseList) {
 }
 // 頁面載入時立即套用已儲存的閱讀字級（CSS 變數）
 applyReadingFontSize(readingFontSize);
+// 頁面載入時立即套用已儲存的一般畫面字級（CSS 變數），並綁定 A-/A+ 按鈕
+applyNormalFontSize(normalFontSize);
+document.addEventListener('DOMContentLoaded', initNormalFontButtons);
