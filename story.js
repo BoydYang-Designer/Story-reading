@@ -3302,6 +3302,20 @@ function downloadReadingRecording() {
 // ── 一般播放模式：跟讀錄音（麥克風）─────────────────────────────
 function updateNormalRecordBtnUI() {
     document.getElementById('normal-record-btn')?.classList.toggle('is-recording', isNormalRecording);
+    updateNormalRecordExitBtnUI();
+}
+
+// 錄音中，或有錄音成果待試聽時，顯示「關閉錄音模式」按鈕
+function updateNormalRecordExitBtnUI() {
+    const show = isNormalRecording || !!normalRecordingBlobUrl;
+    document.getElementById('normal-record-exit-btn')?.classList.toggle('is-hidden', !show);
+}
+
+// 完全結束跟讀錄音：停止錄音（若進行中）、捨棄試聽內容、收起面板與本按鈕
+function exitNormalRecordingMode() {
+    if (isNormalRecording) stopNormalRecording();
+    discardNormalRecording();
+    updateNormalRecordExitBtnUI();
 }
 
 async function startNormalRecording() {
@@ -3310,8 +3324,14 @@ async function startNormalRecording() {
         showNotification('此瀏覽器不支援錄音功能。', 'error');
         return;
     }
-    // 開始新錄音前，先清掉舊的試聽結果
-    discardNormalRecording();
+    // 開始新錄音前，先清掉舊的試聽結果（但不隱藏面板，避免快轉/倒轉按鈕閃爍消失又出現）
+    if (normalRecordingBlobUrl) {
+        URL.revokeObjectURL(normalRecordingBlobUrl);
+        normalRecordingBlobUrl = null;
+    }
+    normalRecordedChunks = [];
+    const oldAudioEl = document.getElementById('normal-record-audio');
+    if (oldAudioEl) { oldAudioEl.pause(); oldAudioEl.removeAttribute('src'); oldAudioEl.load(); }
     // 錄音時先暫停旁白播放，避免麥克風收到喇叭聲
     if (isPlaying) pauseAudio();
     try {
@@ -3371,6 +3391,7 @@ function finalizeNormalRecording() {
     const recCurrent = document.getElementById('normal-rec-current-time');
     if (recCurrent) recCurrent.textContent = '0:00';
     document.getElementById('normal-record-playback')?.classList.remove('is-hidden');
+    updateNormalRecordExitBtnUI();
 }
 
 function discardNormalRecording() {
@@ -3382,6 +3403,7 @@ function discardNormalRecording() {
     const audioEl = document.getElementById('normal-record-audio');
     if (audioEl) { audioEl.pause(); audioEl.removeAttribute('src'); audioEl.load(); }
     document.getElementById('normal-record-playback')?.classList.add('is-hidden');
+    updateNormalRecordExitBtnUI();
 }
 
 function downloadNormalRecording() {
@@ -4539,6 +4561,8 @@ document.getElementById('normal-record-btn')?.addEventListener('click', () => {
     if (isNormalRecording) stopNormalRecording();
     else startNormalRecording();
 });
+
+document.getElementById('normal-record-exit-btn')?.addEventListener('click', exitNormalRecordingMode);
 
 // ── 一般播放模式：自訂錄音播放器邏輯 ─────────────────────────
 (function initNormalRecPlayer() {
