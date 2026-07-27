@@ -1,0 +1,66 @@
+[00:00:00.000 --> 00:00:02.480] We have seen several exciting concepts today.
+[00:00:00.000 --> 00:00:02.480] 我們今天看到了幾個令人興奮的概念。
+[00:00:03.060 --> 00:00:11.840] Now, I'd like to introduce a feature, designed to improve one of the most common interactions parents have with their stroller. We call it Magic Connect.
+[00:00:03.060 --> 00:00:11.840] 現在，我想介紹一個功能，旨在改善父母與嬰兒車最常見的互動之一。我們稱之為Magic Connect。
+[00:00:12.160 --> 00:00:20.360] Today, attaching a stroller seat requires parents to carefully align both sides with two separate adapters before it can lock into place.
+[00:00:12.160 --> 00:00:20.360] 如今，安裝嬰兒車座椅需要父母小心地將兩側與兩個獨立的轉接器對齊，才能鎖定到位。
+[00:00:20.580 --> 00:00:27.120] It often requires both hands, which can be inconvenient when you're holding your baby or carrying shopping bags.
+[00:00:20.580 --> 00:00:27.120] 它通常需要雙手，當您抱著寶寶或攜帶購物袋時，這可能會不方便。
+[00:00:27.280 --> 00:00:34.260] So we asked ourselves, What if attaching a stroller seat could be as simple as setting it down? Let me show you.
+[00:00:27.280 --> 00:00:34.260] 所以我們問自己，如果安裝嬰兒車座椅可以像放下它一樣簡單呢？我帶你去看看。
+[00:00:34.540 --> 00:00:39.160] With the Magic Connect system, there's no need to search for the correct position.
+[00:00:34.540 --> 00:00:39.160] 使用Magic Connect系統，無需搜尋正確的位置。
+[00:00:39.440 --> 00:00:41.680] Simply lower the seat onto the guides.
+[00:00:39.440 --> 00:00:41.680] 只需將座椅降到導軌上即可。
+[00:00:41.880 --> 00:00:46.220] The system automatically aligns the seat and securely locks it into place.
+[00:00:41.880 --> 00:00:46.220] 系統會自動對齊座椅，並將其牢固地鎖定到位。
+[00:00:46.620 --> 00:00:52.620] The result is a faster, more intuitive installation experience that feels natural from the very first use.
+[00:00:46.620 --> 00:00:52.620] 結果是更快、更直觀的安裝體驗，從第一次使用開始就感覺很自然。
+[00:00:53.000 --> 00:00:55.000] That's why we call it Magic Connect.
+[00:00:53.000 --> 00:00:55.000] 這就是我們稱之為Magic Connect的原因。
+[00:00:55.180 --> 00:01:00.040] Because from the user's perspective, it almost feels like the seat connects by itself.
+[00:00:55.180 --> 00:01:00.040] 因為從使用者的角度來看，座椅幾乎可以自行連接。
+[00:01:00.800 --> 00:01:03.080] Now let me introduce another feature.
+[00:01:00.800 --> 00:01:03.080] 現在讓我介紹另一項功能。
+[00:01:03.380 --> 00:01:10.920] In crowded spaces such as elevators, cafes, shopping malls or public transportation, maneuvering a stroller can be challenging.
+[00:01:03.380 --> 00:01:10.920] 在電梯、咖啡館、商場或公共交通工具等擁擠空間，駕駛嬰兒車可能充滿挑戰。
+[00:01:11.180 --> 00:01:14.180] To solve this, we developed Quick Steering Mode.
+[00:01:11.180 --> 00:01:14.180] 為了解決這個問題，我們開發了快速轉向模式。
+[00:01:14.500 --> 00:01:21.440] Simply press the button here to activate four -wheel steering, making tight turns and precise maneuvering much easier.
+[00:01:14.500 --> 00:01:21.440] 只需按下此處的按鈕即可啟動四輪轉向，使轉彎變得緊湊，並更輕鬆地進行精確操縱。
+[00:01:21.700 --> 00:01:26.900] Once you release the button, the stroller instantly returns to its standard steering mode.
+[00:01:21.700 --> 00:01:26.900] 鬆開按鈕後，嬰兒車會立即返回標準轉向模式。
+[00:01:27.060 --> 00:01:31.760] It's a simple feature that gives parents greater control exactly when they need it.
+[00:01:27.060 --> 00:01:31.760] 這是一個簡單的功能，可以讓父母在需要時更好地控制。
+[00:01:32.060 --> 00:01:37.460] These are the two key features of our concept. Transition to the slides.
+[00:01:32.060 --> 00:01:37.460] 這些是我們概念的兩個關鍵特徵。切換到投影片。
+[00:01:37.900 --> 00:01:40.640] Now, let's take a closer look at the rest of the concept.
+[00:01:37.900 --> 00:01:40.640] 現在，讓我們仔細看看概念的其餘部分。
+[00:01:40.900 --> 00:01:46.820] I'll walk you through the design details, specifications, and some of the thinking behind this product.
+[00:01:40.900 --> 00:01:46.820] 我將向您介紹此產品的設計細節、規格和一些想法。
+[00:01:46.820 --> 00:01:50.480] But before we begin, I'd like to show you a short video.
+[00:01:46.820 --> 00:01:50.480] 但在我們開始之前，我想給你們看一段簡短的視頻。
+[00:01:50.840 --> 00:01:55.620] This video demonstrates how parents can use these two features in everyday life.
+[00:01:50.840 --> 00:01:55.620] 這段影片展示了父母如何在日常生活中使用這兩項功能。
+[00:01:55.920 --> 00:02:05.440] You'll see several real -world scenarios where Magic Connect and Quick Steering Mode make daily parenting easier and more convenient. I hope you enjoy it.
+[00:01:55.920 --> 00:02:05.440] 您將看到幾個真實世界的場景，其中Magic Connect和快速轉向模式使日常育兒更輕鬆、更方便。希望你會喜歡。
+[00:02:06.680 --> 00:02:14.160] After the video, I hope the video gave you a clear picture of how these features improve the everyday parenting experience.
+[00:02:06.680 --> 00:02:14.160] 在影片結束後，我希望影片能讓您清楚了解這些功能如何改善日常育兒體驗。
+[00:02:14.460 --> 00:02:18.880] Now, I'd like to briefly walk you through the product in a little more detail.
+[00:02:14.460 --> 00:02:18.880] 現在，我想簡要介紹一下產品。
+[00:02:19.160 --> 00:02:27.300] I'll explain the overall concept, some of the key specifications, and the design decisions behind it. Closing.
+[00:02:19.160 --> 00:02:27.300] 我將解釋整體概念、一些關鍵規格及其背後的設計決策。結束。
+[00:02:27.540 --> 00:02:33.020] To conclude, our goal was to create a stroller that feels more intuitive, more convenient,
+[00:02:27.540 --> 00:02:33.020] 總而言之，我們的目標是打造一款感覺更直觀、更方便的嬰兒車，
+[00:02:33.040 --> 00:02:35.280] and more enjoyable to use every day.
+[00:02:33.040 --> 00:02:35.280] 每天使用更愉快。
+[00:02:35.520 --> 00:02:43.660] By combining Magic Connect with Quick Steering Mode, we've simplified two of the most common interactions parents have with their stroller.
+[00:02:35.520 --> 00:02:43.660] 通過將Magic Connect與快速轉向模式相結合，我們簡化了父母與嬰兒車最常見的兩種互動。
+[00:02:43.940 --> 00:02:47.260] We believe thoughtful design isn't about adding more features.
+[00:02:43.940 --> 00:02:47.260] 我們認為，精心設計並不是為了新增更多功能。
+[00:02:47.500 --> 00:02:51.040] It's about making everyday experiences feel effortless.
+[00:02:47.500 --> 00:02:51.040] 讓日常體驗更輕鬆。
+[00:02:51.280 --> 00:02:53.180] Thank you very much for your time.
+[00:02:51.280 --> 00:02:53.180] 非常感謝你提供你的想法
+[00:02:53.500 --> 00:02:55.500] I'd be happy to answer any questions.
+[00:02:53.500 --> 00:02:55.500] 我很樂意回答任何問題。
