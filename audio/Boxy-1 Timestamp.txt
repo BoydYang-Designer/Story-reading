@@ -44,7 +44,7 @@
 [00:01:50.460 --> 00:01:55.580] 與其折疊成零件向不同方向延伸的不規則形狀，
 [00:01:56.120 --> 00:02:02.580] BOXY creates a predictable rectangular form that is easier to lift, carry, stack, and store.
 [00:01:56.120 --> 00:02:02.580] BOXY創建了一個可預測的矩形形狀，更易於提升、攜帶、堆疊和存儲。
-[00:02:02.580 --> 00:02:10.400] Another important advantage is that the folded dimensions have been designed around the IETA cabin baggage size guidelines.
+[00:02:02.580 --> 00:02:10.400] Another important advantage is that the folded dimensions have been designed around the IATA (International Air Transport Association) cabin baggage size guidelines.
 [00:02:02.580 --> 00:02:10.400] 另一個重要的優點是折疊尺寸是根據IETA客艙行李尺寸指南設計的。
 [00:02:10.640 --> 00:02:16.060] This allows parents to bring the stroller on board on many flights instead of checking it in,
 [00:02:10.640 --> 00:02:16.060] 這允許父母在許多航班上攜帶嬰兒車，而不是辦理登機手續，
