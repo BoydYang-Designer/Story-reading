@@ -4445,13 +4445,39 @@ if (backToSubCategoryBtn) {
 const toggleTranslationBtn = document.getElementById('toggle-translation-btn');
 if (toggleTranslationBtn) {
     toggleTranslationBtn.addEventListener('click', () => {
+        // ✅ 修正：切換中文翻譯時，畫面文字會因內容高度改變而跳動。
+        // 做法：先記錄目前視窗中「錨點句子」與容器頂端的相對距離，
+        // 待切換、重算高度後，再把 scrollTop 調整回同樣的相對距離，
+        // 讓使用者看到的文字位置維持不變。
+        const containerRect = textContainer.getBoundingClientRect();
+        let anchorEl = null;
+        let anchorOffset = 0;
+        const sentenceEls = textContainer.querySelectorAll('.timestamp-sentence');
+        for (const el of sentenceEls) {
+            const r = el.getBoundingClientRect();
+            // 找到第一個「底部尚未離開可視區頂端」的句子，作為錨點
+            if (r.bottom >= containerRect.top) {
+                anchorEl = el;
+                anchorOffset = r.top - containerRect.top;
+                break;
+            }
+        }
+
         showTranslation = !showTranslation;
         document.querySelectorAll('.timestamp-translation').forEach(el => {
             el.style.display = showTranslation ? 'block' : 'none';
         });
         toggleTranslationBtn.textContent = showTranslation ? '隱藏中文' : '顯示中文';
-        // ✅ 修正：中文翻譯顯示/隱藏後，內容高度改變，需重算 scrollMax
+        // 中文翻譯顯示/隱藏後，內容高度改變，需重算 scrollMax
         computeScrollMax();
+
+        // 把錨點句子還原到切換前同樣的視覺位置，避免文字跳動
+        if (anchorEl) {
+            const newContainerRect = textContainer.getBoundingClientRect();
+            const newAnchorTop = anchorEl.getBoundingClientRect().top - newContainerRect.top;
+            const delta = newAnchorTop - anchorOffset;
+            textContainer.scrollTop = Math.max(0, Math.min(textContainer.scrollTop + delta, scrollMax));
+        }
     });
 }
 
