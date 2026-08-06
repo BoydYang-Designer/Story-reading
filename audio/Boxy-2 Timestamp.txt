@@ -1,0 +1,58 @@
+[00:00:00.500 --> 00:00:05.100] BOXY OPENING Good morning everyone. Thank you for joining us today.
+[00:00:00.500 --> 00:00:05.100] BOXY Opening大家早上好。感謝您今天加入我們。
+[00:00:05.400 --> 00:00:09.800] We're excited to share one of our latest travel stroller concepts, BOXY.
+[00:00:05.400 --> 00:00:09.800] 我們很高興分享我們最新的旅行嬰兒車概念之一， Boxy。
+[00:00:10.020 --> 00:00:14.180] Like every project we develop, this concept began with a simple question.
+[00:00:10.020 --> 00:00:14.180] 就像我們開發的每個專案一樣，這個概念始於一個簡單的問題。
+[00:00:14.480 --> 00:00:18.100] Why does traveling with a stroller still require so much effort?
+[00:00:14.480 --> 00:00:18.100] 為什麼攜帶嬰兒車旅行仍然需要付出這麼多努力？
+[00:00:18.400 --> 00:00:21.440] When parents travel, they already have many things to manage.
+[00:00:18.400 --> 00:00:21.440] 當父母旅行時，他們已經有很多事情要處理了。
+[00:00:21.620 --> 00:00:25.740] Luggage, boarding, transportation, and taking care of their children.
+[00:00:21.620 --> 00:00:25.740] 行李、登機、交通和照顧孩子。
+[00:00:25.740 --> 00:00:33.100] However, a stroller which is supposed to make life easier, often becomes one more thing to carry, store, and work around.
+[00:00:25.740 --> 00:00:33.100] 然而，本應讓生活更輕鬆的嬰兒車通常會成為另一件攜帶、存放和工作的東西。
+[00:00:33.440 --> 00:00:41.960] Even after folding, traditional strollers usually create irregular shapes that are difficult to fit into car trunks, hotel rooms, or airport spaces.
+[00:00:33.440 --> 00:00:41.960] 即使在折疊後，傳統的嬰兒車通常也會產生不規則的形狀，難以放入汽車行李箱、飯店房間或機場空間。
+[00:00:42.280 --> 00:00:44.880] So we challenged ourselves with a different idea.
+[00:00:42.280 --> 00:00:44.880] 所以我們用不同的想法挑戰自己
+[00:00:45.340 --> 00:00:50.780] What if a stroller could fold into one of the simplest and most efficient shapes possible, a box?
+[00:00:45.340 --> 00:00:50.780] 如果嬰兒車可以折疊成最簡單、最有效的形狀之一，即盒子，會怎麼樣？
+[00:00:51.040 --> 00:00:53.920] That question became the starting point of BOXY.
+[00:00:51.040 --> 00:00:53.920] 這個問題成為了BOXY的起點。
+[00:00:53.920 --> 00:01:02.020] Our goal wasn't simply to make a smaller stroller, but to create one that is easier to carry, easier to store, and easier to travel with.
+[00:00:53.920 --> 00:01:02.020] 我們的目標不僅是製造一輛較小的嬰兒車，而是製造一輛更易攜帶、更易存放、更易於攜帶的嬰兒車。
+[00:01:02.260 --> 00:01:06.500] Before we move into the design details, I'd like to show you the prototype.
+[00:01:02.260 --> 00:01:06.500] 在我們進入設計細節之前，我想向您展示原型。
+[00:01:06.880 --> 00:01:11.420] One of the key features of BOXY is its simple and intuitive folding experience.
+[00:01:06.880 --> 00:01:11.420] Boxy的主要功能之一是簡單直觀的折疊體驗。
+[00:01:11.800 --> 00:01:20.380] The folding process only requires two simple movements. First, fold down the canopy. Then, push the handlebar downward. That's it.
+[00:01:11.800 --> 00:01:20.380] 折疊過程只需要兩個簡單的動作。首先，放下遮篷。然後，將把手向下推。大功告成。
+[00:01:20.380 --> 00:01:24.480] Within seconds, the stroller transforms into a clean, compact box.
+[00:01:20.380 --> 00:01:24.480] 在幾秒鐘內，嬰兒車就會變成一個乾淨、緊湊的盒子。
+[00:01:24.840 --> 00:01:35.580] Unlike traditional strollers that fold into irregular shapes, BOXY creates a predictable rectangular form that is easier to lift, carry, store, and organize throughout your journey.
+[00:01:24.840 --> 00:01:35.580] 與摺疊成不規則形狀的傳統嬰兒車不同， Boxy創造了一種可預測的矩形形狀，在整個旅程中更容易提升、攜帶、存放和組織。
+[00:01:35.720 --> 00:01:46.040] To better support air travel, the folded dimensions were developed using the International Air Transport Association recommended cabin baggage guideline as a design reference.
+[00:01:35.720 --> 00:01:46.040] 為了更好地支持航空旅行，折疊尺寸是使用國際航空運輸協會推薦的機艙行李指南作為設計參考來開發的。
+[00:01:46.040 --> 00:01:51.840] Of course, final cabin acceptance always depends on each airline's individual baggage policy.
+[00:01:46.040 --> 00:01:51.840] 當然，最終的機艙接受情況總是取決於每家航空公司的個別行李政策。
+[00:01:52.240 --> 00:01:54.380] Opening the stroller is just as intuitive.
+[00:01:52.240 --> 00:01:54.380] 打開嬰兒車也同樣直觀。
+[00:01:54.720 --> 00:02:00.300] Simply reverse the same two movements. Lift the handlebar. Then, raise the canopy.
+[00:01:54.720 --> 00:02:00.300] 只需反轉相同的兩個動作。擡起把手，然後擡起遮篷
+[00:02:00.740 --> 00:02:03.100] Within seconds, BOXY is ready to use again.
+[00:02:00.740 --> 00:02:03.100] 在幾秒鐘內， Boxy就可以再次使用。
+[00:02:03.300 --> 00:02:08.260] The interaction is designed to feel natural, effortless, and easy for first -time users.
+[00:02:03.300 --> 00:02:08.260] 這種互動旨在讓首次使用的用戶感覺自然、輕鬆和輕鬆。
+[00:02:08.260 --> 00:02:13.720] Now that you've seen how BOXY works, let's take a closer look at the thinking behind the design.
+[00:02:08.260 --> 00:02:13.720] 現在您已經了解了Boxy的運作方式，讓我們仔細看看設計背後的想法。
+[00:02:14.040 --> 00:02:22.140] Every design decision was guided by three key ideas. Simpler folding. More efficient storage. A cleaner travel experience.
+[00:02:14.040 --> 00:02:22.140] 每個設計決策都以三個關鍵想法為指導。折疊更簡單，儲存更高效。更乾淨的旅遊體驗。
+[00:02:22.620 --> 00:02:25.980] To wrap up, BOXY is more than just another compact stroller.
+[00:02:22.620 --> 00:02:25.980] 總而言之， Boxy不僅僅是另一款緊湊型嬰兒車。
+[00:02:26.300 --> 00:02:28.720] It's designed to make family travel simpler.
+[00:02:26.300 --> 00:02:28.720] 讓家庭出遊更輕鬆。
+[00:02:29.040 --> 00:02:42.940] By folding into a clean, box -shaped form, BOXY is easier to carry, easier to store, and easier to travel with. Our goal is simple. Less time managing the stroller. More time enjoying the journey. Thank you for your time.
+[00:02:29.040 --> 00:02:42.940] 摺疊成乾淨的盒子形狀，方盒更易於攜帶、存放和旅行。我們的目標很簡單。減少管理嬰兒車的時間。讓您有更多時間享受旅程。感謝您的寶貴時間。
+[00:02:43.160 --> 00:02:47.320] We'd love to hear your thoughts and answer any questions you may have.
+[00:02:43.160 --> 00:02:47.320] 我們很樂意聽取您的想法，並解答您的任何疑問。
