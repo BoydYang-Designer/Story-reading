@@ -1,0 +1,57 @@
+Thanks, Carol. Next, I'd like to introduce our stroller concept, Wonder.
+The idea behind Wonder started with a very simple observation.
+When we push a stroller, we are usually paying attention to it.
+But when we stop, even for just a few seconds, things can change.
+Parents may stop to answer a question, check their phone, or adjust something for their child.
+The ground may look flat, but even a small slope can be easy to miss.
+And if the brake has not been engaged, the stroller may start to move on its own.
+That simple situation became the starting point for Wonder. Key feature 1.
+Auto -brake The first key feature is our auto -brake system. The idea is very simple.
+When the stroller stops, the brake engages automatically. Let me show you.
+As you can see, when the stroller stops, the brake engages automatically.
+And when I want to move again, I simply, push forward.
+The brake releases automatically, and the stroller starts moving.
+So there is no extra step for the parent. Stop. It brakes. Push. It moves.
+That is the basic idea behind auto -brake.
+Because this is a mechanical system, you can feel a small amount of force, when starting from a complete stop.
+This is part of the brake system.
+And the force can be adjusted.
+The stronger the force, the steeper the slope the stroller can resist, before it starts to move.
+In our current prototype, the system can hold a stroller, with a 20kg load, on an 8 -degree slope.
+This gives us a good level of protection, while still keeping the stroller comfortable to push.
+3 -brake modes We are also exploring 3 -brake modes. Full lock for maximum stability. Auto -brake for everyday use.
+And free roll for completely free movement.
+So parents can choose the mode, that works best for different situations. Key feature 2.
+One Continuous Motion Folding The second key feature is our one continuous motion folding system.
+When we looked at traditional stroller folding, we found that it often takes several steps. Adjust the canopy. Unlock the handlebar. Release the seat. Then, fold the stroller.
+We wanted to make this much simpler.
+Before folding, the only preparation is to lower the canopy.
+Then the user unlocks the telescopic handlebar, and pushes it all the way down.
+When the handlebar reaches the bottom, it automatically starts the folding mechanism.
+From there, the handlebar rotates down, and the seat moves with it.
+There is no separate seat release. No extra folding step.
+The seat and frame move together. Let me show you.
+As I continue pushing the handlebar down, the folding process finishes automatically.
+And the result is a smooth and compact folded position.
+So the whole process can be reduced to 3 actions. Lower the canopy. Push the handlebar down. Fold it. And you're done.
+Everything happens in one continuous motion.
+This can be especially helpful in everyday situations.
+When a parent is holding a child, carrying shopping bags, or putting the stroller into a car. Design, philosophy.
+Both features are built around two simple ideas. Passive safety. First, passive safety.
+The stroller helps reduce the chance of unexpected movement.
+Without asking the parent to remember to use the brake every time.
+The stroller simply responds when it stops. Easy interaction. Second, easy interaction.
+The mechanism inside wonder is sophisticated.
+But the experience should feel simple.
+Parents don't need to understand how it works.
+They only need to know four simple actions. Stop. Push. Fold. Go.
+That is the experience we want wonder to deliver. Closing.
+So wonder focuses on two everyday challenges. Safer stopping.
+With auto -brake, the brake engages automatically when the stroller stops, helping reduce the chance of unexpected movement on a slope.
+And with three brake modes, parents can choose what works best for each situation. Easier folding.
+With our one continuous motion folding system, the handlebar, seat, and frame move together in one smooth motion. Ultimately, our goal is simple.
+To reduce the small problems and possible risks that parents may face every day.
+And to create a stroller that feels safer, simpler, and easier to use.
+And to create a stroller that feels safer, simpler, and simpler, and simpler, and simpler, and simpler,
+and simpler, and simpler, and simpler, and simpler, and simpler, and simpler, and simpler, and simpler,
+and simpler, and simpler, and simpler. Thank you.
