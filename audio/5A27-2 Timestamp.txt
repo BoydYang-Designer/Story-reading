@@ -1,0 +1,136 @@
+[00:00:00.000 --> 00:00:04.640] Thanks, Carol. Next, I'd like to introduce our stroller concept, wonder.
+[00:00:00.000 --> 00:00:04.640] 謝謝，卡蘿，接下來，我想介紹我們的嬰兒車概念， WONDER
+[00:00:05.480 --> 00:00:09.520] The idea behind wonder started with a very simple observation.
+[00:00:05.480 --> 00:00:09.520] Wonder背後的想法始於一個非常簡單的觀察。
+[00:00:09.980 --> 00:00:15.020] Parents often stop their stroller for just a few seconds to answer a question, check their phone,
+[00:00:09.980 --> 00:00:15.020] 父母經常停下嬰兒車幾秒鐘來回答一個問題，檢查他們的手機，
+[00:00:15.200 --> 00:00:16.640] or adjust something for their child.
+[00:00:15.200 --> 00:00:16.640] 或為他們的孩子調整一些東西。
+[00:00:16.900 --> 00:00:21.280] But even during these short moments, the stroller may not be fully stable.
+[00:00:16.900 --> 00:00:21.280] 但即使在這些短暫的時刻，嬰兒車也可能不完全穩定。
+[00:00:21.680 --> 00:00:25.440] The ground may look flat, but there can still be a small slope.
+[00:00:21.680 --> 00:00:25.440] 地面可能看起來平坦，但仍然可能有一個小斜坡。
+[00:00:25.520 --> 00:00:28.960] And if the brake has not been used, the stroller may start to roll.
+[00:00:25.520 --> 00:00:28.960] 如果沒有使用剎車，嬰兒車可能會開始滾動。
+[00:00:29.140 --> 00:00:32.140] That simple situation became the starting point for wonder.
+[00:00:29.140 --> 00:00:32.140] 這個簡單的情況成為了奇蹟的起點。
+[00:00:32.700 --> 00:00:38.860] Two key ideas from this observation, we focused on two everyday problems. First, safer stopping.
+[00:00:32.700 --> 00:00:38.860] 根據這項觀察的兩個關鍵想法，我們專注於兩個日常問題。首先，停車更安全。
+[00:00:39.080 --> 00:00:41.180] We developed a mechanical auto -brake system.
+[00:00:39.080 --> 00:00:41.180] 我們開發了一種機械自動制動系統。
+[00:00:41.380 --> 00:00:43.320] When the stroller stops, the brake engages automatically.
+[00:00:41.380 --> 00:00:43.320] 當嬰兒車停止時，剎車會自動接合。
+[00:00:43.560 --> 00:00:46.280] When the parent pushes forward, the brake releases automatically.
+[00:00:43.560 --> 00:00:46.280] 當父級向前推動時，煞車會自動釋放。
+[00:00:46.560 --> 00:00:54.160] So the basic interaction is very simple. Stop. It brakes. Push. It moves. Second, easier folding.
+[00:00:46.560 --> 00:00:54.160] 因此，基本的互動非常簡單。停下來，它會剎車，推它會移動，其次，摺疊起來更輕鬆
+[00:00:54.600 --> 00:01:00.060] We wanted to make stroller folding feel like one continuous movement instead of several separate steps.
+[00:00:54.600 --> 00:01:00.060] 我們希望讓嬰兒車摺疊感覺像一個連續的動作，而不是幾個單獨的步驟。
+[00:01:00.280 --> 00:01:04.420] This became our one continuous motion folding system.
+[00:01:00.280 --> 00:01:04.420] 這成為我們的一個連續運動摺疊系統。
+[00:01:05.420 --> 00:01:07.760] These are the two main ideas behind wonder.
+[00:01:05.420 --> 00:01:07.760] 這些是WONDER背後的兩個主要想法。
+[00:01:08.200 --> 00:01:15.000] And rather than only explain them, I'd like to first show you what they look like in real use. Video. Auto -brake.
+[00:01:08.200 --> 00:01:15.000] 我不僅要解釋它們，還想先向您展示它們在實際使用時的樣子。影片，自動煞車
+[00:01:15.520 --> 00:01:20.460] This video shows the difference between a stroller without auto -brake and a stroller with our auto -brake system.
+[00:01:15.520 --> 00:01:20.460] 這段影片顯示了沒有自動煞車的嬰兒車和配備自動煞車系統的嬰兒車之間的區別。
+[00:01:20.960 --> 00:01:25.480] Without auto -brake, the stroller can begin to move when it is stopped on a slope.
+[00:01:20.960 --> 00:01:25.480] 如果沒有自動煞車，當嬰兒車停在斜坡上時，它可以開始移動。
+[00:01:26.120 --> 00:01:29.880] With wonder, the brake responds automatically when the stroller stops.
+[00:01:26.120 --> 00:01:29.880] 令人驚訝的是，當嬰兒車停止時，剎車會自動響應。
+[00:01:30.120 --> 00:01:36.540] So the parent does not need to remember to activate the brake every time. Prototype. Auto -brake.
+[00:01:30.120 --> 00:01:36.540] 因此，家長不必記得每次都要啟動剎車。原型，自動煞車
+[00:01:37.040 --> 00:01:39.220] Now let me show you the actual prototype.
+[00:01:37.040 --> 00:01:39.220] 現在讓我向你展示實際的原型。
+[00:01:39.520 --> 00:01:44.620] When I stop the stroller, the brake engages automatically. And now I push forward. Forward.
+[00:01:39.520 --> 00:01:44.620] 當我停止嬰兒車時，剎車會自動接合。現在我向前推，向前推
+[00:01:44.880 --> 00:01:47.540] The brake releases and the stroller starts moving.
+[00:01:44.880 --> 00:01:47.540] 剎車鬆開，嬰兒車開始移動。
+[00:01:47.840 --> 00:01:53.320] The key point is that there is no additional action from the parent. Auto -brake. Technical details.
+[00:01:47.840 --> 00:01:53.320] 重點是，家長沒有其他動作。自動煞車，技術細節
+[00:01:55.000 --> 00:01:59.060] Because this is a mechanical system, there is one important point we need to consider.
+[00:01:55.000 --> 00:01:59.060] 因為這是一個機械系統，我們需要考慮一個重要點。
+[00:01:59.240 --> 00:02:02.780] You can feel a small amount of force when starting from a complete stop.
+[00:01:59.240 --> 00:02:02.780] 從完全停止開始時，你可以感覺到一點力。
+[00:02:03.220 --> 00:02:05.720] This is the force needed to overcome the brake.
+[00:02:03.220 --> 00:02:05.720] 這是克服剎車所需的力。
+[00:02:06.000 --> 00:02:11.980] The amount of force can be adjusted and it is directly related to how much slope the system is designed to resist.
+[00:02:06.000 --> 00:02:11.980] 力大小可以調整，這與系統設計的抗傾斜程度直接相關。
+[00:02:12.980 --> 00:02:20.060] In our current prototype, the system can hold a stroller carrying a 20 kg load on an 8 degree slope.
+[00:02:12.980 --> 00:02:20.060] 在我們目前的原型中，該系統可以在8度斜坡上容納載重20公斤的嬰兒車。
+[00:02:20.420 --> 00:02:28.200] So we can adjust the system to find the right balance between anti -roll performance and pushing comfort. Three brake modes. Further development.
+[00:02:20.420 --> 00:02:28.200] 因此，我們可以調整系統，在防滾動性能和推動舒適性之間找到適當的平衡。三種煞車模式。進一步發展。
+[00:02:29.000 --> 00:02:31.380] This also led us to another design question.
+[00:02:29.000 --> 00:02:31.380] 這也讓我們想到了另一個設計問題。
+[00:02:31.860 --> 00:02:35.800] What happens if the auto -brake push feeling is too strong for some users?
+[00:02:31.860 --> 00:02:35.800] 如果自動煞車感覺對某些使用者來說太強，會發生什麼事？
+[00:02:36.340 --> 00:02:41.540] To explore this, we developed the idea of a three -mode brake system. The first is full lock.
+[00:02:36.340 --> 00:02:41.540] 為了探索這一點，我們開發了三模式制動系統的想法。第一個是完全鎖定。
+[00:02:41.940 --> 00:02:50.560] The wheels are fully locked for parking or situations where maximum stability is needed. The second is auto -brake. This is the everyday mode.
+[00:02:41.940 --> 00:02:50.560] 車輪已完全鎖定，以便停車或在需要最大穩定性的情況下停車。第二個是自動煞車。這是日常模式。
+[00:02:50.720 --> 00:02:55.720] The stroller locks automatically when it stops and releases when the user pushes forward.
+[00:02:50.720 --> 00:02:55.720] 當嬰兒車停止時會自動鎖定，當使用者向前推動時會自動釋放。
+[00:02:56.020 --> 00:02:57.820] And the third is free roll.
+[00:02:56.020 --> 00:02:57.820] 第三個是免費滾動。
+[00:02:58.240 --> 00:03:04.260] The brake is completely disengaged so the stroller can move freely without the auto -brake engagement feeling.
+[00:02:58.240 --> 00:03:04.260] 剎車完全脫離，因此嬰兒車可以自由移動，而不會有自動剎車的感覺。
+[00:03:04.460 --> 00:03:13.940] So instead of using one setting for every situation, parents can choose the level of control they prefer. Full lock. Auto -brake. Free roll.
+[00:03:04.460 --> 00:03:13.940] 因此，父母可以選擇他們喜歡的控制程度，而不是對每種情況使用一個設置。完全鎖定，自動煞車，自由滾動
+[00:03:14.140 --> 00:03:23.360] This is still part of our development direction, but it gives us another way to balance safety, comfort, and user preference. Video. Folding knife.
+[00:03:14.140 --> 00:03:23.360] 這仍然是我們發展方向的一部分，但它為我們提供了另一種平衡安全、舒適性和用戶偏好的方式。影片，折疊刀
+[00:03:23.640 --> 00:03:25.480] Now let's look at the second part of wonder.
+[00:03:23.640 --> 00:03:25.480] 現在讓我們來看看WONDER的第二部分。
+[00:03:25.860 --> 00:03:28.100] Here we focused on another common situation.
+[00:03:25.860 --> 00:03:28.100] 在這裡，我們重點關注另一種常見情況。
+[00:03:28.560 --> 00:03:33.360] When parents need to fold a stroller, they may already be holding a child, carrying shopping bags,
+[00:03:28.560 --> 00:03:33.360] 當父母需要摺疊嬰兒車時，他們可能已經抱著孩子，攜帶購物袋，
+[00:03:33.380 --> 00:03:35.580] or getting ready to put the stroller into a car.
+[00:03:33.380 --> 00:03:35.580] 或準備把嬰兒車放進車裡
+[00:03:35.800 --> 00:03:40.700] So we wanted to reduce the number of separate actions. Prototype. Folding.
+[00:03:35.800 --> 00:03:40.700] 因此，我們希望減少單獨行動的次數。原型。折疊。
+[00:03:41.100 --> 00:03:42.780] Let me show you how it works.
+[00:03:41.100 --> 00:03:42.780] 讓我向你展示它是如何運作的。
+[00:03:43.220 --> 00:03:46.820] Before folding, the only preparation is to lower the canopy.
+[00:03:43.220 --> 00:03:46.820] 在摺疊之前，唯一的準備是降低遮篷。
+[00:03:47.120 --> 00:03:51.100] Then I unlock the telescopic handlebar and push it all the way down.
+[00:03:47.120 --> 00:03:51.100] 然後我解鎖伸縮式把手並將其向下推。
+[00:03:51.760 --> 00:03:56.120] As the handlebar reaches the bottom, it activates the folding mechanism.
+[00:03:51.760 --> 00:03:56.120] 當車把到達底部時，它會啟動折疊機制。
+[00:03:56.540 --> 00:04:01.580] And from here, the handlebar rotates down while the seat rotates together with it.
+[00:03:56.540 --> 00:04:01.580] 從這裡開始，把手向下旋轉，而座椅也一起旋轉。
+[00:04:01.580 --> 00:04:05.040] There is no separate seat release. No extra folding step.
+[00:04:01.580 --> 00:04:05.040] 沒有單獨的座椅鬆脫。沒有額外的折疊步驟。
+[00:04:05.280 --> 00:04:06.780] The seat and frame move together.
+[00:04:05.280 --> 00:04:06.780] 座椅和車架一起移動。
+[00:04:07.080 --> 00:04:13.520] As I continue pushing down, the folding sequence finishes automatically, and the stroller reaches its compact folded position.
+[00:04:07.080 --> 00:04:13.520] 當我繼續向下推時，折疊順序自動完成，嬰兒車達到緊湊的折疊位置。
+[00:04:13.720 --> 00:04:19.520] So the process is essentially, lower the canopy, push the handlebar down, fold, and you're done.
+[00:04:13.720 --> 00:04:19.520] 因此，這個過程基本上是降低樹冠，推下車把，摺疊，然後就完成了。
+[00:04:20.120 --> 00:04:24.260] Everything happens as one continuous movement. Design philosophy.
+[00:04:20.120 --> 00:04:24.260] 每件事都以一個連續的動作發生。設計理念。
+[00:04:24.860 --> 00:04:29.580] Although the mechanisms behind wonder are quite complex, we wanted the interaction to feel very simple.
+[00:04:24.860 --> 00:04:29.580] 雖然Wonder背後的機制相當複雜，但我們希望互動感覺非常簡單。
+[00:04:29.860 --> 00:04:34.720] That led us to two design ideas. Passive safety. First, passive safety.
+[00:04:29.860 --> 00:04:34.720] 這讓我們有了兩個設計理念。被動安全第一，被動安全
+[00:04:34.980 --> 00:04:46.740] The stroller helps reduce unexpected movement without asking the parent to remember to use the brake every time. The system responds automatically. Easy interaction. Second, easy interaction.
+[00:04:34.980 --> 00:04:46.740] 嬰兒車有助於減少意外動作，而無需要求家長記得每次使用剎車。系統會自動回應。輕鬆互動。其次，輕鬆互動。
+[00:04:47.040 --> 00:04:49.880] Parents should not have to understand the mechanism behind the product.
+[00:04:47.040 --> 00:04:49.880] 父母不必了解產品背後的機制。
+[00:04:50.140 --> 00:04:54.840] They only need to understand a few simple actions. Stop, push, fold, go.
+[00:04:50.140 --> 00:04:54.840] 他們只需要了解幾個簡單的動作。停、推、折、走
+[00:04:55.080 --> 00:04:58.440] That is the experience we wanted wonder to deliver. Closing.
+[00:04:55.080 --> 00:04:58.440] 這就是我們希望WONDER提供的體驗。結束。
+[00:04:59.160 --> 00:05:02.680] So wonder focuses on two everyday challenges. Safer stopping.
+[00:04:59.160 --> 00:05:02.680] 因此， WONDER專注於兩個日常挑戰。更安全的停車。
+[00:05:03.140 --> 00:05:09.540] With auto brake, the stroller responds automatically when it stops, helping reduce the chance of unexpected movement on slopes.
+[00:05:03.140 --> 00:05:09.540] 使用自動煞車，嬰兒車在停止時會自動響應，有助於減少在斜坡上意外移動的機會。
+[00:05:10.020 --> 00:05:18.540] And through the three mode brake concept, we can further explore the right balance between stability and pushing comfort. Easier folding.
+[00:05:10.020 --> 00:05:18.540] 透過三種模式的剎車概念，我們可以進一步探索穩定性和推動舒適性之間的適當平衡。更輕鬆的折疊。
+[00:05:18.900 --> 00:05:27.940] With our one continuous motion folding system, the handlebar, seat, and frame move together in one smooth motion. Ultimately, our goal is simple.
+[00:05:18.900 --> 00:05:27.940] 透過我們的一個連續運動摺疊系統，車把、座椅和車架在一個平滑的運動中一起運動。最終，我們的目標很簡單。
+[00:05:28.160 --> 00:05:32.700] To reduce the small problems and possible risks that parents may face every day.
+[00:05:28.160 --> 00:05:32.700] 減少父母每天可能面臨的小問題和可能的風險。
+[00:05:32.980 --> 00:05:36.800] And to create a stroller that feels safer, simpler, and easier to use.
+[00:05:32.980 --> 00:05:36.800] 打造更安全、更簡單、更易於使用的嬰兒車。
+[00:05:37.260 --> 00:05:46.720] We believe good design should make everyday life easier without asking people to think about how the mechanism works. That is wonder. Thank you very much.
+[00:05:37.260 --> 00:05:46.720] 我們認為，好的設計應該讓日常生活變得更輕鬆，而不會要求人們思考這種機制是如何運作的。真是奇蹟，非常感謝你
