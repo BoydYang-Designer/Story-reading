@@ -1,0 +1,56 @@
+[00:00:00.000 --> 00:00:07.060] Next, I'd like to introduce a concept focused on making everyday stroller interactions simpler. We call it Magic Connect.
+[00:00:00.000 --> 00:00:07.060] 接下來，我想介紹一個概念，專注於簡化日常嬰兒車互動。我們稱之為Magic Connect。
+[00:00:07.360 --> 00:00:15.900] Today, attaching a stroller seat often requires parents to carefully align both sides with separate adapters before the seat can lock into place.
+[00:00:07.360 --> 00:00:15.900] 如今，安裝嬰兒車座椅通常需要父母小心地用獨立的轉接器對齊兩側，才能將座椅鎖定到位。
+[00:00:16.120 --> 00:00:22.820] It often requires both hands, which can be inconvenient when you're holding your baby or carrying shopping bags.
+[00:00:16.120 --> 00:00:22.820] 它通常需要雙手，當您抱著寶寶或攜帶購物袋時，這可能會不方便。
+[00:00:22.980 --> 00:00:30.280] So we asked ourselves, what if attaching a stroller seat could be as simple as setting it down? Let me show you.
+[00:00:22.980 --> 00:00:30.280] 所以我們問自己，如果安裝嬰兒車座椅可以像放下它一樣簡單呢？我帶你去看看。
+[00:00:30.460 --> 00:00:34.120] With Magic Connect, there's no need to precisely align the seat.
+[00:00:30.460 --> 00:00:34.120] 使用Magic Connect ，無需精確對齊座椅。
+[00:00:34.380 --> 00:00:36.600] Simply lower the seat onto the guides.
+[00:00:34.380 --> 00:00:36.600] 只需將座椅降到導軌上即可。
+[00:00:36.920 --> 00:00:42.120] The guides automatically position the seat, and the system securely locks it into place.
+[00:00:36.920 --> 00:00:42.120] 導軌會自動定位座椅，系統會將其牢固地鎖定到位。
+[00:00:42.420 --> 00:00:48.540] The result is a faster, more intuitive installation experience that feels natural from the very first use.
+[00:00:42.420 --> 00:00:48.540] 結果是更快、更直觀的安裝體驗，從第一次使用開始就感覺很自然。
+[00:00:48.980 --> 00:00:51.140] That's the idea behind Magic Connect.
+[00:00:48.980 --> 00:00:51.140] 這就是Magic Connect背後的理念。
+[00:00:51.400 --> 00:00:55.080] From the user's perspective, the seat almost seems to connect itself.
+[00:00:51.400 --> 00:00:55.080] 從用戶的角度來看，座椅幾乎可以自我連接。
+[00:00:55.080 --> 00:00:59.440] But attaching the seat is only one part of the everyday stroller experience.
+[00:00:55.080 --> 00:00:59.440] 但安裝座椅只是日常嬰兒車體驗的一部分。
+[00:00:59.780 --> 00:01:04.080] We also looked at another common challenge. Maneuvering in crowded spaces.
+[00:00:59.780 --> 00:01:04.080] 我們還研究了另一個常見的挑戰。在擁擠的空間中操縱。
+[00:01:04.400 --> 00:01:11.220] In elevators, cafes, shopping malls or public transportation, making tight turns with a stroller can be difficult.
+[00:01:04.400 --> 00:01:11.220] 在電梯、咖啡館、商場或公共交通工具中，使用嬰兒車轉彎可能很困難。
+[00:01:11.500 --> 00:01:14.240] To solve this, we developed quick steering mode.
+[00:01:11.500 --> 00:01:14.240] 為了解決這個問題，我們開發了快速轉向模式。
+[00:01:14.440 --> 00:01:21.680] Simply press the button here to let all four wheels swivel freely, making tight turns and precise maneuvering much easier.
+[00:01:14.440 --> 00:01:21.680] 只需按下此處的按鈕，即可讓所有四個輪子自由旋轉，使轉彎變得緊湊，並更輕鬆地進行精確操縱。
+[00:01:21.880 --> 00:01:26.920] Release the button, and the stroller instantly returns to its standard steering mode.
+[00:01:21.880 --> 00:01:26.920] 鬆開按鈕，嬰兒車立即返回其標準轉向模式。
+[00:01:27.160 --> 00:01:31.980] It's a simple feature that gives parents greater control, exactly when they need it.
+[00:01:27.160 --> 00:01:31.980] 這是一個簡單的功能，可以讓父母在需要的時候有更大的控制權。
+[00:01:32.340 --> 00:01:40.140] Together, these two features are designed around one simple idea, making everyday stroller interactions easier and more intuitive.
+[00:01:32.340 --> 00:01:40.140] 這兩項功能共同圍繞一個簡單的想法設計，使日常嬰兒車互動更輕鬆、更直觀。
+[00:01:40.140 --> 00:01:43.440] Now, let's take a closer look at the rest of the concept.
+[00:01:40.140 --> 00:01:43.440] 現在，讓我們仔細看看概念的其餘部分。
+[00:01:43.720 --> 00:01:53.840] But before we get into the design details, I'd like to show you a short video, demonstrating how these two features can make everyday parenting easier. I hope you enjoy it.
+[00:01:43.720 --> 00:01:53.840] 但在我們進入設計細節之前，我想給你們看一段簡短的視頻，展示這兩個功能如何讓日常育兒變得更容易。希望你會喜歡。
+[00:01:54.080 --> 00:01:58.680] Now that you've seen the concept in action, let's take a closer look at the product itself,
+[00:01:54.080 --> 00:01:58.680] 現在您已經看到了實際的概念，讓我們仔細看看產品本身，
+[00:01:59.000 --> 00:02:03.840] including the overall design, key specifications, and the thinking behind it.
+[00:01:59.000 --> 00:02:03.840] 包括整體設計、關鍵規格及其背後的思維。
+[00:02:04.100 --> 00:02:08.400] To conclude, our goal was not simply to add more features to a stroller.
+[00:02:04.100 --> 00:02:08.400] 總而言之，我們的目標不僅僅是為嬰兒車添加更多功能。
+[00:02:08.400 --> 00:02:13.560] Instead, we focused on simplifying the interactions parents experience every day.
+[00:02:08.400 --> 00:02:13.560] 相反，我們專注於簡化父母每天體驗的互動。
+[00:02:13.860 --> 00:02:17.340] We believe thoughtful design isn't about adding more features.
+[00:02:13.860 --> 00:02:17.340] 我們認為，精心設計並不是為了新增更多功能。
+[00:02:17.600 --> 00:02:20.860] It's about making everyday experiences feel effortless.
+[00:02:17.600 --> 00:02:20.860] 讓日常體驗更輕鬆。
+[00:02:21.140 --> 00:02:23.120] Thank you very much for your time.
+[00:02:21.140 --> 00:02:23.120] 非常感謝你提供你的想法
+[00:02:23.380 --> 00:02:25.180] I'd be happy to answer any questions.
+[00:02:23.380 --> 00:02:25.180] 我很樂意回答任何問題。
