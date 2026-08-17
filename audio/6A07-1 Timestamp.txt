@@ -1,0 +1,106 @@
+[00:00:00.000 --> 00:00:04.800] Before we wrap up, if we still have a few minutes, I'd like to share one additional idea.
+[00:00:00.000 --> 00:00:04.800] 在總結之前，如果我們還有幾分鐘的時間，我想分享另一個想法。
+[00:00:05.180 --> 00:00:07.980] This one wasn't part of today's planned concepts.
+[00:00:05.180 --> 00:00:07.980] 這不是今天的計劃概念的一部分。
+[00:00:08.320 --> 00:00:14.000] I don't have a prototype yet, but I prepared a few slides to explain the idea and get your thoughts.
+[00:00:08.320 --> 00:00:14.000] 我還沒有原型，但我準備了幾張投影片來解釋這個想法，並了解你的想法。
+[00:00:14.260 --> 00:00:18.060] I started by looking at the folding experience from the parent's perspective.
+[00:00:14.260 --> 00:00:18.060] 我首先從父母的角度看待折疊體驗。
+[00:00:18.380 --> 00:00:23.500] With many compact strollers, when you fold the stroller, the handlebar rotates downward.
+[00:00:18.380 --> 00:00:23.500] 使用許多緊湊型嬰兒車時，當您摺疊嬰兒車時，車把會向下旋轉。
+[00:00:23.960 --> 00:00:29.500] Because the handlebar moves down, the parent naturally needs to bend over and follow the movement.
+[00:00:23.960 --> 00:00:29.500] 由於把手向下移動，父母自然需要彎腰跟隨動作。
+[00:00:29.780 --> 00:00:35.760] It's a small detail, but it's something the parent experiences every time they fold or unfold the stroller.
+[00:00:29.780 --> 00:00:35.760] 這是一個小細節，但這是父母每次摺疊或展開嬰兒車時都會體驗到的東西。
+[00:00:36.000 --> 00:00:43.400] So I started thinking, can we make the folding motion more natural, while allowing the parent to stay more upright?
+[00:00:36.000 --> 00:00:43.400] 所以我開始想，我們可以讓折疊動作更自然，同時讓父母保持更直立嗎？
+[00:00:43.640 --> 00:00:50.580] The Boogaboo Dragonfly is a good example of a stroller designed to fold while keeping the handlebar relatively upright,
+[00:00:43.640 --> 00:00:50.580] Boogaboo蜻蜓是嬰兒車的一個很好的例子，它被設計成可以折疊，同時保持車把相對直立，
+[00:00:50.780 --> 00:00:53.400] so the parent doesn't need to bend over as much.
+[00:00:50.780 --> 00:00:53.400] 所以父母不需要彎腰
+[00:00:53.580 --> 00:01:01.000] Its mechanism allows the stroller to fold into a self -standing position with one hand, without removing the seat or bassinet.
+[00:00:53.580 --> 00:01:01.000] 其機構允許嬰兒車單手折疊成自立姿勢，而無需拆卸座椅或搖籃。
+[00:01:01.480 --> 00:01:06.620] However, when we look more closely at the folding movement, there are still some opportunities.
+[00:01:01.480 --> 00:01:06.620] 然而，當我們更仔細地觀察折疊運動時，仍然有一些機會。
+[00:01:06.920 --> 00:01:11.880] As you can see, the user lifts the handlebar and brings the front of the stroller backward.
+[00:01:06.920 --> 00:01:11.880] 如您所見，使用者擡起車把並將嬰兒車前部向後移動。
+[00:01:12.200 --> 00:01:19.200] This lifts the front wheels off the ground and allows a support element to engage, so the stroller can stand by itself.
+[00:01:12.200 --> 00:01:19.200] 這將前輪從地面擡起，並允許支撐元件接合，因此嬰兒車可以獨立站立。
+[00:01:19.560 --> 00:01:25.600] From my perspective, the overall movement could still be made more natural and effortless for the parent.
+[00:01:19.560 --> 00:01:25.600] 從我的角度來看，對於父母來說，整體運動仍然可以變得更加自然和輕鬆。
+[00:01:25.620 --> 00:01:31.560] So I started thinking, can we create an upright folding motion that keeps the stroller compact,
+[00:01:25.620 --> 00:01:31.560] 所以我開始思考，我們是否可以創造一個保持嬰兒車緊湊的直立摺疊運動，
+[00:01:31.900 --> 00:01:34.280] but without requiring the user to lift the stroller?
+[00:01:31.900 --> 00:01:34.280] 但不需要使用者擡起嬰兒車嗎？
+[00:01:34.740 --> 00:01:36.940] So this is the approach I explored.
+[00:01:34.740 --> 00:01:36.940] 這就是我探索的方法。
+[00:01:37.200 --> 00:01:39.200] Let me explain what you just saw.
+[00:01:37.200 --> 00:01:39.200] 讓我解釋一下你剛剛看到的情況。
+[00:01:39.460 --> 00:01:47.380] Before folding, the only thing the parent needs to do, is bring the canopy to its lowest position to achieve the most compact folded size.
+[00:01:39.460 --> 00:01:47.380] 折疊之前，父母唯一需要做的就是將遮篷放到最低位置，以達到最緊湊的摺疊尺寸。
+[00:01:47.820 --> 00:01:50.820] Then, the parent simply rotates the handlebar upward.
+[00:01:47.820 --> 00:01:50.820] 然後，父母只需向上旋轉車把。
+[00:01:51.260 --> 00:01:57.100] As the handlebar rotates, the seat rotates together with it, while all four wheels remain on the ground.
+[00:01:51.260 --> 00:01:57.100] 當車把旋轉時，座椅會與座椅一起旋轉，而四個輪子都留在地面上。
+[00:01:57.360 --> 00:02:00.020] So the parent never needs to lift the stroller.
+[00:01:57.360 --> 00:02:00.020] 因此，父母永遠不需要擡起嬰兒車。
+[00:02:00.300 --> 00:02:05.700] As the handlebar reaches the upright position, the seat also reaches the unlocking position.
+[00:02:00.300 --> 00:02:05.700] 當車把到達直立位置時，座椅也會到達解鎖位置。
+[00:02:05.960 --> 00:02:09.860] At this point the seat automatically releases and folds by itself.
+[00:02:05.960 --> 00:02:09.860] 此時，座椅會自動釋放和折疊。
+[00:02:10.300 --> 00:02:15.640] Then, the parent simply pushes the handlebar downward to complete the rest of the folding process.
+[00:02:10.300 --> 00:02:15.640] 然後，家長只需將車把向下推，即可完成其餘的折疊過程。
+[00:02:15.640 --> 00:02:19.920] When fully folded, the stroller remains standing on all four wheels.
+[00:02:15.640 --> 00:02:19.920] 完全折疊後，嬰兒車仍然站在所有四個輪子上。
+[00:02:20.180 --> 00:02:23.540] And unfolding is simply the reverse of the folding process.
+[00:02:20.180 --> 00:02:23.540] 展開只是摺疊過程的反過來。
+[00:02:23.840 --> 00:02:31.600] Because the handlebar remains upright, the parent can pull it upward to unfold the stroller, without needing to lift or reposition it.
+[00:02:23.840 --> 00:02:31.600] 由於車把保持直立，家長可以向上拉開嬰兒車，而無需提起或重新定位嬰兒車。
+[00:02:31.940 --> 00:02:38.600] The seat can also fold in the parent -facing position, so there is no need to change the seat direction before folding.
+[00:02:31.940 --> 00:02:38.600] 座椅也可以摺疊在面向父母的位置，因此摺疊前無需改變座椅方向。
+[00:02:38.960 --> 00:02:44.500] The goal is to create a simple, continuous folding experience that feels natural, comfortable,
+[00:02:38.960 --> 00:02:44.500] 我們的目標是創造一個簡單，連續的折疊體驗，感覺自然，舒適，
+[00:02:44.720 --> 00:02:47.240] and effortless, without lifting the stroller.
+[00:02:44.720 --> 00:02:47.240] 毫不費力地擡起嬰兒車
+[00:02:47.540 --> 00:02:51.300] Let me show you the folding mechanism again, from another angle.
+[00:02:47.540 --> 00:02:51.300] 讓我從另一個角度再次向你展示摺疊機制。
+[00:02:51.580 --> 00:02:57.480] This view gives you a better look at how the handlebar and seat move together through the folding sequence.
+[00:02:51.580 --> 00:02:57.480] 此視圖可讓您更好地了解車把和座椅在摺疊過程中如何一起移動。
+[00:02:57.900 --> 00:03:02.400] So, this is the overall concept from different views and in both seat directions.
+[00:02:57.900 --> 00:03:02.400] 因此，這是從不同角度和兩個座位方向的整體概念。
+[00:03:02.800 --> 00:03:05.380] Another detail I considered is the footrest.
+[00:03:02.800 --> 00:03:05.380] 我考慮的另一個細節是腳踏板。
+[00:03:05.760 --> 00:03:10.540] Normally, many strollers use a footrest mounted on the frame in front of the seat.
+[00:03:05.760 --> 00:03:10.540] 通常情況下，許多嬰兒車都會使用安裝在座椅前車架上的腳踏板。
+[00:03:10.660 --> 00:03:14.380] But in this concept, the seat folds down into this same area.
+[00:03:10.660 --> 00:03:14.380] 但在這個概念中，座椅向下折疊成相同的區域。
+[00:03:14.540 --> 00:03:19.940] So a traditional frame -mounted footrest would take up the folding space and affect the folded size.
+[00:03:14.540 --> 00:03:19.940] 因此，傳統的車架式腳墊會佔用摺疊空間，並影響摺疊尺寸。
+[00:03:20.160 --> 00:03:24.880] So instead, I integrated a long adjustable footrest directly into the seat.
+[00:03:20.160 --> 00:03:24.880] 因此，我將可調整的長腳墊直接整合到座椅中。
+[00:03:24.980 --> 00:03:29.920] Because it folds together with the seat, it doesn't interfere with the folding mechanism.
+[00:03:24.980 --> 00:03:29.920] 由於它與座椅摺疊在一起，因此不會幹擾摺疊機制。
+[00:03:30.140 --> 00:03:35.520] And whether the seat is parent -facing or forward -facing, the child can always use the footrest.
+[00:03:30.140 --> 00:03:35.520] 無論座椅是面向父母還是面向前方，孩子都可以隨時使用腳墊。
+[00:03:35.780 --> 00:03:41.300] The adjustment button is positioned behind the footrest, so the parent can adjust it with one hand.
+[00:03:35.780 --> 00:03:41.300] 調整按鈕位於腳墊後方，因此父母可以用一隻手進行調整。
+[00:03:41.740 --> 00:03:47.020] This is the rear view, showing the brake pedal detail, and how it is integrated into the rear frame.
+[00:03:41.740 --> 00:03:47.020] 這是後視圖，顯示剎車踏板的細節，以及它如何集成到後車架中。
+[00:03:47.420 --> 00:03:51.060] Finally, here are the overall dimensions and the folded dimensions.
+[00:03:47.420 --> 00:03:51.060] 最後，這裡是整體尺寸和折疊尺寸。
+[00:03:51.320 --> 00:03:56.880] The key point is that the upright folding mechanism does not require the stroller to be lifted,
+[00:03:51.320 --> 00:03:56.880] 重點是直立折疊機構不需要擡起嬰兒車，
+[00:03:56.880 --> 00:04:02.340] while still maintaining the target folded dimensions. So that's basically the idea.
+[00:03:56.880 --> 00:04:02.340] 同時仍保持目標折疊尺寸所以基本上就是這個主意
+[00:04:02.660 --> 00:04:06.920] I wanted to make the folding experience easier and more natural for the parent.
+[00:04:02.660 --> 00:04:06.920] 我想讓折疊體驗對家長來說更輕鬆、更自然。
+[00:04:07.140 --> 00:04:15.220] The key idea is that the parent can fold and unfold the stroller without bending over, while keeping the handlebar in an upright position.
+[00:04:07.140 --> 00:04:15.220] 關鍵的想法是，父母可以在不彎腰的情況下摺疊和展開嬰兒車，同時保持車把處於直立位置。
+[00:04:15.440 --> 00:04:20.160] We've also made a quick validation mockup to test the basic folding architecture.
+[00:04:15.440 --> 00:04:20.160] 我們還製作了快速驗證模型，以測試基本的摺疊架構。
+[00:04:20.540 --> 00:04:26.700] It doesn't include the detailed mechanisms yet, but so far, the basic folding structure works as expected.
+[00:04:20.540 --> 00:04:26.700] 它還沒有包括詳細的機制，但到目前為止，基本的折疊結構可以正常工作。
+[00:04:27.200 --> 00:04:31.020] So for now, I mainly wanted to share the idea and see what you think.
+[00:04:27.200 --> 00:04:31.020] 所以現在，我主要想分享這個想法，看看你有什麼想法。
+[00:04:31.240 --> 00:04:36.960] If you find the direction interesting, we'd be happy to explore it further together, and hear your thoughts.
+[00:04:31.240 --> 00:04:36.960] 如果你覺得有趣的方向，我們很樂意進一步探索，並聆聽你的想法。
