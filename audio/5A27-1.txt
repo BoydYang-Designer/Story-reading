@@ -1,57 +1,80 @@
-Thanks, Carol. Next, I'd like to introduce our stroller concept, Wonder.
-The idea behind Wonder started with a very simple observation.
-When we push a stroller, we are usually paying attention to it.
-But when we stop, even for just a few seconds, things can change.
-Parents may stop to answer a question, check their phone, or adjust something for their child.
-The ground may look flat, but even a small slope can be easy to miss.
-And if the brake has not been engaged, the stroller may start to move on its own.
-That simple situation became the starting point for Wonder. Key feature 1.
-Auto -brake The first key feature is our auto -brake system. The idea is very simple.
-When the stroller stops, the brake engages automatically. Let me show you.
-As you can see, when the stroller stops, the brake engages automatically.
-And when I want to move again, I simply, push forward.
-The brake releases automatically, and the stroller starts moving.
-So there is no extra step for the parent. Stop. It brakes. Push. It moves.
-That is the basic idea behind auto -brake.
-Because this is a mechanical system, you can feel a small amount of force, when starting from a complete stop.
-This is part of the brake system.
-And the force can be adjusted.
-The stronger the force, the steeper the slope the stroller can resist, before it starts to move.
-In our current prototype, the system can hold a stroller, with a 20kg load, on an 8 -degree slope.
-This gives us a good level of protection, while still keeping the stroller comfortable to push.
-3 -brake modes We are also exploring 3 -brake modes. Full lock for maximum stability. Auto -brake for everyday use.
-And free roll for completely free movement.
-So parents can choose the mode, that works best for different situations. Key feature 2.
-One Continuous Motion Folding The second key feature is our one continuous motion folding system.
-When we looked at traditional stroller folding, we found that it often takes several steps. Adjust the canopy. Unlock the handlebar. Release the seat. Then, fold the stroller.
-We wanted to make this much simpler.
-Before folding, the only preparation is to lower the canopy.
-Then the user unlocks the telescopic handlebar, and pushes it all the way down.
-When the handlebar reaches the bottom, it automatically starts the folding mechanism.
-From there, the handlebar rotates down, and the seat moves with it.
-There is no separate seat release. No extra folding step.
-The seat and frame move together. Let me show you.
-As I continue pushing the handlebar down, the folding process finishes automatically.
-And the result is a smooth and compact folded position.
-So the whole process can be reduced to 3 actions. Lower the canopy. Push the handlebar down. Fold it. And you're done.
-Everything happens in one continuous motion.
-This can be especially helpful in everyday situations.
-When a parent is holding a child, carrying shopping bags, or putting the stroller into a car. Design, philosophy.
-Both features are built around two simple ideas. Passive safety. First, passive safety.
-The stroller helps reduce the chance of unexpected movement.
-Without asking the parent to remember to use the brake every time.
-The stroller simply responds when it stops. Easy interaction. Second, easy interaction.
-The mechanism inside wonder is sophisticated.
-But the experience should feel simple.
-Parents don't need to understand how it works.
-They only need to know four simple actions. Stop. Push. Fold. Go.
-That is the experience we want wonder to deliver. Closing.
-So wonder focuses on two everyday challenges. Safer stopping.
-With auto -brake, the brake engages automatically when the stroller stops, helping reduce the chance of unexpected movement on a slope.
-And with three brake modes, parents can choose what works best for each situation. Easier folding.
-With our one continuous motion folding system, the handlebar, seat, and frame move together in one smooth motion. Ultimately, our goal is simple.
-To reduce the small problems and possible risks that parents may face every day.
-And to create a stroller that feels safer, simpler, and easier to use.
-And to create a stroller that feels safer, simpler, and simpler, and simpler, and simpler, and simpler,
-and simpler, and simpler, and simpler, and simpler, and simpler, and simpler, and simpler, and simpler,
-and simpler, and simpler, and simpler. Thank you.
+Wonder. Presentation. Next I'd like to introduce our stroller concept, wonder.
+We started with a simple observation.
+A stroller is usually safe while it's moving.
+But what happens when the parent stops?
+These are some everyday situations, where a parent may stop for a moment on a slight slope, without even realizing it.
+Because the slope is so subtle, the parent may not think they need to engage the brake.
+But even a slight slope can cause the stroller to slowly start rolling.
+It may only take a few seconds, but that can create an unexpected situation for both the parent and the child.
+So we started with a simple question.
+What if the stroller could protect itself after the parent stops?
+That led us to look at braking in a different way.
+With a conventional stroller, there are basically two states.
+Brake released, the stroller moves freely.
+Brake engaged, the stroller is fully locked.
+But there's a gap between these two states.
+What happens when the parent stops on a slight slope, but doesn't realize the stroller is starting to roll?
+That's where auto -brake comes in. The idea is simple. Stop. It locks. Push. It releases.
+But there's one important thing to clarify.
+Auto -brake only engages after the stroller has come to a complete stop.
+It is not designed to stop a stroller while it is already moving.
+Instead, it helps prevent the stroller from rolling again after it has stopped.
+Especially on slight slopes that are easy to overlook.
+The conventional brake is still used whenever the parent wants to actively stop or fully lock the stroller.
+So basically, we're adding another layer between free movement and full lock.
+Rather than just explaining it, let me show you.
+Here you can see the difference.
+With a conventional stroller, if the parent stops on a slight slope without engaging the brake, the stroller may slowly start to roll again.
+With wonder, once the stroller comes to a complete stop, the auto -brake engages automatically and helps prevent it from rolling again.
+So the parent doesn't have to remember another step for a slope they may not even notice.
+Now let me show you the prototype.
+When I stop the stroller, the auto -brake engages automatically.
+And when I push forward, the brake releases, and the stroller moves again. No extra action. Just. Stop. Push.
+There's one more important thing to understand about this concept.
+The auto -brake isn't designed to fully lock the stroller on every slope.
+Its main purpose is to prevent unintended rolling after the stroller has stopped, especially on slight slopes that are easy to overlook.
+As the slope gets steeper, the stroller may eventually overcome the braking force and start to move.
+In that situation, the parent should use the conventional brake for full locking.
+So the two systems have different roles.
+Auto -brake prevents unintended rolling after the stroller stops.
+Conventional brake actively stops and fully locks the stroller when the parent needs it.
+In other words, the auto -brake gives you protection after you stop.
+When you may not realize you need to apply the brake.
+The conventional brake is there, when you know you want full locking.
+There's another part of the concept I'd like to explain.
+We could achieve automatic braking electronically, and there are already electronic brake systems on the market, designed to provide full locking.
+But we wanted to explore a different approach.
+Instead of automatically applying full braking,
+Wunder uses a mechanical system to create a controlled locking effect after the stroller comes to a stop.
+The stroller's own movement is used to engage and release the brake.
+So we don't need a battery to power the braking function.
+This gives us the potential to simplify the system, reduce weight, and reduce cost.
+But it also creates an important design challenge.
+How much braking force is enough?
+If the braking force is too low, the stroller may still roll on a slight slope.
+But if it's too high, starting from a complete stop can feel uncomfortable, because the parent has to push against more resistance.
+So our goal isn't to maximize the braking force.
+It's to find the right balance.
+Enough resistance to prevent unintended rolling.
+But not so much that pushing feels uncomfortable.
+In our current prototype, the system can hold a stroller with a 20 -kilogram load on an 8 -degree slope.
+But this is the current capability of our prototype.
+It doesn't mean the auto brake is intended to replace the full lock brake on steeper slopes.
+We also looked at another everyday moment, folding.
+Think about when parents need to go up or down stairs.
+They may be holding a child, carrying bags or simply trying to move quickly.
+So we asked ourselves, can we make folding simpler?
+With Wunder, there's no separate seat folding step. The canopy is adjustable.
+So before folding, just make sure it's in the lowest position.
+Then unlock the telescopic handlebar and push it down.
+As the handlebar folds, the seat follows automatically.
+The seat and frame move together in one continuous motion.
+And importantly, the same mechanism works in both seat directions.
+So it doesn't matter whether the seat is parent -facing or forward -facing. Let me show you.
+First, put the canopy in its lowest position.
+Then unlock the telescopic handlebar and push it down.
+As the handlebar moves down, the folding mechanism is activated.
+The seat rotates together with the frame.
+And I just keep push -ex until the stroller reaches its compact folded position. So basically, lower, push, done. It's one continuous movement.
+Now that you've seen how the two key ideas work, let's take a closer look at the rest of the design.
+I'll walk you through the overall concept, the key design details, and some of the specifications.

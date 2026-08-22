@@ -1,68 +1,13 @@
-Thanks, Carol. Next, I'd like to introduce our stroller concept, wonder.
-The idea behind wonder started with a very simple observation.
-Parents often stop their stroller for just a few seconds to answer a question, check their phone,
-or adjust something for their child.
-But even during these short moments, the stroller may not be fully stable.
-The ground may look flat, but there can still be a small slope.
-And if the brake has not been used, the stroller may start to roll.
-That simple situation became the starting point for wonder.
-Two key ideas from this observation, we focused on two everyday problems. First, safer stopping.
-We developed a mechanical auto -brake system.
-When the stroller stops, the brake engages automatically.
-When the parent pushes forward, the brake releases automatically.
-So the basic interaction is very simple. Stop. It brakes. Push. It moves. Second, easier folding.
-We wanted to make stroller folding feel like one continuous movement instead of several separate steps.
-This became our one continuous motion folding system.
-These are the two main ideas behind wonder.
-And rather than only explain them, I'd like to first show you what they look like in real use. Video. Auto -brake.
-This video shows the difference between a stroller without auto -brake and a stroller with our auto -brake system.
-Without auto -brake, the stroller can begin to move when it is stopped on a slope.
-With wonder, the brake responds automatically when the stroller stops.
-So the parent does not need to remember to activate the brake every time. Prototype. Auto -brake.
-Now let me show you the actual prototype.
-When I stop the stroller, the brake engages automatically. And now I push forward. Forward.
-The brake releases and the stroller starts moving.
-The key point is that there is no additional action from the parent. Auto -brake. Technical details.
-Because this is a mechanical system, there is one important point we need to consider.
-You can feel a small amount of force when starting from a complete stop.
-This is the force needed to overcome the brake.
-The amount of force can be adjusted and it is directly related to how much slope the system is designed to resist.
-In our current prototype, the system can hold a stroller carrying a 20 kg load on an 8 degree slope.
-So we can adjust the system to find the right balance between anti -roll performance and pushing comfort. Three brake modes. Further development.
-This also led us to another design question.
-What happens if the auto -brake push feeling is too strong for some users?
-To explore this, we developed the idea of a three -mode brake system. The first is full lock.
-The wheels are fully locked for parking or situations where maximum stability is needed. The second is auto -brake. This is the everyday mode.
-The stroller locks automatically when it stops and releases when the user pushes forward.
-And the third is free roll.
-The brake is completely disengaged so the stroller can move freely without the auto -brake engagement feeling.
-So instead of using one setting for every situation, parents can choose the level of control they prefer. Full lock. Auto -brake. Free roll.
-This is still part of our development direction, but it gives us another way to balance safety, comfort, and user preference. Video. Folding knife.
-Now let's look at the second part of wonder.
-Here we focused on another common situation.
-When parents need to fold a stroller, they may already be holding a child, carrying shopping bags,
-or getting ready to put the stroller into a car.
-So we wanted to reduce the number of separate actions. Prototype. Folding.
-Let me show you how it works.
-Before folding, the only preparation is to lower the canopy.
-Then I unlock the telescopic handlebar and push it all the way down.
-As the handlebar reaches the bottom, it activates the folding mechanism.
-And from here, the handlebar rotates down while the seat rotates together with it.
-There is no separate seat release. No extra folding step.
-The seat and frame move together.
-As I continue pushing down, the folding sequence finishes automatically, and the stroller reaches its compact folded position.
-So the process is essentially, lower the canopy, push the handlebar down, fold, and you're done.
-Everything happens as one continuous movement. Design philosophy.
-Although the mechanisms behind wonder are quite complex, we wanted the interaction to feel very simple.
-That led us to two design ideas. Passive safety. First, passive safety.
-The stroller helps reduce unexpected movement without asking the parent to remember to use the brake every time. The system responds automatically. Easy interaction. Second, easy interaction.
-Parents should not have to understand the mechanism behind the product.
-They only need to understand a few simple actions. Stop, push, fold, go.
-That is the experience we wanted wonder to deliver. Closing.
-So wonder focuses on two everyday challenges. Safer stopping.
-With auto brake, the stroller responds automatically when it stops, helping reduce the chance of unexpected movement on slopes.
-And through the three mode brake concept, we can further explore the right balance between stability and pushing comfort. Easier folding.
-With our one continuous motion folding system, the handlebar, seat, and frame move together in one smooth motion. Ultimately, our goal is simple.
-To reduce the small problems and possible risks that parents may face every day.
-And to create a stroller that feels safer, simpler, and easier to use.
-We believe good design should make everyday life easier without asking people to think about how the mechanism works. That is wonder. Thank you very much.
+There's one additional option we could explore, if the starting force of the auto -brake becomes a concern.
+We could explore whether a three -position mechanism would give us more flexibility.
+For example, the rear brake could have three positions.
+Position 1 would be full lock, like a traditional stroller brake.
+Position 2 would be the auto -brake mode, which is our current concept.
+The stroller can move when pushed, but once it comes to a complete stop, the auto -brake engages to help prevent it from rolling again.
+And position 3 would be free -rolling, with no auto -brake resistance.
+This would give us three different modes, depending on the situation.
+Full lock, auto -brake and free -rolling.
+I think this could give us more flexibility in balancing braking performance and starting force.
+Of course, this is only an idea at this stage.
+We haven't designed or validated the mechanism yet, so, we would need to explore whether this approach is actually feasible.
+But if the starting force becomes an issue, I think it could be an interesting direction to investigate.
