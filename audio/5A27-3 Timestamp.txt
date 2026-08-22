@@ -1,158 +1,160 @@
-[00:00:05.460 --> 00:00:12.600] Wonder. Presentation. Next I'd like to introduce our stroller concept, Wonder.
-[00:00:05.460 --> 00:00:12.600] Wonder。簡報。接下來我想介紹我們的嬰兒車概念， Wonder。
-[00:00:12.880 --> 00:00:14.960] We started with a simple observation.
-[00:00:12.880 --> 00:00:14.960] 我們從一個簡單的觀察開始。
-[00:00:15.280 --> 00:00:17.980] A stroller is usually safe while it's moving.
-[00:00:15.280 --> 00:00:17.980] 嬰兒車在移動時通常是安全的。
-[00:00:18.220 --> 00:00:20.340] But what happens when the parent stops?
-[00:00:18.220 --> 00:00:20.340] 但當父母停下來時會發生什麼事？
-[00:00:20.740 --> 00:00:27.680] These are some everyday situations where a parent may stop for a moment on a slight slope, without noticing the slope.
-[00:00:20.740 --> 00:00:27.680] 這些是一些日常情況，父母可能會在輕微的斜坡上停下來一會兒，而不會注意到斜坡。
-[00:00:27.940 --> 00:00:33.140] Because the slope is so subtle, the parent may not think it's necessary to engage the brake.
-[00:00:27.940 --> 00:00:33.140] 由於斜坡非常微妙，父母可能認為沒有必要踩剎車。
-[00:00:33.320 --> 00:00:37.300] But even a slight slope can cause the stroller to slowly start rolling.
-[00:00:33.320 --> 00:00:37.300] 但即使是輕微的斜坡也可能導致嬰兒車慢慢開始滾動。
-[00:00:37.600 --> 00:00:43.900] It may only take a few seconds, but it can create an unexpected situation for both the parent and the child.
-[00:00:37.600 --> 00:00:43.900] 這可能只需要幾秒鐘，但可能會給父母和孩子帶來意想不到的情況。
-[00:00:44.160 --> 00:00:46.260] So we started with a simple question.
-[00:00:44.160 --> 00:00:46.260] 所以我們從一個簡單的問題開始。
-[00:00:46.440 --> 00:00:49.800] What if the stroller could protect itself when the parent stops?
-[00:00:46.440 --> 00:00:49.800] 如果嬰兒車可以在父母停車時保護自己呢？
-[00:00:50.120 --> 00:00:52.320] This made us think differently about braking.
-[00:00:50.120 --> 00:00:52.320] 這讓我們對煞車有不同的看法。
-[00:00:52.620 --> 00:00:56.100] With a conventional stroller, there are basically two states.
-[00:00:52.620 --> 00:00:56.100] 使用傳統的嬰兒車，基本上有兩種狀態。
-[00:00:56.540 --> 00:00:58.980] Brake released, the stroller moves freely.
-[00:00:56.540 --> 00:00:58.980] 釋放剎車，嬰兒車自由移動。
-[00:00:59.420 --> 00:01:01.940] Brake engaged, the stroller is fully locked.
-[00:00:59.420 --> 00:01:01.940] 剎車已啟動，嬰兒車已完全鎖定。
-[00:01:02.140 --> 00:01:04.560] But there is a gap between these two states.
-[00:01:02.140 --> 00:01:04.560] 但這兩種狀態之間存在差距。
-[00:01:04.560 --> 00:01:11.080] What happens when the parent stops on a slight slope, but doesn't realize, the stroller is starting to roll?
-[00:01:04.560 --> 00:01:11.080] 當父母停在輕微的斜坡上，卻沒有意識到嬰兒車開始滾動時會發生什麼？
-[00:01:11.400 --> 00:01:18.400] That's where auto -brake comes in. The idea is simple. Stop, it locks. Push, it releases.
-[00:01:11.400 --> 00:01:18.400] 這就是自動煞車發揮作用的地方。這個想法很簡單。停下來，它會鎖定，推，它會釋放
-[00:01:19.000 --> 00:01:23.340] When the stroller stops, auto -brake automatically creates a locking effect.
-[00:01:19.000 --> 00:01:23.340] 當嬰兒車停止時，自動煞車會自動產生鎖定效果。
-[00:01:23.720 --> 00:01:26.620] The purpose is not to replace the conventional brake.
-[00:01:23.720 --> 00:01:26.620] 目的不是要取代傳統的煞車系統。
-[00:01:26.880 --> 00:01:34.760] It provides passive protection when the parent overlooks a slight slope, or simply doesn't realize the stroller is starting to move.
-[00:01:26.880 --> 00:01:34.760] 當父母俯瞰輕微斜坡時，或者根本沒有意識到嬰兒車開始移動時，它會提供被動保護。
-[00:01:34.980 --> 00:01:40.500] For steeper slopes, or whenever full stability is needed, the conventional brake is still used.
-[00:01:34.980 --> 00:01:40.500] 對於較陡的斜坡，或每當需要完全穩定時，仍使用傳統制動器。
-[00:01:40.780 --> 00:01:47.060] So basically, we are adding another layer between, free movement, and, full lock.
-[00:01:40.780 --> 00:01:47.060] 因此，基本上，我們在之間添加了另一層，自由移動和完全鎖定。
-[00:01:47.300 --> 00:01:50.140] And rather than just explain it, let me show you.
-[00:01:47.300 --> 00:01:50.140] 而不是僅僅解釋它，讓我向你展示。
-[00:01:50.460 --> 00:01:51.920] Here you can see the difference.
-[00:01:50.460 --> 00:01:51.920] 在這裡你可以看到差異。
-[00:01:52.220 --> 00:02:00.060] With a conventional stroller, if the parent stops on a slight slope without engaging the brake, the stroller may slowly start to roll.
-[00:01:52.220 --> 00:02:00.060] 使用傳統嬰兒車時，如果父母在沒有剎車的情況下停在輕微的斜坡上，嬰兒車可能會慢慢開始滾動。
-[00:02:00.260 --> 00:02:07.780] With wonder, the auto -brake automatically creates a locking effect, when the stroller stops, helping prevent unintended rolling.
-[00:02:00.260 --> 00:02:07.780] 令人驚訝的是，當嬰兒車停止時，自動煞車會自動產生鎖定效果，有助於防止意外滾動。
-[00:02:08.020 --> 00:02:13.080] So the parent doesn't need to remember another step for a slope, they may not even notice.
-[00:02:08.020 --> 00:02:13.080] 因此，父母不需要記住斜坡的另一個步驟，他們甚至可能不會注意到。
-[00:02:13.460 --> 00:02:15.320] Now let me show you the prototype.
-[00:02:13.460 --> 00:02:15.320] 現在讓我向你展示原型。
-[00:02:15.700 --> 00:02:19.280] When I stop the stroller, the auto -brake engages automatically.
-[00:02:15.700 --> 00:02:19.280] 當我停止嬰兒車時，自動煞車會自動啟動。
-[00:02:19.580 --> 00:02:27.800] And when I push forward, the brake releases, and the stroller moves again. No extra action. Just. Stop. Push.
-[00:02:19.580 --> 00:02:27.800] 當我向前推時，剎車釋放，嬰兒車再次移動。無需額外操作，只需。停下來，推
-[00:02:28.140 --> 00:02:30.800] There's an important point about this concept.
-[00:02:28.140 --> 00:02:30.800] 這個概念有一個重要的觀點。
-[00:02:31.000 --> 00:02:35.260] The auto -brake is not designed to fully lock the stroller on every slope.
-[00:02:31.000 --> 00:02:35.260] 自動煞車的設計無法完全鎖定每個斜坡上的嬰兒車。
-[00:02:35.640 --> 00:02:40.800] Its main purpose is to prevent unintended rolling on slight slopes that are easy to overlook.
-[00:02:35.640 --> 00:02:40.800] 其主要目的是防止在容易忽略的輕微斜坡上意外滾動。
-[00:02:41.100 --> 00:02:47.240] As the slope becomes steeper, the stroller may eventually overcome the braking force, and start to move.
-[00:02:41.100 --> 00:02:47.240] 隨著斜坡變得更陡，嬰兒車最終可能會克服制動力，並開始移動。
-[00:02:47.420 --> 00:02:52.160] In that situation, the parent should use the conventional brake for full locking.
-[00:02:47.420 --> 00:02:52.160] 在這種情況下，家長應使用傳統制動器進行完全鎖定。
-[00:02:52.380 --> 00:02:59.760] So the two systems have different roles. Auto -brake. Passive protection for slight slopes. Conventional brake.
-[00:02:52.380 --> 00:02:59.760] 所以這兩個系統有不同的角色自動煞車。輕微斜坡的被動保護。傳統煞車。
-[00:03:00.020 --> 00:03:02.920] Full locking when the parent wants maximum stability.
-[00:03:00.020 --> 00:03:02.920] 當父母希望獲得最大穩定性時完全鎖定。
-[00:03:03.300 --> 00:03:08.720] In other words, auto -brake protects the moment, when you don't realize you need the brake.
-[00:03:03.300 --> 00:03:08.720] 換句話說，當您沒有意識到需要剎車時，自動剎車可以保護瞬間。
-[00:03:09.060 --> 00:03:13.340] The conventional brake handles the moment when you know you need full locking.
-[00:03:09.060 --> 00:03:13.340] 當您知道需要完全鎖定時，傳統制動器可以處理。
-[00:03:13.680 --> 00:03:15.820] There's another important part of this concept.
-[00:03:13.680 --> 00:03:15.820] 這個概念還有另一個重要部分。
-[00:03:16.120 --> 00:03:18.500] We could achieve automatic braking electronically.
-[00:03:16.120 --> 00:03:18.500] 我們可以實現電子自動煞車。
-[00:03:18.880 --> 00:03:24.420] And there are already electronic brake systems on the market that are designed to provide full locking.
-[00:03:18.880 --> 00:03:24.420] 市場上已經有專為提供完全鎖定而設計的電子制動系統。
-[00:03:24.660 --> 00:03:27.380] But we wanted to explore a different direction.
-[00:03:24.660 --> 00:03:27.380] 但我們想探索不同的方向。
-[00:03:27.640 --> 00:03:36.180] Instead of automatically applying full braking, Wunder uses a mechanical system to create a controlled locking effect when the stroller stops.
-[00:03:27.640 --> 00:03:36.180] Wunder不會自動完全煞車，而是使用機械系統在嬰兒車停止時產生受控的鎖定效果。
-[00:03:36.580 --> 00:03:40.320] The stroller's own movement is used to engage and release the brake.
-[00:03:36.580 --> 00:03:40.320] 嬰兒車自身的動作用於接合和釋放剎車。
-[00:03:40.500 --> 00:03:43.480] So we don't need a battery to power the braking function.
-[00:03:40.500 --> 00:03:43.480] 因此，我們不需要電池來為煞車功能供電。
-[00:03:43.780 --> 00:03:48.680] This gives us the potential to simplify the system, reduce weight, and reduce cost.
-[00:03:43.780 --> 00:03:48.680] 這使我們有可能簡化系統、減輕重量並降低成本。
-[00:03:48.820 --> 00:03:51.940] But this also creates an important design challenge.
-[00:03:48.820 --> 00:03:51.940] 但這也造成了重要的設計挑戰。
-[00:03:52.160 --> 00:03:54.040] How much braking force is enough?
-[00:03:52.160 --> 00:03:54.040] 多少煞車力就夠了？
-[00:03:54.260 --> 00:03:58.820] If the braking force is too low, the stroller may still roll on a slight slope.
-[00:03:54.260 --> 00:03:58.820] 如果剎車力太低，嬰兒車仍可能在輕微的斜坡上滾動。
-[00:03:59.000 --> 00:04:07.320] But if the braking force is too high, starting from a complete stop, can feel uncomfortable, because the parent has to push against more resistance.
-[00:03:59.000 --> 00:04:07.320] 但如果剎車力太大，從完全停止開始，可能會感到不舒服，因為父母不得不推動更多的阻力。
-[00:04:07.660 --> 00:04:10.540] So our goal is not to maximize the braking force.
-[00:04:07.660 --> 00:04:10.540] 因此，我們的目標不是最大限度地提高制動力。
-[00:04:10.740 --> 00:04:13.080] Our goal is to find the right balance.
-[00:04:10.740 --> 00:04:13.080] 我們的目標是找到適當的平衡。
-[00:04:13.380 --> 00:04:18.740] Enough resistance to prevent unintended rolling, but not so much that pushing feels uncomfortable.
-[00:04:13.380 --> 00:04:18.740] 足夠的阻力來防止意外滾動，但不會讓推動感覺不舒服。
-[00:04:19.100 --> 00:04:25.480] In our current prototype, the system can hold a stroller, with a 20 -kilogram load on an 8 -degree slope.
-[00:04:19.100 --> 00:04:25.480] 在我們目前的原型中，該系統可以容納一個嬰兒車，在8度的斜坡上承受20公斤的負載。
-[00:04:25.640 --> 00:04:28.640] But this is the current capability of our prototype.
-[00:04:25.640 --> 00:04:28.640] 但這是我們原型的現有能力。
-[00:04:29.040 --> 00:04:33.840] It doesn't mean auto -brake is intended to replace the full -lock brake on steeper slopes.
-[00:04:29.040 --> 00:04:33.840] 這並不意味著自動制動器旨在取代較陡峭斜坡上的全鎖定制動器。
-[00:04:34.080 --> 00:04:37.000] We also looked at another everyday moment, folding.
-[00:04:34.080 --> 00:04:37.000] 我們還看了另一個日常時刻，折疊。
-[00:04:37.500 --> 00:04:41.200] Think about the moment when parents need to go up or down a staircase.
-[00:04:37.500 --> 00:04:41.200] 想想父母需要上下樓梯的那一刻。
-[00:04:41.540 --> 00:04:46.060] They may be holding a child, carrying bags, or simply trying to move quickly.
-[00:04:41.540 --> 00:04:46.060] 他們可能抱著孩子、攜帶行李，或只是試圖快速移動。
-[00:04:46.280 --> 00:04:49.840] So we asked ourselves, can we make folding simpler?
-[00:04:46.280 --> 00:04:49.840] 所以我們問自己，我們可以讓折疊變得更簡單嗎？
-[00:04:50.100 --> 00:04:53.160] With wonder, there's no separate seat folding step.
-[00:04:50.100 --> 00:04:53.160] 令人驚訝的是，沒有單獨的座椅折疊步驟。
-[00:04:53.500 --> 00:04:58.320] The canopy is adjustable, so before folding, just make sure it's in the lowest position.
-[00:04:53.500 --> 00:04:58.320] 遮篷是可調整的，因此在摺疊之前，請確保它位於最低位置。
-[00:04:58.700 --> 00:05:01.960] Then, unlock the telescopic handlebar and push it down.
-[00:04:58.700 --> 00:05:01.960] 然後，解鎖伸縮式車把並向下推。
-[00:05:02.140 --> 00:05:05.280] As the handlebar folds, the seat follows automatically.
-[00:05:02.140 --> 00:05:05.280] 當車把折疊時，座椅會自動跟隨。
-[00:05:05.640 --> 00:05:08.960] The seat and frame move together in one continuous motion.
-[00:05:05.640 --> 00:05:08.960] 座椅和車架以一個連續的動作一起移動。
-[00:05:09.200 --> 00:05:13.000] And importantly, the same mechanism works in both seat directions.
-[00:05:09.200 --> 00:05:13.000] 重要的是，相同的機制在兩個座椅方向都有效。
-[00:05:13.240 --> 00:05:18.860] So it doesn't matter whether the seat is parent -facing or forward -facing. Let me show you.
-[00:05:13.240 --> 00:05:18.860] 因此，座椅是面向父座椅還是面向前座椅並不重要。我帶你去看看。
-[00:05:19.220 --> 00:05:21.740] First, put the canopy in its lowest position.
-[00:05:19.220 --> 00:05:21.740] 首先，將遮篷置於最低位置。
-[00:05:22.020 --> 00:05:25.300] Then unlock the telescopic handlebar and push it down.
-[00:05:22.020 --> 00:05:25.300] 然後解鎖伸縮式車把並向下推。
-[00:05:25.460 --> 00:05:29.160] As the handlebar moves down, the folding mechanism is activated.
-[00:05:25.460 --> 00:05:29.160] 隨著車把向下移動，摺疊機制被啟動。
-[00:05:29.440 --> 00:05:33.820] The seat rotates together with the frame. And I just keep pushing.
-[00:05:29.440 --> 00:05:33.820] 座椅與車架一起旋轉。我只是不停地推
-[00:05:34.140 --> 00:05:43.480] Until the stroller reaches its compact folded position. So basically, lower. Push. Done. It's one continuous movement.
-[00:05:34.140 --> 00:05:43.480] 直到嬰兒車達到緊湊的折疊位置。基本上，低一點，用力推完成了，這是一個連續的動作
-[00:05:43.980 --> 00:05:46.200] Ultimately, our goal is quite simple.
-[00:05:43.980 --> 00:05:46.200] 最終，我們的目標相當簡單。
-[00:05:46.420 --> 00:05:51.620] We want to remove the small problems and unnecessary steps that parents deal with every day.
-[00:05:46.420 --> 00:05:51.620] 我們希望消除父母每天處理的小問題和不必要的步驟。
-[00:05:51.880 --> 00:05:55.240] And make the stroller easier to use in everyday situations.
-[00:05:51.880 --> 00:05:55.240] 並使嬰兒車在日常情況下更易於使用。
-[00:05:55.560 --> 00:05:59.700] With wonder, we looked at two moments where we can simplify the experience.
-[00:05:55.560 --> 00:05:59.700] 令人驚訝的是，我們研究了兩個可以簡化體驗的時刻。
-[00:05:59.980 --> 00:06:03.440] When parents stop, auto -brake provides passive protection.
-[00:05:59.980 --> 00:06:03.440] 當父母停止時，自動剎車提供被動保護。
-[00:06:03.740 --> 00:06:13.760] When parents fold, the seat and frame move together in one continuous motion. So the experience becomes. Stop. Push. Push. Fold. Go.
-[00:06:03.740 --> 00:06:13.760] 當父母摺疊時，座椅和車架會以一個連續的動作一起移動。這樣體驗就會變成停，推，推，折，走
+[00:00:00.050 --> 00:00:03.410] Next I'd like to introduce our stroller concept, wonder.
+[00:00:00.050 --> 00:00:03.410] 接下來我想介紹我們的嬰兒車概念， WONDER
+[00:00:03.730 --> 00:00:05.750] We started with a simple observation.
+[00:00:03.730 --> 00:00:05.750] 我們從一個簡單的觀察開始。
+[00:00:06.090 --> 00:00:08.790] A stroller is usually safe while it's moving.
+[00:00:06.090 --> 00:00:08.790] 嬰兒車在移動時通常是安全的。
+[00:00:09.050 --> 00:00:11.130] But what happens when the parent stops?
+[00:00:09.050 --> 00:00:11.130] 但當父母停下來時會發生什麼事？
+[00:00:11.530 --> 00:00:18.470] These are some everyday situations where a parent may stop for a moment on a slight slope, without noticing the slope.
+[00:00:11.530 --> 00:00:18.470] 這些是一些日常情況，父母可能會在輕微的斜坡上停下來一會兒，而不會注意到斜坡。
+[00:00:18.770 --> 00:00:23.950] Because the slope is so subtle, the parent may not think it's necessary to engage the brake.
+[00:00:18.770 --> 00:00:23.950] 由於斜坡非常微妙，父母可能認為沒有必要踩剎車。
+[00:00:24.290 --> 00:00:28.090] But even a slight slope can cause the stroller to slowly start rolling.
+[00:00:24.290 --> 00:00:28.090] 但即使是輕微的斜坡也可能導致嬰兒車慢慢開始滾動。
+[00:00:28.090 --> 00:00:34.710] It may only take a few seconds, but it can create an unexpected situation for both the parent and the child.
+[00:00:28.090 --> 00:00:34.710] 這可能只需要幾秒鐘，但可能會給父母和孩子帶來意想不到的情況。
+[00:00:35.010 --> 00:00:37.050] So we started with a simple question.
+[00:00:35.010 --> 00:00:37.050] 所以我們從一個簡單的問題開始。
+[00:00:37.410 --> 00:00:40.590] What if the stroller could protect itself when the parent stops?
+[00:00:37.410 --> 00:00:40.590] 如果嬰兒車可以在父母停車時保護自己呢？
+[00:00:41.130 --> 00:00:43.130] This made us think differently about braking.
+[00:00:41.130 --> 00:00:43.130] 這讓我們對煞車有不同的看法。
+[00:00:43.590 --> 00:00:46.910] With a conventional stroller, there are basically two states.
+[00:00:43.590 --> 00:00:46.910] 使用傳統的嬰兒車，基本上有兩種狀態。
+[00:00:47.470 --> 00:00:49.770] Brake released, the stroller moves freely.
+[00:00:47.470 --> 00:00:49.770] 釋放剎車，嬰兒車自由移動。
+[00:00:50.250 --> 00:00:52.730] Brake engaged, the stroller is fully locked.
+[00:00:50.250 --> 00:00:52.730] 剎車已啟動，嬰兒車已完全鎖定。
+[00:00:52.930 --> 00:00:55.370] But there is a gap between these two states.
+[00:00:52.930 --> 00:00:55.370] 但這兩種狀態之間存在差距。
+[00:00:55.370 --> 00:01:01.890] What happens when the parent stops on a slight slope, but doesn't realize the stroller is starting to roll?
+[00:00:55.370 --> 00:01:01.890] 當父母停在輕微的斜坡上，卻沒有意識到嬰兒車開始滾動時，會發生什麼事？
+[00:01:02.110 --> 00:01:09.210] That's where auto -brake comes in. The idea is simple. Stop, it locks. Push, it releases.
+[00:01:02.110 --> 00:01:09.210] 這就是自動煞車發揮作用的地方。這個想法很簡單。停下來，它會鎖定，推，它會釋放
+[00:01:09.570 --> 00:01:14.150] When the stroller stops, auto -brake automatically creates a locking effect.
+[00:01:09.570 --> 00:01:14.150] 當嬰兒車停止時，自動煞車會自動產生鎖定效果。
+[00:01:14.530 --> 00:01:17.430] The purpose is not to replace the conventional brake.
+[00:01:14.530 --> 00:01:17.430] 目的不是要取代傳統的煞車系統。
+[00:01:17.430 --> 00:01:25.550] It provides passive protection when the parent overlooks a slight slope, or simply doesn't realize the stroller is starting to move.
+[00:01:17.430 --> 00:01:25.550] 當父母俯瞰輕微斜坡時，或者根本沒有意識到嬰兒車開始移動時，它會提供被動保護。
+[00:01:25.770 --> 00:01:31.290] For steeper slopes, or whenever full stability is needed, the conventional brake is still used.
+[00:01:25.770 --> 00:01:31.290] 對於較陡的斜坡，或每當需要完全穩定時，仍使用傳統制動器。
+[00:01:31.470 --> 00:01:37.870] So basically, we are adding another layer between free movement and full lock.
+[00:01:31.470 --> 00:01:37.870] 基本上，我們在自由移動和完全鎖定之間添加了另一層。
+[00:01:38.190 --> 00:01:40.950] And rather than just explain it, let me show you.
+[00:01:38.190 --> 00:01:40.950] 而不是僅僅解釋它，讓我向你展示。
+[00:01:41.290 --> 00:01:42.710] Here you can see the difference.
+[00:01:41.290 --> 00:01:42.710] 在這裡你可以看到差異。
+[00:01:42.710 --> 00:01:50.850] With a conventional stroller, if the parent stops on a slight slope without engaging the brake, the stroller may slowly start to roll.
+[00:01:42.710 --> 00:01:50.850] 使用傳統嬰兒車時，如果父母在沒有剎車的情況下停在輕微的斜坡上，嬰兒車可能會慢慢開始滾動。
+[00:01:51.210 --> 00:01:58.570] With wonder, the auto -brake automatically creates a locking effect when the stroller stops, helping prevent unintended rolling.
+[00:01:51.210 --> 00:01:58.570] 令人驚訝的是，當嬰兒車停止時，自動煞車會自動產生鎖定效果，有助於防止意外滾動。
+[00:01:59.010 --> 00:02:03.890] So the parent doesn't need to remember another step for a slope they may not even notice.
+[00:01:59.010 --> 00:02:03.890] 因此，父母不需要記住他們甚至可能沒有注意到的斜坡的另一個步驟。
+[00:02:04.330 --> 00:02:06.090] Now let me show you the prototype.
+[00:02:04.330 --> 00:02:06.090] 現在讓我向你展示原型。
+[00:02:06.090 --> 00:02:09.950] When I stop the stroller, the auto -brake engages automatically.
+[00:02:06.090 --> 00:02:09.950] 當我停止嬰兒車時，自動煞車會自動啟動。
+[00:02:10.430 --> 00:02:18.610] And when I push forward, the brake releases and the stroller moves again. No extra action. Just. Stop. Push.
+[00:02:10.430 --> 00:02:18.610] 當我向前推時，剎車釋放，嬰兒車再次移動。無需額外操作，只需。停下來，推
+[00:02:18.890 --> 00:02:21.570] There's an important point about this concept.
+[00:02:18.890 --> 00:02:21.570] 這個概念有一個重要的觀點。
+[00:02:22.010 --> 00:02:26.050] The auto -brake is not designed to fully lock the stroller on every slope.
+[00:02:22.010 --> 00:02:26.050] 自動煞車的設計無法完全鎖定每個斜坡上的嬰兒車。
+[00:02:26.450 --> 00:02:31.590] Its main purpose is to prevent unintended rolling on slight slopes that are easy to overlook.
+[00:02:26.450 --> 00:02:31.590] 其主要目的是防止在容易忽略的輕微斜坡上意外滾動。
+[00:02:31.590 --> 00:02:38.030] As the slope becomes steeper, the stroller may eventually overcome the braking force and start to move.
+[00:02:31.590 --> 00:02:38.030] 隨著斜坡變得更陡，嬰兒車最終可能會克服制動力並開始移動。
+[00:02:38.190 --> 00:02:42.930] In that situation, the parent should use the conventional brake for full locking.
+[00:02:38.190 --> 00:02:42.930] 在這種情況下，家長應使用傳統制動器進行完全鎖定。
+[00:02:43.230 --> 00:02:50.570] So the two systems have different roles. Auto -brake. Passive protection for slight slopes. Conventional brake.
+[00:02:43.230 --> 00:02:50.570] 所以這兩個系統有不同的角色自動煞車。輕微斜坡的被動保護。傳統煞車。
+[00:02:50.770 --> 00:02:53.710] Full locking when the parent wants maximum stability.
+[00:02:50.770 --> 00:02:53.710] 當父母希望獲得最大穩定性時完全鎖定。
+[00:02:54.210 --> 00:02:59.510] In other words, auto -brake protects the moment when you don't realize you need the brake.
+[00:02:54.210 --> 00:02:59.510] 換句話說，當您沒有意識到需要剎車時，自動剎車可以保護您。
+[00:02:59.510 --> 00:03:04.090] The conventional brake handles the moment when you know you need full locking.
+[00:02:59.510 --> 00:03:04.090] 當您知道需要完全鎖定時，傳統制動器可以處理。
+[00:03:04.430 --> 00:03:06.630] There's another important part of this concept.
+[00:03:04.430 --> 00:03:06.630] 這個概念還有另一個重要部分。
+[00:03:06.910 --> 00:03:09.310] We could achieve automatic braking electronically.
+[00:03:06.910 --> 00:03:09.310] 我們可以實現電子自動煞車。
+[00:03:09.650 --> 00:03:12.650] And there are already electronic brake systems on the market.
+[00:03:09.650 --> 00:03:12.650] 市場上已經有電子煞車系統。
+[00:03:12.910 --> 00:03:15.210] That are designed to provide full locking.
+[00:03:12.910 --> 00:03:15.210] 專為提供完全鎖定而設計。
+[00:03:15.490 --> 00:03:18.150] But we wanted to explore a different direction.
+[00:03:15.490 --> 00:03:18.150] 但我們想探索不同的方向。
+[00:03:18.510 --> 00:03:26.950] Instead of automatically applying full braking, Wunder uses a mechanical system to create a controlled locking effect when the stroller stops.
+[00:03:18.510 --> 00:03:26.950] Wunder不會自動完全煞車，而是使用機械系統在嬰兒車停止時產生受控的鎖定效果。
+[00:03:26.950 --> 00:03:31.070] The stroller's own movement is used to engage and release the brake.
+[00:03:26.950 --> 00:03:31.070] 嬰兒車自身的動作用於接合和釋放剎車。
+[00:03:31.370 --> 00:03:34.270] So we don't need a battery to power the braking function.
+[00:03:31.370 --> 00:03:34.270] 因此，我們不需要電池來為煞車功能供電。
+[00:03:34.550 --> 00:03:39.490] This gives us the potential to simplify the system, reduce weight, and reduce cost.
+[00:03:34.550 --> 00:03:39.490] 這使我們有可能簡化系統、減輕重量並降低成本。
+[00:03:39.650 --> 00:03:42.730] But this also creates an important design challenge.
+[00:03:39.650 --> 00:03:42.730] 但這也造成了重要的設計挑戰。
+[00:03:43.070 --> 00:03:44.830] How much braking force is enough?
+[00:03:43.070 --> 00:03:44.830] 多少煞車力就夠了？
+[00:03:45.150 --> 00:03:49.590] If the braking force is too low, the stroller may still roll on a slight slope.
+[00:03:45.150 --> 00:03:49.590] 如果剎車力太低，嬰兒車仍可能在輕微的斜坡上滾動。
+[00:03:49.590 --> 00:03:58.110] But if the braking force is too high, starting from a complete stop can feel uncomfortable because the parent has to push against more resistance.
+[00:03:49.590 --> 00:03:58.110] 但如果剎車力太大，從完全停止開始可能會感到不舒服，因為父母必須推動更多阻力。
+[00:03:58.450 --> 00:04:01.350] So our goal is not to maximize the braking force.
+[00:03:58.450 --> 00:04:01.350] 因此，我們的目標不是最大限度地提高制動力。
+[00:04:01.610 --> 00:04:03.870] Our goal is to find the right balance.
+[00:04:01.610 --> 00:04:03.870] 我們的目標是找到適當的平衡。
+[00:04:04.190 --> 00:04:09.530] Enough resistance to prevent unintended rolling, but not so much that pushing feels uncomfortable.
+[00:04:04.190 --> 00:04:09.530] 足夠的阻力來防止意外滾動，但不會讓推動感覺不舒服。
+[00:04:09.970 --> 00:04:16.270] In our current prototype, the system can hold a stroller with a 20 -kilogram load on an 8 -degree slope.
+[00:04:09.970 --> 00:04:16.270] 在我們目前的原型中，該系統可以在8度的斜坡上容納20公斤重的嬰兒車。
+[00:04:16.270 --> 00:04:19.370] But this is the current capability of our prototype.
+[00:04:16.270 --> 00:04:19.370] 但這是我們原型的現有能力。
+[00:04:19.770 --> 00:04:24.650] It doesn't mean auto -brake is intended to replace the full -lock brake on steeper slopes.
+[00:04:19.770 --> 00:04:24.650] 這並不意味著自動制動器旨在取代較陡峭斜坡上的全鎖定制動器。
+[00:04:24.870 --> 00:04:27.810] We also looked at another everyday moment, folding.
+[00:04:24.870 --> 00:04:27.810] 我們還看了另一個日常時刻，折疊。
+[00:04:28.290 --> 00:04:32.010] Think about the moment when parents need to go up or down a staircase.
+[00:04:28.290 --> 00:04:32.010] 想想父母需要上下樓梯的那一刻。
+[00:04:32.390 --> 00:04:36.850] They may be holding a child, carrying bags, or simply trying to move quickly.
+[00:04:32.390 --> 00:04:36.850] 他們可能抱著孩子、攜帶行李，或只是試圖快速移動。
+[00:04:37.070 --> 00:04:40.630] So we asked ourselves, can we make folding simpler?
+[00:04:37.070 --> 00:04:40.630] 所以我們問自己，我們可以讓折疊變得更簡單嗎？
+[00:04:40.870 --> 00:04:43.930] With Wunder, there's no separate seat folding step.
+[00:04:40.870 --> 00:04:43.930] 使用Wunder ，無需單獨的座椅折疊步驟。
+[00:04:43.930 --> 00:04:49.130] The canopy is adjustable, so before folding, just make sure it's in the lowest position.
+[00:04:43.930 --> 00:04:49.130] 遮篷是可調整的，因此在摺疊之前，請確保它位於最低位置。
+[00:04:49.450 --> 00:04:52.770] Then, unlock the telescopic handlebar and push it down.
+[00:04:49.450 --> 00:04:52.770] 然後，解鎖伸縮式車把並向下推。
+[00:04:53.030 --> 00:04:56.070] As the handlebar folds, the seat follows automatically.
+[00:04:53.030 --> 00:04:56.070] 當車把折疊時，座椅會自動跟隨。
+[00:04:56.590 --> 00:04:59.750] The seat and frame move together in one continuous motion.
+[00:04:56.590 --> 00:04:59.750] 座椅和車架以一個連續的動作一起移動。
+[00:05:00.230 --> 00:05:03.790] And importantly, the same mechanism works in both seat directions.
+[00:05:00.230 --> 00:05:03.790] 重要的是，相同的機制在兩個座椅方向都有效。
+[00:05:04.010 --> 00:05:09.650] So it doesn't matter whether the seat is parent -facing or forward -facing. Let me show you.
+[00:05:04.010 --> 00:05:09.650] 因此，座椅是面向父座椅還是面向前座椅並不重要。我帶你去看看。
+[00:05:09.650 --> 00:05:12.550] First, put the canopy in its lowest position.
+[00:05:09.650 --> 00:05:12.550] 首先，將遮篷置於最低位置。
+[00:05:12.750 --> 00:05:16.090] Then unlock the telescopic handlebar and push it down.
+[00:05:12.750 --> 00:05:16.090] 然後解鎖伸縮式車把並向下推。
+[00:05:16.310 --> 00:05:19.950] As the handlebar moves down, the folding mechanism is activated.
+[00:05:16.310 --> 00:05:19.950] 隨著車把向下移動，摺疊機制被啟動。
+[00:05:20.390 --> 00:05:22.770] The seat rotates together with the frame.
+[00:05:20.390 --> 00:05:22.770] 座椅與車架一起旋轉。
+[00:05:22.990 --> 00:05:34.290] And I just keep pushing until the stroller reaches its compact folded position. So basically, lower, push, done. It's one continuous movement.
+[00:05:22.990 --> 00:05:34.290] 我只是繼續推，直到嬰兒車達到緊湊的折疊位置。所以基本上，降低，推，完成。這是一個連續的動作
+[00:05:34.810 --> 00:05:36.990] Ultimately, our goal is quite simple.
+[00:05:34.810 --> 00:05:36.990] 最終，我們的目標相當簡單。
+[00:05:36.990 --> 00:05:42.430] We want to remove the small problems and unnecessary steps that parents deal with every day.
+[00:05:36.990 --> 00:05:42.430] 我們希望消除父母每天處理的小問題和不必要的步驟。
+[00:05:42.610 --> 00:05:45.990] And make the stroller easier to use in everyday situations.
+[00:05:42.610 --> 00:05:45.990] 並使嬰兒車在日常情況下更易於使用。
+[00:05:46.330 --> 00:05:50.410] With Wunder, we looked at two moments where we can simplify the experience.
+[00:05:46.330 --> 00:05:50.410] 借助Wunder ，我們研究了兩個可以簡化體驗的時刻。
+[00:05:50.850 --> 00:05:54.230] When parents stop, auto -brake provides passive protection.
+[00:05:50.850 --> 00:05:54.230] 當父母停止時，自動剎車提供被動保護。
+[00:05:54.550 --> 00:06:05.010] When parents fold, the seat and frame move together in one continuous motion. So the experience becomes. Stop. Push. Fold. Go. Go. Go. Go.
+[00:05:54.550 --> 00:06:05.010] 當父母摺疊時，座椅和車架會以一個連續的動作一起移動。這樣體驗就會變成停，推，折，走走，走，走
