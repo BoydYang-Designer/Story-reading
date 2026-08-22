@@ -5,49 +5,50 @@ I started by looking at the folding experience from the parent's perspective.
 With many compact strollers, when you fold the stroller, the handlebar rotates downward.
 Because the handlebar moves down, the parent naturally needs to bend over and follow the movement.
 It's a small detail, but it's something the parent experiences every time they fold or unfold the stroller.
-So I started thinking, can we make the folding motion more natural, while allowing the parent to stay more upright?
-The Boogaboo Dragonfly is a good example of a stroller designed to fold while keeping the handlebar relatively upright,
+So, I started thinking, can we make the folding motion more natural, while allowing the parent to stay more upright?
+The Boogaboo Dragonfly is a good example of a stroller designed to fold, while keeping the handlebar relatively upright,
 so the parent doesn't need to bend over as much.
 Its mechanism allows the stroller to fold into a self -standing position with one hand, without removing the seat or bassinet.
 However, when we look more closely at the folding movement, there are still some opportunities.
-As you can see, the user lifts the handlebar and brings the front of the stroller backward.
-This lifts the front wheels off the ground and allows a support element to engage, so the stroller can stand by itself.
+As you can see, the user lifts the handlebar, and brings the front of the stroller backward.
+This lifts the front wheels off the ground, and allows a support element to engage, so the stroller can stand by itself.
 From my perspective, the overall movement could still be made more natural and effortless for the parent.
 So I started thinking, can we create an upright folding motion that keeps the stroller compact,
 but without requiring the user to lift the stroller?
-So this is the approach I explored.
+So, this is the approach I explored.
 Let me explain what you just saw.
-Before folding, the only thing the parent needs to do, is bring the canopy to its lowest position to achieve the most compact folded size.
+Before folding, the only thing the parent needs to do is bring the canopy to its lowest position to achieve the most compact folded size.
 Then, the parent simply rotates the handlebar upward.
 As the handlebar rotates, the seat rotates together with it, while all four wheels remain on the ground.
 So the parent never needs to lift the stroller.
-As the handlebar reaches the upright position, the seat also reaches the unlocking position.
-At this point the seat automatically releases and folds by itself.
+As the handlebar reaches the upright position, the seat also reaches the release position.
+At this point, the seat automatically releases and folds by itself.
 Then, the parent simply pushes the handlebar downward to complete the rest of the folding process.
 When fully folded, the stroller remains standing on all four wheels.
 And unfolding is simply the reverse of the folding process.
-Because the handlebar remains upright, the parent can pull it upward to unfold the stroller, without needing to lift or reposition it.
+Because the handlebar remains upright, the parent can simply pull it upward to unfold the stroller, without needing to bend over or lift the stroller.
 The seat can also fold in the parent -facing position, so there is no need to change the seat direction before folding.
 The goal is to create a simple, continuous folding experience that feels natural, comfortable,
-and effortless, without lifting the stroller.
-Let me show you the folding mechanism again, from another angle.
-This view gives you a better look at how the handlebar and seat move together through the folding sequence.
-So, this is the overall concept from different views and in both seat directions.
+and effortless, without bending over or lifting the stroller.
+Let me show you the folding sequence from another angle.
+This view gives you a better look at how the handlebar and seat move together throughout the folding process.
+So, this is the overall concept from different angles, with the seat in both directions.
 Another detail I considered is the footrest.
-Normally, many strollers use a footrest mounted on the frame in front of the seat.
-But in this concept, the seat folds down into this same area.
-So a traditional frame -mounted footrest would take up the folding space and affect the folded size.
-So instead, I integrated a long adjustable footrest directly into the seat.
-Because it folds together with the seat, it doesn't interfere with the folding mechanism.
-And whether the seat is parent -facing or forward -facing, the child can always use the footrest.
-The adjustment button is positioned behind the footrest, so the parent can adjust it with one hand.
-This is the rear view, showing the brake pedal detail, and how it is integrated into the rear frame.
-Finally, here are the overall dimensions and the folded dimensions.
-The key point is that the upright folding mechanism does not require the stroller to be lifted,
-while still maintaining the target folded dimensions. So that's basically the idea.
+Normally, the footrest is mounted on the front part of the frame.
+But with this folding system, the seat always folds toward the front of the stroller, whether it's parent -facing or forward -facing.
+So, when the stroller folds, the seat moves into the same space where a traditional footrest would normally be.
+That means a frame -mounted footrest would get in the way and also affect the folded size.
+So instead I integrated a long adjustable footrest directly into the seat.
+Since it folds together with the seat, it doesn't get in the way during folding.
+And because it's part of the seat, it can still be used in both seat directions.
+The adjustment button is placed behind the footrest, so parents can easily adjust it with one hand.
+This is the rear view, showing the brake pedal detail and how it is integrated into the rear frame.
+Finally, here are the overall and folded dimensions.
+The key point is that the stroller can fold upright without needing to be lifted, while still keeping the folded size reasonable.
+The folded height is around 67 cm, which gives us a good balance between a compact folded size and an accessible handlebar height. So, that's basically the idea.
 I wanted to make the folding experience easier and more natural for the parent.
-The key idea is that the parent can fold and unfold the stroller without bending over, while keeping the handlebar in an upright position.
-We've also made a quick validation mockup to test the basic folding architecture.
+The key idea is that the parent can fold and unfold the stroller without bending over, while keeping the handlebar upright.
+We've also made a quick validation mock -up to test the basic folding architecture.
 It doesn't include the detailed mechanisms yet, but so far, the basic folding structure works as expected.
-So for now, I mainly wanted to share the idea and see what you think.
-If you find the direction interesting, we'd be happy to explore it further together, and hear your thoughts.
+So for now, I mainly wanted to share the idea and get your thoughts.
+If you find the direction interesting, we'd be happy to explore it further together.
